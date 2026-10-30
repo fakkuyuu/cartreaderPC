@@ -66,10 +66,10 @@ void gbaMenu() {
       sd.chdir("/");
       readROM_GBA();
       sd.chdir("/");
-      // Internal Checksum
-      compare_checksum_GBA();
-      // CRC32
-      compareCRC("gba.txt", 0, 1, 0);
+      if (!PcLink::usingPcStorage()) {
+        compare_checksum_GBA();
+        compareCRC("gba.txt", 0, 1, 0);
+      }
 #ifdef ENABLE_GLOBAL_LOG
       save_log();
 #endif
@@ -730,6 +730,8 @@ void getCartInfo_GBA() {
     sd.chdir();
     if (myFile.open("gba.txt", O_READ)) {
       char gamename[100];
+      bool entrySelected = false;
+      if (myFile.isPc()) myFile.findRecord(1, cartID);
 
 #ifdef ENABLE_GLOBAL_LOG
       // Disable log to prevent unnecessary logging
@@ -815,11 +817,16 @@ void getCartInfo_GBA() {
 
               // Selection made
               else if (b == 3) {
-                // Close file and break to exit both loops
-                myFile.close();
+                // Mark the selection and unwind both database loops before
+                // closing the file.  Closing here only exited the innermost
+                // button loop; the PC-backed FsFile could then be queried
+                // again with an invalid handle and leave the display blank.
+                entrySelected = true;
                 break;
               }
             }
+            if (entrySelected)
+              break;
           }
         }
         // If no match advance and try again
@@ -829,6 +836,8 @@ void getCartInfo_GBA() {
           // skip third empty line
           skip_line(&myFile);
         }
+        if (entrySelected)
+          break;
       }
       // Close the file:
       myFile.close();

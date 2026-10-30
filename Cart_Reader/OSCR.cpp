@@ -49,7 +49,7 @@
  * String Constants
  **/
 // Firmware Version
-constexpr char PROGMEM FSTRING_VERSION[] = "V15.6";
+constexpr char PROGMEM FSTRING_VERSION[] = "V15.5-PC62";
 
 // Universal
 constexpr char PROGMEM FSTRING_RESET[] = "Reset";
@@ -79,7 +79,7 @@ constexpr char PROGMEM FSTRING_NAME[] = "Name: ";
 constexpr char PROGMEM FSTRING_CHECKSUM[] = "Checksum: ";
 constexpr char PROGMEM FSTRING_ROM_SIZE[] = "ROM Size: ";
 constexpr char PROGMEM FSTRING_REVISION[] = "Revision: ";
-constexpr char PROGMEM FSTRING_SERIAL[] = "Serial: ";
+constexpr char PROGMEM FSTRING_SERIAL[] = "PcConsole: ";
 
 /*==== /CONSTANTS =================================================*/
 
@@ -127,7 +127,7 @@ void printVersionToSerial() {
   #elif defined(HW5)
     ClockedSerial.print(F("HW5"));
   #elif defined(SERIAL_MONITOR)
-    ClockedSerial.print(F("Serial"));
+    ClockedSerial.print(F("PcConsole"));
   #else
     ClockedSerial.print(F("HW?"));
   #endif

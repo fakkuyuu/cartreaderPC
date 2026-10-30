@@ -409,26 +409,26 @@ void setROMSize_ATARI8()
 setrom:
     String sizeROM;
     for (int i = 0; i < (atari8hi - atari8lo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(ATARI8[i + atari8lo]);
-      Serial.println(F("KB"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(ATARI8[i + atari8lo]);
+      PcConsole.println(F("KB"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newatari8size = sizeROM.toInt() + atari8lo;
     if (newatari8size > atari8hi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(ATARI8[newatari8size]);
-  Serial.println(F("KB"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(ATARI8[newatari8size]);
+  PcConsole.println(F("KB"));
 #endif
   EEPROM_writeAnything(8, newatari8size);
   atari8size = newatari8size;
@@ -463,10 +463,10 @@ void checkStatus_ATARI8()
   display_Update();
   wait();
 #else
-  Serial.print(FS(FSTRING_ROM_SIZE));
-  Serial.print(ATARI8[atari8size]);
-  Serial.println(F("KB"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(FS(FSTRING_ROM_SIZE));
+  PcConsole.print(ATARI8[atari8size]);
+  PcConsole.println(F("KB"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -482,7 +482,7 @@ void setCart_ATARI8()
   struct database_entry_mapper_size entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("atari8cart.txt");
 
   // Open database
   if (myFile.open("atari8cart.txt", O_READ)) {

@@ -276,7 +276,7 @@ void setROMSize_VSMILE()
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(VSMILE[newvsmilesize]);
-  println_Msg(F("MB"));
+  println_Msg(F("KB"));
   display_Update();
   delay(1000);
 #else
@@ -286,26 +286,26 @@ void setROMSize_VSMILE()
 setrom:
     String sizeROM;
     for (int i = 0; i < (vsmilehi - vsmilelo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(VSMILE[i + vsmilelo]);
-      Serial.println(F("MB"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(VSMILE[i + vsmilelo]);
+      PcConsole.println(F("KB"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newvsmilesize = sizeROM.toInt() + vsmilelo;
     if (newvsmilesize > vsmilehi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(VSMILE[newvsmilesize]);
-  Serial.println(F("MB"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(VSMILE[newvsmilesize]);
+  PcConsole.println(F("KB"));
 #endif
   EEPROM_writeAnything(8, newvsmilesize);
   vsmilesize = newvsmilesize;
@@ -330,10 +330,10 @@ void checkStatus_VSMILE()
   display_Update();
   wait();
 #else
-  Serial.print(FS(FSTRING_ROM_SIZE));
-  Serial.print(VSMILE[vsmilesize]);
-  Serial.println(F("MB"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(FS(FSTRING_ROM_SIZE));
+  PcConsole.print(VSMILE[vsmilesize]);
+  PcConsole.println(F("MB"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 

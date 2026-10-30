@@ -248,26 +248,26 @@ void setROMSize_PYUUTA()
 setrom:
     String sizeROM;
     for (int i = 0; i < (pyuutahi - pyuutalo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(PYUUTA[i + pyuutalo]);
-      Serial.println(F("KB"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(PYUUTA[i + pyuutalo]);
+      PcConsole.println(F("KB"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newpyuutasize = sizeROM.toInt() + pyuutalo;
     if (newpyuutasize > pyuutahi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(PYUUTA[newpyuutasize]);
-  Serial.println(F("KB"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(PYUUTA[newpyuutasize]);
+  PcConsole.println(F("KB"));
 #endif
   EEPROM_writeAnything(8, newpyuutasize);
   pyuutasize = newpyuutasize;
@@ -292,10 +292,10 @@ void checkStatus_PYUUTA()
   display_Update();
   wait();
 #else
-  Serial.print(FS(FSTRING_ROM_SIZE));
-  Serial.print(PYUUTA[pyuutasize]);
-  Serial.println(F("KB"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(FS(FSTRING_ROM_SIZE));
+  PcConsole.print(PYUUTA[pyuutasize]);
+  PcConsole.println(F("KB"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 

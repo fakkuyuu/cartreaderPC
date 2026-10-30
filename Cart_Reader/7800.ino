@@ -531,26 +531,26 @@ void setROMSize_7800() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (a7800hi - a7800lo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(a7800[i + a7800lo]);
-      Serial.println(F("K"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(a7800[i + a7800lo]);
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     new7800size = sizeROM.toInt() + a7800lo;
     if (new7800size > a7800hi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(a7800[new7800size]);
-  Serial.println(F("K"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(a7800[new7800size]);
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(8, new7800size);
   a7800size = new7800size;
@@ -582,30 +582,30 @@ void checkStatus_7800() {
   display_Update();
   wait();
 #else
-  Serial.print(F("MAPPER:   "));
-  Serial.println(a7800mapper);
+  PcConsole.print(F("MAPPER:   "));
+  PcConsole.println(a7800mapper);
   if (a7800mapper == 0)
-    Serial.println(F("Standard [7816/7832/7848]"));
+    PcConsole.println(F("Standard [7816/7832/7848]"));
   else if (a7800mapper == 1)
-    Serial.println(F("SuperGame 128/256K [78SG/ARTI]"));
+    PcConsole.println(F("SuperGame 128/256K [78SG/ARTI]"));
   else if (a7800mapper == 2)
-    Serial.println(F("SuperGame 144K [78S9] - Alien Brigade/Crossbow"));
+    PcConsole.println(F("SuperGame 144K [78S9] - Alien Brigade/Crossbow"));
   else if (a7800mapper == 3)
-    Serial.println(F("F-18 Hornet 64K [78AB]"));
+    PcConsole.println(F("F-18 Hornet 64K [78AB]"));
   else if (a7800mapper == 4)
-    Serial.println(F("Double Dragon/Rampage [78AC]"));
+    PcConsole.println(F("Double Dragon/Rampage [78AC]"));
   else if (a7800mapper == 5)
-    Serial.println(F("Realsports Baseball/Tank Command/Tower Toppler/Waterski [78S4]"));
+    PcConsole.println(F("Realsports Baseball/Tank Command/Tower Toppler/Waterski [78S4]"));
   else if (a7800mapper == 6)
-    Serial.println(F("Karateka (PAL) [78S4 Variant]"));
+    PcConsole.println(F("Karateka (PAL) [78S4 Variant]"));
   else if (a7800mapper == 7)
-    Serial.println(F("Bankset"));
+    PcConsole.println(F("Bankset"));
   else if (a7800mapper == 8)
-    Serial.println(F("Bentley Bears Crystal Quest/Bounty Bob Strikes Back"));
-  Serial.print(FS(FSTRING_ROM_SIZE));
-  Serial.print(A7800[a7800size]);
-  Serial.println(F("K"));
-  Serial.println(FS(FSTRING_EMPTY));
+    PcConsole.println(F("Bentley Bears Crystal Quest/Bounty Bob Strikes Back"));
+  PcConsole.print(FS(FSTRING_ROM_SIZE));
+  PcConsole.print(a7800[a7800size]);
+  PcConsole.println(F("K"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -639,20 +639,20 @@ void setMapper_7800() {
 #else
 setmapper:
   String newmap;
-  Serial.println(F("SUPPORTED MAPPERS:"));
-  Serial.println(F("0 = Standard [7816/7832/7848]"));
-  Serial.println(F("1 = SuperGame 128K [78SG]"));
-  Serial.println(F("2 = SuperGame 144K [78S9] - Alien Brigade/Crossbow"));
-  Serial.println(F("3 = F-18 Hornet 64K [78AB]"));
-  Serial.println(F("4 = Double Dragon/Rampage [78AC]"));
-  Serial.println(F("5 = Realsports Baseball/Tank Command/Tower Toppler/Waterski [78S4]"));
-  Serial.println(F("6 = Karateka (PAL) [78S4 Variant]"));
-  Serial.println(F("7 = Bankset"));
-  Serial.println(F("8 = Bentley Bears Crystal Quest/Bounty Bob Strikes Back"));
-  Serial.print(F("Enter Mapper [0-8]: "));
-  while (Serial.available() == 0) {}
-  newmap = Serial.readStringUntil('\n');
-  Serial.println(newmap);
+  PcConsole.println(F("SUPPORTED MAPPERS:"));
+  PcConsole.println(F("0 = Standard [7816/7832/7848]"));
+  PcConsole.println(F("1 = SuperGame 128K [78SG]"));
+  PcConsole.println(F("2 = SuperGame 144K [78S9] - Alien Brigade/Crossbow"));
+  PcConsole.println(F("3 = F-18 Hornet 64K [78AB]"));
+  PcConsole.println(F("4 = Double Dragon/Rampage [78AC]"));
+  PcConsole.println(F("5 = Realsports Baseball/Tank Command/Tower Toppler/Waterski [78S4]"));
+  PcConsole.println(F("6 = Karateka (PAL) [78S4 Variant]"));
+  PcConsole.println(F("7 = Bankset"));
+  PcConsole.println(F("8 = Bentley Bears Crystal Quest/Bounty Bob Strikes Back"));
+  PcConsole.print(F("Enter Mapper [0-8]: "));
+  while (PcConsole.available() == 0) {}
+  newmap = PcConsole.readStringUntil('\n');
+  PcConsole.println(newmap);
   a7800index = newmap.toInt() * 3;
   new7800mapper = pgm_read_byte(a7800mapsize + a7800index);
 #endif
@@ -674,7 +674,7 @@ void setCart_7800() {
   struct database_entry_mapper_size entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("7800.txt");
 
   // Open database
   if (myFile.open("7800.txt", O_READ)) {

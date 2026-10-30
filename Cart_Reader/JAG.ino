@@ -30,7 +30,7 @@ byte jagromSize = 0;        // 0 = 1MB, 1 = 2MB, 2 = 4MB
 // SAVE TYPE
 // 0 = SERIAL EEPROM
 // 1 = FLASH
-byte jagSaveType = 0;  // Serial EEPROM
+byte jagSaveType = 0;  // PcConsole EEPROM
 
 // SERIAL EEPROM 93CX6
 // CONTROL: EEPCS (PA7), EEPSK (PA6), EEPDI (PF0) [DATA D0]
@@ -117,7 +117,7 @@ void jagMenu() {
         readJagEEP();
       else {
         println_Msg(F("Cart has no EEPROM"));
-        display.display();
+        display_Update();
       }
       break;
 
@@ -131,7 +131,7 @@ void jagMenu() {
         writeJagEEP();
       } else {
         println_Msg(F("Cart has no EEPROM"));
-        display.display();
+        display_Update();
       }
       break;
 
@@ -142,7 +142,7 @@ void jagMenu() {
         readJagFLASH();
       else {
         println_Msg(F("Cart has no FLASH"));
-        display.display();
+        display_Update();
       }
       break;
 
@@ -158,7 +158,7 @@ void jagMenu() {
         verifyJagFLASH();
       } else {
         println_Msg(F("Cart has no FLASH"));
-        display.display();
+        display_Update();
       }
       break;
   }
@@ -263,7 +263,7 @@ void setCart_Jag() {
   struct database_entry_Jag entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("jag.txt");
 
   // Open database
   if (myFile.open("jag.txt", O_READ)) {
@@ -339,35 +339,35 @@ void jagEepMenu() {
       jagEepSize = 0;  // 128B
       EEPROM_writeAnything(10, jagEepSize);
       println_Msg(F("128B (93C46)"));
-      display.display();
+      display_Update();
       break;
 
     case 1:
       jagEepSize = 1;  // 256B
       EEPROM_writeAnything(10, jagEepSize);
       println_Msg(F("256B (93C56)"));
-      display.display();
+      display_Update();
       break;
 
     case 2:
       jagEepSize = 2;  // 512B
       EEPROM_writeAnything(10, jagEepSize);
       println_Msg(F("512B (93C66)"));
-      display.display();
+      display_Update();
       break;
 
     case 3:
       jagEepSize = 3;  // 1024B
       EEPROM_writeAnything(10, jagEepSize);
       println_Msg(F("1024B (93C76)"));
-      display.display();
+      display_Update();
       break;
 
     case 4:
       jagEepSize = 4;  // 2048B
       EEPROM_writeAnything(10, jagEepSize);
       println_Msg(F("2048B (93C86)"));
-      display.display();
+      display_Update();
       break;
   }
 }
@@ -808,7 +808,7 @@ void EepromEWEN(void) {  // EWEN 10011xxxx
   EEP_CS_CLEAR;
   _delay_us(2);
 #ifdef SERIAL_MONITOR
-  Serial.println(F("ERASE ENABLED"));
+  PcConsole.println(F("ERASE ENABLED"));
 #endif
 }
 
@@ -837,7 +837,7 @@ void EepromERAL(void) {  // ERASE ALL 10010xxxx
   EEP_CS_CLEAR;
   jagEepromStatus();
 #ifdef SERIAL_MONITOR
-  Serial.println(F("ERASED ALL"));
+  PcConsole.println(F("ERASED ALL"));
 #endif
 }
 
@@ -867,7 +867,7 @@ void EepromEWDS(void) {  // DISABLE 10000xxxx
   EEP_CS_CLEAR;
   _delay_us(2);
 #ifdef SERIAL_MONITOR
-  Serial.println(F("ERASE DISABLED"));
+  PcConsole.println(F("ERASE DISABLED"));
 #endif
 }
 
@@ -889,18 +889,18 @@ void EepromDisplay() {  // FOR SERIAL ONLY
   for (word address = 0; address < eepEnd; address += 2) {
     EepromRead(address);
     if ((address % 16 == 0) && (address != 0))
-      Serial.println(F(""));
+      PcConsole.println(F(""));
     if (jagEepBuf[1] < 0x10)
-      Serial.print(F("0"));
-    Serial.print(jagEepBuf[1], HEX);
-    Serial.print(F(" "));
+      PcConsole.print(F("0"));
+    PcConsole.print(jagEepBuf[1], HEX);
+    PcConsole.print(F(" "));
     if (jagEepBuf[0] < 0x10)
-      Serial.print(F("0"));
-    Serial.print(jagEepBuf[0], HEX);
-    Serial.print(F(" "));
+      PcConsole.print(F("0"));
+    PcConsole.print(jagEepBuf[0], HEX);
+    PcConsole.print(F(" "));
   }
-  Serial.println(F(""));
-  Serial.println(F(""));
+  PcConsole.println(F(""));
+  PcConsole.println(F(""));
 }
 #endif
 //*****************************************************************************
@@ -980,7 +980,7 @@ void writeJagEEP() {
     EepromEWEN();  // ERASE/WRITE ENABLE
     EepromERAL();  // ERASE ALL
 #ifdef SERIAL_MONITOR
-    Serial.println(F("WRITING"));
+    PcConsole.println(F("WRITING"));
 #endif
     word eepEnd = int_pow(2, jagEepSize) * 64;  // WORDS
     if (jagEepSize > 1) {                       // 93C66/93C76/93C86

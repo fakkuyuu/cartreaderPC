@@ -59,6 +59,8 @@
 
 #include "OSCR.h"
 
+void pcVerificationResult(uint8_t code);
+
 /******************************************
    Libraries
  *****************************************/
@@ -67,7 +69,10 @@
 SdFs sd;
 FsFile myFile;
 #ifdef ENABLE_GLOBAL_LOG
-FsFile myLog;
+// The global log is used only for physical-SD/standalone operation.  Keeping
+// it out of HybridFsFile avoids a second PC file object and preserves RAM for
+// the 512-byte ROM transfer cache.
+PhysicalFsFile myLog;
 bool dont_log = false;
 #endif
 
@@ -119,6 +124,30 @@ typedef enum COLOR_T {
 #include <U8g2lib.h>
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
 #endif
+
+extern bool errorLvl;
+void rgbLed(byte Color);
+void pcVerificationResult(uint8_t code) {
+  if (code == 1) {
+    errorLvl = 0;
+    rgbLed(green_color);
+  } else if (code == 2) {
+    errorLvl = 2;
+    rgbLed(yellow_color);
+  } else {
+    errorLvl = 1;
+    rgbLed(red_color);
+  }
+#if defined(ENABLE_LCD) || defined(ENABLE_OLED)
+  display.setCursor(0, display.ty + 8);
+  if (code == 1) display.print(F("PC verify: OK"));
+  else if (code == 2) display.print(F("PC verify: no DB"));
+  else display.print(F("PC verify: ERROR"));
+  display.updateDisplay();
+#else
+  (void)code;
+#endif
+}
 
 // Etherkit Clock Generator
 #include <si5351.h>
@@ -546,6 +575,9 @@ void rewind_line(FsFile& readfile, byte count = 1) {
 
 // Calculate CRC32 if needed and compare it to CRC read from database
 boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, int offset) {
+  // The host computes CRC and searches its local database when the completed
+  // file is closed. Never read the dumped ROM or database back over USB.
+  if (PcLink::usingPcStorage()) return true;
   char crcStr[9];
   print_Msg(F("CRC32... "));
   display_Update();
@@ -703,6 +735,9 @@ void createFolderAndOpenFile(const char* system, const char* subfolder, const ch
   }
 }
 
+static bool pcDirectDatabaseSelection = false;
+static uint32_t pcDirectDatabaseOffset = 0;
+
 // move file pointer to first game line with matching letter. If no match is found the last database entry is selected
 void seek_first_letter_in_database(FsFile& database, byte myLetter) {
   char gamename_str[3];
@@ -712,6 +747,13 @@ void seek_first_letter_in_database(FsFile& database, byte myLetter) {
   dont_log = true;
 #endif
   database.rewind();
+  if (pcDirectDatabaseSelection) {
+    database.seekSet(pcDirectDatabaseOffset);
+#ifdef ENABLE_GLOBAL_LOG
+    dont_log = false;
+#endif
+    return;
+  }
   // Skip ahead to selected starting letter
   if ((myLetter > 0) && (myLetter <= 26)) {
     myLetter += 'A' - 1;
@@ -795,6 +837,17 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
 
     skip_line(&database);
 
+    if (pcDirectDatabaseSelection) {
+      pcDirectDatabaseSelection = false;
+      // Normal on-reader selection applies the parsed record through this
+      // callback before accepting it. Direct PC selection must do the same;
+      // NES uses it to populate mapper/PRG/CHR/RAM from the iNES header.
+      if (printDataLine) printDataLine(data);
+      if (setRomName) setRomName(gamename);
+      database.close();
+      return true;
+    }
+
     println_Msg(F("Select your cartridge"));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(gamename);
@@ -827,6 +880,12 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
 #ifdef ENABLE_GLOBAL_LOG
     // Enable log again
     dont_log = false;
+#endif
+#ifdef PC_MENU
+    // This database browser is not a numbered question_box, so advertise its
+    // four physical-control equivalents explicitly to the PC tool.
+    PcConsole.println(F("[Control] cartridge-select"));
+    PcLink::menuReady();
 #endif
     uint8_t b = 0;
     while (1) {
@@ -869,11 +928,37 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
           fastScrolling = 30;
         else
           fastScrolling = 1;
+#ifdef PC_MENU
+        // The record does not redraw for this action, so explicitly unlock
+        // the PC controls again after its input acknowledgement.
+        PcLink::menuReady();
+#endif
         continue;
       }
     }
   }
   return false;
+}
+
+static bool pcCustomControlActive = false;
+static char pcDirectMenuCode = 0;
+
+void pcPhysicalControlsReady() {
+#ifdef PC_MENU
+  if (!pcCustomControlActive)
+    PcConsole.println(F("[Control] physical-buttons"));
+  PcLink::menuReady();
+#endif
+}
+
+void pcAlphabetReady(byte index, const char* databaseName) {
+#ifdef PC_MENU
+  PcConsole.print(F("[Control] alphabet\t"));
+  PcConsole.print(index);
+  PcConsole.print('\t');
+  PcConsole.println(databaseName);
+  PcLink::menuReady();
+#endif
 }
 
 void printInstructions() {
@@ -895,6 +980,7 @@ void printInstructions() {
   println_Msg(F("Space/Zero to Select"));
 #endif /* ENABLE_OLED | ENABLE_LCD | SERIAL_MONITOR */
   display_Update();
+  pcPhysicalControlsReady();
 #ifdef ENABLE_GLOBAL_LOG
   // Enable log again
   dont_log = wasnt_logging; // Return to original state
@@ -944,6 +1030,22 @@ int navigateMenu(int min, int max, void (*printSelection)(int)) {
   printInstructions();
 
   while (1) {
+#ifdef PC_MENU
+    if (pcDirectMenuCode && PcConsole.available() && PcConsole.peek() == pcDirectMenuCode) {
+      PcConsole.read();
+      char encoded[3];
+      for (uint8_t digit = 0; digit < 2; digit++) {
+        unsigned long deadline = millis() + 3000UL;
+        while (!PcConsole.available() && (long)(millis() - deadline) < 0) delay(1);
+        int value = PcConsole.read();
+        encoded[digit] = value < 0 ? '0' : (char)value;
+      }
+      encoded[2] = 0;
+      int selected = (int)strtoul(encoded, NULL, 16);
+      if (selected >= min && selected <= max) return selected;
+      PcLink::menuReady();
+    }
+#endif
     b = checkButton();
     if (b == 2) {  // Previous Mapper (doubleclick)
       if (i == min)
@@ -973,25 +1075,26 @@ int navigateMenu(int min, int max, void (*printSelection)(int)) {
 #elif defined(SERIAL_MONITOR)
 int navigateMenu(__attribute__((unused)) int min, __attribute__((unused)) int max, void (*printSelection)(int)) {
   printSelection(0);
-  Serial.println(F("Enter number to change:_"));
-  while (Serial.available() == 0) {}
-  int selectedNumber = Serial.parseInt();
+  PcConsole.println(F("Enter number to change:_"));
+  while (PcConsole.available() == 0) {}
+  int selectedNumber = PcConsole.parseInt();
   delay(200);
   return selectedNumber;
 }
 #endif /* (ENABLE_OLED | ENABLE_LCD) */
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-void starting_letter__subDraw(byte selection, byte line) {
+void starting_letter__subDraw(byte selection, byte line, const char* databaseName) {
   display.setDrawColor(0);
   for (uint8_t i = 0; i < 4; i++) display.drawLine(0, 10 + i * 16, 128, 10 + i * 16);
   display.setDrawColor(1);
   display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
   display_Update();
+  pcAlphabetReady(selection + line * 7, databaseName);
 }
 #endif /* (ENABLE_OLED | ENABLE_LCD) */
 
-byte starting_letter() {
+byte starting_letter(const char* databaseName) {
 #ifdef ENABLE_GLOBAL_LOG
   // Disable log to prevent unnecessary logging
   dont_log = true;
@@ -1016,7 +1119,39 @@ byte starting_letter() {
   display.drawLine(4 + selection * 16, 10 + line * 16, 9 + selection * 16, 10 + line * 16);
   display_Update();
 
+  pcAlphabetReady(selection + line * 7, databaseName);
+
   while (1) {
+#ifdef PC_MENU
+    // PC game-list selection sends an ASCII-hex database byte offset. This
+    // avoids the reader scanning from A to Z over the serial filesystem.
+    if (PcConsole.available()) {
+      char direct = PcConsole.peek();
+      if (direct == '@') {
+        PcConsole.read();
+        char encoded[9];
+        for (uint8_t i = 0; i < 8; i++) {
+          unsigned long deadline = millis() + 3000UL;
+          while (!PcConsole.available() && (long)(millis() - deadline) < 0) delay(1);
+          int value = PcConsole.read();
+          if (value < 0) value = '0';
+          encoded[i] = (char)value;
+        }
+        encoded[8] = 0;
+        pcDirectDatabaseOffset = strtoul(encoded, NULL, 16);
+        pcDirectDatabaseSelection = true;
+        display_Clear();
+        println_Msg(F("Please wait..."));
+        display_Update();
+        break;
+      } else if (direct == '?') {
+        PcConsole.read();
+        selection = 6;
+        line = 3;
+        break;
+      }
+    }
+#endif
     uint8_t b = checkButton();
     if (b == 2) {  // Previous
       if ((selection == 0) && (line > 0)) {
@@ -1028,7 +1163,7 @@ byte starting_letter() {
       } else if (selection > 0) {
         selection--;
       }
-      starting_letter__subDraw(selection, line);
+      starting_letter__subDraw(selection, line, databaseName);
     } else if (b == 1) {  // Next
       if ((selection == 6) && (line < 3)) {
         line++;
@@ -1039,7 +1174,7 @@ byte starting_letter() {
       } else if (selection < 6) {
         selection++;
       }
-      starting_letter__subDraw(selection, line);
+      starting_letter__subDraw(selection, line, databaseName);
     } else if (b == 3) {  // Long Press - Execute
       if ((selection + line * 7) != 27) {
         display_Clear();
@@ -1051,12 +1186,12 @@ byte starting_letter() {
   }
   return (selection + line * 7);
 #elif defined(SERIAL_MONITOR)
-  Serial.println(F("Enter first letter: "));
-  while (Serial.available() == 0) {
+  PcConsole.println(F("Enter first letter: "));
+  while (PcConsole.available() == 0) {
   }
 
   // Read the incoming byte:
-  byte incomingByte = Serial.read();
+  byte incomingByte = PcConsole.read();
   return incomingByte;
 #endif
 
@@ -1309,6 +1444,7 @@ void mainMenu() {
 
 #ifdef ENABLE_SNES
     case SYSTEM_MENU_SNES:
+      PcConsole.println(F("[Menu] entering SNES"));
       return snsMenu();
 #endif
 
@@ -1774,6 +1910,7 @@ void aboutScreen() {
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
+  pcPhysicalControlsReady();
 
   while (1) {
 
@@ -2194,7 +2331,10 @@ void setup() {
 
   // Read current folder number out of the EEPROM
   EEPROM_readAnything(0, foldern);
-  if (foldern < 0) foldern = 0;
+  if (foldern < 0) {
+    foldern = 0;
+    EEPROM_writeAnything(0, foldern);
+  }
 
 #ifdef ENABLE_LCD
   display.begin();
@@ -2240,8 +2380,8 @@ void setup() {
 #endif /* ENABLE_OLED */
 
 #ifdef ENABLE_SERIAL
-  // Serial Begin
-  Serial.begin(9600);
+  // PcConsole Begin
+  PcConsole.begin(9600);
   // LED Error
   rgbLed(blue_color);
 #endif /* ENABLE_SERIAL */
@@ -2266,7 +2406,12 @@ void setup() {
     wait();
     resetArduino();
 #else  /* !ENABLE_VSELECT */
-    print_FatalError(sd_error_STR);
+    println_Msg(F("SD INIT"));
+    print_Msg(F("Code: "));
+    print_Msg(sd.physicalErrorCode(), HEX);
+    print_Msg(F(" Data: "));
+    println_Msg(sd.physicalErrorData(), HEX);
+    _print_FatalError();
 #endif /* ENABLE_VSELECT */
   }
 
@@ -2283,21 +2428,24 @@ void setup() {
 #endif /* ENABLE_CONFIG */
 
 #ifdef ENABLE_GLOBAL_LOG
-  if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
-    print_FatalError(sd_error_STR);
-  }
-
-  // Start new log if file is too big
-  EEPROM_readAnything(0, foldern);
-  if ((myLog.fileSize() > 262144) && (foldern < 9999) && (foldern > 0)) {
-    sprintf(folder, "%s%d%s", "OSCR_LOG_", foldern, ".txt");
-    foldern = foldern + 1;
-    EEPROM_writeAnything(0, foldern);
-    myLog.rename(folder);
-    // Close the file:
-    myLog.close();
+  // Physical SD keeps upstream logging.  In PC mode the host builds the
+  // companion TXT; opening a second streamed PC file corrupts ROM transfer.
+  if (!PcLink::usingPcStorage()) {
     if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
       print_FatalError(sd_error_STR);
+    }
+
+    // Start new log if file is too big
+    EEPROM_readAnything(0, foldern);
+    if ((myLog.fileSize() > 262144) && (foldern < 9999) && (foldern > 0)) {
+      sprintf(folder, "%s%d%s", "OSCR_LOG_", foldern, ".txt");
+      foldern = foldern + 1;
+      EEPROM_writeAnything(0, foldern);
+      myLog.rename(folder);
+      myLog.close();
+      if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
+        print_FatalError(sd_error_STR);
+      }
     }
   }
 
@@ -2313,7 +2461,7 @@ void setup() {
 #elif defined(HW5)
   print_Msg(F("OSCR HW5"));
 #elif defined(SERIAL_MONITOR)
-  print_Msg(F("OSCR Serial"));
+  print_Msg(F("OSCR PcConsole"));
 #endif /* HWn */
   print_Msg(FS(FSTRING_SPACE));
   println_Msg(FS(FSTRING_VERSION));
@@ -2477,6 +2625,7 @@ void wait() {
 #ifdef ENABLE_GLOBAL_LOG
 // Copies the last part of the current log file to the dump folder
 void save_log() {
+  if (PcLink::usingPcStorage()) return;
   // Last found position
   uint64_t lastPosition = 0;
 
@@ -2553,8 +2702,10 @@ void save_log() {
 
 #ifdef ENABLE_GLOBAL_LOG
 void println_Log(const __FlashStringHelper* string) {
-  myLog.println(string);
+  if (!PcLink::usingPcStorage()) myLog.println(string);
 }
+#else
+void println_Log(const __FlashStringHelper*) {}
 #endif
 
 void print_Msg(const __FlashStringHelper* string) {
@@ -2562,10 +2713,10 @@ void print_Msg(const __FlashStringHelper* string) {
   display.print(string);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.print(string);
+  PcConsole.print(string);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.print(string);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(string);
 #endif
 }
 
@@ -2587,10 +2738,10 @@ void print_Msg(const char myString[]) {
 
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.print(myString);
+  PcConsole.print(myString);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.print(myString);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(myString);
 #endif
 }
 
@@ -2599,10 +2750,10 @@ void print_Msg(long unsigned int message) {
   display.print(message);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.print(message);
+  PcConsole.print(message);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.print(message);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(message);
 #endif
 }
 
@@ -2611,10 +2762,10 @@ void print_Msg(byte message, int outputFormat) {
   display.print(message, outputFormat);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.print(message, outputFormat);
+  PcConsole.print(message, outputFormat);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -2623,10 +2774,10 @@ void print_Msg(word message, int outputFormat) {
   display.print(message, outputFormat);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.print(message, outputFormat);
+  PcConsole.print(message, outputFormat);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -2635,10 +2786,10 @@ void print_Msg(int message, int outputFormat) {
   display.print(message, outputFormat);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.print(message, outputFormat);
+  PcConsole.print(message, outputFormat);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -2647,10 +2798,10 @@ void print_Msg(long unsigned int message, int outputFormat) {
   display.print(message, outputFormat);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.print(message, outputFormat);
+  PcConsole.print(message, outputFormat);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.print(message, outputFormat);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -2659,10 +2810,10 @@ void print_Msg(String string) {
   display.print(string);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.print(string);
+  PcConsole.print(string);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.print(string);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(string);
 #endif
 }
 
@@ -2688,10 +2839,10 @@ void println_Msg(String string) {
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.println(string);
+  PcConsole.println(string);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.println(string);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(string);
 #endif
 }
 
@@ -2701,29 +2852,32 @@ void println_Msg(byte message, int outputFormat) {
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.println(message, outputFormat);
+  PcConsole.println(message, outputFormat);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.println(message, outputFormat);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(message, outputFormat);
 #endif
 }
 
 void println_Msg(const char myString[]) {
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
-#ifdef ENABLE_GLOBAL_LOG
-  dont_log = true;
-#endif
-  print_Msg(myString);
-#ifdef ENABLE_GLOBAL_LOG
-  dont_log = false;
-#endif
+  // Do not call print_Msg() here: it also writes to PcConsole, which made
+  // every C-string appear twice in dual OLED/PC builds.
+  size_t strPos = 0;
+  while (myString[strPos]) {
+    if (display.tx >= 122) {
+      if (display.ty + 8 > 56) break;
+      display.setCursor(0, display.ty + 8);
+    }
+    display.print(myString[strPos++]);
+  }
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.println(myString);
+  PcConsole.println(myString);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.println(myString);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(myString);
 #endif
 }
 
@@ -2733,13 +2887,13 @@ void println_Msg(const __FlashStringHelper* string) {
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.println(string);
+  PcConsole.println(string);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
   char myBuffer[15];
   strlcpy_P(myBuffer, (char*)string, 15);
   if ((strncmp(myBuffer, "Press Button...", 14) != 0) && (strncmp(myBuffer, "Select file", 10) != 0)) {
-    if (!dont_log && loggingEnabled) myLog.println(string);
+    if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(string);
   }
 #endif
 }
@@ -2750,10 +2904,10 @@ void println_Msg(long unsigned int message) {
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef ENABLE_SERIAL
-  Serial.println(message);
+  PcConsole.println(message);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.println(message);
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(message);
 #endif
 }
 
@@ -2762,10 +2916,13 @@ void display_Update() {
   display.updateDisplay();
 #endif
 #ifdef ENABLE_SERIAL
+  // Progress bars use short, non-newline writes. Push them immediately so the
+  // PC UI shows live progress instead of receiving the whole bar at the end.
+  PcConsole.flush();
   delay(100);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.flush();
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.flush();
 #endif
 }
 
@@ -2775,7 +2932,7 @@ void display_Clear() {
   display.setCursor(0, 8);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled) myLog.println(FS(FSTRING_EMPTY));
+  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -2820,6 +2977,24 @@ void rgbLed(byte Color) {
       setColor_RGB(0, 0, 0);
       break;
   }
+#ifdef PC_MENU
+  static byte lastReportedColor = 255;
+  if (PcLink::connected() && lastReportedColor != Color) {
+    lastReportedColor = Color;
+    PcConsole.print(F("[LED]\t"));
+    switch (Color) {
+      case blue_color: PcConsole.println(F("blue")); break;
+      case red_color: PcConsole.println(F("red")); break;
+      case purple_color: PcConsole.println(F("purple")); break;
+      case green_color: PcConsole.println(F("green")); break;
+      case turquoise_color: PcConsole.println(F("turquoise")); break;
+      case yellow_color: PcConsole.println(F("yellow")); break;
+      case white_color: PcConsole.println(F("white")); break;
+      case black_color: PcConsole.println(F("off")); break;
+      default: PcConsole.println(F("unknown")); break;
+    }
+  }
+#endif
 }
 
 void blinkLED() {
@@ -2832,13 +3007,15 @@ void blinkLED() {
   // 5mm LED on D10, above SD slot
   PORTB ^= (1 << 4);
 #elif defined(ENABLE_LCD)  // HW4
-  // TX LED on D1, build-in
-  PORTE ^= (1 << 1);
+  // UART0 TX belongs to PC storage; do not toggle D1 during transfers.
 #elif defined(ENABLE_SERIAL)
   // 5mm LED on D10, above SD slot (HW3)
   PORTB ^= (1 << 4);  //HW4/HW5 LCD RST connects there now too
   // 3mm LED on D38, front of PCB (HW5)
   PORTB ^= (1 << 7);
+#endif
+#ifdef PC_MENU
+  PcLink::activityBlinking();
 #endif
 }
 
@@ -2868,25 +3045,28 @@ unsigned char question_box(const __FlashStringHelper* question, char answers[7][
 }
 
 #if defined(ENABLE_SERIAL)
-// Serial Monitor
+// PcConsole Monitor
 byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20], uint8_t num_answers, uint8_t default_choice __attribute__((unused))) {
   // Print menu to serial monitor
-  Serial.println(question);
+  PcConsole.println(question);
   for (byte i = 0; i < num_answers; i++) {
-    Serial.print(i);
-    Serial.print(F(")"));
-    Serial.println(answers[i]);
+    PcConsole.print(i);
+    PcConsole.print(F(")"));
+    PcConsole.println(answers[i]);
   }
   // Wait for user input
-  Serial.println(FS(FSTRING_EMPTY));
-  Serial.println(F("Please browse pages with 'u'(up) and 'd'(down)"));
-  Serial.println(F("and enter a selection by typing a number(0-6): _ "));
-  Serial.println(FS(FSTRING_EMPTY));
-  while (Serial.available() == 0) {
-  }
-
-  // Read the incoming byte (can't be -1, as there must be data available)
-  char incomingByte = Serial.read();
+  PcConsole.println(FS(FSTRING_EMPTY));
+  PcConsole.println(F("Please browse pages with 'u'(up) and 'd'(down)"));
+  PcConsole.println(F("and enter a selection by typing a number(0-6): _ "));
+  PcConsole.println(FS(FSTRING_EMPTY));
+  // The PC entry box sends a line (for example "0\n"). Each menu consumes
+  // one selection, so discard CR/LF left by the preceding menu.
+  char incomingByte;
+  do {
+    while (PcConsole.available() == 0) {
+    }
+    incomingByte = PcConsole.read();
+  } while (incomingByte == '\r' || incomingByte == '\n');
 
   // Page up (u)
   if (incomingByte == 'u') {
@@ -2912,8 +3092,8 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
   }
 
   // Print the received byte for validation e.g. in case of a different keyboard mapping
-  //Serial.println(incomingByte);
-  //Serial.println(FS(FSTRING_EMPTY));
+  //PcConsole.println(incomingByte);
+  //PcConsole.println(FS(FSTRING_EMPTY));
   return incomingByte - '0';
 }
 #endif
@@ -2922,6 +3102,21 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
 // Display a question box with selectable answers. Make sure default choice is in (0, num_answers]
 unsigned char questionBox_Display(const __FlashStringHelper* question, char answers[7][20], uint8_t num_answers, uint8_t default_choice) {
+#ifdef PC_MENU
+  // Mirror the same menu to the PC. Input remains active on both the HW3
+  // button and the PC keyboard/clickable menu.
+  PcConsole.println(question);
+  for (byte i = 0; i < num_answers; i++) {
+    PcConsole.print(i);
+    PcConsole.print(F(")"));
+    PcConsole.println(answers[i]);
+  }
+  if (numPages > 1) {
+    PcConsole.println(F("u) Previous page"));
+    PcConsole.println(F("d) Next page"));
+  }
+  PcConsole.println(F("Select on reader or PC: _"));
+#endif
   //clear the screen
   display.clearDisplay();
   display.updateDisplay();
@@ -2952,9 +3147,107 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
 
   unsigned long idleTime = millis();
   byte currentColor = 0;
+  uint8_t pcButtonEvent = 0;
 
   // wait until user makes his choice
+#ifdef PC_MENU
+  PcLink::menuReady();
+#endif
   while (1) {
+#ifdef PC_MENU
+    // Poll PC input without disabling the physical controls. Ignore line
+    // endings left by the PC entry box.
+    if (PcConsole.available()) {
+      char incomingByte = PcConsole.read();
+      if (incomingByte == 'H') {
+        sd.copyPhysicalToPc(SS);
+        PcLink::menuReady();
+        continue;
+      }
+      if (incomingByte == 'K') {
+        unsigned long deadline = millis() + 3000UL;
+        while (!PcConsole.available() && (long)(millis() - deadline) < 0) delay(5);
+        int action = PcConsole.read();
+        String browserPath = PcConsole.readStringUntil('\n');
+        browserPath.trim();
+        if (browserPath.length() > 0 && browserPath.length() < 260) {
+          if (action == 'L') sd.listPhysicalPath(SS, browserPath.c_str());
+          else if (action == 'C') sd.copyPhysicalPathToPc(SS, browserPath.c_str());
+        } else PcConsole.println(F("[SD Browser] invalid command"));
+        PcLink::menuReady();
+        continue;
+      }
+      if (incomingByte == 'I') {
+        if (sd.selectPhysical(SS)) PcConsole.println(F("[Storage Mode] SD"));
+        else PcConsole.println(F("[Storage Mode] SD init failed; PC retained"));
+        PcLink::menuReady();
+        continue;
+      }
+      if (incomingByte == 'J') {
+        sd.selectPc();
+        PcConsole.println(F("[Storage Mode] PC"));
+        PcLink::menuReady();
+        continue;
+      }
+      if (incomingByte >= 'A' && incomingByte <= 'G') {
+        uint32_t testedBaud = 0;
+        bool passed = PcLink::benchmarkOne(incomingByte - 'A', testedBaud);
+        if (passed) {
+          PcConsole.print(F("[Benchmark] passed baud="));
+        } else {
+          PcConsole.print(F("[Benchmark] failed baud="));
+        }
+        PcConsole.println(testedBaud);
+        delay(300);
+        wdt_enable(WDTO_15MS);
+        while (1) {}
+      }
+      if (incomingByte == 'b' || incomingByte == 'B') {
+        PcConsole.println(F("[Benchmark] command received"));
+        uint32_t selectedBaud = PcLink::benchmark();
+        PcConsole.print(F("[Benchmark] stable baud="));
+        PcConsole.println(selectedBaud);
+        delay(750);
+        wdt_enable(WDTO_15MS);
+        while (1) {}
+      }
+      // The GUI page buttons must change pages immediately.  Lower-case
+      // u/d deliberately remain physical-button gestures for cursor motion.
+      if (incomingByte == '[' && numPages > 1) {
+        if (currPage > 1) {
+          lastPage = currPage;
+          currPage--;
+          break;
+        }
+        PcLink::menuReady();
+        continue;
+      }
+      if (incomingByte == ']' && numPages > 1) {
+        if (numPages > currPage) {
+          lastPage = currPage;
+          currPage++;
+          break;
+        }
+        PcLink::menuReady();
+        continue;
+      }
+      // Persistent PC controls emulate the physical HW3 button even in an
+      // ordinary numbered menu.  This preserves cursor movement within a
+      // page; the existing physical-button code below also handles paging at
+      // the first/last item.
+      if (incomingByte == 'd') pcButtonEvent = 1;
+      else if (incomingByte == 'u') pcButtonEvent = 2;
+      else if (incomingByte == ' ') pcButtonEvent = 3;
+      else if (incomingByte == 'l' || incomingByte == 'L') pcButtonEvent = 4;
+      if (incomingByte >= '0' && incomingByte < ('0' + num_answers)) {
+        choice = incomingByte - '0';
+        PcConsole.print(F("[Menu] accepted choice="));
+        PcConsole.println(choice);
+        numPages = 0;
+        break;
+      }
+    }
+#endif
     // Attract Mode
     if (millis() - idleTime > 300000) {
       if ((millis() - idleTime) % 4000 == 0) {
@@ -2975,7 +3268,14 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
       2 doubleClick/counter clockwise rotation
       3 hold/press
       4 longHold */
-    uint8_t b = checkButton();
+    uint8_t b;
+#ifdef PC_MENU
+    if (pcButtonEvent) {
+      b = pcButtonEvent;
+      pcButtonEvent = 0;
+    } else
+#endif
+      b = checkButton();
 
     // if button is pressed twice or rotary encoder turned left/counter clockwise
     if (b == 2) {
@@ -3053,11 +3353,19 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
       break;
     }
 
+#ifdef PC_MENU
+    // Cursor-only PC gestures do not redraw the menu, so explicitly release
+    // the next input after the acknowledgement consumed this one.
+    if (b == 1 || b == 2 || b == 4) PcLink::menuReady();
+#endif
+
     checkUpdater();
   }
 
   // pass on user choice
   rgbLed(black_color);
+  PcConsole.print(F("[Menu] returning choice="));
+  PcConsole.println(choice);
 
 #ifdef ENABLE_GLOBAL_LOG
   println_Msg(FS(FSTRING_EMPTY));
@@ -3124,13 +3432,13 @@ void checkUpdater() {
 /******************************************
   User Control
 *****************************************/
-// Using Serial Monitor
-#if defined(ENABLE_SERIAL)
+// Using PcConsole Monitor
+#if defined(SERIAL_MONITOR) && !defined(ENABLE_OLED) && !defined(ENABLE_LCD)
 uint8_t checkButton() {
-  while (Serial.available() == 0) {
+  while (PcConsole.available() == 0) {
   }
   // read() can't return -1 since there's data available.
-  char incomingByte = Serial.read();
+  char incomingByte = PcConsole.read();
 
   //Next
   if (incomingByte == 'd') {
@@ -3159,11 +3467,11 @@ void wait_serial() {
   if (errorLvl) {
     errorLvl = 0;
   }
-  while (Serial.available() == 0) {
+  while (PcConsole.available() == 0) {
   }
   // Result is ignored
-  Serial.read();
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.read();
+  PcConsole.println(FS(FSTRING_EMPTY));
 }
 #endif
 
@@ -3171,6 +3479,17 @@ void wait_serial() {
 #if defined(ENABLE_OLED)
 // Read button state
 uint8_t checkButton() {
+#ifdef PC_MENU
+  if (PcConsole.available()) {
+    // Numeric input belongs to questionBox_Display(). Peeking prevents this
+    // physical-button fallback from swallowing a digit between menu polls.
+    char incomingByte = PcConsole.peek();
+    if (incomingByte == 'd') { PcConsole.read(); return 1; }
+    if (incomingByte == 'u') { PcConsole.read(); return 2; }
+    if (incomingByte == ' ') { PcConsole.read(); return 3; }
+    if (incomingByte == 'l' || incomingByte == 'L') { PcConsole.read(); return 4; }
+  }
+#endif
 #ifdef ENABLE_BUTTON2
   byte eventButton2 = checkButton2();
   if ((eventButton2 > 0) && (eventButton2 < 2))
@@ -3307,7 +3626,18 @@ void wait_btn() {
   if (errorLvl == 0)
     rgbLed(green_color);
 
+#ifdef PC_MENU
+  // Allow ordinary "Press Button..." waits to be dismissed from the PC.
+  PcLink::pressButtonReady();
+#endif
   while (1) {
+#ifdef PC_MENU
+    if (PcConsole.available()) {
+      PcConsole.read();
+      errorLvl = 0;
+      break;
+    }
+#endif
     // get input button
     uint8_t b = checkButton();
 
@@ -3786,3 +4116,4 @@ void loop() {
 //******************************************
 // End of File
 //******************************************
+

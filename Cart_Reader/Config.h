@@ -1,3 +1,5 @@
+#define PC_MENU
+#define PC_DUAL_STORAGE
 /********************************************************************
                     Open Source Cartridge Reader
 ********************************************************************/
@@ -31,7 +33,7 @@
 
 //#define HW5
 //#define HW4
-//#define HW3
+#define HW3
 //#define HW2
 //#define HW1
 //#define SERIAL_MONITOR
@@ -45,7 +47,6 @@
 */
 
 //#define ENABLE_VSELECT
-
 /****/
 
 /* [ Clock Generator ---------------------------------------------- ]
@@ -53,7 +54,6 @@
 */
 
 #define ENABLE_CLOCKGEN
-
 /****/
 
 /* [ Real Time Clock ---------------------------------------------- ]
@@ -71,154 +71,132 @@
 */
 
 //#define ENABLE_2600
-
 /****/
 
 /* [ Atari 5200 --------------------------------------------------- ]
 */
 
 //#define ENABLE_5200
-
 /****/
 
 /* [ Atari 7800 --------------------------------------------------- ]
 */
 
 //#define ENABLE_7800
-
 /****/
 
 /* [ Atari Jaguar --------------------------------------------------- ]
 */
 //#define ENABLE_JAGUAR
-
 /****/
 
 /* [ Atari LYNX --------------------------------------------------- ]
 */
 
 //#define ENABLE_LYNX
-
 /****/
 
 /* [ Atari 8-bit -------------------------------------------------- ]
 */
 
 //#define ENABLE_ATARI8
-
 /****/
 
 /* [ Bally Astrocade ---------------------------------------------- ]
 */
 
 //#define ENABLE_BALLY
-
 /****/
 
 /* [ Bandai Little Jammer ----------------------------------------- ]
 */
 
 //#define ENABLE_LJ
-
 /****/
 
 /* [ Bandai Little Jammer Pro ------------------------------------- ]
 */
 
 //#define ENABLE_LJPRO
-
 /****/
 
 /* [ Benesse Pocket Challenge W ----------------------------------- ]
 */
 
 //#define ENABLE_PCW
-
 /****/
 
 /* [ Casio PV-1000 ------------------------------------------------ ]
 */
 
 //#define ENABLE_PV1000
-
 /****/
 
 /* [ ColecoVision ------------------------------------------------- ]
 */
 
 //#define ENABLE_COLV
-
 /****/
 
 /* [ Commodore 64 ------------------------------------------------- ]
 */
 
 //#define ENABLE_C64
-
 /****/
 
 /* [ Commodore VIC-20 --------------------------------------------- ]
 */
 
 //#define ENABLE_VIC20
-
 /****/
 
 /* [ Emerson Arcadia 2001 ----------------------------------------- ]
 */
 
 //#define ENABLE_ARC
-
 /****/
 
 /* [ Fairchild Channel F ------------------------------------------ ]
 */
 
 //#define ENABLE_FAIRCHILD
-
 /****/
 
 /* [ Flash Repros (all systems, SNES repro also needs FLASH8)------ ]
 */
 
-//#define ENABLE_FLASH 
-
+//#define ENABLE_FLASH
 /****/
 
 /* [ Flashrom Programmer Menu & SNES Repros------------------------ ]
 */
 
-//#define ENABLE_FLASH8 
-//#define ENABLE_FLASH16 
-
+//#define ENABLE_FLASH8
+//#define ENABLE_FLASH16
 /****/
 
 /* [ Game Boy (Color) and Advance --------------------------------- ]
 */
 
 #define ENABLE_GBX
-
 /****/
 
 /* [ Intellivision ------------------------------------------------ ]
 */
 
 //#define ENABLE_INTV
-
 /****/
 
 /* [ LeapFrog Leapster -------------------------------------------- ]
 */
 
 //#define ENABLE_LEAP
-
 /****/
 
 /* [ Neo Geo Pocket ----------------------------------------------- ]
 */
 
 //#define ENABLE_NGP
-
 /****/
 
 /* [ Nintendo 64 -------------------------------------------------- ]
@@ -226,168 +204,144 @@
 
 #define ENABLE_N64
 //#define ENABLE_CONTROLLERTEST
-
 /****/
 
 /* [ Nintendo Entertainment System/Family Computer ---------------- ]
 */
 
 #define ENABLE_NES
-
 /****/
 
 /* [ Magnavox Odyssey 2 ------------------------------------------- ]
 */
 
 //#define ENABLE_ODY2
-
 /****/
 
 /* [ MSX ---------------------------------------------------------- ]
 */
 
-//#define ENABLE_MSX
-
+#define ENABLE_MSX
 /****/
 
 /* [ PC Engine/TurboGrafx 16 -------------------------------------- ]
 */
 
-//#define ENABLE_PCE
-
+#define ENABLE_PCE
 /****/
 
 /* [ Pokemon Mini ------------------------------------------------- ]
 */
 
 //#define ENABLE_POKE
-
 /****/
 
 /* [ RCA Studio II ------------------------------------------------ ]
 */
 
 //#define ENABLE_RCA
-
 /****/
 
 /* [ Sega Master System/Mark III/Game Gear/SG-1000 ---------------- ]
 */
 
 #define ENABLE_SMS
-
 /****/
 
 /* [ Sega Mega Drive/Genesis -------------------------------------- ]
 */
 
 #define ENABLE_MD
-
 /****/
 
 /* [ Super Famicom SF Memory Cassette (needs ENABLE_SNES)---------- ]
 */
 
 //#define ENABLE_SFM
-
 /****/
 
 /* [ Super Famicom Satellaview (needs ENABLE_SNES)----------------- ]
 */
 
 //#define ENABLE_SV
-
 /****/
 
 /* [ Super Famicom Sufami Turbo (needs ENABLE_SNES)---------------- ]
 */
 
 //#define ENABLE_ST
-
 /****/
 
 /* [ Super Famicom Game Processor RAM Cassette (needs ENABLE_SNES)- ]
 */
 
 //#define ENABLE_GPC
-
 /****/
 
 /* [ Super Nintendo ----------------------------------------------- ]
 */
 
 #define ENABLE_SNES
-
 /****/
 
 /* [ Texas Instruments TI-99 -------------------------------------- ]
 */
 
 //#define ENABLE_TI99
-
 /****/
 
 /* [ Tomy Pyuuta -------------------------------------------------- ]
 */
 
 //#define ENABLE_PYUUTA
-
 /****/
 
 /* [ TRS-80 Color Computer ---------------------------------------- ]
 */
 
 //#define ENABLE_TRS80
-
 /****/
 
 /* [ Vectrex ------------------------------------------------------ ]
 */
 
 //#define ENABLE_VECTREX
-
 /****/
 
 /* [ Virtual Boy -------------------------------------------------- ]
 */
 
 //#define ENABLE_VBOY
-
 /****/
 
 /* [ Vtech V.Smile ------------------------------------------------ ]
 */
 
 //#define ENABLE_VSMILE
-
 /****/
 
 /* [ Watara Supervision ------------------------------------------- ]
 */
 
 //#define ENABLE_WSV
-
 /****/
 
 /* [ WonderSwan and Benesse Pocket Challenge v2 ------------------- ]
 */
 
 //#define ENABLE_WS
-
 /****/
 
 /* [ Super A'can -------------------------------------------------- ]
 */
 
 //#define ENABLE_SUPRACAN
-
 /****/
 
 /* [ Casio Loopy -------------------------------------------------- ]
 */
 
 //#define ENABLE_LOOPY
-
 /****/
 
 /* [ CP System III ------------------------------------------------ ]
@@ -395,7 +349,6 @@ also needs ENABLE_FLASH8 and ENABLE_FLASH16 to be enabled
 */
 
 //#define ENABLE_CPS3
-
 /****/
 
 /*==== FIRMWARE OPTIONS ===========================================*/
@@ -451,7 +404,7 @@ also needs ENABLE_FLASH8 and ENABLE_FLASH16 to be enabled
     other than HW5 and HW3.
 */
 
-#define ENABLE_UPDATER
+//#define ENABLE_UPDATER
 
 /****/
 
@@ -595,6 +548,15 @@ also needs ENABLE_FLASH8 and ENABLE_FLASH16 to be enabled
 #if !(defined(HW5) || defined(HW3))
 #undef ENABLE_UPDATER
 #endif
+
+// PC transport always owns UART0, including on boards with a display.
+#define PC_STORAGE
+#define ENABLE_SERIAL
+#undef ENABLE_UPDATER
+#ifdef ENABLE_3V3FIX
+#error PC transport requires a fixed 16MHz CPU clock (disable ENABLE_3V3FIX).
+#endif
+// Keep the physical display and controls enabled while mirroring menus to PC.
 
 /* End of settings */
 

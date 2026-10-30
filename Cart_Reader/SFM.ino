@@ -160,8 +160,10 @@ void sfmGameOptions() {
       // Change working dir to root
       sd.chdir("/");
       readROM_SFM();
-      compare_checksum();
-      compareCRC("snes.txt", 0, 1, 0);
+      if (!PcLink::usingPcStorage()) {
+        compare_checksum();
+        compareCRC("snes.txt", 0, 1, 0);
+      }
       break;
 
     // Write sram

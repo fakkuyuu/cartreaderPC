@@ -245,26 +245,26 @@ void setROMSize_PV1000()
 setrom:
     String sizeROM;
     for (int i = 0; i < (pv1000hi - pv1000lo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(PV1000[i + pv1000lo]);
-      Serial.println(F("KB"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(PV1000[i + pv1000lo]);
+      PcConsole.println(F("KB"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newpv1000size = sizeROM.toInt() + pv1000lo;
     if (newpv1000size > pv1000hi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(PV1000[newpv1000size]);
-  Serial.println(F("KB"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(PV1000[newpv1000size]);
+  PcConsole.println(F("KB"));
 #endif
   EEPROM_writeAnything(8, newpv1000size);
   pv1000size = newpv1000size;
@@ -289,10 +289,10 @@ void checkStatus_PV1000()
   display_Update();
   wait();
 #else
-  Serial.print(FS(FSTRING_ROM_SIZE));
-  Serial.print(PV1000[pv1000size]);
-  Serial.println(F("KB"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(FS(FSTRING_ROM_SIZE));
+  PcConsole.print(PV1000[pv1000size]);
+  PcConsole.println(F("KB"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 

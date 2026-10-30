@@ -285,26 +285,26 @@ void setROMSize_ODY2() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (ody2hi - ody2lo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(ODY2[i + ody2lo]);
-      Serial.println(F("K"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(ODY2[i + ody2lo]);
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newody2size = sizeROM.toInt() + ody2lo;
     if (newody2size > ody2hi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(ODY2[newody2size]);
-  Serial.println(F("K"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(ODY2[newody2size]);
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(8, newody2size);
   ody2size = newody2size;
@@ -335,12 +335,12 @@ void checkStatus_ODY2() {
   display_Update();
   wait();
 #else
-  Serial.print(F("CURRENT MAPPER:   "));
-  Serial.println(ody2mapper);
-  Serial.print(F("CURRENT ROM SIZE: "));
-  Serial.print(ODY2[ody2size]);
-  Serial.println(F("K"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(F("CURRENT MAPPER:   "));
+  PcConsole.println(ody2mapper);
+  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(ODY2[ody2size]);
+  PcConsole.println(F("K"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -354,7 +354,7 @@ void setCart_ODY2() {
   struct database_entry_mapper_size entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("ody2cart.txt");
 
   // Open database
   if (myFile.open("ody2cart.txt", O_READ)) {

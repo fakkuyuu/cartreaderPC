@@ -304,11 +304,11 @@ void println_Mapper5200(byte mapper) {
     println_Msg(F("BOUNTY BOB"));
 #else
   if (mapper == 0)
-    Serial.println(F("STANDARD"));
+    PcConsole.println(F("STANDARD"));
   else if (mapper == 1)
-    Serial.println(F("TWO CHIP"));
+    PcConsole.println(F("TWO CHIP"));
   else if (mapper == 2)
-    Serial.println(F("BOUNTY BOB"));
+    PcConsole.println(F("BOUNTY BOB"));
 #endif
 }
 
@@ -355,26 +355,26 @@ void setROMSize_5200() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (a5200hi - a5200lo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(a5200[i + a5200lo]);
-      Serial.println(F("K"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(a5200[i + a5200lo]);
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     new5200size = sizeROM.toInt() + a5200lo;
     if (new5200size > a5200hi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(a5200[new5200size]);
-  Serial.println(F("K"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(a5200[new5200size]);
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(8, new5200size);
   a5200size = new5200size;
@@ -406,13 +406,13 @@ void checkStatus_5200() {
   display_Update();
   wait();
 #else
-  Serial.print(F("MAPPER:   "));
-  Serial.println(a5200mapper);
+  PcConsole.print(F("MAPPER:   "));
+  PcConsole.println(a5200mapper);
   println_Mapper5200(a5200mapper);
-  Serial.print(FS(FSTRING_ROM_SIZE));
-  Serial.print(a5200[a5200size]);
-  Serial.println(F("K"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(FS(FSTRING_ROM_SIZE));
+  PcConsole.print(a5200[a5200size]);
+  PcConsole.println(F("K"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -475,14 +475,14 @@ void setMapper_5200() {
 #else
 setmapper:
   String newmap;
-  Serial.println(F("SUPPORTED MAPPERS:"));
-  Serial.println(F("0 = Standard 4K/8K/16K/32K"));
-  Serial.println(F("1 = Two Chip 16K"));
-  Serial.println(F("2 = Bounty Bob Strikes Back 40K"));
-  Serial.print(F("Enter Mapper [0-2]: "));
-  while (Serial.available() == 0) {}
-  newmap = Serial.readStringUntil('\n');
-  Serial.println(newmap);
+  PcConsole.println(F("SUPPORTED MAPPERS:"));
+  PcConsole.println(F("0 = Standard 4K/8K/16K/32K"));
+  PcConsole.println(F("1 = Two Chip 16K"));
+  PcConsole.println(F("2 = Bounty Bob Strikes Back 40K"));
+  PcConsole.print(F("Enter Mapper [0-2]: "));
+  while (PcConsole.available() == 0) {}
+  newmap = PcConsole.readStringUntil('\n');
+  PcConsole.println(newmap);
   a5200index = newmap.toInt() * 3;
   new5200mapper = pgm_read_byte(a5200mapsize + a5200index);
 #endif
@@ -500,7 +500,7 @@ void setCart_5200() {
   struct a5200_DB_entry entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("5200.txt");
 
   // Open database
   if (myFile.open("5200.txt", O_READ)) {

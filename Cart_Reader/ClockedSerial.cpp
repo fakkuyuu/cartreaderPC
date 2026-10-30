@@ -91,7 +91,7 @@ void DynamicClockSerial::begin(unsigned long baud, byte config, unsigned long sc
   #elif defined(USART_RXC_vect)
     ISR(USART_RXC_vect) // ATmega8
   #else
-    #error "Don't know what the Data Received vector is called for Serial"
+    #error "Don't know what the Data Received vector is called for PcConsole"
   #endif
     {
       ClockedSerial._rx_complete_irq();
@@ -106,7 +106,7 @@ void DynamicClockSerial::begin(unsigned long baud, byte config, unsigned long sc
   #elif defined(USART_UDRE_vect)
   ISR(USART_UDRE_vect)
   #else
-    #error "Don't know what the Data Register Empty vector is called for Serial"
+    #error "Don't know what the Data Register Empty vector is called for PcConsole"
   #endif
   {
     ClockedSerial._tx_udr_empty_irq();

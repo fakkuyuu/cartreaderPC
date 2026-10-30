@@ -588,10 +588,10 @@ setmapper:
   String newmap;
   boolean c64mapfound = false;
   printMapper_C64(0);
-  Serial.print(F("Enter Mapper [0-22]: "));
-  while (Serial.available() == 0) {}
-  newmap = Serial.readStringUntil('\n');
-  Serial.println(newmap);
+  PcConsole.print(F("Enter Mapper [0-22]: "));
+  while (PcConsole.available() == 0) {}
+  newmap = PcConsole.readStringUntil('\n');
+  PcConsole.println(newmap);
   newc64mapper = newmap.toInt();
   for (int i = 0; i < c64mapcount; i++) {
     c64index = i * 3;
@@ -600,8 +600,8 @@ setmapper:
       c64mapfound = true;
   }
   if (c64mapfound == false) {
-    Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(FS(FSTRING_EMPTY));
+    PcConsole.println(F("MAPPER NOT SUPPORTED!"));
+    PcConsole.println(FS(FSTRING_EMPTY));
     newc64mapper = 0;
     goto setmapper;
   }
@@ -657,26 +657,26 @@ void setROMSize_C64() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (c64hi - c64lo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(C64[i + c64lo]);
-      Serial.println(F("K"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(C64[i + c64lo]);
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newc64size = sizeROM.toInt() + c64lo;
     if (newc64size > c64hi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(C64[newc64size]);
-  Serial.println(F("K"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(C64[newc64size]);
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(8, newc64size);
   c64size = newc64size;
@@ -711,12 +711,12 @@ void checkStatus_C64() {
   display_Update();
   wait();
 #else
-  Serial.print(F("CURRENT MAPPER:     "));
-  Serial.println(c64mapper);
-  Serial.print(F("CURRENT ROM SIZE:   "));
-  Serial.print(C64[c64size]);
-  Serial.println(F("K"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(F("CURRENT MAPPER:     "));
+  PcConsole.println(c64mapper);
+  PcConsole.print(F("CURRENT ROM SIZE:   "));
+  PcConsole.print(C64[c64size]);
+  PcConsole.println(F("K"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -791,28 +791,28 @@ void printMapper_C64(byte c64maplabel) {
       break;
   }
 #else
-  Serial.println(F("0 = NORMAL/ULTIMAX"));
-  Serial.println(F("1 = ACTION REPLAY"));
-  Serial.println(F("2 = KCS POWER CARTRIDGE"));
-  Serial.println(F("3 = FINAL CARTRIDGE III"));
-  Serial.println(F("4 = SIMONS BASIC"));
-  Serial.println(F("5 = OCEAN"));
-  Serial.println(F("6 = EXPERT CARTRIDGE"));
-  Serial.println(F("7 = FUN PLAY/POWER PLAY"));
-  Serial.println(F("8 = SUPER GAMES"));
-  Serial.println(F("9 = ATOMIC POWER"));
-  Serial.println(F("10 = EPYX FASTLOAD"));
-  Serial.println(F("11 = WESTERMANN LEARNING"));
-  Serial.println(F("12 = REX UTILITY"));
-  Serial.println(F("13 = FINAL CARTRIDGE I"));
-  Serial.println(F("14 = MAGIC FORMEL"));
-  Serial.println(F("15 = C64 GAME SYSTEM"));
-  Serial.println(F("16 = WARPSPEED"));
-  Serial.println(F("17 = DINAMIC"));
-  Serial.println(F("18 = ZAXXON/SUPER ZAXXON"));
-  Serial.println(F("19 = MAGIC DESK/DOMARK/HES AUSTRALIA"));
-  Serial.println(F("20 = SUPER SNAPSHOT"));
-  Serial.println(F("21 = COMAL-80"));
+  PcConsole.println(F("0 = NORMAL/ULTIMAX"));
+  PcConsole.println(F("1 = ACTION REPLAY"));
+  PcConsole.println(F("2 = KCS POWER CARTRIDGE"));
+  PcConsole.println(F("3 = FINAL CARTRIDGE III"));
+  PcConsole.println(F("4 = SIMONS BASIC"));
+  PcConsole.println(F("5 = OCEAN"));
+  PcConsole.println(F("6 = EXPERT CARTRIDGE"));
+  PcConsole.println(F("7 = FUN PLAY/POWER PLAY"));
+  PcConsole.println(F("8 = SUPER GAMES"));
+  PcConsole.println(F("9 = ATOMIC POWER"));
+  PcConsole.println(F("10 = EPYX FASTLOAD"));
+  PcConsole.println(F("11 = WESTERMANN LEARNING"));
+  PcConsole.println(F("12 = REX UTILITY"));
+  PcConsole.println(F("13 = FINAL CARTRIDGE I"));
+  PcConsole.println(F("14 = MAGIC FORMEL"));
+  PcConsole.println(F("15 = C64 GAME SYSTEM"));
+  PcConsole.println(F("16 = WARPSPEED"));
+  PcConsole.println(F("17 = DINAMIC"));
+  PcConsole.println(F("18 = ZAXXON/SUPER ZAXXON"));
+  PcConsole.println(F("19 = MAGIC DESK/DOMARK/HES AUSTRALIA"));
+  PcConsole.println(F("20 = SUPER SNAPSHOT"));
+  PcConsole.println(F("21 = COMAL-80"));
 #endif
 }
 
@@ -827,7 +827,7 @@ void setCart_C64() {
   struct database_entry_mapper_size entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("c64cart.txt");
 
   // Open database
   if (myFile.open("c64cart.txt", O_READ)) {

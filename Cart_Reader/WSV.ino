@@ -250,26 +250,26 @@ void setROMSize_WSV() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (wsvhi - wsvlo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(pgm_read_word(&(WSV[i + wsvlo])));
-      Serial.println(F("K"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(pgm_read_word(&(WSV[i + wsvlo])));
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newwsvsize = sizeROM.toInt() + wsvlo;
     if (newwsvsize > wsvhi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(pgm_read_word(&(WSV[newwsvsize])));
-  Serial.println(F("K"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(pgm_read_word(&(WSV[newwsvsize])));
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(8, newwsvsize);
   wsvsize = newwsvsize;
@@ -293,10 +293,10 @@ void checkStatus_WSV() {
   display_Update();
   wait();
 #else
-  Serial.print(F("CURRENT ROM SIZE: "));
-  Serial.print(pgm_read_word(&(WSV[wsvsize])));
-  Serial.println(F("K"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(pgm_read_word(&(WSV[wsvsize])));
+  PcConsole.println(F("K"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -351,7 +351,7 @@ void setCart_WSV() {
   struct database_entry_WSV entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("wsv.txt");
 
   // Open database
   if (myFile.open("wsv.txt", O_READ)) {

@@ -277,26 +277,26 @@ void setROMSize_LJ()
 setrom:
     String sizeROM;
     for (int i = 0; i < (ljhi - ljlo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(LJ[i + ljlo]);
-      Serial.println(F("KB"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(LJ[i + ljlo]);
+      PcConsole.println(F("KB"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newljsize = sizeROM.toInt() + ljlo;
     if (newljsize > ljhi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(LJ[newljsize]);
-  Serial.println(F("KB"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(LJ[newljsize]);
+  PcConsole.println(F("KB"));
 #endif
   EEPROM_writeAnything(8, newljsize);
   ljsize = newljsize;
@@ -321,10 +321,10 @@ void checkStatus_LJ()
   display_Update();
   wait();
 #else
-  Serial.print(FS(FSTRING_ROM_SIZE));
-  Serial.print(LJ[ljsize]);
-  Serial.println(F("MB"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(FS(FSTRING_ROM_SIZE));
+  PcConsole.print(LJ[ljsize]);
+  PcConsole.println(F("MB"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 

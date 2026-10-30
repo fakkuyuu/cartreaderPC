@@ -154,7 +154,7 @@ void setup_LJPRO()
   // Request 3.3V
   setVoltage(VOLTS_SET_3V3);
 
-  // LITTLE JAMMER PRO uses Serial Flash
+  // LITTLE JAMMER PRO uses PcConsole Flash
   // Set Data Pins to Input
   DDRF = 0x00; // U1 Data
   DDRC = 0x00; // U2 Data
@@ -196,7 +196,7 @@ void setup_LJPRO()
 // SERIAL MODE
 //******************************************
 // 25L4005/25L1605/25L3205/25L6405
-// Default Serial Mode
+// Default PcConsole Mode
 
 void sendSerial_U1(uint8_t data)
 {
@@ -378,7 +378,7 @@ void pulseClock_LJPRO(unsigned int times)
   }
 }
 
-// Send one byte of data to Serial FLASH [Parallel Mode]
+// Send one byte of data to PcConsole FLASH [Parallel Mode]
 void sendData_U1(byte data)
 {
   DDRF = 0xFF; // U1 Data Output
@@ -539,7 +539,7 @@ void readROM_LJPRO()
   // Read U1
   println_Msg(F("Reading U1..."));
   display_Update();
-  if (ljproflash1size == 1) { // 25L4005 - Serial Mode
+  if (ljproflash1size == 1) { // 25L4005 - PcConsole Mode
     CS1_LOW; // U1 LOW
     DDRF = 0x00; // U1 Data Input
     sendSerial_U1(0x03); // Read Array
@@ -573,7 +573,7 @@ void readROM_LJPRO()
     // Read U2
     println_Msg(F("Reading U2..."));
     display_Update();
-    if (ljproflash2size == 1) { // 25L4005 - Serial Mode
+    if (ljproflash2size == 1) { // 25L4005 - PcConsole Mode
       CS2_LOW; // U2 LOW
       DDRC = 0x00; // U2 Data Input
       sendSerial_U2(0x03); // Read Array

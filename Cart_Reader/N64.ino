@@ -1078,19 +1078,19 @@ void controllerTest_Serial() {
 
     // Print Button
     String buttonc = String("Button: " + String(button) + "   ");
-    Serial.print(buttonc);
+    PcConsole.print(buttonc);
 
     // Print Stick X Value
     String stickx = String("X: " + String(N64_status.stick_x, DEC) + "   ");
-    Serial.print(stickx);
+    PcConsole.print(stickx);
 
     // Print Stick Y Value
     String sticky = String(" Y: " + String(N64_status.stick_y, DEC) + "   ");
-    Serial.println(sticky);
+    PcConsole.println(sticky);
 
     if (button == "Press a button" && lastbutton == "Z") {
       // Quit
-      Serial.println("");
+      PcConsole.println("");
       quit = 0;
     }
   }
@@ -2072,6 +2072,7 @@ void printCartInfo_N64() {
   sd.chdir("/");
 
   if (myFile.open("n64.txt", O_READ)) {
+    if (myFile.isPc()) myFile.findRecord(1, checksumStr);
     // Loop through file
     while (myFile.available()) {
       // Read 8 bytes into String, do it one at a time so byte order doesn't get mixed up
@@ -2987,8 +2988,6 @@ uint32_t readRom_N64() {
     print_FatalError(create_file_STR);
   }
 
-  byte buffer[1024];
-
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(cartSize) * 1024 * 1024;
@@ -3020,23 +3019,25 @@ uint32_t readRom_N64() {
       NOP;
 
       // data on PINK and PINF is valid now, read into sd card buffer
-      buffer[c] = PINK;      // hiByte
-      buffer[c + 1] = PINF;  // loByte
+      sdBuffer[c] = PINK;      // hiByte
+      sdBuffer[c + 1] = PINF;  // loByte
 
       // Pull read(PH6) high
       PORTH |= (1 << 6);
 
       // crc32 update
-      UPDATE_CRC(oldcrc32, buffer[c]);
-      UPDATE_CRC(oldcrc32, buffer[c + 1]);
+      UPDATE_CRC(oldcrc32, sdBuffer[c]);
+      UPDATE_CRC(oldcrc32, sdBuffer[c + 1]);
     }
+
+    myFile.write(sdBuffer, 512);
 
     // Set the address for the next 512 bytes to dump
     setAddress_N64(currByte + 512);
     // Wait 62.5ns (safety)
     NOP;
 
-    for (int c = 512; c < 1024; c += 2) {
+    for (int c = 0; c < 512; c += 2) {
       // Pull read(PH6) low
       PORTH &= ~(1 << 6);
       // Wait ~310ns
@@ -3047,21 +3048,21 @@ uint32_t readRom_N64() {
       NOP;
 
       // data on PINK and PINF is valid now, read into sd card buffer
-      buffer[c] = PINK;      // hiByte
-      buffer[c + 1] = PINF;  // loByte
+      sdBuffer[c] = PINK;      // hiByte
+      sdBuffer[c + 1] = PINF;  // loByte
 
       // Pull read(PH6) high
       PORTH |= (1 << 6);
 
       // crc32 update
-      UPDATE_CRC(oldcrc32, buffer[c]);
-      UPDATE_CRC(oldcrc32, buffer[c + 1]);
+      UPDATE_CRC(oldcrc32, sdBuffer[c]);
+      UPDATE_CRC(oldcrc32, sdBuffer[c + 1]);
     }
+
+    myFile.write(sdBuffer, 512);
 
     processedProgressBar += 1024;
     draw_progressbar(processedProgressBar, totalProgressBar);
-    // write out 1024 bytes to file
-    myFile.write(buffer, 1024);
   }
 
   // Close the file:

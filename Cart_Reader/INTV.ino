@@ -487,10 +487,10 @@ void setMapper_INTV() {
 setmapper:
   String newmap;
   intvmapfound = false;
-  Serial.print(F("Enter Mapper [0-9]: "));
-  while (Serial.available() == 0) {}
-  newmap = Serial.readStringUntil('\n');
-  Serial.println(newmap);
+  PcConsole.print(F("Enter Mapper [0-9]: "));
+  while (PcConsole.available() == 0) {}
+  newmap = PcConsole.readStringUntil('\n');
+  PcConsole.println(newmap);
   newintvmapper = newmap.toInt();
   for (int i = 0; i < intvmapcount; i++) {
     intvindex = i * 4;
@@ -499,8 +499,8 @@ setmapper:
       intvmapfound = true;
   }
   if (intvmapfound == false) {
-    Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(FS(FSTRING_EMPTY));
+    PcConsole.println(F("MAPPER NOT SUPPORTED!"));
+    PcConsole.println(FS(FSTRING_EMPTY));
     newintvmapper = 0;
     goto setmapper;
   }
@@ -552,26 +552,26 @@ void setROMSize_INTV() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (intvhi - intvlo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(pgm_read_byte(&(INTV[i + intvlo])));
-      Serial.println(F("K"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(pgm_read_byte(&(INTV[i + intvlo])));
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newintvsize = sizeROM.toInt() + intvlo;
     if (newintvsize > intvhi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(pgm_read_byte(&(INTV[newintvsize])));
-  Serial.println(F("K"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(pgm_read_byte(&(INTV[newintvsize])));
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(8, newintvsize);
   intvsize = newintvsize;
@@ -602,12 +602,12 @@ void checkStatus_INTV() {
   display_Update();
   wait();
 #else
-  Serial.print(F("CURRENT MAPPER:   "));
-  Serial.println(intvmapper);
-  Serial.print(F("CURRENT ROM SIZE: "));
-  Serial.print(pgm_read_byte(&(INTV[intvsize])));
-  Serial.println(F("K"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(F("CURRENT MAPPER:   "));
+  PcConsole.println(intvmapper);
+  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(pgm_read_byte(&(INTV[intvsize])));
+  PcConsole.println(F("K"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -674,7 +674,7 @@ void setCart_INTV() {
   struct database_entry_INTV entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("intv.txt");
 
   // Open database
   if (myFile.open("intv.txt", O_READ)) {

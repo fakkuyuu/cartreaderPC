@@ -1107,7 +1107,7 @@ void getCartInfo_MD() {
     }
   }
 
-  // Serial EEPROM Check
+  // PcConsole EEPROM Check
   for (int i = 0; i < eepcount; i++) {
     int index = i * 2;
     word eepcheck = pgm_read_word(eepid + index);
@@ -1122,7 +1122,7 @@ void getCartInfo_MD() {
 
   // Greatest Heavyweights of the Ring (J) has blank chksum 0x0000
   // Other non-save carts might have the same blank chksum
-  // Check header for Serial EEPROM Data
+  // Check header for PcConsole EEPROM Data
   if (chksum == 0x0000) {
     if (readWord_MD(0xD9) != 0xE840) {  // NOT SERIAL EEPROM
       eepType = 0;
@@ -1378,7 +1378,7 @@ void getCartInfo_MD() {
   }
   println_Msg(FS(FSTRING_EMPTY));
   if (saveType == 4) {
-    print_Msg(F("Serial EEPROM: "));
+    print_Msg(F("PcConsole EEPROM: "));
     print_Msg(eepSize * 8 / 1024);
     println_Msg(F(" KBit"));
   } else {
@@ -1458,8 +1458,6 @@ void readROM_MD() {
 
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("MD", "ROM", romName, "BIN");
-
-  byte buffer[1024] = { 0 };
 
   // Phantasy Star/Beyond Oasis with 74HC74 and 74HC139 switch ROM/SRAM at address 0x200000
   if (0x200000 < cartSize && cartSize < 0x400000) {
@@ -1566,8 +1564,8 @@ void readROM_MD() {
       NOP;
 
       // Read
-      buffer[d] = PINA;
-      buffer[d + 1] = PINC;
+      sdBuffer[d] = PINA;
+      sdBuffer[d + 1] = PINC;
 
       // Setting CS(PH3) HIGH
       PORTH |= (1 << 3);
@@ -1583,11 +1581,14 @@ void readROM_MD() {
 
       // Skip first 256 words
       if (((currBuffer == 0) && (currWord >= 256)) || (currBuffer > 0)) {
-        calcCKS += ((buffer[d] << 8) | buffer[d + 1]);
+        calcCKS += ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
       }
       d += 2;
+      if (d == 512) {
+        myFile.write(sdBuffer, 512);
+        d = 0;
+      }
     }
-    myFile.write(buffer, 1024);
 
     // update progress bar
     processedProgressBar += 1024;
@@ -1630,8 +1631,8 @@ void readROM_MD() {
         NOP;
 
         // Read
-        buffer[d] = PINA;
-        buffer[d + 1] = PINC;
+        sdBuffer[d] = PINA;
+        sdBuffer[d + 1] = PINC;
 
         // Setting CS(PH3) HIGH
         PORTH |= (1 << 3);
@@ -1647,11 +1648,14 @@ void readROM_MD() {
 
         // Skip first 256 words
         if (((currBuffer == 0) && (currWord >= 256)) || (currBuffer > 0)) {
-          calcCKSLockon += ((buffer[d] << 8) | buffer[d + 1]);
+          calcCKSLockon += ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
         }
         d += 2;
+        if (d == 512) {
+          myFile.write(sdBuffer, 512);
+          d = 0;
+        }
       }
-      myFile.write(buffer, 1024);
 
       // update progress bar
       processedProgressBar += 1024;
@@ -1695,8 +1699,8 @@ void readROM_MD() {
         NOP;
 
         // Read
-        buffer[d] = PINA;
-        buffer[d + 1] = PINC;
+        sdBuffer[d] = PINA;
+        sdBuffer[d + 1] = PINC;
 
         // Setting CS(PH3) HIGH
         PORTH |= (1 << 3);
@@ -1710,10 +1714,13 @@ void readROM_MD() {
         if (isSVP)
           PORTH ^= (1 << 1);
 
-        calcCKSSonic2 += ((buffer[d] << 8) | buffer[d + 1]);
+        calcCKSSonic2 += ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
         d += 2;
+        if (d == 512) {
+          myFile.write(sdBuffer, 512);
+          d = 0;
+        }
       }
-      myFile.write(buffer, 1024);
 
       // update progress bar
       processedProgressBar += 1024;

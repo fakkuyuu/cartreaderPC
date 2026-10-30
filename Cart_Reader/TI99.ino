@@ -447,7 +447,7 @@ void readGROM_TI99()
     println_Msg(F("GROM SIZE 0K"));
     display_Update();
 #else
-    Serial.println(F("GROM SIZE 0K"));
+    PcConsole.println(F("GROM SIZE 0K"));
 #endif
   }
   else {
@@ -511,7 +511,7 @@ void readCROM_TI99()
     println_Msg(F("ROM SIZE 0K"));
     display_Update();
 #else
-    Serial.println(F("ROM SIZE 0K"));
+    PcConsole.println(F("ROM SIZE 0K"));
 #endif
   }
   else {
@@ -629,17 +629,17 @@ void checkStatus_TI99()
   readGROMMap();
   wait();
 #else
-  Serial.print(F("CURRENT MAPPER:     "));
-  Serial.println(ti99mapper);
-  Serial.print(F("GROM SIZE: "));
-  Serial.print(GROM[gromsize]);
-  Serial.println(F("KB"));
-  Serial.print(F("ROM SIZE:  "));
-  Serial.print(CROM[cromsize]);
-  Serial.println(F("KB"));
-  Serial.print(F("GROM MAP:  "));
+  PcConsole.print(F("CURRENT MAPPER:     "));
+  PcConsole.println(ti99mapper);
+  PcConsole.print(F("GROM SIZE: "));
+  PcConsole.print(GROM[gromsize]);
+  PcConsole.println(F("KB"));
+  PcConsole.print(F("ROM SIZE:  "));
+  PcConsole.print(CROM[cromsize]);
+  PcConsole.println(F("KB"));
+  PcConsole.print(F("GROM MAP:  "));
   readGROMMap();
-  Serial.println(F(""));
+  PcConsole.println(F(""));
 #endif
 }
 
@@ -659,9 +659,9 @@ void printMapper_TI99(byte ti99maplabel)
       break;
   }
 #else
-  Serial.println(F("0 = NORMAL"));
-  Serial.println(F("1 = MBX"));
-  Serial.println(F("2 = TI-CALC"));
+  PcConsole.println(F("0 = NORMAL"));
+  PcConsole.println(F("1 = MBX"));
+  PcConsole.println(F("2 = TI-CALC"));
 #endif
 }
 
@@ -698,10 +698,10 @@ setmapper:
   String newmap;
   ti99mapfound = false;
   printMapper_TI99(0);
-  Serial.print(F("Enter Mapper [0-2]: "));
-  while (Serial.available() == 0) {}
-  newmap = Serial.readStringUntil('\n');
-  Serial.println(newmap);
+  PcConsole.print(F("Enter Mapper [0-2]: "));
+  while (PcConsole.available() == 0) {}
+  newmap = PcConsole.readStringUntil('\n');
+  PcConsole.println(newmap);
   newti99mapper = newmap.toInt();
   for (int i = 0; i < ti99mapcount; i++) {
     ti99index = i * 5;
@@ -710,8 +710,8 @@ setmapper:
       ti99mapfound = true;
   }
   if (ti99mapfound == false) {
-    Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(F(""));
+    PcConsole.println(F("MAPPER NOT SUPPORTED!"));
+    PcConsole.println(F(""));
     newti99mapper = 0;
     goto setmapper;
   }
@@ -748,6 +748,7 @@ void setGROMSize_TI99()
   else {
     int b = 0;
     int i = gromlo;
+    pcPhysicalControlsReady();
     while (1) {
       display_Clear();
       print_Msg(F("GROM Size: "));
@@ -773,6 +774,8 @@ void setGROMSize_TI99()
         newgromsize = i;
         break;
       }
+      if (b == 1 || b == 2)
+        pcPhysicalControlsReady();
     }
     display.setCursor(0, 48); // Display selection at bottom
   }
@@ -800,26 +803,26 @@ void setGROMSize_TI99()
 setgrom:
     String sizeGROM;
     for (int i = 0; i < (gromhi - gromlo + 1); i++) {
-      Serial.print(F("Select GROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(GROM[i + gromlo]);
-      Serial.println(F("KB"));
+      PcConsole.print(F("Select GROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(GROM[i + gromlo]);
+      PcConsole.println(F("KB"));
     }
-    Serial.print(F("Enter GROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeGROM = Serial.readStringUntil('\n');
-    Serial.println(sizeGROM);
+    PcConsole.print(F("Enter GROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeGROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeGROM);
     newgromsize = sizeGROM.toInt() + gromlo;
     if (newgromsize > gromhi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setgrom;
     }
   }
-  Serial.print(F("GROM SIZE "));
-  Serial.print(GROM[newgromsize]);
-  Serial.println(F("KB"));
+  PcConsole.print(F("GROM SIZE "));
+  PcConsole.print(GROM[newgromsize]);
+  PcConsole.println(F("KB"));
   EEPROM_writeAnything(8, newgromsize);
   gromsize = newgromsize;
   // Default GROM Map to sequential GROMs
@@ -829,7 +832,7 @@ setgrom:
   }
   EEPROM_writeAnything(13, newgrommap);
   grommap = newgrommap;
-  Serial.print(F("GROM MAP  "));
+  PcConsole.print(F("GROM MAP  "));
   readGROMMap();
 #endif
 }
@@ -852,16 +855,16 @@ void readGROMMap()
   display_Update();
 #else
   if (grommap == 0)
-    Serial.print(0);
-  else (
+    PcConsole.print(0);
+  else {
     for (int x = 3; x < 8; x++) {
     if (((grommap >> x) & 0x1) == 1) {
-        Serial.print(x);
+        PcConsole.print(x);
         newgromsize++;
       }
     }
 }
-Serial.println(FS(FSTRING_EMPTY));
+PcConsole.println(FS(FSTRING_EMPTY));
 #endif
   if (gromsize != newgromsize) {
     EEPROM_writeAnything(8, newgromsize);
@@ -883,6 +886,7 @@ void setGROMMap_TI99()
     println_Msg(F("Press to Skip GROM"));
     println_Msg(F("Hold to Enable GROM"));
     display_Update();
+    pcPhysicalControlsReady();
     while (1) {
       b = checkButton();
       if (b == 2) { // Previous
@@ -914,19 +918,19 @@ void setGROMMap_TI99()
 #else
   String mapGROM;
   for (int i = 3; i < 8; i++) {
-    Serial.print(F("Enable GROM "));
-    Serial.println(i);
-    Serial.println(F("0 = NO"));
-    Serial.println(F("1 = YES"));
-    while (Serial.available() == 0) {}
-    mapCROM = Serial.readStringUntil('\n');
-    Serial.println(mapGROM);
+    PcConsole.print(F("Enable GROM "));
+    PcConsole.println(i);
+    PcConsole.println(F("0 = NO"));
+    PcConsole.println(F("1 = YES"));
+    while (PcConsole.available() == 0) {}
+    mapGROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(mapGROM);
     if (mapGROM.toInt() == 1)
       newgrommap = (newgrommap | (1 << i));
   }
   EEPROM_writeAnything(13, newgrommap);
   grommap = newgrommap;
-  Serial.print(F("GROM MAP: "));
+  PcConsole.print(F("GROM MAP: "));
   readGROMMap();
 #endif
 }
@@ -968,26 +972,26 @@ void setCROMSize_TI99()
 setrom:
     String sizeROM;
     for (int i = 0; i < (cromhi - cromlo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(CROM[i + cromlo]);
-      Serial.println(F("KB"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(CROM[i + cromlo]);
+      PcConsole.println(F("KB"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newcromsize = sizeROM.toInt() + cromlo;
     if (newcromsize > cromhi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(CROM[newcromsize]);
-  Serial.println(F("KB"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(CROM[newcromsize]);
+  PcConsole.println(F("KB"));
 #endif
   EEPROM_writeAnything(8, newcromsize);
   cromsize = newcromsize;
@@ -1053,7 +1057,7 @@ void setCart_TI99()
   struct database_entry_TI99 entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("ti99cart.txt");
 
   if (myFile.open("ti99cart.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);

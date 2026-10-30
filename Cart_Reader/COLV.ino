@@ -233,26 +233,26 @@ void setROMSize_COL() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (colhi - collo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(pgm_read_byte(&(COL[i + collo])));
-      Serial.println(F("K"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(pgm_read_byte(&(COL[i + collo])));
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newcolsize = sizeROM.toInt() + collo;
     if (newcolsize > colhi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(pgm_read_byte(&(COL[newcolsize])));
-  Serial.println(F("K"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(pgm_read_byte(&(COL[newcolsize])));
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(8, newcolsize);
   colsize = newcolsize;
@@ -279,10 +279,10 @@ void checkStatus_COL() {
   display_Update();
   wait();
 #else
-  Serial.print(F("CURRENT ROM SIZE: "));
-  Serial.print(pgm_read_byte(&(COL[colsize])));
-  Serial.println(F("K"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(pgm_read_byte(&(COL[colsize])));
+  PcConsole.println(F("K"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -336,7 +336,7 @@ void setCart_COL() {
   struct database_entry_COL entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("colv.txt");
 
   // Open database
   if (myFile.open("colv.txt", O_READ)) {

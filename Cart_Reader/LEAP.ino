@@ -538,26 +538,26 @@ void setROMSize_LEAP()
 setrom:
     String sizeROM;
     for (int i = 0; i < (leaphi - leaplo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(LEAPSTER[i + leaplo]);
-      Serial.println(F("MB"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(LEAPSTER[i + leaplo]);
+      PcConsole.println(F("MB"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newleapsize = sizeROM.toInt() + leaplo;
     if (newleapsize > leaphi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(LEAPSTER[newleapsize]);
-  Serial.println(F("MB"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(LEAPSTER[newleapsize]);
+  PcConsole.println(F("MB"));
 #endif
   EEPROM_writeAnything(8, newleapsize);
   leapsize = newleapsize;
@@ -586,14 +586,14 @@ void checkStatus_LEAP()
   display_Update();
   wait();
 #else
-  Serial.print(F("TITLE: "));
-  Serial.println(ROMTitle);
-  Serial.print(F("VER: "));
-  Serial.println(ROMVersion);
-  Serial.print(FS(FSTRING_ROM_SIZE));
-  Serial.print(LEAPSTER[leapsize]);
-  Serial.println(F("MB"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(F("TITLE: "));
+  PcConsole.println(ROMTitle);
+  PcConsole.print(F("VER: "));
+  PcConsole.println(ROMVersion);
+  PcConsole.print(FS(FSTRING_ROM_SIZE));
+  PcConsole.print(LEAPSTER[leapsize]);
+  PcConsole.println(F("MB"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 

@@ -11,6 +11,7 @@
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
 #include "SdFat.h"
+#include "PcStorage.h"
 
 #include "Config.h"
 
@@ -21,7 +22,7 @@
 # endif
 
 // Error if more than one hardware version is enabled
-# if (defined(HW1) + defined(HW2) + defined(HW3) + defined(HW4) + defined(HW5) + defined(SERIAL_MONITOR)) > 1
+# if (defined(HW1) + defined(HW2) + defined(HW3) + defined(HW4) + defined(HW5) + (defined(SERIAL_MONITOR) && !defined(PC_MENU))) > 1
 #   error !!! PLEASE CHOOSE ONLY ONE HARDWARE VERSION IN CONFIG.H !!!
 # endif
 
@@ -62,7 +63,7 @@
 #   endif /* HW4 */
 
 // SERIAL might work but needs tested. Make sure they know it's untested.
-#   if defined(SERIAL_MONITOR)
+#   if defined(SERIAL_MONITOR) && !defined(PC_MENU)
 #     if defined(ALLOW_UNSAFE_CONFIG)
 #       warning Using VSELECT with a serial-only OSCR is untested. Verification with a multimeter before use is strongly recommended. Please remember to report back with your findings.
 #     else /* !defined(ALLOW_UNSAFE_CONFIG) */

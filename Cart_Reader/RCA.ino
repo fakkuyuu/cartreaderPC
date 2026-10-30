@@ -248,26 +248,26 @@ void setROMSize_RCA()
 setrom:
     String sizeROM;
     for (int i = 0; i < (rcahi - rcalo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(RCA[i + rcalo]);
-      Serial.println(F("KB"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(RCA[i + rcalo]);
+      PcConsole.println(F("KB"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newrcasize = sizeROM.toInt() + rcalo;
     if (newrcasize > rcahi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(RCA[newrcasize]);
-  Serial.println(F("KB"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(RCA[newrcasize]);
+  PcConsole.println(F("KB"));
 #endif
   EEPROM_writeAnything(8, newrcasize);
   rcasize = newrcasize;
@@ -292,10 +292,10 @@ void checkStatus_RCA()
   display_Update();
   wait();
 #else
-  Serial.print(FS(FSTRING_ROM_SIZE));
-  Serial.print(RCA[rcasize] * 512);
-  Serial.println(F("B"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(FS(FSTRING_ROM_SIZE));
+  PcConsole.print(RCA[rcasize] * 512);
+  PcConsole.println(F("B"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 

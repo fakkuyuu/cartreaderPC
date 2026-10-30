@@ -334,6 +334,7 @@ void setROMSize_VIC20()
   else {
     int b = 0;
     int i = vic20lo;
+    pcPhysicalControlsReady();
     while (1) {
       display_Clear();
       print_Msg(F("ROM0 Size: "));
@@ -361,6 +362,8 @@ void setROMSize_VIC20()
         newvic20size = i;
         break;
       }
+      if (b == 1 || b == 2)
+        pcPhysicalControlsReady();
     }
     display.setCursor(0, 48); // Display selection at bottom
   }
@@ -379,31 +382,31 @@ void setROMSize_VIC20()
 setrom:
     String sizeROM;
     for (int i = 0; i < (vic20hi - vic20lo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print((VIC20SIZE[i + vic20lo] & 0xF0) >> 4);
-      Serial.print(F("KB/"));
-      Serial.print(VIC20SIZE[i + vic20lo] & 0x0F);
-      Serial.println(F("KB"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print((VIC20SIZE[i + vic20lo] & 0xF0) >> 4);
+      PcConsole.print(F("KB/"));
+      PcConsole.print(VIC20SIZE[i + vic20lo] & 0x0F);
+      PcConsole.println(F("KB"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newvic20size = sizeROM.toInt() + vic20lo;
     if (newvic20size > vic20hi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM0 Size = "));
-  Serial.print((VIC20SIZE[newvic20size] & 0xF0) >> 4);
-  Serial.println(F("KB"));
-  Serial.print(F("ROM1 Size = "));
-  Serial.print(VIC20SIZE[newvic20size] & 0x0F);
-  Serial.println(F("KB"));
+  PcConsole.print(F("ROM0 Size = "));
+  PcConsole.print((VIC20SIZE[newvic20size] & 0xF0) >> 4);
+  PcConsole.println(F("KB"));
+  PcConsole.print(F("ROM1 Size = "));
+  PcConsole.print(VIC20SIZE[newvic20size] & 0x0F);
+  PcConsole.println(F("KB"));
 #endif
   EEPROM_writeAnything(8, newvic20size);
   vic20size = newvic20size;
@@ -438,15 +441,15 @@ void checkStatus_VIC20()
   display_Update();
   wait();
 #else
-  Serial.print(F("CURRENT ROM MAP:   "));
-  Serial.println(VIC20MAP[vic20map]);
-  Serial.print(F("CURRENT ROM0 SIZE: "));
-  Serial.print((VIC20SIZE[vic20size] & 0xF0) >> 4);
-  Serial.println(F("KB"));
-  Serial.print(F("CURRENT ROM1 SIZE: "));
-  Serial.print(VIC20SIZE[vic20size] & 0x0F);
-  Serial.println(F("KB"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(F("CURRENT ROM MAP:   "));
+  PcConsole.println(VIC20MAP[vic20map]);
+  PcConsole.print(F("CURRENT ROM0 SIZE: "));
+  PcConsole.print((VIC20SIZE[vic20size] & 0xF0) >> 4);
+  PcConsole.println(F("KB"));
+  PcConsole.print(F("CURRENT ROM1 SIZE: "));
+  PcConsole.print(VIC20SIZE[vic20size] & 0x0F);
+  PcConsole.println(F("KB"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -492,6 +495,7 @@ void setROMMap_VIC20()
       delay(250);
     }
   }
+  pcPhysicalControlsReady();
   while (1) {
     display_Clear();
     print_Msg(F("ROM Map: "));
@@ -518,6 +522,8 @@ void setROMMap_VIC20()
       newvic20map = i;
       break;
     }
+    if (b == 1 || b == 2)
+      pcPhysicalControlsReady();
   }
   display.setCursor(0, 56);
   print_Msg(F("ROM MAP "));
@@ -527,20 +533,20 @@ void setROMMap_VIC20()
   delay(1000);
 #else
   String newmap;
-  Serial.println(F("ROM MAP:"));
-  Serial.println(F("0 = 0x2000"));
-  Serial.println(F("1 = 0x2000/0x4000"));
-  Serial.println(F("2 = 0x2000/0xA000"));
-  Serial.println(F("3 = 0x4000/0x6000"));
-  Serial.println(F("4 = 0x6000"));
-  Serial.println(F("5 = 0x6000/0xA000"));
-  Serial.println(F("6 = 0x7000"));
-  Serial.println(F("7 = 0xA000"));
-  Serial.println(F("8 = 0xB000"));
-  Serial.print(F("Enter Mapper [0-8]: "));
-  while (Serial.available() == 0) {}
-  newmap = Serial.readStringUntil('\n');
-  Serial.println(newmap);
+  PcConsole.println(F("ROM MAP:"));
+  PcConsole.println(F("0 = 0x2000"));
+  PcConsole.println(F("1 = 0x2000/0x4000"));
+  PcConsole.println(F("2 = 0x2000/0xA000"));
+  PcConsole.println(F("3 = 0x4000/0x6000"));
+  PcConsole.println(F("4 = 0x6000"));
+  PcConsole.println(F("5 = 0x6000/0xA000"));
+  PcConsole.println(F("6 = 0x7000"));
+  PcConsole.println(F("7 = 0xA000"));
+  PcConsole.println(F("8 = 0xB000"));
+  PcConsole.print(F("Enter Mapper [0-8]: "));
+  while (PcConsole.available() == 0) {}
+  newmap = PcConsole.readStringUntil('\n');
+  PcConsole.println(newmap);
   newvic20map = newmap.toInt();
 #endif
   EEPROM_writeAnything(7, newvic20map);
@@ -559,7 +565,7 @@ void setCart_VIC20()
   struct database_entry_mapper_size entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("vic20cart.txt");
 
   // Open database
   if (myFile.open("vic20cart.txt", O_READ)) {

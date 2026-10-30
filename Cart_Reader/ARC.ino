@@ -208,26 +208,26 @@ void setROMSize_ARC() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (archi - arclo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(ARC[i + arclo]);
-      Serial.println(F("K"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(ARC[i + arclo]);
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newarcsize = sizeROM.toInt() + arclo;
     if (newarcsize > archi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(ARC[newarcsize]);
-  Serial.println(F("K"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(ARC[newarcsize]);
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(8, newarcsize);
   arcsize = newarcsize;
@@ -251,10 +251,10 @@ void checkStatus_ARC() {
   display_Update();
   wait();
 #else
-  Serial.print(F("CURRENT ROM SIZE: "));
-  Serial.print(ARC[arcsize]);
-  Serial.println(F("K"));
-  Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(ARC[arcsize]);
+  PcConsole.println(F("K"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 

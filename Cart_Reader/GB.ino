@@ -536,7 +536,7 @@ void gbMenu() {
       // Change working dir to root
       sd.chdir("/");
       readROM_GB();
-      compare_checksums_GB();
+      if (!PcLink::usingPcStorage()) compare_checksums_GB();
 #ifdef ENABLE_GLOBAL_LOG
       save_log();
 #endif
@@ -1106,7 +1106,7 @@ void getCartInfo_GB() {
     }
   }
 
-  // Find Game Serial
+  // Find Game PcConsole
   cartID[0] = 0;
   if (sdBuffer[0x143] == 0x80 || sdBuffer[0x143] == 0xC0) {
     if ((romName[myLength - 4] == 'A' || romName[myLength - 4] == 'B' || romName[myLength - 4] == 'H' || romName[myLength - 4] == 'K' || romName[myLength - 4] == 'V') && (romName[myLength - 1] == 'A' || romName[myLength - 1] == 'B' || romName[myLength - 1] == 'D' || romName[myLength - 1] == 'E' || romName[myLength - 1] == 'F' || romName[myLength - 1] == 'I' || romName[myLength - 1] == 'J' || romName[myLength - 1] == 'K' || romName[myLength - 1] == 'P' || romName[myLength - 1] == 'S' || romName[myLength - 1] == 'U' || romName[myLength - 1] == 'X' || romName[myLength - 1] == 'Y')) {

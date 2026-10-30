@@ -593,33 +593,33 @@ void println_Mapper2600(byte mapper) {
     println_Msg(mapper, HEX);
 #else
   if (mapper == 0x04)
-    Serial.println(F("F4SC"));
+    PcConsole.println(F("F4SC"));
   else if (mapper == 0x06)
-    Serial.println(F("F6SC"));
+    PcConsole.println(F("F6SC"));
   else if (mapper == 0x08)
-    Serial.println(F("F8SC"));
+    PcConsole.println(F("F8SC"));
   else if (mapper == 0x20)
-    Serial.println(F("2K"));
+    PcConsole.println(F("2K"));
   else if (mapper == 0x40)
-    Serial.println(F("4K"));
+    PcConsole.println(F("4K"));
   else if (mapper == 0x0A)
-    Serial.println(F("UA"));
+    PcConsole.println(F("UA"));
   else if (mapper == 0xC0)
-    Serial.println(F("CV"));
+    PcConsole.println(F("CV"));
   else if (mapper == 0xD0)
-    Serial.println(F("DPC"));
+    PcConsole.println(F("DPC"));
   else if (mapper == 0xF9)
-    Serial.println(F("TP"));
+    PcConsole.println(F("TP"));
   else if (mapper == 0x07)
-    Serial.println(F("X07"));
+    PcConsole.println(F("X07"));
   else if (mapper == 0xDF)
-    Serial.println(F("DFSC"));
+    PcConsole.println(F("DFSC"));
   else if (mapper == 0xBA)
-    Serial.println(F("SB 128K"));
+    PcConsole.println(F("SB 128K"));
   else if (mapper == 0xBB)
-    Serial.println(F("SB 256K"));
+    PcConsole.println(F("SB 256K"));
   else
-    Serial.println(mapper, HEX);
+    PcConsole.println(mapper, HEX);
 #endif
 }
 
@@ -647,16 +647,16 @@ void checkStatus_2600() {
   display_Update();
   wait();
 #else
-  Serial.print(F("MAPPER:   "));
+  PcConsole.print(F("MAPPER:   "));
   println_Mapper2600(a2600mapper);
 
-  Serial.print(FS(FSTRING_ROM_SIZE));
+  PcConsole.print(FS(FSTRING_ROM_SIZE));
   if (a2600mapper == 0xD0)
-    Serial.print(F("10"));
+    PcConsole.print(F("10"));
   else
-    Serial.print(a2600[a2600size]);
-  Serial.println(F("K"));
-  Serial.println(FS(FSTRING_EMPTY));
+    PcConsole.print(a2600[a2600size]);
+  PcConsole.println(F("K"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -689,34 +689,34 @@ void setMapper_2600() {
 #else
 setmapper:
   String newmap;
-  Serial.println(F("SUPPORTED MAPPERS:"));
-  Serial.println(F("0 = F4SC [Atari 32K \w RAM]"));
-  Serial.println(F("1 = F6SC [Atari 16K \w RAM]"));
-  Serial.println(F("2 = F8SC [Atari 8K \w RAM]"));
-  Serial.println(F("3 = 2K [Standard 2K]"));
-  Serial.println(F("4 = 3F [Tigervision 8K]"));
-  Serial.println(F("5 = 4K [Standard 4K]"));
-  Serial.println(F("6 = CV [Commavid]"));
-  Serial.println(F("7 = DPC [Pitfall II]"));
-  Serial.println(F("8 = E0 [Parker Bros]"));
-  Serial.println(F("9 = E7 [M-Network]"));
-  Serial.println(F("10 = F0 [Megaboy]"));
-  Serial.println(F("11 = F4 [Atari 32K]"));
-  Serial.println(F("12 = F6 [Atari 16K]"));
-  Serial.println(F("13 = F8 [Atari 8K]"));
-  Serial.println(F("14 = FA [CBS RAM Plus]"));
-  Serial.println(F("15 = FE [Activision]"));
-  Serial.println(F("16 = TP [Time Pilot 8K]"));
-  Serial.println(F("17 = UA [UA Ltd]"));
-  Serial.println(F("18 = 3E [Tigervision 32K \w RAM]"));
-  Serial.println(F("19 = 07 [X07 64K]"));
-  Serial.println(F("20 = DFSC [Penult 128K]"));
-  Serial.println(F("21 = SB [SuperBank Casey's Gold 128K]"));
-  Serial.println(F("22 = SB [SuperBank 256K]"));
-  Serial.print(F("Enter Mapper [0-22]: "));
-  while (Serial.available() == 0) {}
-  newmap = Serial.readStringUntil('\n');
-  Serial.println(newmap);
+  PcConsole.println(F("SUPPORTED MAPPERS:"));
+  PcConsole.println(F("0 = F4SC [Atari 32K \w RAM]"));
+  PcConsole.println(F("1 = F6SC [Atari 16K \w RAM]"));
+  PcConsole.println(F("2 = F8SC [Atari 8K \w RAM]"));
+  PcConsole.println(F("3 = 2K [Standard 2K]"));
+  PcConsole.println(F("4 = 3F [Tigervision 8K]"));
+  PcConsole.println(F("5 = 4K [Standard 4K]"));
+  PcConsole.println(F("6 = CV [Commavid]"));
+  PcConsole.println(F("7 = DPC [Pitfall II]"));
+  PcConsole.println(F("8 = E0 [Parker Bros]"));
+  PcConsole.println(F("9 = E7 [M-Network]"));
+  PcConsole.println(F("10 = F0 [Megaboy]"));
+  PcConsole.println(F("11 = F4 [Atari 32K]"));
+  PcConsole.println(F("12 = F6 [Atari 16K]"));
+  PcConsole.println(F("13 = F8 [Atari 8K]"));
+  PcConsole.println(F("14 = FA [CBS RAM Plus]"));
+  PcConsole.println(F("15 = FE [Activision]"));
+  PcConsole.println(F("16 = TP [Time Pilot 8K]"));
+  PcConsole.println(F("17 = UA [UA Ltd]"));
+  PcConsole.println(F("18 = 3E [Tigervision 32K \w RAM]"));
+  PcConsole.println(F("19 = 07 [X07 64K]"));
+  PcConsole.println(F("20 = DFSC [Penult 128K]"));
+  PcConsole.println(F("21 = SB [SuperBank Casey's Gold 128K]"));
+  PcConsole.println(F("22 = SB [SuperBank 256K]"));
+  PcConsole.print(F("Enter Mapper [0-22]: "));
+  while (PcConsole.available() == 0) {}
+  newmap = PcConsole.readStringUntil('\n');
+  PcConsole.println(newmap);
   a2600index = newmap.toInt() * 2;
   new2600mapper = pgm_read_byte(a2600mapsize + a2600index);
 #endif
@@ -745,7 +745,7 @@ void setCart_2600() {
   byte gameMapper;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("2600.txt");
 
   // Open database
   if (myFile.open("2600.txt", O_READ)) {

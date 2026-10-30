@@ -114,6 +114,78 @@ byte chipselect;
 boolean srambit5 = false;
 boolean srambit6 = false;
 boolean srambit7 = false;
+boolean msxRomNameSelected = false;
+
+#ifdef PC_MENU
+static bool pcMSXReadOption(char code, byte low, byte high, byte skip, byte* selected) {
+  if (!PcConsole.available() || PcConsole.peek() != code) return false;
+  PcConsole.read();
+  char encoded[3];
+  for (byte digit = 0; digit < 2; digit++) {
+    unsigned long deadline = millis() + 3000UL;
+    while (!PcConsole.available() && (long)(millis() - deadline) < 0) delay(1);
+    int value = PcConsole.read();
+    encoded[digit] = value < 0 ? '0' : (char)value;
+  }
+  encoded[2] = 0;
+  byte value = (byte)strtoul(encoded, NULL, 16);
+  if (value >= low && value <= high && value != skip) {
+    *selected = value;
+    return true;
+  }
+  PcLink::menuReady();
+  return false;
+}
+
+static void pcMSXMapperReady() {
+  PcConsole.print(F("[Control] msx-options\tX\tMSX Mapper"));
+  for (byte i = 0; i < msxmapcount; i++) {
+    byte mapper = pgm_read_byte(msxmapsize + i * 5);
+    PcConsole.print('\t');
+    PcConsole.print(i, HEX);
+    PcConsole.print('=');
+    PcConsole.print(mapper);
+    PcConsole.print(F("  "));
+    switch (mapper) {
+      case 0: PcConsole.print(F("NONE")); break;
+      case 1: PcConsole.print(F("ASCII8")); break;
+      case 2: PcConsole.print(F("ASCII16")); break;
+      case 3: PcConsole.print(F("CROSS BLAIM")); break;
+      case 4: PcConsole.print(F("GAME MASTER 2")); break;
+      case 5: PcConsole.print(F("HAL NOTE")); break;
+      case 6: PcConsole.print(F("HARRY FOX YUKI")); break;
+      case 7: PcConsole.print(F("KOEI")); break;
+      case 8: PcConsole.print(F("KONAMI")); break;
+      case 9: PcConsole.print(F("KONAMI SCC")); break;
+      case 10: PcConsole.print(F("MSX-DOS2")); break;
+      case 11: PcConsole.print(F("PAC/FM-PAC")); break;
+      case 12: PcConsole.print(F("R-TYPE")); break;
+      case 13: PcConsole.print(F("SUPER LODE RUNNER")); break;
+      case 14: PcConsole.print(F("HUDSON SOFT BEE PACK")); break;
+    }
+  }
+  PcConsole.println();
+  PcLink::menuReady();
+}
+
+static void pcMSXSizeReady(char code, const __FlashStringHelper* title,
+                           byte low, byte high, bool endpointsOnly, bool ramValues) {
+  PcConsole.print(F("[Control] msx-options\t"));
+  PcConsole.print(code);
+  PcConsole.print('\t');
+  PcConsole.print(title);
+  for (byte i = low; i <= high; i++) {
+    if (endpointsOnly && i != low && i != high) continue;
+    PcConsole.print('\t');
+    PcConsole.print(i, HEX);
+    PcConsole.print('=');
+    PcConsole.print(ramValues ? MSXRAM[i] : MSX[i]);
+    PcConsole.print(F(" KB"));
+  }
+  PcConsole.println();
+  PcLink::menuReady();
+}
+#endif
 
 // EEPROM MAPPING
 // 07 MAPPER
@@ -217,7 +289,7 @@ void setup_MSX() {
   PORTJ |= (1 << 0);  // TIME(PJ0)
 
   checkStatus_MSX();
-  strcpy(romName, "MSX");
+  if (!msxRomNameSelected) strcpy(romName, "MSX");
 
   mode = CORE_MSX;
 }
@@ -844,8 +916,17 @@ void printMapperSelection_MSX(int index) {
 void setMapper_MSX() {
   byte newmsxmapper;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  navigateMenu(0, msxmapcount - 1, &printMapperSelection_MSX);
-  newmsxmapper = msxmapselect;
+#ifdef PC_MENU
+  pcCustomControlActive = true;
+  pcDirectMenuCode = 'X';
+  pcMSXMapperReady();
+#endif
+  int selectedIndex = navigateMenu(0, msxmapcount - 1, &printMapperSelection_MSX);
+  newmsxmapper = pgm_read_byte(msxmapsize + selectedIndex * 5);
+#ifdef PC_MENU
+  pcDirectMenuCode = 0;
+  pcCustomControlActive = false;
+#endif
 
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
@@ -858,10 +939,10 @@ setmapper:
   String newmap;
   msxmapfound = false;
   printMapper(0);
-  Serial.print(F("Enter Mapper [0-14]: "));
-  while (Serial.available() == 0) {}
-  newmap = Serial.readStringUntil('\n');
-  Serial.println(newmap);
+  PcConsole.print(F("Enter Mapper [0-14]: "));
+  while (PcConsole.available() == 0) {}
+  newmap = PcConsole.readStringUntil('\n');
+  PcConsole.println(newmap);
   newmsxmapper = newmap.toInt();
   for (int i = 0; i < msxmapcount; i++) {
     msxindex = i * 5;
@@ -870,14 +951,16 @@ setmapper:
       msxmapfound = true;
   }
   if (msxmapfound == false) {
-    Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(FS(FSTRING_EMPTY));
+    PcConsole.println(F("MAPPER NOT SUPPORTED!"));
+    PcConsole.println(FS(FSTRING_EMPTY));
     newmsxmapper = 0;
     goto setmapper;
   }
 #endif
   EEPROM_writeAnything(7, newmsxmapper);
   msxmapper = newmsxmapper;
+  msxRomNameSelected = false;
+  strcpy(romName, "MSX");
 }
 
 void checkMapperSize_MSX() {
@@ -917,9 +1000,26 @@ void setROMSize_MSX() {
     int i = msxlo;
 
     printRomSize_MSX(i);
+#ifdef PC_MENU
+    pcCustomControlActive = true;
+    pcMSXSizeReady('Y', F("MSX ROMサイズ"), msxlo, msxhi,
+                   msxmapper == 11, false);
+#endif
     printInstructions();
 
     while (1) {
+#ifdef PC_MENU
+      byte directSelection;
+      byte skip = msxmapper == 11 ? 1 : 255;
+      if (pcMSXReadOption('Y', msxlo, msxhi, skip, &directSelection)) {
+        // PAC/FM-PAC only permits the two endpoints (0K and 64K).
+        if (msxmapper != 11 || directSelection == msxlo || directSelection == msxhi) {
+          newmsxsize = directSelection;
+          break;
+        }
+        PcLink::menuReady();
+      }
+#endif
       b = checkButton();
       if (b == 2) {             // Previous (doubleclick)
         if (msxmapper == 11) {  // PAC/FM-PAC 0K/64K
@@ -932,11 +1032,10 @@ void setROMSize_MSX() {
             i = msxhi;
           else
             i--;
-
-          // Only update display after input because of slow LCD library
-          printRomSize_MSX(i);
-          printInstructions();
         }
+        // Update and re-arm PC input after either normal or special stepping.
+        printRomSize_MSX(i);
+        printInstructions();
       }
       if (b == 1) {             // Next (press)
         if (msxmapper == 11) {  // PAC/FM-PAC 0K/64K
@@ -949,17 +1048,18 @@ void setROMSize_MSX() {
             i = msxlo;
           else
             i++;
-
-          // Only update display after input because of slow LCD library
-          printRomSize_MSX(i);
-          printInstructions();
         }
+        printRomSize_MSX(i);
+        printInstructions();
       }
       if (b == 3) {  // Long Press - Execute (hold)
         newmsxsize = i;
         break;
       }
     }
+#ifdef PC_MENU
+    pcCustomControlActive = false;
+#endif
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -977,39 +1077,39 @@ void setROMSize_MSX() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (msxhi - msxlo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
       if (msxmapper == 12)  // R-Type
-        Serial.print(F("384"));
+        PcConsole.print(F("384"));
       else
-        Serial.print(MSX[i + msxlo]);
-      Serial.println(F("K"));
+        PcConsole.print(MSX[i + msxlo]);
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newmsxsize = sizeROM.toInt() + msxlo;
     if (msxmapper == 11) {  // PAC/FM-PAC 0K/64K
-      if ((newmsxromsize > 0) && (newmsxromsize < 4)) {
-        Serial.println(F("SIZE NOT SUPPORTED"));
-        Serial.println(FS(FSTRING_EMPTY));
+      if ((newmsxsize > 0) && (newmsxsize < 4)) {
+        PcConsole.println(F("SIZE NOT SUPPORTED"));
+        PcConsole.println(FS(FSTRING_EMPTY));
         goto setrom;
       }
     }
     if (newmsxsize > msxhi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
+  PcConsole.print(F("ROM Size = "));
   if (msxmapper == 12)  // R-Type
-    Serial.print(F("384"));
+    PcConsole.print(F("384"));
   else
-    Serial.print(MSX[newmsxsize]);
-  Serial.println(F("K"));
+    PcConsole.print(MSX[newmsxsize]);
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(8, newmsxsize);
   msxsize = newmsxsize;
@@ -1038,9 +1138,22 @@ void setRAMSize_MSX() {
     int i = msxramlo;
 
     printRamSize_MSX(i);
+#ifdef PC_MENU
+    pcCustomControlActive = true;
+    pcMSXSizeReady('Z', F("MSX RAMサイズ"), msxramlo, msxramhi,
+                   msxmapper == 7, true);
+#endif
     printInstructions();
 
     while (1) {
+#ifdef PC_MENU
+      byte directSelection;
+      byte skip = msxmapper == 7 ? 3 : 255;
+      if (pcMSXReadOption('Z', msxramlo, msxramhi, skip, &directSelection)) {
+        newmsxramsize = directSelection;
+        break;
+      }
+#endif
       b = checkButton();
       if (b == 2) {            // Previous (doubleclick)
         if (msxmapper == 7) {  // Koei 8K/32K
@@ -1053,11 +1166,9 @@ void setRAMSize_MSX() {
             i = msxramhi;
           else
             i--;
-
-          // Only update display after input because of slow LCD library
-          printRamSize_MSX(i);
-          printInstructions();
         }
+        printRamSize_MSX(i);
+        printInstructions();
       }
       if (b == 1) {            // Next (press)
         if (msxmapper == 7) {  // Koei 8K/32K
@@ -1070,17 +1181,18 @@ void setRAMSize_MSX() {
             i = msxramlo;
           else
             i++;
-
-          // Only update display after input because of slow LCD library
-          printRamSize_MSX(i);
-          printInstructions();
         }
+        printRamSize_MSX(i);
+        printInstructions();
       }
       if (b == 3) {  // Long Press - Execute (hold)
         newmsxramsize = i;
         break;
       }
     }
+#ifdef PC_MENU
+    pcCustomControlActive = false;
+#endif
     display.setCursor(0, 56);  // Display selection at bottom
   }
   print_Msg(F("RAM SIZE "));
@@ -1095,33 +1207,33 @@ void setRAMSize_MSX() {
 setram:
     String sizeRAM;
     for (int i = 0; i < (msxramhi - msxramlo + 1); i++) {
-      Serial.print(F("Select RAM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(MSXRAM[i + msxramlo]);
-      Serial.println(F("K"));
+      PcConsole.print(F("Select RAM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(MSXRAM[i + msxramlo]);
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter RAM Size: "));
-    while (Serial.available() == 0) {}
-    sizeRAM = Serial.readStringUntil('\n');
-    Serial.println(sizeRAM);
+    PcConsole.print(F("Enter RAM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeRAM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeRAM);
     newmsxramsize = sizeRAM.toInt() + msxramlo;
     if (msxmapper == 7) {        // Koei 8K/32K
       if (newmsxramsize == 3) {  // 16K
-        Serial.println(F("SIZE NOT SUPPORTED"));
-        Serial.println(FS(FSTRING_EMPTY));
+        PcConsole.println(F("SIZE NOT SUPPORTED"));
+        PcConsole.println(FS(FSTRING_EMPTY));
         goto setram;
       }
     }
     if (newmsxramsize > msxramhi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setram;
     }
   }
-  Serial.print(F("RAM Size = "));
-  Serial.print(MSXRAM[newmsxramsize]);
-  Serial.println(F("K"));
+  PcConsole.print(F("RAM Size = "));
+  PcConsole.print(MSXRAM[newmsxramsize]);
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(10, newmsxramsize);
   msxramsize = newmsxramsize;
@@ -1167,18 +1279,18 @@ void checkStatus_MSX() {
   display_Update();
   wait();
 #else
-  Serial.print(F("CURRENT MAPPER:   "));
-  Serial.println(msxmapper);
-  Serial.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(F("CURRENT MAPPER:   "));
+  PcConsole.println(msxmapper);
+  PcConsole.print(F("CURRENT ROM SIZE: "));
   if (msxmapper == 12)  // R-Type
-    Serial.print(F("384"));
+    PcConsole.print(F("384"));
   else
-    Serial.print(MSX[msxsize]);
-  Serial.println(F("K"));
-  Serial.print(F("CURRENT RAM SIZE: "));
-  Serial.print(MSXRAM[msxramsize]);
-  Serial.println(F("K"));
-  Serial.println(FS(FSTRING_EMPTY));
+    PcConsole.print(MSX[msxsize]);
+  PcConsole.println(F("K"));
+  PcConsole.print(F("CURRENT RAM SIZE: "));
+  PcConsole.print(MSXRAM[msxramsize]);
+  PcConsole.println(F("K"));
+  PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 
@@ -1232,21 +1344,21 @@ void printMapper(byte msxmaplabel) {
       break;
   }
 #else
-  Serial.println(F("0 = NONE"));
-  Serial.println(F("1 = ASCII8"));
-  Serial.println(F("2 = ASCII16"));
-  Serial.println(F("3 = CROSS BLAIM"));
-  Serial.println(F("4 = GAME MASTER 2"));
-  Serial.println(F("5 = HAL NOTE"));
-  Serial.println(F("6 = HARRY FOX YUKI"));
-  Serial.println(F("7 = KOEI"));
-  Serial.println(F("8 = KONAMI"));
-  Serial.println(F("9 = KONAMI SCC"));
-  Serial.println(F("10 = MSX-DOS2"));
-  Serial.println(F("11 = PAC/FM-PAC"));
-  Serial.println(F("12 = R-TYPE"));
-  Serial.println(F("13 = SUPER LODE RUNNER"));
-  Serial.println(F("14 = HUDSON SOFT BEE PACK"));
+  PcConsole.println(F("0 = NONE"));
+  PcConsole.println(F("1 = ASCII8"));
+  PcConsole.println(F("2 = ASCII16"));
+  PcConsole.println(F("3 = CROSS BLAIM"));
+  PcConsole.println(F("4 = GAME MASTER 2"));
+  PcConsole.println(F("5 = HAL NOTE"));
+  PcConsole.println(F("6 = HARRY FOX YUKI"));
+  PcConsole.println(F("7 = KOEI"));
+  PcConsole.println(F("8 = KONAMI"));
+  PcConsole.println(F("9 = KONAMI SCC"));
+  PcConsole.println(F("10 = MSX-DOS2"));
+  PcConsole.println(F("11 = PAC/FM-PAC"));
+  PcConsole.println(F("12 = R-TYPE"));
+  PcConsole.println(F("13 = SUPER LODE RUNNER"));
+  PcConsole.println(F("14 = HUDSON SOFT BEE PACK"));
 #endif
 }
 
@@ -1258,6 +1370,23 @@ struct database_entry_MSX {
   byte gameSize;
   byte ramSize;
 };
+
+void setRomName_MSX(const char* input) {
+#ifdef PC_MENU
+  PcConsole.print(F("[MSX Title]\t"));
+  PcConsole.println(input);
+#endif
+  byte out = 0;
+  for (byte in = 0; input[in] && out < sizeof(romName) - 1; in++) {
+    char c = input[in];
+    if (c == '/' || c == '\\' || c == ':' || c == '*' || c == '?' ||
+        c == '"' || c == '<' || c == '>' || c == '|') c = '_';
+    romName[out++] = c;
+  }
+  while (out && romName[out - 1] == ' ') out--;
+  romName[out] = 0;
+  msxRomNameSelected = out != 0;
+}
 
 void readDataLine_MSX(FsFile& database, void* entry) {
   database_entry_MSX* castEntry = (database_entry_MSX*)entry;
@@ -1287,13 +1416,13 @@ void setCart_MSX() {
   struct database_entry_MSX entry;
 
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("msxcart.txt");
 
   // Open database
   if (myFile.open("msxcart.txt", O_READ)) {
     seek_first_letter_in_database(myFile, myLetter);
 
-    if (checkCartSelection(myFile, &readDataLine_MSX, &entry)) {
+    if (checkCartSelection(myFile, &readDataLine_MSX, &entry, NULL, &setRomName_MSX)) {
       EEPROM_writeAnything(7, entry.gameMapper);
       EEPROM_writeAnything(8, entry.gameSize);
       EEPROM_writeAnything(10, entry.ramSize);

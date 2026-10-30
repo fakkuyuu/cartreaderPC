@@ -320,8 +320,8 @@ void getCartInfo_VB() {
   dataIn_VB();
 
   for (unsigned long address = 0x10000; address <= 0x400000; address *= 2) {
-    // Get Serial
-    word vbSerial = readWord_VB((address - 0x204) / 2);  // Cart Serial
+    // Get PcConsole
+    word vbSerial = readWord_VB((address - 0x204) / 2);  // Cart PcConsole
 
     // Get Rom/Sram sizes for known serials
     switch (vbSerial) {

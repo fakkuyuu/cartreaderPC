@@ -319,26 +319,26 @@ void setROMSize_TRS80()
 setrom:
     String sizeROM;
     for (int i = 0; i < (trs80hi - trs80lo + 1); i++) {
-      Serial.print(F("Select ROM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(TRS80[i + trs80lo]);
-      Serial.println(F("KB"));
+      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(TRS80[i + trs80lo]);
+      PcConsole.println(F("KB"));
     }
-    Serial.print(F("Enter ROM Size: "));
-    while (Serial.available() == 0) {}
-    sizeROM = Serial.readStringUntil('\n');
-    Serial.println(sizeROM);
+    PcConsole.print(F("Enter ROM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeROM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeROM);
     newtrs80size = sizeROM.toInt() + trs80lo;
     if (newtrs80size > trs80hi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  Serial.print(F("ROM Size = "));
-  Serial.print(TRS80[newtrs80size]);
-  Serial.println(F("KB"));
+  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(TRS80[newtrs80size]);
+  PcConsole.println(F("KB"));
 #endif
   EEPROM_writeAnything(8, newtrs80size);
   trs80size = newtrs80size;
@@ -363,10 +363,10 @@ void checkStatus_TRS80()
   display_Update();
   wait();
 #else
-  Serial.print(FS(FSTRING_ROM_SIZE));
-  Serial.print(TRS80[trs80size];
-               Serial.println(F("KB"));
-               Serial.println(FS(FSTRING_EMPTY));
+  PcConsole.print(FS(FSTRING_ROM_SIZE));
+  PcConsole.print(TRS80[trs80size]);
+               PcConsole.println(F("KB"));
+               PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
 

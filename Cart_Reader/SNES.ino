@@ -315,6 +315,7 @@ void reproMenu() {
 
 // SNES start menu
 void snsMenu() {
+  PcConsole.println(F("[Menu] SNES menu started"));
   // create menu with title and 7 options to choose from
   unsigned char snsCart;
   // Copy menuOptions out of progmem
@@ -406,10 +407,10 @@ void snesMenu() {
           sd.chdir("/");
           // start reading from cart
           readROM_SNES();
-          // Internal Checksum
-          compare_checksum();
-          // CRC32
-          compareCRC("snes.txt", 0, 1, 0);
+          if (!PcLink::usingPcStorage()) {
+            compare_checksum();
+            compareCRC("snes.txt", 0, 1, 0);
+          }
 #ifdef ENABLE_GLOBAL_LOG
           save_log();
 #endif
@@ -795,8 +796,6 @@ byte readBank_SNES(byte myBank, word myAddress) {
 }
 
 void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
-  byte buffer[1024] = { 0 };
-
   uint16_t c = 0;
   uint16_t currByte = 32768;
 
@@ -814,7 +813,7 @@ void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
     currByte = 32768;
     while (1) {
       c = 0;
-      while (c < 1024) {
+      while (c < 512) {
         PORTF = (currByte & 0xFF);
         PORTK = ((currByte >> 8) & 0xFF);
 
@@ -829,11 +828,12 @@ void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
         NOP;
         NOP;
 
-        buffer[c] = PINC;
+        sdBuffer[c] = PINC;
         c++;
         currByte++;
       }
-      file->write(buffer, 1024);
+      file->write(sdBuffer, 512);
+      blinkLED();
 
       // exit while(1) loop once the uint16_t currByte overflows from 0xffff to 0 (current bank is done)
       if (currByte == 0) break;
@@ -846,8 +846,6 @@ void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
 }
 
 void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
-  byte buffer[1024] = { 0 };
-
   uint16_t c = 0;
   uint16_t currByte = 0;
 
@@ -865,7 +863,7 @@ void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
     currByte = 0;
     while (1) {
       c = 0;
-      while (c < 1024) {
+      while (c < 512) {
         PORTF = (currByte & 0xFF);
         PORTK = ((currByte >> 8) & 0xFF);
 
@@ -880,11 +878,12 @@ void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
         NOP;
         NOP;
 
-        buffer[c] = PINC;
+        sdBuffer[c] = PINC;
         c++;
         currByte++;
       }
-      file->write(buffer, 1024);
+      file->write(sdBuffer, 512);
+      blinkLED();
 
       // exit while(1) loop once the uint16_t currByte overflows from 0xffff to 0 (current bank is done)
       if (currByte == 0) break;
@@ -1061,6 +1060,11 @@ void checkAltConf(char crcStr[9]) {
     println_Msg(checksumStr);
     display_Update();
 
+    if (myFile.isPc()) {
+      char pcQuery[14];
+      snprintf(pcQuery, sizeof(pcQuery), "%s,%s", checksumStr, crcStr);
+      myFile.findRecord(255, pcQuery);
+    }
     while (myFile.available()) {
       // Skip first line with name
       skip_line(&myFile);

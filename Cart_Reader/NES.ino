@@ -815,17 +815,19 @@ void getMapping() {
     setDefaultRomName();
     browseDatabase = selectMapping(database);
   } else {
+    char crcStrAlt[9];
     println_Msg(F("Searching database"));
     print_Msg(F("for "));
     sprintf(crcStr, "%08lX", oldcrc32);
     print_Msg(crcStr);
     if (oldcrc32 != oldcrc32MMC3) {
       print_Msg(F(" or "));
-      sprintf(crcStr, "%08lX", oldcrc32MMC3);
-      print_Msg(crcStr);
+      sprintf(crcStrAlt, "%08lX", oldcrc32MMC3);
+      print_Msg(crcStrAlt);
     }
     println_Msg(F("..."));
     display_Update();
+    if (database.isPc()) database.findRecord(1, crcStr, oldcrc32 != oldcrc32MMC3 ? crcStrAlt : nullptr);
     while (database.available()) {
       struct database_entry entry;
 
@@ -899,7 +901,7 @@ void readDataLine_NES(FsFile& database, void* e) {
 
 bool selectMapping(FsFile& database) {
   // Select starting letter
-  byte myLetter = starting_letter();
+  byte myLetter = starting_letter("nes.txt");
 
   if (myLetter == 27) {
     // Change Mapper
@@ -1362,6 +1364,21 @@ chooseMapper:
   uint8_t hundreds = newmapper / 100;
   uint8_t tens = newmapper / 10 - hundreds * 10;
   uint8_t units = newmapper - hundreds * 100 - tens * 10;
+  bool pcMapperDirect = false;
+
+#ifdef PC_MENU
+  if (PcLink::connected()) {
+    pcCustomControlActive = true;
+    PcConsole.print(F("[Control] nes-mapper\t"));
+    PcConsole.print(newmapper);
+    for (uint8_t i = 0; i < mapcount; i++) {
+      PcConsole.print('\t');
+      PcConsole.print(pgm_read_word(mapsize + i));
+    }
+    PcConsole.println();
+    PcLink::menuReady();
+  }
+#endif
 
   // Cycle through all 3 digits
   uint8_t digit = 0;
@@ -1404,7 +1421,29 @@ chooseMapper:
     }
     display.updateDisplay();
 
+    // The mapper digit editor is driven by the same four events as the HW3
+    // button, but it is not a numbered question box.  Advertise readiness on
+    // every digit redraw so the persistent PC button controls stay usable.
+    pcPhysicalControlsReady();
+
     while (1) {
+#ifdef PC_MENU
+      if (PcConsole.available() && PcConsole.peek() == 'M') {
+        PcConsole.read();
+        char encoded[4];
+        for (uint8_t i = 0; i < 3; i++) {
+          unsigned long deadline = millis() + 3000UL;
+          while (!PcConsole.available() && (long)(millis() - deadline) < 0) delay(1);
+          int value = PcConsole.read();
+          encoded[i] = value < 0 ? '0' : (char)value;
+        }
+        encoded[3] = 0;
+        newmapper = (uint16_t)atoi(encoded);
+        pcMapperDirect = true;
+        digit = 3;
+        break;
+      }
+#endif
       /* Check Button
          1 click
          2 doubleClick
@@ -1470,7 +1509,8 @@ chooseMapper:
   }
   display_Clear();
 
-  newmapper = hundreds * 100 + tens * 10 + units;
+  if (!pcMapperDirect)
+    newmapper = hundreds * 100 + tens * 10 + units;
 
   // Check if valid
   bool validMapper = 0;
@@ -1487,6 +1527,10 @@ chooseMapper:
     goto chooseMapper;
   }
 
+#ifdef PC_MENU
+  pcCustomControlActive = false;
+#endif
+
   // LCD
 #elif defined(ENABLE_LCD)
   navigateMenu(0, mapcount - 1, &printMapperSelection_NES);
@@ -1499,29 +1543,29 @@ chooseMapper:
   display_Update();
   delay(500);
 
-  // Serial Monitor
+  // PcConsole Monitor
 #elif defined(ENABLE_SERIAL)
 setmapper:
   String newmap;
   bool mapfound = false;
-  Serial.println(F("SUPPORTED MAPPERS:"));
+  PcConsole.println(F("SUPPORTED MAPPERS:"));
   for (int i = 0; i < mapcount; i++) {
     mapselect = pgm_read_word(mapsize + i);
-    Serial.print("[");
-    Serial.print(mapselect);
-    Serial.print("]");
+    PcConsole.print("[");
+    PcConsole.print(mapselect);
+    PcConsole.print("]");
     if (i < mapcount - 1) {
       if ((i != 0) && ((i + 1) % 10 == 0))
-        Serial.println(FS(FSTRING_EMPTY));
+        PcConsole.println(FS(FSTRING_EMPTY));
       else
-        Serial.print(F("\t"));
+        PcConsole.print(F("\t"));
     } else
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(FS(FSTRING_EMPTY));
   }
-  Serial.print(F("Enter Mapper: "));
-  while (Serial.available() == 0) {}
-  newmap = Serial.readStringUntil('\n');
-  Serial.println(newmap);
+  PcConsole.print(F("Enter Mapper: "));
+  while (PcConsole.available() == 0) {}
+  newmap = PcConsole.readStringUntil('\n');
+  PcConsole.println(newmap);
   newmapper = newmap.toInt();
   for (uint8_t i = 0; i < mapcount; i++) {
     mapselect = pgm_read_word(mapsize + i);
@@ -1529,8 +1573,8 @@ setmapper:
       mapfound = true;
   }
   if (mapfound == false) {
-    Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(FS(FSTRING_EMPTY));
+    PcConsole.println(F("MAPPER NOT SUPPORTED!"));
+    PcConsole.println(FS(FSTRING_EMPTY));
     newmapper = 0;
     goto setmapper;
   }
@@ -1583,7 +1627,27 @@ void setPRGSize() {
   if (prglo == prghi)
     newprgsize = prglo;
   else {
+#ifdef PC_MENU
+    if (PcLink::connected()) {
+      pcCustomControlActive = true;
+      pcDirectMenuCode = 'P';
+      PcConsole.print(F("[Control] nes-options\tP\tPRG ROMサイズ"));
+      for (uint8_t i = prglo; i <= prghi; i++) {
+        PcConsole.print('\t');
+        PcConsole.print(i);
+        PcConsole.print('=');
+        PcConsole.print(pgm_read_word(&(PRG[i])));
+        PcConsole.print(F(" KB"));
+      }
+      PcConsole.println();
+      PcLink::menuReady();
+    }
+#endif
     newprgsize = navigateMenu(prglo, prghi, &printPrgSize_NES);
+#ifdef PC_MENU
+    pcDirectMenuCode = 0;
+    pcCustomControlActive = false;
+#endif
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
@@ -1600,26 +1664,26 @@ void setPRGSize() {
 setprg:
     String sizePRG;
     for (int i = 0; i < (prghi - prglo + 1); i++) {
-      Serial.print(F("Select PRG Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(pgm_read_word(&(PRG[i + prglo])));
-      Serial.println(F("K"));
+      PcConsole.print(F("Select PRG Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(pgm_read_word(&(PRG[i + prglo])));
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter PRG Size: "));
-    while (Serial.available() == 0) {}
-    sizePRG = Serial.readStringUntil('\n');
-    Serial.println(sizePRG);
+    PcConsole.print(F("Enter PRG Size: "));
+    while (PcConsole.available() == 0) {}
+    sizePRG = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizePRG);
     newprgsize = sizePRG.toInt() + prglo;
     if (newprgsize > prghi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setprg;
     }
   }
-  Serial.print(F("PRG Size = "));
-  Serial.print(pgm_read_word(&(PRG[newprgsize])));
-  Serial.println(F("K"));
+  PcConsole.print(F("PRG Size = "));
+  PcConsole.print(pgm_read_word(&(PRG[newprgsize])));
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(9, newprgsize);
   prgsize = newprgsize;
@@ -1651,7 +1715,27 @@ void setCHRSize() {
   if (chrlo == chrhi)
     newchrsize = chrlo;
   else {
+#ifdef PC_MENU
+    if (PcLink::connected()) {
+      pcCustomControlActive = true;
+      pcDirectMenuCode = 'C';
+      PcConsole.print(F("[Control] nes-options\tC\tCHR ROMサイズ"));
+      for (uint8_t i = chrlo; i <= chrhi; i++) {
+        PcConsole.print('\t');
+        PcConsole.print(i);
+        PcConsole.print('=');
+        PcConsole.print(pgm_read_word(&(CHR[i])));
+        PcConsole.print(F(" KB"));
+      }
+      PcConsole.println();
+      PcLink::menuReady();
+    }
+#endif
     newchrsize = navigateMenu(chrlo, chrhi, &printChrSize_NES);
+#ifdef PC_MENU
+    pcDirectMenuCode = 0;
+    pcCustomControlActive = false;
+#endif
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
@@ -1668,26 +1752,26 @@ void setCHRSize() {
 setchr:
     String sizeCHR;
     for (int i = 0; i < (chrhi - chrlo + 1); i++) {
-      Serial.print(F("Select CHR Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
-      Serial.print(pgm_read_word(&(CHR[i + chrlo])));
-      Serial.println(F("K"));
+      PcConsole.print(F("Select CHR Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
+      PcConsole.print(pgm_read_word(&(CHR[i + chrlo])));
+      PcConsole.println(F("K"));
     }
-    Serial.print(F("Enter CHR Size: "));
-    while (Serial.available() == 0) {}
-    sizeCHR = Serial.readStringUntil('\n');
-    Serial.println(sizeCHR);
+    PcConsole.print(F("Enter CHR Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeCHR = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeCHR);
     newchrsize = sizeCHR.toInt() + chrlo;
     if (newchrsize > chrhi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setchr;
     }
   }
-  Serial.print(F("CHR Size = "));
-  Serial.print(pgm_read_word(&(CHR[newchrsize])));
-  Serial.println(F("K"));
+  PcConsole.print(F("CHR Size = "));
+  PcConsole.print(pgm_read_word(&(CHR[newchrsize])));
+  PcConsole.println(F("K"));
 #endif
   EEPROM_writeAnything(10, newchrsize);
   chrsize = newchrsize;
@@ -1733,7 +1817,38 @@ void setRAMSize() {
   if (ramlo == ramhi)
     newramsize = ramlo;
   else {
+#ifdef PC_MENU
+    if (PcLink::connected()) {
+      pcCustomControlActive = true;
+      pcDirectMenuCode = 'R';
+      PcConsole.print(F("[Control] nes-options\tR\tRAM/Saveサイズ"));
+      for (uint8_t i = 0; i <= ramhi; i++) {
+        PcConsole.print('\t');
+        PcConsole.print(i);
+        PcConsole.print('=');
+        if (mapper == 0)
+          PcConsole.print(i * 2);
+        else if (mapper == 16)
+          PcConsole.print(pgm_read_byte(&(RAM[i])) * 32);
+        else if (mapper == 159 || mapper == 80)
+          PcConsole.print(pgm_read_byte(&(RAM[i])) * 16);
+        else if (mapper == 19 && i == 2)
+          PcConsole.print(128);
+        else if (mapper == 82)
+          PcConsole.print(i * 5);
+        else
+          PcConsole.print(pgm_read_byte(&(RAM[i])));
+        PcConsole.print((mapper == 16 || mapper == 159 || mapper == 80 || (mapper == 19 && i == 2)) ? F(" B") : F(" KB"));
+      }
+      PcConsole.println();
+      PcLink::menuReady();
+    }
+#endif
     newramsize = navigateMenu(0, ramhi, &printRamSize_NES);
+#ifdef PC_MENU
+    pcDirectMenuCode = 0;
+    pcCustomControlActive = false;
+#endif
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
@@ -1778,75 +1893,75 @@ void setRAMSize() {
 setram:
     String sizeRAM;
     for (int i = 0; i < (ramhi - ramlo + 1); i++) {
-      Serial.print(F("Select RAM Size:  "));
-      Serial.print(i);
-      Serial.print(F(" = "));
+      PcConsole.print(F("Select RAM Size:  "));
+      PcConsole.print(i);
+      PcConsole.print(F(" = "));
       if (mapper == 0) {
-        Serial.print(pgm_read_byte(&(RAM[i])) / 4);
-        Serial.println(F("K"));
+        PcConsole.print(pgm_read_byte(&(RAM[i])) / 4);
+        PcConsole.println(F("K"));
       } else if ((mapper == 16) || (mapper == 159)) {
         if (mapper == 16)
-          Serial.print(pgm_read_byte(&(RAM[i + ramlo])) * 32);
+          PcConsole.print(pgm_read_byte(&(RAM[i + ramlo])) * 32);
         else
-          Serial.print(pgm_read_byte(&(RAM[i + ramlo])) * 16);
-        Serial.println(F("B"));
+          PcConsole.print(pgm_read_byte(&(RAM[i + ramlo])) * 16);
+        PcConsole.println(F("B"));
       } else if (mapper == 19) {
         if (i == 2)
-          Serial.println(F("128B"));
+          PcConsole.println(F("128B"));
         else {
-          Serial.print(pgm_read_byte(&(RAM[i + ramlo])));
-          Serial.println(F("K"));
+          PcConsole.print(pgm_read_byte(&(RAM[i + ramlo])));
+          PcConsole.println(F("K"));
         }
       } else {
-        Serial.print(pgm_read_byte(&(RAM[i + ramlo])));
-        Serial.println(F("K"));
+        PcConsole.print(pgm_read_byte(&(RAM[i + ramlo])));
+        PcConsole.println(F("K"));
       }
     }
-    Serial.print(F("Enter RAM Size: "));
-    while (Serial.available() == 0) {}
-    sizeRAM = Serial.readStringUntil('\n');
-    Serial.println(sizeRAM);
+    PcConsole.print(F("Enter RAM Size: "));
+    while (PcConsole.available() == 0) {}
+    sizeRAM = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeRAM);
     newramsize = sizeRAM.toInt() + ramlo;
     if (newramsize > ramhi) {
-      Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(FSTRING_EMPTY));
       goto setram;
     }
   }
   if ((mapper == 16) || (mapper == 159)) {
     int sizeEEP = 0;
-    Serial.print(F("EEPROM Size = "));
+    PcConsole.print(F("EEPROM Size = "));
     if (mapper == 16)
       sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 32;
     else
       sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 16;
-    Serial.print(sizeEEP);
-    Serial.println(F("B"));
-    Serial.println(FS(FSTRING_EMPTY));
+    PcConsole.print(sizeEEP);
+    PcConsole.println(F("B"));
+    PcConsole.println(FS(FSTRING_EMPTY));
   } else if (mapper == 19) {
-    Serial.print(F("RAM Size =  "));
+    PcConsole.print(F("RAM Size =  "));
     if (newramsize == 2)
-      Serial.println(F("128B"));
+      PcConsole.println(F("128B"));
     else {
-      Serial.print(pgm_read_byte(&(RAM[newramsize])));
-      Serial.println(F("K"));
+      PcConsole.print(pgm_read_byte(&(RAM[newramsize])));
+      PcConsole.println(F("K"));
     }
-    Serial.println(FS(FSTRING_EMPTY));
+    PcConsole.println(FS(FSTRING_EMPTY));
   } else if (mapper == 80) {
-    Serial.print(F("RAM Size = "));
-    Serial.print(pgm_read_byte(&(RAM[newramsize])) * 16);
-    Serial.println(F("B"));
-    Serial.println(FS(FSTRING_EMPTY));
+    PcConsole.print(F("RAM Size = "));
+    PcConsole.print(pgm_read_byte(&(RAM[newramsize])) * 16);
+    PcConsole.println(F("B"));
+    PcConsole.println(FS(FSTRING_EMPTY));
   } else {
-    Serial.print(F("RAM Size = "));
+    PcConsole.print(F("RAM Size = "));
     if (mapper == 0)
-      Serial.print(newramsize * 2);
+      PcConsole.print(newramsize * 2);
     else if (mapper == 82)
-      Serial.print(newramsize * 5);
+      PcConsole.print(newramsize * 5);
     else
-      Serial.print(pgm_read_byte(&(RAM[newramsize])));
-    Serial.println(F("K"));
-    Serial.println(FS(FSTRING_EMPTY));
+      PcConsole.print(pgm_read_byte(&(RAM[newramsize])));
+    PcConsole.println(F("K"));
+    PcConsole.println(FS(FSTRING_EMPTY));
   }
 #endif
   EEPROM_writeAnything(11, newramsize);
@@ -3464,9 +3579,8 @@ void readCHR(bool readrom) {
         case 1:
         case 155:
           banks = int_pow(2, chrsize);
-          write_prg_byte(0x8000, 0x80);            // Clear Register
-          write_mmc1_byte(0x8000, 0x00);           // Mapper control
           for (size_t i = 0; i < banks; i += 2) {  // 8K/16K/32K/64K/128K (Bank #s are based on 4K Banks)
+            write_prg_byte(0x8000, 0x80);          // Clear Register
             write_mmc1_byte(0xA000, i);
             dumpBankCHR(0x0, 0x2000);
           }
@@ -5130,9 +5244,9 @@ void writeFLASH() {
         display.print(F("*"));
         display.updateDisplay();
 #else
-        Serial.print(F("*"));
+        PcConsole.print(F("*"));
         if ((i != 0) && ((i + 1) % 16 == 0))
-          Serial.println(FS(FSTRING_EMPTY));
+          PcConsole.println(FS(FSTRING_EMPTY));
 #endif
       }
       myFile.close();
