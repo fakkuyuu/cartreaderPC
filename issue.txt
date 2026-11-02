@@ -309,67 +309,65 @@ Purpose: Make the language choice understandable to users who cannot read Japane
 Completion: First launch uses English, and the "JAPANESE" option switches to Japanese.
 Version/commit: Not addressed. Only source search was performed; no code, EXE or firmware changes.
 
-#028 GB MBC1特殊バンク修正の取り込み・互換性検証とMBC1Mの扱い
-追加日時: 2026-11-01 21:41:54 JST
-最終更新日時: 2026-11-02 18:52:19 JST
-状態: VERIFY（GitHub masterに修正反映済み、反映後のビルド・実機再検証待ち） / P2 / bug, gb, mbc1, test, docs
-出所: ユーザーが別GPTチャットの修正・検証依頼を共有。以下は共有された報告であり、本チャットで独立確認した結果ではない。
-当初の対象: チャイニーズファイター、ボンバーマンクエストのMBC1吸出し失敗。
-対象範囲: 旧Sanni CartReaderのGB.ino（依頼文表記gb.ino）。新OSCRへの移植は別作業。
+#028 Integrate the GB MBC1 special-bank fix, verify compatibility and handle MBC1M
+Added: 2026-11-01 21:41:54 JST
+Last updated: 2026-11-02 18:52:19 JST
+Status: VERIFY (fix committed to GitHub master; post-change build and hardware re-verification pending at time of this status) / P2 / bug, gb, mbc1, test, docs
+Source: The user shared a fix/verification request from another GPT chat. The initial information below was reported by that chat, not independently established in this conversation.
+Original affected games: Chinese Fighter and Bomberman Quest failing MBC1 dumps.
+Initial scope: GB.ino from the old Sanni CartReader ("gb.ino" in the request); porting to the new OSCR is separate.
 
-共有された不具合説明:
-・一部の通常MBC1・1MB ROMで正規ダンプとCRC不一致。
-・従来の設定例は以下。下位5bit=0のバンクを上側窓から直接選ぶと別バンクへ置換されるとの説明。
+Shared explanation of the defect:
+- Some ordinary MBC1 1MB ROM dumps did not match reference CRCs.
+- The old register sequence was reportedly as follows; selecting a bank whose low five bits are zero directly in the upper ROM window maps it to another bank:
   writeByte_GB(0x6000, 0);
   writeByte_GB(0x4000, currBank >> 5);
   writeByte_GB(0x2000, currBank & 0x1F);
-・例: 0x20指定が0x21になる。実際の現行処理全体・適用条件は今後照合する。
+- Example: requesting bank 0x20 yields 0x21. Check the actual current code and applicability before generalizing.
 
-共有された成功修正の方針:
-・通常バンクはmode 0、0x4000–0x7FFFから読む。
-・特殊バンク0x20/0x40/0x60はmode 1へ切り替え、上位バンクを選択して0x0000–0x3FFFから読む。
-・ファイル内のバンク順を維持する。読めない領域をFFで埋めて不一致を隠す方法は採用しない。
-・通常MBC1とMBC1Mでは上位レジスタの対応が異なるとの説明（通常bit5–6、MBC1M bit4–5）。仕様と実コードを照合する。
+Shared successful fix approach:
+- Ordinary banks: mode 0, read from 0x4000-0x7FFF.
+- Special banks 0x20/0x40/0x60: switch to mode 1, choose the high bank and read from 0x0000-0x3FFF.
+- Preserve ROM bank order in the output. Do not conceal mismatches by filling unreadable regions with FF.
+- Ordinary MBC1 and MBC1M were said to map upper register bits differently (ordinary bits 5-6, MBC1M bits 4-5); compare this claim against the specification and code.
 
-共有された実機結果と未確認事項:
-・通常MBC1・1MB: 修正版で吸出し成功、CRC一致との報告。全MBC1の互換性確認ではない。
-・MBC1Mのボンバーマンコレクション: 同修正版で吸出し成功、正規ROMとのCRC一致もユーザー確認済み（追記: 2026-11-01 21:50:52 JST）。以前の「CRC一致は要確認」を訂正。MBC1M全タイトルの互換性確認ではない。
-・MBC1M専用マッピングを実装した修正ではないとの説明。吸出し成功の理由、実バンク順・内容は未調査。
-・桃太郎コレクションは検証候補。動作確認済みにはしない。
-・各結果の具体的なCRC/SHA・元コード/修正版全文・使用版は未提供。変更差分と既存MBC1M分岐の抜粋は後から共有済み（下記）。初期対象2本それぞれの結果との対応も明記されていない。
-・レトロフリークで吸えないという確実な情報はなく、CartReaderの挙動と混同しない。
+Shared hardware results and unknowns:
+- Ordinary MBC1 1MB: The revised build reportedly dumped successfully with matching CRC; not proof of compatibility with every MBC1.
+- MBC1M Bomberman Collection: Revised build reportedly dumped successfully and the user confirmed CRC equality with the reference ROM (added 2026-11-01 21:50:52 JST). This corrects an earlier note saying CRC verification was pending. It does not prove compatibility across all MBC1M titles.
+- Reportedly this was not a new dedicated MBC1M mapping implementation. The reason for success and actual bank ordering/content remain uninvestigated.
+- Momotaro Collection is a possible test title; do not mark it verified.
+- Specific CRC/SHA values, original/full modified files and exact build versions were not supplied. Snippets of the changed code and existing MBC1M branch were subsequently shared (below). There is no documented result mapping for each of the two initially affected titles.
+- No definite evidence that Retro Freak cannot dump these cartridges; do not conflate its behavior with CartReader.
 
-実装開始後に行う作業（現時点では着手しない）:
-1. 元と修正版の実ファイルを比較して全差分を確認。今回成功した修正を維持する。
-2. MBC1のバンク設定、読出し窓、ROM出力順・書込み処理を追跡。
-3. 512KB以下の通常MBC1で既存動作を維持し、1MB以上で特殊バンクを確認。
-4. 0x00/0x01/0x1F/0x20/0x21/0x3F/0x40/0x60を境界例として読出し方法を報告。
-5. MBC1Mの実配線・バンク順と修正版動作を比較し、ボンバーマンコレクション成功の理由を調べる。
-6. MBC1M専用処理は必要と確認できた場合のみ追加。ヘッダで確実に識別できない場合は正常ROMを壊さない選択方法を検討。
-7. MBC2/MBC3/MBC5等は変更しない。不要なリファクタリングはしない。
-8. コンパイルと境界条件を確認し、ソフト検証と実機確認を区別する。
-成果物: 修正済みGB.ino、変更関数・各MBC1への影響・境界バンクの方法・MBC1M対応範囲・ビルド結果・追加実機試験タイトルの簡潔な報告。
-完了条件: 既存の成功実績を維持し、通常MBC1およびMBC1Mの対応範囲を証拠付きで明記する。未試験を成功としない。
-対応版/コミット: 未対応。共有内容をissueへ記録したのみ。ソース取得・調査・実装・コンパイル・書き込みは未着手。
-参考:
-  旧: https://github.com/sanni/cartreader
-  新（今回の移植対象外）: https://github.com/oscartreader/oscr-firmware
-  仕様: https://gbdev.io/pandocs/MBC1.html
+Work originally proposed after approval (historical plan; do not treat as current pending authorization):
+1. Compare actual source files and full diff; preserve the already successful fix.
+2. Trace MBC1 bank register settings, reading windows, ROM output order and write operations.
+3. Preserve ordinary MBC1 at <=512KB; inspect special banks on >=1MB titles.
+4. Report read behavior at boundary banks 0x00/0x01/0x1F/0x20/0x21/0x3F/0x40/0x60.
+5. Compare MBC1M wiring/bank order and modified behavior; investigate Bomberman Collection success.
+6. Add a dedicated MBC1M path only if necessary; when headers cannot reliably identify it, choose an approach that does not break valid ROMs.
+7. Do not alter MBC2/MBC3/MBC5 or perform unrelated refactoring.
+8. Check compilation and boundary cases, distinguishing software verification from hardware results.
+Deliverable: Corrected GB.ino plus concise account of affected functions, implications for MBC1 variants, boundary-bank method, MBC1M support, build results and hardware test candidates.
+Completion: Preserve proven successes and document evidence-backed coverage for ordinary MBC1 and MBC1M; never label untested configurations as passing.
+Version/commit at initial issue registration: Not addressed. Only the shared report had been recorded; source acquisition, investigation, implementation, compilation and flashing had not started.
+References:
+  Old project: https://github.com/sanni/cartreader
+  New project (not this port's target): https://github.com/oscartreader/oscr-firmware
+  Specification: https://gbdev.io/pandocs/MBC1.html
 
-追記・以前の説明の訂正（2026-11-01 21:58:29 JST）:
-・別GPTが元/修正版を比較したとの報告: gb.inoの1269行付近、通常MBC1のバンク設定1か所のみ変更。
-・「元コードにMBC1M専用処理がない」という以前の説明は誤りと訂正された。
-  元/修正版の両方にromType == 0x101 || romType == 0x103のMBC1M分岐があり、今回は変更なしとの報告。
-・したがってMBC1M未実装と決めつけて新規追加しない。まず現行ソースとの照合、romType判定と既存分岐の到達を確認する。
-・ボンバーマンコレクションがこの分岐で処理された場合、今回の通常MBC1修正はその読出しへ影響しない。
-  CRC一致の実績は維持し、実際の認識経路は未確認と区別する。
-・以下は共有された抜粋。全ファイルは未受領。本チャットで差分が1か所のみと独立検証したわけではない。
+Addendum/correction of earlier explanation (2026-11-01 21:58:29 JST):
+- Another GPT reportedly compared original and patched gb.ino, finding only one ordinary-MBC1 bank-selection change near line 1269.
+- The earlier claim that original code lacked MBC1M-specific handling was corrected: both original and patched versions reportedly contain an unchanged branch for romType == 0x101 || romType == 0x103.
+- Do not assume MBC1M is unimplemented and add a duplicate. First check the actual source, romType recognition and reachability of the existing branch.
+- If Bomberman Collection follows that branch, this ordinary-MBC1 fix does not affect its read path. Retain the reported CRC match while treating the recognition path as unverified.
+- The following are supplied excerpts, not full source. This chat did not independently verify that there was only one change.
 
-共有差分の修正前（通常MBC1のelse内）:
+Shared pre-fix diff excerpt (ordinary MBC1 else):
   writeByte_GB(0x6000, 0);
   writeByte_GB(0x4000, currBank >> 5);
   writeByte_GB(0x2000, currBank & 0x1F);
-共有差分の修正後（通常MBC1のelse内）:
+Shared post-fix excerpt (ordinary MBC1 else):
   if (currBank == 0x20 || currBank == 0x40 || currBank == 0x60) {
     writeByte_GB(0x6000, 1);
     writeByte_GB(0x4000, (currBank >> 5) & 0x03);
@@ -383,7 +381,7 @@ Version/commit: Not addressed. Only source search was performed; no code, EXE or
     romAddress = (currBank == 1) ? 0x0000 : 0x4000;
     endAddress = 0x7FFF;
   }
-共有された既存MBC1M処理（今回変更なし）:
+Shared existing MBC1M handling (unchanged by the fix):
   else if (romType == 0x101 || romType == 0x103) {
     if (currBank < 10) {
       writeByte_GB(0x4000, currBank >> 4);
@@ -393,28 +391,28 @@ Version/commit: Not addressed. Only source search was performed; no code, EXE or
       writeByte_GB(0x2000, 0x10 | (currBank & 0x1f));
     }
   }
-今後の照合点: currBank==1で0x0000–0x7FFFを読む既存ループの構造、特殊バンク後の窓復元、endAddressの終端条件、MBC1M判定。
-  抜粋中のcurrBank < 10はそのまま記録。数値や処理を推測で書き換えない。
-方針: 成功修正を維持し、通常バンク・既存MBC1M・他MBCは必要性が確認されるまで変更しない。
-実施状況: issueへの追記のみ。実装開始指示待ち。
+Future comparison points: The existing currBank==1 loop reading 0x0000-0x7FFF, restoration of the ordinary window after special banks, endAddress termination semantics and MBC1M detection.
+Preserve currBank < 10 exactly as shared; do not guess alternative values or behavior.
+Policy: Preserve the successful fix, and do not change ordinary banks, existing MBC1M or other MBC types without demonstrated need.
+Status at this historical addendum: Issue update only; awaiting implementation authorization.
 
-実装記録（2026-11-02、ChatGPT GPT-6によるGitHub直接修正）:
-・担当: 本チャットのChatGPT（GPT-6）。ユーザーの明示指示によりGitHubプラグイン経由でmasterを直接修正。
-・対象: fakkuyuu/cartreaderPC の Cart_Reader/GB.ino、readROM_GB()内の通常MBC1分岐（1269行付近）のみ。
-・修正: currBankが0x20/0x40/0x60の場合はmode 1を設定し、上位バンクを選んで0x0000–0x3FFFを読み出す。それ以外はmode 0とし、従来のバンク読出し窓へ復帰する。
-・既存のMBC1M判定（BOMCOL/MOMOCOL等）とromType==0x101/0x103専用分岐は元から存在することをソースで確認。今回のコミットでは変更なし。その他のMBC分岐も変更なし。
-・修正コミット: f85877af147c9528fe8d899baee3894a0b879bf1
+Implementation record (2026-11-02; direct GitHub edit by ChatGPT GPT-6):
+- Owner: ChatGPT (GPT-6) in this conversation, following the user's explicit instruction, edited master via the GitHub connector.
+- Scope: Cart_Reader/GB.ino in fakkuyuu/cartreaderPC, only the ordinary MBC1 branch of readROM_GB() near line 1269.
+- Fix: For currBank 0x20/0x40/0x60, set mode 1, select the high bank and read 0x0000-0x3FFF. For all other banks, use mode 0 and return to the original reading window.
+- Source confirmed existing MBC1M detection (BOMCOL/MOMOCOL, etc.) and the dedicated romType==0x101/0x103 branch, unchanged in this commit. Other MBC paths also unchanged.
+- Commit: f85877af147c9528fe8d899baee3894a0b879bf1
   https://github.com/fakkuyuu/cartreaderPC/commit/f85877af147c9528fe8d899baee3894a0b879bf1
-・GitHubコミット差分を再取得し、変更ファイルがGB.inoのみ（14行追加、3行削除）であること、修正後の内容を確認。
-・過去のユーザー実機結果: 通常MBC1・1MBでCRC一致、ボンバーマンコレクション（MBC1M）で正規ROMとのCRC一致。いずれも今回のGitHubコミット後の再試験ではない。
-・未実施: このGitHub版のコンパイル・書込み・実機CRC再照合、他のMBC1/MBC1Mタイトルの網羅試験。
-・管理状態: 実装済みのためTRIAGEからVERIFYへ変更。過去の「未着手」記述は当時の履歴として残す。
+- GitHub commit diff re-fetched and checked: only GB.ino changed (14 additions, 3 deletions); new contents checked.
+- Previous user hardware results: Ordinary 1MB MBC1 CRC match and Bomberman Collection (MBC1M) CRC match against reference ROM; neither is a re-test after this GitHub commit.
+- Not done at that point: Compile/flash this GitHub revision, verify CRC on hardware again, or comprehensively test other MBC1/MBC1M titles.
+- Status changed from TRIAGE to VERIFY because implementation was present; historical "not started" notes remain as dated records.
 
-ユーザー実機テスト報告（2026-11-02、今回のGitHub修正後）:
-・GB、GBA、SNES、メガドライブ（MD）の4機種でROM吸出し成功、CRC一致をユーザーが確認。
-・対象タイトル・各CRC値・テストしたGBのMBC1/MBC1M種別の内訳は今回の報告では未記載。従って今回の4機種成功だけで特殊バンク0x20/0x40/0x60の個別再検証や全MBC1M互換性が確認されたとは断定しない。
-・#028はGB MBC1案件のため、他3機種の結果は今回の修正後の回帰テスト実績として記録。状態VERIFYを維持。
-Codexビルド/書込結果（2026-11-02 18:52:19 JST）: GitHub f85877aのMBC1特殊バンク修正を含むPC89ファームをGCC16.1でビルドし、COM5へ書込み成功。通常MBC1 256KiB/512KiB/1MiB/2MiBの窓サイズ合計をソフトモデルで確認（実ハード信号試験ではない）。実機CRC再照合は未実施、VERIFY継続。
+User hardware test report (2026-11-02, after the GitHub fix):
+- User confirmed successful ROM dumps and matching CRCs on GB, GBA, SNES and Mega Drive (MD).
+- No titles, CRCs, or specific MBC1/MBC1M categories were given. These four success reports do not specifically verify 0x20/0x40/0x60 special banks or prove general MBC1M compatibility.
+- Since #028 concerns GB MBC1, record results for the other three platforms as post-fix regression evidence. Remain in VERIFY.
+Codex build/flash record (2026-11-02 18:52:19 JST): Built PC89 firmware including the MBC1 special-bank fix from GitHub f85877a with GCC 16.1; flashing to COM5 succeeded. A software model checked aggregate window sizes for ordinary MBC1 at 256KiB/512KiB/1MiB/2MiB (not hardware signal testing). Actual hardware CRC re-comparison after the fix was not performed; remain in VERIFY.
 
 
 #029 ワンクリック吸出しモード（ボタン送り・メニュー選択を自動化）
