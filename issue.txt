@@ -1,5 +1,5 @@
 cartreaderPC Issues
-最終更新日時: 2026-11-02 21:19:14 JST
+最終更新日時: 2026-11-02 21:47:18 JST
 対象: PCツールPC90 / ファームPC89 / HW3（PCはGitHub2642587由来）
 
 これは要望・不具合・案の管理表。ローカルの正本を公開用に転記したもの。GitHub Issuesの個別チケット登録とは別。
@@ -450,8 +450,8 @@ Codexビルド/書込結果（2026-11-02 18:52:19 JST）: GitHub f85877aのMBC1�
 
 #029 ワンクリック吸出しモード（ボタン送り・メニュー選択を自動化）
 追加日時: 2026-11-01 22:02:12 JST
-最終更新日時: 2026-11-02 21:19:14 JST
-状態: VERIFY（PC89でGB/GBA/SNES/MD実機成功。N64一括ソース追加、次期PCツールの再ビルド・テスト・実機確認待ち） / P2 / enhancement, ui, automation
+最終更新日時: 2026-11-02 21:47:18 JST
+状態: VERIFY（PC89でGB/GBA/SNES/MD実機成功。N64はPC90ビルド・25テストPASS、実機未確認。NES候補確認のPCソース修正・回帰テスト追加済み、再テスト/EXE取込/実機確認待ち） / P2 / enhancement, ui, automation
 出所: ユーザー案。接点不良などがなければ、開始1ボタンでROM吸出し完了まで進めたい。
 目的: カート情報の確認・Press Button・Read ROMの選択など、定型操作の手間を減らす。
 要望: 自動操作モードを用意し、対応する画面遷移を認識して吸出し・PC検証まで進める。
@@ -500,6 +500,8 @@ Codex指摘のN64実不具合修正（2026-11-02 20:19:49 JST）: Codexから「
 Codex再検証のSAVEDパス不具合修正（2026-11-02 21:05:05 JST）: 先の付属TXT誤認修正で保存ログのパスを [SAVED] 以降最初の「 (」で分割していたため、ファイル名「GAME (J).Z64」やフォルダ名「Archive (2026)」など括弧を含む正規のROMパスが途中で切れ、拡張子照合に失敗しROM保存を認識できず安全停止することをCodexが再現。pc/batch_dump.py を修正して、末尾の厳密な「 (数字 bytes) SHA256=16進文字列」まで含む[SAVED]行を正規表現 fullmatch で照合し、パスと実バイト数を別々に抽出。ファイル名・フォルダ名に「 (」や「 (数字 bytes)」が含まれても途中で切断しない。パスの実ROM拡張子照合による付属TXT除外とN64のROMサイズ一致確認は維持。修正コミット04e4e91。pc/test_batch_dump.py に括弧を含むN64ファイル名/フォルダ名のROM→TXT→Read Save正常経路、および途中の「(12 bytes)」に惑わされず末尾のサイズを採用する回帰テスト2件を追加、合計25テストメソッド（コミットb951838）。Codexによる修正前23テストPASSはユーザー報告済み。新たな25テストの再実行、EXE再ビルド、N64実機確認は未実施。EXE化はユーザー報告どおりまだ行っておらず、ビルド指示までは既存PC89を変更しない。状態VERIFYを継続。
 
 Codex再ビルド結果（2026-11-02 21:19:14 JST）: GitHub2642587のN64一括対応（TXT保存通知のROM誤認防止・括弧入りパス対策を含む）をPC90へ取り込みEXE作成。レビュー時25テスト全PASS、今回の全Python構文/EXE --self-test exit0/PASS。表示版名だけPC90へ変更。ファームは書込み済みPC89を継続し、再ビルド/再書込みなし。成果物outputs3/cartreader-v15.5-pc90/CartReaderPC.exe、ソースwork/pc90/pc。N64一括の実機結果は未確認、VERIFY継続。
+
+NES一括・DB一致候補の誤停止修正（2026-11-02 21:47:18 JST、ユーザー不具合報告）: NESの通常経路ではNES.ino getMapping()がPRGのCRCでnes.txtを検索し、一致時は checkCartSelection() の「Select your cartridge」→「[Control] cartridge-select」で候補確認を求める。一方、全FFやDB未登録時は「No data found.」または「CRC not found in database」→「Using manual selection」を経由してアルファベット/DB手動選択に進み、その先も同じ [Control] cartridge-select が出る。従来pc/cartreader_pc.pyは全ての候補確認画面で一括を停止していた。修正: pc/batch_dump.py にNES検索開始・手動フォールバック・候補表示・一度だけ確定済みのフラグを追加。entry段階の「Searching database」から、手動フォールバック通知なしで「Select your cartridge」に進んだ場合のみ候補確認Spaceを1回送る。全FF・DB未登録・DB一致根拠なし・重複候補操作・候補確認前の予期せぬPress Buttonは自動進行しない。pc/cartreader_pc.py の render_candidate_controls に batch.on_candidate() を接続。元のアルファベット画面でのNES専用Reset/旧FW安全停止・手動Mapper/サイズ選択停止を維持し、ファームは変更しない。ソース修正コミット7445332・6160d25。pc/test_batch_dump.py にDB一致の候補→Press Button→Read iNES Rom→ROM保存/VERIFY、CRC未登録と全FFの手動候補停止、根拠なし候補/Press停止、候補二重確認防止、GUI接続AST確認の6テストを追加（コミットc0ec699、従来25→31テストメソッド）。本チャットでは31テスト実行・PC EXE再ビルド・NES実機確認は未実施。Codexにレビュー/実行を委ね、実機確認までVERIFY維持。
 
 #030 保存先フォルダをエクスプローラーで開くボタン
 追加日時: 2026-11-01 22:05:38 JST
