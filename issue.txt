@@ -1,5 +1,5 @@
 cartreaderPC Issues
-最終更新日時: 2026-11-02 16:34:04 JST
+最終更新日時: 2026-11-02 16:41:28 JST
 対象: PCツールPC88h（画面版名PC88eを維持） / ファームPC88a / HW3
 
 これは要望・不具合・案の管理表。ローカルの正本を公開用に転記したもの。GitHub Issuesの個別チケット登録とは別。
@@ -64,7 +64,7 @@ ID    状態     優先 分類                    件名
 
 033   CLOSED     P2   bug/ui/storage          再接続後に保存先変更予約の表示が残る
 
-034   VERIFY     P2   enhancement/logging     PC共通ログ名をOSCR_LOGPC.txtへ変更
+034   CLOSED     P2   enhancement/logging     PC共通ログ名をOSCR_LOGPC.txtへ変更
 
 035   CLOSED     P2   bug/verification/gba    PC保存時のGBAヘッダチェックサム確認が欠落
 
@@ -569,19 +569,19 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 
 #034 PCツールの共通ログ名をOSCR_LOGPC.txtへ変更する
 追加日時: 2026-11-02 12:18:38 JST
-最終更新日時: 2026-11-02 12:28:53 JST
-状態: VERIFY（PC88e実装、実利用確認待ち） / P2 / enhancement, logging
+最終更新日時: 2026-11-02 16:41:28 JST
+状態: CLOSED（PC88e以降、ユーザー動作確認済み） / P2 / enhancement, logging
 出所: ユーザー要望。SD保存モードでもPCツールが共通ログを作るため、本体のログと区別したい。
 要望: PCツールが作成する共通ログ名をOSCR_LOGPC.txtにする。本体の単体動作で作るOSCR_LOG.txtはそのまま。
 範囲: GUI/CLI共通の出力ファイル名、および書込失敗案内等のファイル名表示を揃える。保存内容・追記方式は#031の仕様を維持。
 既存ログ: 既存OSCR_LOG.txtの移動・改名・削除・内容統合はこの要望だけで行わない。
 関連: #031は実装/ユーザー確認済み。この名前変更は追加要望として別管理。
 完了条件: PC保存/SD保存どちらでもPC側はOSCR_LOGPC.txtへ記録し、本体側OSCR_LOG.txtと混同しない。
-対応版/コミット: 未対応。issue登録のみ。実装開始指示待ち。
+登録時点の記録: 未対応（実装前）。後述のPC88e実装・ソフト確認で更新済み。
 実装記録（2026-11-02 12:28:53 JST）: PC共通ログと書込み失敗案内をOSCR_LOGPC.txtへ変更。GUI/CLI共通。既存OSCR_LOG.txtは改名/削除/移行しない。保存内容・追記方式は変更なし。
 ソフト確認: 正常69/不一致68対69/短いヘッダ/DBなし/DB一致リネーム/ROM横TXTへの結果記録、ログ追記と旧ログ非変更を確認。EXE生成・--self-test exit0/PASS。#032の抽出/整形メソッドは前版と一致。実機確認は未実施。
 成果物: outputs3/cartreader-v15.5-pc88e/CartReaderPC.exe、ソース work/pc88e/pc。ファーム変更・書込みなし。
-
+ユーザー動作確認（2026-11-02 16:41:28 JST）: ユーザーより「034おｋ」との確認報告を受領。PC共通ログのOSCR_LOGPC.txtへの名称変更は実利用で問題なしと判断しCLOSEDに変更。PC/SDモード別やGUI/CLI別の個別試験内訳は報告されておらず、全組合せの実機確認を意味しない。
 
 #035 PC保存時のGBAヘッダチェックサム確認・結果表示を補う
 追加日時: 2026-11-02 12:24:29 JST
