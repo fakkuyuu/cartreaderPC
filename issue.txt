@@ -1,5 +1,5 @@
 cartreaderPC Issues
-最終更新日時: 2026-11-02 14:26:00 JST
+最終更新日時: 2026-11-02 14:42:48 JST
 対象: PCツールPC88h（画面版名PC88eを維持） / ファームPC88a / HW3
 
 これは要望・不具合・案の管理表。ローカルの正本を公開用に転記したもの。GitHub Issuesの個別チケット登録とは別。
@@ -62,7 +62,7 @@ ID    状態     優先 分類                    件名
 
 032   VERIFY     P2   bug/logging/docs        ROM付属TXTの不要ログ・空行・項目名を整理
 
-033   VERIFY     P2   bug/ui/storage          再接続後に保存先変更予約の表示が残る
+033   CLOSED     P2   bug/ui/storage          再接続後に保存先変更予約の表示が残る
 
 034   VERIFY     P2   enhancement/logging     PC共通ログ名をOSCR_LOGPC.txtへ変更
 
