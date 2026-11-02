@@ -52,6 +52,13 @@ class Storage:
         self.last_rom_path = None
         self.host_state = host_state if host_state is not None else {}
         self.console_pending = ""
+        self.companion_boot = ""
+        self.companion_devices = []
+        self.companion_card = {}
+        self.companion_identifying = False
+        self.companion_search = False
+        self.companion_title = ""
+        self.companion_dump = None
 
     @staticmethod
     def _companion_log_line(line):
@@ -67,10 +74,11 @@ class Storage:
         return not stripped.startswith(internal)
 
     def append_console_log(self, text):
-        self.console_pending += text
+        self.console_pending += text.replace("\r", "\n")
         while "\n" in self.console_pending:
             line, self.console_pending = self.console_pending.split("\n", 1)
             complete = line + "\n"
+            self._remember_companion_line(line)
             if self._companion_log_line(complete):
                 self.console_text = (self.console_text + complete)[-65536:]
 
@@ -249,14 +257,119 @@ class Storage:
         self.log(result + "\n")
         return 2
 
+    def _remember_companion_line(self, raw):
+        """Keep bounded card metadata separate from one ROM operation."""
+        line = raw.strip()
+        if not line:
+            return
+        if re.match(r"^OSCR\s+HW\d+\s+V", line):
+            self.companion_boot = line[:256]
+            self.companion_devices = []
+            self.companion_card.clear()
+            self.companion_title = ""
+            self.companion_search = False
+            self.companion_identifying = False
+            self.companion_dump = None
+            return
+        if line.startswith("[+] "):
+            action = line[4:].strip()
+            self.companion_dump = None
+            if action in ("Read ROM", "Read Cart", "Read iNES Rom", "Read PRG/CHR"):
+                self.companion_dump = {"action": line, "saving": "", "stars": 0}
+                self.companion_identifying = False
+            elif re.match(r"^(Read|Write|Force|Test|Refresh|Change|Select|Flash|Erase|Reset)\b", action):
+                if action in ("Refresh Cart", "Select Cart", "Reset"):
+                    self.companion_card.clear()
+                    self.companion_title = ""
+                    self.companion_search = False
+                    self.companion_identifying = True
+            else:
+                primary = {"Game Boy", "NES/Famicom", "Super Nintendo/SFC",
+                           "Nintendo 64 (3V)", "Mega Drive/Genesis",
+                           "SMS/GG/MIII/SG-1000", "PC Engine/TG16", "MSX"}
+                if action in primary:
+                    self.companion_devices = [line]
+                else:
+                    self.companion_devices = self.companion_devices[:1] + [line]
+                self.companion_card.clear()
+                self.companion_title = ""
+                self.companion_search = False
+                self.companion_identifying = True
+            return
+        if line == "Searching database...":
+            self.companion_card.clear()
+            self.companion_title = ""
+            self.companion_search = True
+            self.companion_identifying = True
+            self.companion_dump = None
+            return
+        field = re.match(
+            r"^(Name|PcConsole|Serial|Revision|ROM Size|Save Size|Save Type|Save Lib|"
+            r"Header Checksum|Type|ICs|Mapper|MAPPER|PRG SIZE|CHR SIZE|RAM SIZE|"
+            r"Checksum|ChkS|Sram|bramCheck|Header CRC32):\s*(.*)$", line)
+        if field and self.companion_dump is None:
+            key, value = field.groups()
+            identity = key in ("Name", "Serial", "PcConsole")
+            if identity and not self.companion_identifying and (
+                    key == "Name" or self.companion_card.get(key) != line):
+                self.companion_card.clear()
+                self.companion_title = ""
+                self.companion_search = False
+                self.companion_identifying = True
+            self.companion_card[key] = line[:1024]
+            return
+        if self.companion_identifying and re.search(
+                r"\.(?:gba|gbc?|sfc|smc|z64|n64|v64|md|bin|nes|pce|sms|gg|rom)$", line, re.I):
+            self.companion_title = line[:1024]
+            return
+        if self.companion_dump is not None:
+            if line.startswith("Saving to "):
+                self.companion_dump["saving"] = line[:4096]
+            elif re.fullmatch(r"\[*\*+\]?", line):
+                self.companion_dump["stars"] = min(
+                    80, self.companion_dump["stars"] + line.count("*"))
+
+    def _format_companion_log(self, verification):
+        """Format only cached card details and the current ROM operation."""
+        result = [self.companion_boot] if self.companion_boot else []
+        if self.companion_dump is not None:
+            result.extend(self.companion_devices)
+            if self.companion_search:
+                result.append("Searching database...")
+            if self.companion_title:
+                result.append(self.companion_title)
+            result.extend(self.companion_card.values())
+            result.append(self.companion_dump["action"])
+            if self.companion_dump["saving"]:
+                result.append(self.companion_dump["saving"])
+            if self.companion_dump["stars"]:
+                result.append("[" + "*" * self.companion_dump["stars"] + "]")
+        verify_lines = [line.strip() for line in verification.splitlines() if line.strip()]
+        result.extend(line for line in verify_lines if line.startswith("Checksum:"))
+        for line in verify_lines:
+            if line.startswith("Checksum:"):
+                continue
+            match = re.match(r"^\[VERIFY\]\s+CRC32=([0-9A-Fa-f]{8})(.*)$", line)
+            if not match:
+                result.append(line)
+                continue
+            fields = [field.strip() for field in match.group(2).split("  ") if field.strip()]
+            db = next((field[3:] for field in fields if field.startswith("DB=")), None)
+            crc_line = "CRC32... " + match.group(1).upper()
+            result.append(crc_line + (" -> " + db if db is not None else ""))
+            result.extend(field for field in fields if not field.startswith("DB="))
+        return "\n".join(result).rstrip() + "\n"
+
     def write_companion_log(self, rom_path):
         """Create the dump TXT on the PC without a second reader-side stream."""
         path = self.last_rom_path if self.last_rom_path is not None else rom_path
         companion = path.with_suffix(".txt")
-        if self.console_pending and self._companion_log_line(self.console_pending):
-            self.console_text = (self.console_text + self.console_pending)[-65536:]
+        if self.console_pending:
+            self._remember_companion_line(self.console_pending)
+            if self._companion_log_line(self.console_pending):
+                self.console_text = (self.console_text + self.console_pending)[-65536:]
         self.console_pending = ""
-        body = self.console_text.rstrip() + "\n\n" + self.last_verification + "\n"
+        body = self._format_companion_log(self.last_verification)
         companion.write_text(body, encoding="utf-8")
         digest = hashlib.sha256(companion.read_bytes()).hexdigest()
         name = companion.relative_to(self.root).as_posix()
@@ -264,6 +377,7 @@ class Storage:
         self.record()
         self.log(f"\n[SAVED] {name} ({companion.stat().st_size} bytes) SHA256={digest}\n")
         self.console_text = ""
+        self.companion_dump = None
 
     def allocate(self, path, flags=1):
         path = path.resolve()

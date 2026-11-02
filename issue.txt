@@ -1,6 +1,6 @@
 cartreaderPC Issues
-最終更新日時: 2026-11-02 12:28:53 JST
-対象: PCツールPC88e / ファームPC88a / HW3
+最終更新日時: 2026-11-02 13:07:43 JST
+対象: PCツールPC88f（画面版名PC88eを維持） / ファームPC88a / HW3
 
 これは要望・不具合・案の管理表。ローカルの正本を公開用に転記したもの。GitHub Issuesの個別チケット登録とは別。
 変更履歴.txtは「何を変えたか」、このファイルは「何が残っているか」を管理する。
@@ -60,7 +60,7 @@ ID    状態     優先 分類                    件名
 
 031   CLOSED   P2   enhancement/logging     PCのOSCR_LOG.txtへコンソールと同じ内容を保存
 
-032   OPEN     P2   bug/logging/docs        ROM付属TXTの不要ログ・空行・項目名を整理
+032   VERIFY     P2   bug/logging/docs        ROM付属TXTの不要ログ・空行・項目名を整理
 
 033   OPEN     P2   bug/ui/storage          再接続後に保存先変更予約の表示が残る
 
@@ -503,8 +503,8 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 
 #032 ROM付属TXTの内容を整理し、共通コンソールログと区別する
 追加日時: 2026-11-01 22:42:57 JST
-最終更新日時: 2026-11-01 22:53:11 JST
-状態: OPEN / P2 / bug, logging, docs
+最終更新日時: 2026-11-02 13:07:43 JST
+状態: VERIFY（PC88f、必須ソフト試験通過・実機確認待ち） / P2 / bug, logging, docs
 出所: ユーザー提供の本家/ツール生成TXTを実読比較。
 比較資料:
   本家: [ローカルSD]/GBA/ROM/HPOTTER COS/4/HPOTTER COS.txt
@@ -522,6 +522,14 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 対応版/コミット: 未対応。資料比較・issue登録のみ。生成経路の原因調査・実装は未着手。
 
 ソース確認追記（2026-11-01 22:53:11 JST）: work/pc88a/Cart_Reader/OSCR.cppのFSTRING_SERIAL定義が「PcConsole: 」になっている（82行）。GBA.inoのカート情報・DB表示はこの定数を使用。PC側TXT加工による置換ではなく、共通表示文字列の誤変更。Serial表記へ戻す対象として記録。修正は未実施。
+
+実装記録（2026-11-02 13:03:19 JST）: ユーザーの再設計指示に基づきstorage.pyのみ変更。元の単純フォーマッタ案は未採用。カート情報は独立した固定項目キャッシュ、今回ROMはRead ROM基準のaction/保存先/進捗として分離。完了時に今回分だけ消去し、同一カートの次回へメタ情報を継承。識別/機種選択/再起動で古い情報を解除。履歴全保持はしない。
+検証: work/pc88f/test_companion.pyの11テストPASS（必須7条件、フレーム分割、SNES不一致/DB未一致/リネーム情報、再起動、カート切替、SDコピー時にカート情報を流用しない）。同一コンソール入力で共通ログのバイト一致も確認。構文/EXE既存セルフテストPASS。
+変更制約: PcConsoleの値/表記・#035検証処理・execute/close_handle・ROM保存/リネーム/SHA/manifest関連既存処理・ファームは変更なし。対象はstorage.pyのみで他ソースはPC88eとバイト一致。TXT本文生成後の既存SHA/manifest/通知処理は維持。
+実機結果: 未確認。全機種の表示形式を網羅した保証ではない。状態は上記試験通過後に初めてVERIFYへ更新、CLOSEDではない。
+成果物: outputs3/cartreader-v15.5-pc88f/CartReaderPC.exe、正本work/pc88f/pc/storage.py。cartreader_pc.pyを変えない指示により画面の版名はPC88eのまま。
+
+実機結果（2026-11-02 13:07:43 JST）: PC88f #032 ユーザー提供ROM付属TXT: ROCKMAN_EXE2/103、8MB、Header Checksum69、Checksum69 OK、CRC32 98E4F096、DB=Battle Network - Rockman EXE 2 (Japan).gba、RENAMED先103を確認。機種/カート情報・今回保存先・進捗・検証結果あり、提示TXTにメニュー/LED/空行過多なし。PcConsole表記は指示どおり維持。同一カート2回目・セーブ後・カート切替の実機試験を確認した意味ではない。 状態はVERIFYを維持。
 
 #033 再接続でSD保存が緑になった後も保存先変更予約の表示が残る
 追加日時: 2026-11-02 12:11:24 JST
