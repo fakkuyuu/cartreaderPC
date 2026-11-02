@@ -317,7 +317,9 @@ class BatchDump:
                 and not self.nes_candidate_selected):
             self.nes_candidate_selected = True
             return " "
-        return self.stop("NESのDB一致を確認できません。候補は手動選択してください")
+        if self.target == "NES":
+            return self.stop("NESのDB一致を確認できません。候補は手動選択してください")
+        return self.stop("カートリッジの手動選択が必要です")
 
     def on_physical(self):
         """Confirm only an identified GBA database candidate; never guess elsewhere."""
