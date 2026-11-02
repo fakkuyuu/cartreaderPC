@@ -615,72 +615,72 @@ Artifacts: outputs3/cartreader-v15.5-pc88e/CartReaderPC.exe; source work/pc88e/p
 Completion review (2026-11-02 14:46:29 JST): User said Codex had marked #035 completed. As previously recorded under #032, companion TXT generated from actual PC-storage GBA ROM (ROCKMAN_EXE2/103, 8 MB) contained "Checksum: 69 -> OK", CRC32 98E4F096, DB match and RENAMED destination. Thus actual use verified successful GBA header checksum and TXT recording. Software tests included deliberately bad headers, mismatches and DB misses, but these were not physically reproduced. GBA header checksum does not guarantee full-ROM integrity. Mark #035 CLOSED.
 
 
-#036 電源オンで事前指定した機種の一括吸出しを自動開始するモード
-追加日時: 2026-11-02 22:01:51 JST
-最終更新日時: 2026-11-02 22:01:51 JST
-状態: IDEA / P2 / enhancement, automation
-出所: ユーザーの機能案。実装開始指示ではない。
-要望: 対象機種を事前指定し、本体電源オンをきっかけに、その機種の一括吸出しを開始するモード。
-利用イメージ: PCツールが起動して接続待ち中に本体をオン→接続・入力準備を確認→指定機種の#029一括処理を開始。これは想定であり、単体SD起動も対象にするかは未決定。
-関連: #029のROM先行・セーブがある場合の読出し・不明/エラー時停止を再利用する案。
-検討事項: モード/機種設定の保存、起動時と再接続時の扱い、1回の本体起動につき重複開始しない条件、ユーザーによる解除方法。通信不調による再接続と実際の電源再投入をどう区別するかを明確にする。
-完了条件: 設定したモードで本体起動から一括操作を開始でき、通常手動モードも維持。開始条件・対象保存先・再接続挙動を仕様化して確認する。
-対応版/コミット: 未実装。issue登録のみ。実装開始指示待ち。
+#036 Automatically start one-click dumping for a preset console when the reader powers on
+Added: 2026-11-02 22:01:51 JST
+Last updated: 2026-11-02 22:01:51 JST
+Status: IDEA / P2 / enhancement, automation
+Source: User's feature idea, not permission to implement.
+Request: Allow a console to be configured ahead of time and automatically start that console's one-click dump when the reader is powered on.
+Possible usage: The PC tool is running and waiting for connection; power on reader -> confirm connection and input readiness -> start #029 batch for the preset console. This is an illustrative design, not final; whether standalone SD startup is included remains undecided.
+Related: Proposal to reuse #029 behavior: ROM first, read save when applicable, and stop on unknown state/errors.
+Considerations: Persisting mode/console configuration, handling initial startup versus reconnection, avoiding duplicate starts on one reader boot, and allowing user cancellation. Clarify how to distinguish connection-loss retries from a real power cycle.
+Completion: Configured mode starts one batch on reader startup, regular manual mode remains available, and start conditions, target storage backend and reconnection rules are documented/tested.
+Version/commit: Not implemented; issue registration only, awaiting explicit user authorization.
 
-#037 英語モードにしても日本語が残る操作ボタン・メニュー・案内
-追加日時: 2026-11-02 22:23:29 JST
-最終更新日時: 2026-11-02 22:23:29 JST
-状態: OPEN / P2 / bug, ui, i18n
-出所: ユーザー報告「英語にならないボタンがいくつかある」。PC91ソースと実翻訳関数を照合した調査。
-対象: work/pc91/pc/cartreader_pc.py、i18n.py、batch_dump.py。ソース調査であり全画面の実GUI試験ではない。
-確実なボタン表記の不足（8種類、同じラベルが複数機種に出る）:
-・一括GB / 一括GBA / 一括吸出し / 一括(swapped) / 一括(not swapped)（cartreader_pc.py 836〜842行）
-・7 ◀ 前のページ (←) / 8 次のページ (→) ▶（869〜870行）。辞書には古いPageUp/PageDown版しかない。
-・診断（1573行）。翻訳辞書に該当なし。
-診断メニュー項目:
-・転送試験 1MiB（1571行）は辞書に訳があるが、UiTranslator.refreshがMenuのentryラベルを処理しないので適用されない。
-・詳細ログを表示（1572行）は辞書の訳もなく、同じMenu適用漏れがある。
-関連して日本語が残る表示:
-・一括吸出し中...、一括開始/完了/停止理由、セーブ形式不明やサイズ不一致など（GUIとbatch_dump.py）。一括機能追加時の翻訳が未整備。
-・先頭文字の矢印/テンキー8246/Enter/5/A–Z操作説明（1110行）は一部単語だけ英語になる。
-・OSCR_LOGPC.txtの書込失敗警告（1949行）は日本語固定で翻訳関数未使用。
-・二重起動警告（209行）、DB欠損警告の日本語部分（1519〜1520行）。後者はもともと日英併記。
-・保存先予約の表示の組合せに日本語の『保存』等が残る可能性。比較用内部文字列はUI訳と区別し、状態判定を壊さない。
-・言語選択の『日本語』表記は既存#027で管理。初期英語/選択肢JAPANESEの変更と重複実装しない。
-原因: 新規ラベルの辞書不足、古いラベルとの不一致、Menu項目の翻訳未適用、メッセージボックス/コンソール出力はウィジェット巡回の対象外。
-対応案: 英語UIの操作部品・案内をまとめて整備し、内部制御文字列や本体通信は変更しない。共有ログは実際のコンソール表示内容を保存する既存仕様を維持。
-確認方法: UiTranslatorをEnglishにしてPython文字列へ適用し、上記ボタンで日本語が残ることを確認。静的文字列の残留34箇所は比較用文字列や重複も含むため、34個のUI不具合と数えない。
-完了条件: 一括/ページ送り/診断とメニュー項目が英語になり、動的生成画面・言語往復切替で追従。関連警告/操作案内の対応範囲を明記し、日本語へ戻せることを確認。
-対応版/コミット: 未対応。調査とissue登録のみ。コード・EXE・ファームは変更していない。
+#037 Some buttons, menus and messages remain Japanese in English mode
+Added: 2026-11-02 22:23:29 JST
+Last updated: 2026-11-02 22:23:29 JST
+Status: OPEN / P2 / bug, ui, i18n
+Source: User reported that some buttons do not switch to English. Investigated PC91 source and actual translation implementation.
+Scope: work/pc91/pc/cartreader_pc.py, i18n.py and batch_dump.py. This was a source review, not comprehensive actual GUI testing.
+Confirmed untranslated button labels (eight kinds; some occur for multiple consoles):
+- "一括GB" / "一括GBA" / "一括吸出し" / "一括(swapped)" / "一括(not swapped)" (cartreader_pc.py lines 836-842).
+- "7 ◀ 前のページ (←)" / "8 次のページ (→) ▶" (lines 869-870). Dictionary contains only outdated PageUp/PageDown label variants.
+- "診断" (Diagnostics; line 1573), missing from dictionary.
+Diagnostics menu entries:
+- "転送試験 1MiB" (1MiB transfer test; line 1571) has a dictionary translation, but UiTranslator.refresh does not translate Menu entry labels.
+- "詳細ログを表示" (Show detailed logs; line 1572) has no dictionary translation and is also excluded from Menu translation.
+Other display text that remains Japanese:
+- "一括吸出し中..." and batch start/complete/stop explanations, unknown save formats or size mismatches (GUI and batch_dump.py). Translations were not finished when batch support was added.
+- Alphabet entry directions, numpad 8246, Enter/5, A-Z explanation (line 1110): only portions become English.
+- OSCR_LOGPC.txt write-failure warning (line 1949) is hardcoded Japanese and bypasses translation.
+- Duplicate-instance warning (line 209), and Japanese text in missing-DB warning (lines 1519-1520); latter was already bilingual.
+- Combinations of storage reservation labels may retain words such as "保存" (save/storage). Distinguish internal comparison strings from user-facing translations; do not break state logic.
+- "日本語" language option is handled by existing #027. Do not duplicate its first-launch English/"JAPANESE" change.
+Causes: Missing dictionary entries for new labels, mismatch with obsolete label variants, Menu items not processed by translation refresh, and message boxes/console outputs being outside widget traversal.
+Remedy proposal: Cover English UI controls and guidance comprehensively without altering internal protocol strings or reader messages. Preserve the existing common-log behavior of saving exactly what is displayed in the console.
+Verification: Set UiTranslator to English and apply it to Python string labels; the above buttons retained Japanese. A static scan found 34 Japanese string occurrences, including internal comparison literals and duplicates, so this does not mean 34 separate UI bugs.
+Completion: Batch/page/diagnostics buttons and menu entries become English, dynamically created screens and round-trip language switching follow the selection, and relevant warning/help coverage is explicitly documented. Switching back to Japanese must work.
+Version/commit: Not addressed. Investigation and issue entry only; no code, EXE or firmware changed.
 
-#038 メインメニューのページ端で範囲外へ移動するとPC操作画面が処理中のまま
-追加日時: 2026-11-02 22:26:26 JST
-最終更新日時: 2026-11-02 22:32:25 JST
-状態: OPEN / P2 / bug, ui, menu
-出所: ユーザー実機報告。PC91/本体PC89のソースで経路確認。
-再現: メインメニュー1ページ目で前のページを押す、または最終ページ（ユーザー環境では2ページ目）で次のページを押す。
-観測: ツールが処理中となり操作メニューが戻らない。本体ボタンは反応する。
-ソース確認:
-・PC GUI send_menu_keyは送信前にclear_operationを呼び、操作メニューを削除しnavigationのitems/optionsも空にする。
-・本体questionBox_Displayの[ / ]処理は、最初/最後の境界ではページを変更せずPcLink::menuReady()を通知してcontinueする。メニュー本文は再送しない。
-・PCの[Reader] input ready処理は入力フラグ/モードを戻すが、削除したメニューを再描画しない。
-結論: 範囲外ページで本体が停止するというより、ページ変更なし応答とGUI再表示の不整合。PC上の処理中表示・空メニューが残る。
-対応案: 範囲外のページ操作を無効化する、変更なしでも現メニューを再表示する等。操作待ち応答だけの場合にGUIメニューを保持/復元する設計も検討。必要なら本体のページ位置通知を追加する。
-完了条件: 最初の前/最後の次でも処理中に残らず、マウス/数字/矢印/Enter/本体操作を継続可能。通常ページ移動・一括開始も維持。機種追加でページ数が増える場合も確認。
-対応版/コミット: 未対応。調査・issue登録のみ。コード・EXE・ファームは変更しない。
+#038 Navigating outside the first/last main-menu page leaves the PC operation screen stuck
+Added: 2026-11-02 22:26:26 JST
+Last updated: 2026-11-02 22:32:25 JST
+Status: OPEN / P2 / bug, ui, menu
+Source: User hardware report; checked the relevant code path in PC91 tool and PC89 firmware.
+Reproduction: On the first main-menu page, press Previous Page; or on the final page (page 2 in the user's configuration), press Next Page.
+Observed: Tool displays "processing" and the controls do not reappear. Reader's physical buttons still respond.
+Code review:
+- PC GUI send_menu_key calls clear_operation before sending, deleting operation widgets and clearing navigation items/options.
+- Firmware questionBox_Display handles "[" / "]" at page boundaries without changing the page, then sends PcLink::menuReady() and continues; it does not retransmit the menu body.
+- PC "[Reader] input ready" restores readiness flag/input mode but does not redraw the deleted menu.
+Conclusion: The reader probably does not freeze at the page boundary; the GUI fails to reconcile the unchanged-page acknowledgment and menu display. An empty menu with "processing" remains on PC.
+Possible fixes: Disable invalid page changes; redraw the current menu even if the page stays unchanged; or retain/restore controls when only an input-ready acknowledgment arrives. Add explicit firmware page-position notification only if necessary.
+Completion: Previous on first/Next on last page never leaves "processing" stuck; mouse, digits, arrows, Enter and physical reader controls remain usable. Preserve normal page changes and one-click starts, including configurations with additional pages.
+Version/commit: Not addressed. Investigation and issue registration only; no code, EXE or firmware changes.
 
-変更時点の調査（2026-11-02 22:32:25 JST）:
-・保存ソースPC83/PC85ではページボタンがsend_keyを直接呼び、送信時に操作メニューを消していなかった。
-・PC86でページボタンの7/8番号統一とともに呼出先がsend_menu_keyへ変更され、送信前のclear_operationが入った。PC91もこの経路を継承している。
-・比較した本体PC83/PC87/PC88a/PC89の範囲外ページ処理は同じで、menuReadyのみ通知する。
-・以上からPC85→PC86のPCツール変更で入った回帰と判断。最近のGPTによる一括機能追加が発端ではない。ユーザーの「以前は存在しないページで何も起きなかった」という記憶と整合するが、過去版の実機再試験はしていない。
-・今回も記録のみ。修正・ビルド・書込みは未実施。
+Historical change analysis (2026-11-02 22:32:25 JST):
+- Archived PC83/PC85 sources used send_key directly for page buttons and did not clear the operation menu on send.
+- PC86 unified page button numbers as 7/8 and switched the callback to send_menu_key, which calls clear_operation before sending. PC91 inherited this path.
+- The examined reader versions PC83/PC87/PC88a/PC89 all use the same out-of-range page handling: send only menuReady.
+- Therefore this is most likely a regression introduced by the PC85 -> PC86 PC-tool change, not by recent GPT batch-mode additions. This is consistent with the user's memory that navigating to a nonexistent page previously did nothing, although older versions have not been retested on hardware.
+- This entry records investigation only; no fix, build or firmware flash was performed.
 
-【次の運用】
-・変更案・不具合・要望はまずissue登録のみ。ユーザーが実装開始を明示するまでコード変更・ビルド・書き込みを始めない。
-・新報告は既存IDを探して追記。なければ末尾に新IDを追加。
-・新規登録時に追加日時と最終更新日時を記録。追記時は追加日時を維持し、最終更新日時を更新。
-・要望とアシスタントの提案を区別し、勝手に全てを実装予定へ変えない。
-・着手したら対応版/コミットと試験を追記。実装完了と実機確認を区別。
-・GitHubへ移す場合はこのIDとGitHub番号の対応を残す。公開前に個人情報を確認。
-・ファイル整理やGit化の作業自体を、このissue.txt作成だけで完了扱いにしない。
+[WORKFLOW RULES]
+- For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
+- For new reports, check whether an existing issue ID applies and append to it; otherwise create the next ID.
+- Preserve the original Added date and update Last updated when appending or changing status.
+- Distinguish user requests from assistant suggestions. Do not silently turn all proposals into committed implementations.
+- When implementation starts, record versions/commits and tests. Distinguish code completion from physical hardware verification.
+- When moving items to GitHub Issues, preserve the mapping between these IDs and GitHub numbers. Check for personal information before publishing.
+- Creating this issue.txt alone does not mean folder cleanup or Git migration is complete.
