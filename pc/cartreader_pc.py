@@ -910,8 +910,6 @@ def gui(args):
             simple_controls["buttons"].append(button)
         select_simple(0)
     def render_candidate_controls():
-        if batch.active:
-            batch_stop("カートリッジの手動選択が必要です")
         input_mode.set("candidate")
         menu_title.set("カセット候補を選択")
         for child in menu_items.winfo_children():
@@ -922,6 +920,11 @@ def gui(args):
             ("この候補を選択 (Space)", " "),
         )
         add_simple_controls(controls, candidate=True)
+        if batch.active:
+            was_active = batch.active
+            action = batch.on_candidate()
+            batch_report(was_active)
+            batch_schedule(action)
 
     def render_physical_fallback():
         input_mode.set("physical")
