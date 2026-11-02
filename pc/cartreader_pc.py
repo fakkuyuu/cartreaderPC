@@ -14,6 +14,7 @@ import time
 
 from protocol import ProtocolError, encode, receive
 from storage import Storage
+from batch_dump import BatchDump
 from i18n import UiTranslator
 from ram_status import ram_labels
 from browser_request import make_request
@@ -664,6 +665,36 @@ def gui(args):
     set_led_state("unknown")
     input_ready = tk.BooleanVar(value=False)
     input_mode = tk.StringVar(value="menu")
+    batch = BatchDump()
+    batch_pending = {"key": None}
+    def batch_report(was_active):
+        if was_active and not batch.active:
+            batch_pending["key"] = None
+            inbox.put(f"[Batch] {batch.reason}\n")
+    def batch_stop(reason):
+        active = batch.active
+        batch.stop(reason)
+        batch_report(active)
+    def batch_schedule(value):
+        if value is not None and batch.active:
+            batch_pending["key"] = value
+        batch_poll()
+    def batch_poll():
+        value = batch_pending["key"]
+        if (value is not None and batch.active and worker and worker.is_alive()
+                and input_ready.get() and not sd_browser["busy"]):
+            batch_pending["key"] = None
+            send_menu_key(value, "一括吸出し中...", automated=True)
+    def start_batch(target, selected_number):
+        if (not worker or not worker.is_alive() or not input_ready.get()
+                or input_mode.get() != "menu" or sd_browser["busy"]
+                or storage_current["mode"] != "PC" or storage_current["pending"]
+                or benchmark["index"] is not None):
+            inbox.put("[Batch] 一括吸出しはPC保存・接続済みの機種選択メニューから開始してください\n")
+            return
+        batch.begin(target)
+        inbox.put(f"[Batch] {target} 一括吸出しを開始\n")
+        batch_schedule(selected_number)
     menu_navigation = {"items": [], "options": [], "selected": 0}
     sd_browser = {"window": None, "tree": None, "path": "/", "pending": [],
                   "busy": False, "progress": None, "progress_text": None,
@@ -709,7 +740,7 @@ def gui(args):
         return True
 
     def browser_start_next():
-        if sd_browser["busy"] or not input_ready.get():
+        if batch.active or sd_browser["busy"] or not input_ready.get():
             return
         if sd_browser["deferred"]:
             action, path = sd_browser["deferred"]
@@ -735,7 +766,9 @@ def gui(args):
                 sd_browser["status"].set(f"コピー中: {path}")
             browser_command("C", path)
 
-    def send_key(value):
+    def send_key(value, automated=False):
+        if batch.active and not automated:
+            batch_stop("手動操作に切り替えました")
         if worker and worker.is_alive() and input_ready.get():
             input_ready.set(False)
             keys.put(ord(value))
@@ -753,10 +786,12 @@ def gui(args):
         for child in menu_items.winfo_children():
             child.destroy()
 
-    def send_menu_key(value, message="処理中..."):
+    def send_menu_key(value, message="処理中...", automated=False):
+        if batch.active and not automated:
+            batch_stop("手動操作に切り替えました")
         if worker and worker.is_alive() and input_ready.get():
             clear_operation(message)
-            send_key(value)
+            send_key(value, automated=automated)
 
     # Keep the actual left/right controls available on non-numbered screens.
     physical_visible = tk.BooleanVar(value=bool(ui_settings.get("physical_controls_visible", False)))
@@ -796,14 +831,29 @@ def gui(args):
                 widget.configure(background="#dbeafe" if active else "white",
                                  highlightbackground="#2563eb" if active else "white",
                                  highlightthickness=2 if active else 0)
+        batch_targets = {
+            "Game Boy": (("一括GB", "GB"), ("一括GBA", "GBA")),
+            "NES/Famicom": (("一括吸出し", "NES"),),
+            "Super Nintendo/SFC": (("一括吸出し", "SNES"),),
+            "Mega Drive/Genesis": (("一括吸出し", "MD"),),
+            "PC Engine/TG16": (("一括(swapped)", "PCE_SWAP"),
+                                ("一括(not swapped)", "PCE_RAW")),
+        }
         for position, (number, label) in enumerate(options):
-            item = tk.Label(menu_items, text=f"{number}  {label}", anchor="w",
+            row_frame = ttk.Frame(menu_items)
+            row_frame.pack(fill="x", pady=2)
+            item = tk.Label(row_frame, text=f"{number}  {label}", anchor="w",
                             padx=10, pady=5, relief="solid", borderwidth=1,
                             background="white", cursor="hand2")
-            item.pack(fill="x", pady=2)
+            item.pack(side="left", fill="x", expand=True)
             rendered.append(item)
             item.bind("<Enter>", lambda event, i=position: select_row(i))
             item.bind("<Button-1>", lambda event, n=number: send_menu_key(n))
+            if title == "OPEN SOURCE CART READER":
+                for button_label, target in batch_targets.get(label, ()):
+                    ttk.Button(row_frame, text=button_label,
+                               command=lambda t=target, n=number: start_batch(t, n)).pack(
+                                   side="left", padx=(4, 0))
         menu_navigation["items"] = rendered
         menu_navigation["options"] = list(options)
         menu_navigation["paged"] = paged
@@ -811,6 +861,11 @@ def gui(args):
         if rendered:
             select_row(0)
             window.focus_set()
+        if batch.active:
+            was_active = batch.active
+            action = batch.on_menu(title, options)
+            batch_report(was_active)
+            batch_schedule(action)
         if paged:
             nav = ttk.Frame(menu_items)
             nav.pack(fill="x", pady=(5, 0))
@@ -829,6 +884,11 @@ def gui(args):
         item.bind("<Enter>", lambda event: item.configure(background="#dbeafe", highlightbackground="#2563eb", highlightthickness=2))
         item.bind("<Leave>", lambda event: item.configure(background="white", highlightthickness=0))
         item.bind("<Button-1>", lambda event: send_menu_key(" "))
+        if batch.active:
+            was_active = batch.active
+            action = batch.on_press()
+            batch_report(was_active)
+            batch_schedule(action)
 
     simple_controls = {"buttons": [], "selected": 0}
     def select_simple(index):
@@ -848,6 +908,8 @@ def gui(args):
             simple_controls["buttons"].append(button)
         select_simple(0)
     def render_candidate_controls():
+        if batch.active:
+            batch_stop("カートリッジの手動選択が必要です")
         input_mode.set("candidate")
         menu_title.set("カセット候補を選択")
         for child in menu_items.winfo_children():
@@ -907,6 +969,8 @@ def gui(args):
             send_bytes(b"@" + f"{offset:08X}".encode("ascii"))
 
     def render_nes_mapper(current, supported):
+        if batch.active:
+            batch_stop("Mapperの手動選択が必要です")
         input_mode.set("nes-mapper")
         menu_title.set("NES Mapperを指定")
         for child in menu_items.winfo_children():
@@ -942,6 +1006,8 @@ def gui(args):
     nes_option_state = {"buttons": [], "selected": 0}
 
     def render_nes_options(code, label, options):
+        if batch.active:
+            batch_stop("サイズなどの手動選択が必要です")
         input_mode.set("nes-options")
         menu_title.set(label)
         for child in menu_items.winfo_children():
@@ -980,6 +1046,8 @@ def gui(args):
 
     database_list_state = {}
     def render_database_candidates(letter):
+        if batch.active:
+            batch_stop("タイトルの手動選択が必要です")
         input_mode.set("database-list")
         menu_title.set(f"{letter} — ゲームを選択")
         for child in menu_items.winfo_children():
@@ -1016,6 +1084,13 @@ def gui(args):
             listing.insert("end", "該当するゲームがありません")
 
     def render_alphabet_controls(selected_index=0, database_name=""):
+        if batch.active:
+            if batch.target == "NES" and database_name.lower() == "nes.txt":
+                batch.phase = "nes_reset_wait"
+                batch_pending["key"] = "!"
+                inbox.put("[Batch] NESが自動認識できません。安全なResetを要求します\n")
+            else:
+                batch_stop("タイトルの手動選択が必要です")
         input_mode.set("alphabet")
         alphabet_state["selected"] = selected_index
         alphabet_state["database"] = database_name
@@ -1045,6 +1120,12 @@ def gui(args):
         parser_buffer += chunk.replace("\r", "")
         while "\n" in parser_buffer:
             line, parser_buffer = parser_buffer.split("\n", 1)
+            was_active = batch.active
+            if line == "[+] Reset" and batch.phase == "nes_reset_wait":
+                batch.stop("NES認識失敗。Reset実行後、自動操作を終了しました")
+            else:
+                batch.on_line(line)
+            batch_report(was_active)
             firmware_update = reader_firmware_status(line)
             if firmware_update is not None:
                 firmware_state.set(firmware_update)
@@ -1172,6 +1253,7 @@ def gui(args):
                     storage_mode.set(f"保存先: {storage_current['mode']}（{requested}へ切替中）")
                     send_key(code)
                 browser_start_next()
+                batch_poll()
             elif line == "[Reader] press button ready":
                 input_ready.set(True)
                 render_press_button()
@@ -1433,6 +1515,8 @@ def gui(args):
         worker = threading.Thread(target=run, args=(port.get(), output.get()), daemon=True)
         worker.start()
     def disconnect():
+        if batch.active:
+            batch_stop("切断によって一括操作を終了しました")
         if worker and worker.is_alive():
             detach_ack.clear()
             keys.put(0x04)
