@@ -52,7 +52,7 @@ ID    状態     優先 分類                    件名
 
 027   OPEN     P2   enhancement/ui/i18n     初回は英語・日本語の選択名をJAPANESEにする
 
-028   TRIAGE   P2   bug/gb/mbc1             GB MBC1特殊バンク修正・MBC1M互換性検証
+028   VERIFY   P2   bug/gb/mbc1             GB MBC1特殊バンク修正・MBC1M互換性検証
 
 029   VERIFY     P2   enhancement/ui/automation  ワンクリックでROM吸出し完了まで自動操作
 
@@ -342,8 +342,8 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 
 #028 GB MBC1特殊バンク修正の取り込み・互換性検証とMBC1Mの扱い
 追加日時: 2026-11-01 21:41:54 JST
-最終更新日時: 2026-11-01 21:58:29 JST
-状態: TRIAGE（解決方針共有済み、実コード照合・取り込み未着手） / P2 / bug, gb, mbc1, test, docs
+最終更新日時: 2026-11-02（GitHub修正反映記録）
+状態: VERIFY（GitHub masterに修正反映済み、反映後のビルド・実機再検証待ち） / P2 / bug, gb, mbc1, test, docs
 出所: ユーザーが別GPTチャットの修正・検証依頼を共有。以下は共有された報告であり、本チャットで独立確認した結果ではない。
 当初の対象: チャイニーズファイター、ボンバーマンクエストのMBC1吸出し失敗。
 対象範囲: 旧Sanni CartReaderのGB.ino（依頼文表記gb.ino）。新OSCRへの移植は別作業。
@@ -428,6 +428,18 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
   抜粋中のcurrBank < 10はそのまま記録。数値や処理を推測で書き換えない。
 方針: 成功修正を維持し、通常バンク・既存MBC1M・他MBCは必要性が確認されるまで変更しない。
 実施状況: issueへの追記のみ。実装開始指示待ち。
+
+実装記録（2026-11-02、ChatGPT GPT-6によるGitHub直接修正）:
+・担当: 本チャットのChatGPT（GPT-6）。ユーザーの明示指示によりGitHubプラグイン経由でmasterを直接修正。
+・対象: fakkuyuu/cartreaderPC の Cart_Reader/GB.ino、readROM_GB()内の通常MBC1分岐（1269行付近）のみ。
+・修正: currBankが0x20/0x40/0x60の場合はmode 1を設定し、上位バンクを選んで0x0000–0x3FFFを読み出す。それ以外はmode 0とし、従来のバンク読出し窓へ復帰する。
+・既存のMBC1M判定（BOMCOL/MOMOCOL等）とromType==0x101/0x103専用分岐は元から存在することをソースで確認。今回のコミットでは変更なし。その他のMBC分岐も変更なし。
+・修正コミット: f85877af147c9528fe8d899baee3894a0b879bf1
+  https://github.com/fakkuyuu/cartreaderPC/commit/f85877af147c9528fe8d899baee3894a0b879bf1
+・GitHubコミット差分を再取得し、変更ファイルがGB.inoのみ（14行追加、3行削除）であること、修正後の内容を確認。
+・過去のユーザー実機結果: 通常MBC1・1MBでCRC一致、ボンバーマンコレクション（MBC1M）で正規ROMとのCRC一致。いずれも今回のGitHubコミット後の再試験ではない。
+・未実施: このGitHub版のコンパイル・書込み・実機CRC再照合、他のMBC1/MBC1Mタイトルの網羅試験。
+・管理状態: 実装済みのためTRIAGEからVERIFYへ変更。過去の「未着手」記述は当時の履歴として残す。
 
 #029 ワンクリック吸出しモード（ボタン送り・メニュー選択を自動化）
 追加日時: 2026-11-01 22:02:12 JST
