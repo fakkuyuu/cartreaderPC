@@ -667,6 +667,7 @@ def gui(args):
     input_mode = tk.StringVar(value="menu")
     batch = BatchDump()
     batch_pending = {"key": None}
+    reset_capability = {"nes": False}
     def batch_report(was_active):
         if was_active and not batch.active:
             batch_pending["key"] = None
@@ -1086,9 +1087,12 @@ def gui(args):
     def render_alphabet_controls(selected_index=0, database_name=""):
         if batch.active:
             if batch.target == "NES" and database_name.lower() == "nes.txt":
-                batch.phase = "nes_reset_wait"
-                batch_pending["key"] = "!"
-                inbox.put("[Batch] NESが自動認識できません。安全なResetを要求します\n")
+                if reset_capability["nes"]:
+                    batch.phase = "nes_reset_wait"
+                    batch_pending["key"] = "!"
+                    inbox.put("[Batch] NESが自動認識できません。安全なResetを要求します\n")
+                else:
+                    batch_stop("NES認識失敗。専用Reset未対応の旧ファームです。手動で復帰してください")
             else:
                 batch_stop("タイトルの手動選択が必要です")
         input_mode.set("alphabet")
@@ -1154,6 +1158,7 @@ def gui(args):
             if checkpoint_match:
                 checkpoint_label.set(f"確認間隔：{checkpoint_match.group(1)} KiB")
             if line.startswith("[Connected:"):
+                reset_capability["nes"] = False
                 set_connection_state("接続済み")
                 set_storage_state("PC", storage_current["pending"])
             if version_match:
@@ -1372,6 +1377,8 @@ def gui(args):
                     selected = 0
                     database_name = ""
                 render_alphabet_controls(max(0, min(27, selected)), database_name)
+            elif line == "[Control] nes-reset-supported":
+                reset_capability["nes"] = True
             elif line == "[Control] physical-buttons":
                 render_physical_fallback()
             elif line == "Set Mapper manually":
