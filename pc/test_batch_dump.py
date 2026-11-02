@@ -45,6 +45,33 @@ class BatchDumpTests(unittest.TestCase):
         self.assertFalse(run.active)
         self.assertIn("セーブ有無が不明", run.reason)
 
+    def test_gba_database_explicit_no_save(self):
+        run = BatchDump()
+        run.begin("GBA")
+        self.assertEqual(run.on_menu("Select Game Boy", GB_CHOICES), "1")
+        run.on_line("Save Lib: None")
+        run.on_line("Save Type: None/Unknown")
+        self.assertFalse(run.save)
+        self.assertEqual(run.on_menu("GBA Cart Reader", GBA_MENU), "0")
+        run.on_line("[SAVED] GBA/ROM/Test/1/Test.gba (1048576 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678 DB=Known Test")
+        self.assertEqual(run.on_press(), " ")
+        self.assertIsNone(run.on_menu("GBA Cart Reader", GBA_MENU))
+        self.assertEqual(run.reason, "一括吸出し完了: ROM")
+
+    def test_nes_database_nvram(self):
+        run = BatchDump()
+        run.begin("NES")
+        run.on_line("RAM SIZE: 8K")
+        self.assertTrue(run.save)
+        self.assertEqual(run.on_menu("NES CART READER",
+                         (("0", "Read iNES Rom"), ("2", "Read Save"))), "0")
+        run.on_line("[SAVED] NES/ROM/Test/1/Test.nes (32784 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678 DB=Known Test")
+        self.assertEqual(run.on_press(), " ")
+        self.assertEqual(run.on_menu("NES CART READER",
+                         (("0", "Read iNES Rom"), ("2", "Read Save"))), "2")
+
     def test_snes_no_save(self):
         run = BatchDump()
         run.begin("SNES")
