@@ -1,6 +1,6 @@
 cartreaderPC Issues
-最終更新日時: 2026-11-02 13:07:43 JST
-対象: PCツールPC88f（画面版名PC88eを維持） / ファームPC88a / HW3
+最終更新日時: 2026-11-02 13:54:09 JST
+対象: PCツールPC88g（画面版名PC88eを維持） / ファームPC88a / HW3
 
 これは要望・不具合・案の管理表。ローカルの正本を公開用に転記したもの。GitHub Issuesの個別チケット登録とは別。
 変更履歴.txtは「何を変えたか」、このファイルは「何が残っているか」を管理する。
@@ -503,8 +503,8 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 
 #032 ROM付属TXTの内容を整理し、共通コンソールログと区別する
 追加日時: 2026-11-01 22:42:57 JST
-最終更新日時: 2026-11-02 13:07:43 JST
-状態: VERIFY（PC88f、必須ソフト試験通過・実機確認待ち） / P2 / bug, logging, docs
+最終更新日時: 2026-11-02 13:54:09 JST
+状態: VERIFY（PC88g、空行調整を取り込み・実機確認待ち） / P2 / bug, logging, docs
 出所: ユーザー提供の本家/ツール生成TXTを実読比較。
 比較資料:
   本家: [ローカルSD]/GBA/ROM/HPOTTER COS/4/HPOTTER COS.txt
@@ -530,6 +530,12 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 成果物: outputs3/cartreader-v15.5-pc88f/CartReaderPC.exe、正本work/pc88f/pc/storage.py。cartreader_pc.pyを変えない指示により画面の版名はPC88eのまま。
 
 実機結果（2026-11-02 13:07:43 JST）: PC88f #032 ユーザー提供ROM付属TXT: ROCKMAN_EXE2/103、8MB、Header Checksum69、Checksum69 OK、CRC32 98E4F096、DB=Battle Network - Rockman EXE 2 (Japan).gba、RENAMED先103を確認。機種/カート情報・今回保存先・進捗・検証結果あり、提示TXTにメニュー/LED/空行過多なし。PcConsole表記は指示どおり維持。同一カート2回目・セーブ後・カート切替の実機試験を確認した意味ではない。 状態はVERIFYを維持。
+
+外部更新レビュー（2026-11-02 13:31:40 JST）: GitHubの外部GPT更新7256c48（fix(pc): restore readable spacing in ROM companion TXT）を確認。差分はstorage.pyの_format_companion_logのみで、段落間に空行を追加。カート情報/今回ROMの分離や検証処理への変更なし。取得したコードをメモリ上で11テスト実行しPASS。旧テストの空行ゼロ条件のみ、段落空行1行許容・連続空行禁止へ合わせて確認。ローカルPC88f製品ソース/EXEへの取り込み・ビルドは未実施。実機確認なし。
+
+取り込み（2026-11-02 13:35:54 JST）: 明示指示によりGitHub 7256c48の整形変更をPC88gへ取り込み。機種/カート情報/吸出し/検証の段落間に空行を追加。storage.pyのみ変更。レビュー時11テストPASSのコードと一致し、EXEビルド・--self-test exit0/PASS。実機確認待ち。成果物outputs3/cartreader-v15.5-pc88g/CartReaderPC.exe。
+
+ユーザー確認（2026-11-02 13:54:09 JST）: PC88gのTXTについて「改行入ったね」と報告。段落空行の表示を実利用で確認。連続吸出し等の全実機条件まで確認した意味ではなく、VERIFYを維持。
 
 #033 再接続でSD保存が緑になった後も保存先変更予約の表示が残る
 追加日時: 2026-11-02 12:11:24 JST
