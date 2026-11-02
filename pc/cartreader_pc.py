@@ -933,6 +933,11 @@ def gui(args):
             ("決定", " "),
         )
         add_simple_controls(controls)
+        if batch.active:
+            was_active = batch.active
+            action = batch.on_physical()
+            batch_report(was_active)
+            batch_schedule(action)
 
     alphabet_state = {"selected": 0, "database": "", "buttons": []}
     def select_alphabet(index):
