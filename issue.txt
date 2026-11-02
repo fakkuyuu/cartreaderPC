@@ -1,5 +1,5 @@
 cartreaderPC Issues
-最終更新日時: 2026-11-02 14:42:48 JST
+最終更新日時: 2026-11-02 14:46:29 JST
 対象: PCツールPC88h（画面版名PC88eを維持） / ファームPC88a / HW3
 
 これは要望・不具合・案の管理表。ローカルの正本を公開用に転記したもの。GitHub Issuesの個別チケット登録とは別。
@@ -66,7 +66,7 @@ ID    状態     優先 分類                    件名
 
 034   VERIFY     P2   enhancement/logging     PC共通ログ名をOSCR_LOGPC.txtへ変更
 
-035   VERIFY     P2   bug/verification/gba    PC保存時のGBAヘッダチェックサム確認が欠落
+035   CLOSED     P2   bug/verification/gba    PC保存時のGBAヘッダチェックサム確認が欠落
 
 【詳細】
 
@@ -583,8 +583,8 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 
 #035 PC保存時のGBAヘッダチェックサム確認・結果表示を補う
 追加日時: 2026-11-02 12:24:29 JST
-最終更新日時: 2026-11-02 12:28:53 JST
-状態: VERIFY（PC88e実装、実利用確認待ち） / P2 / bug, verification, gba
+最終更新日時: 2026-11-02 14:46:29 JST
+状態: CLOSED（PC88e以降、GBAヘッダチェックサム正常判定をPC実利用で確認） / P2 / bug, verification, gba
 出所: ユーザーのPC保存ログと本体単体ROMログの比較で「Checksum: 69 -> OK」がPC側にないとの報告。
 ソース確認: FW PC88a GBA.inoのRead ROMでは、PC保存時にcompare_checksum_GBAとcompareCRCを両方省略。
   compare_checksum_GBAは保存済みROM先頭512Bを読み、checksumHeader_GBAで計算したヘッダチェックサムを認識時のchecksumStrと比較する。
@@ -594,11 +594,14 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 注意: ヘッダチェックサムはROM全体のチェックサムではない。既存CRC32/DB照合・SHA256は維持する。69はユーザーの例であり固定値にしない。
 関連: #032はROM横TXT整理。本項目は欠けた検証処理そのものなので別管理。
 完了条件: 正常/不正/短すぎるヘッダを処理し、PC保存でも計算結果と判定が残る。本体SD保存の検証は維持。
-対応版/コミット: 未対応。ソース調査・issue登録のみ。実装開始指示待ち。
+登録時点の記録: 未対応（実装前）。後述のPC88e実装・検証記録で更新済み。
 
 実装記録（2026-11-02 12:28:53 JST）: PCでCRC32を読む既存走査時に先頭190Bを保持し、0xA0〜0xBCの負の和から0x19を引いた下位8bitを、保存ROMの0xBDと比較。Checksum: XX -> OK/不一致/短すぎるヘッダを表示し、last_verification経由でROM横TXTにも記録。全ROM CRC32/DB/SHA256は維持。不一致は既存検証失敗コード3。認識時の本体checksumStrではなく、保存ROM内の期待値との内部整合チェック。
 ソフト確認: 正常69/不一致68対69/短いヘッダ/DBなし/DB一致リネーム/ROM横TXTへの結果記録、ログ追記と旧ログ非変更を確認。EXE生成・--self-test exit0/PASS。#032の抽出/整形メソッドは前版と一致。実機確認は未実施。
 成果物: outputs3/cartreader-v15.5-pc88e/CartReaderPC.exe、ソース work/pc88e/pc。ファーム変更・書込みなし。
+
+完了確認（2026-11-02 14:46:29 JST）: ユーザーからCodex側で#035完了扱いとの連絡を受領。PC保存の実利用で生成されたGBA ROM付属TXT（ROCKMAN_EXE2/103、8 MB）に「Checksum: 69 -> OK」とCRC32「98E4F096」、DB一致、RENAMED先が記録されたことは#032で既報。保存ROMのGBAヘッダチェックサム正常判定とTXT反映を実利用で確認した。異常ヘッダ・不一致・DB未一致はソフト試験で確認済みだが、実機で意図的な不一致を再現したものではない。GBAヘッダチェックサムはROM全体の整合性を保証するものではない。以上により#035をCLOSEDとする。
+
 
 【次の運用】
 ・変更案・不具合・要望はまずissue登録のみ。ユーザーが実装開始を明示するまでコード変更・ビルド・書き込みを始めない。
