@@ -1269,9 +1269,20 @@ void readROM_GB() {
     }
     // Set ROM bank for MBC1
     else {
-      writeByte_GB(0x6000, 0);
-      writeByte_GB(0x4000, currBank >> 5);
-      writeByte_GB(0x2000, currBank & 0x1F);
+      // Banks 0x20/0x40/0x60 are only accessible in mode 1 via 0x0000-0x3FFF.
+      if (currBank == 0x20 || currBank == 0x40 || currBank == 0x60) {
+        writeByte_GB(0x6000, 1);
+        writeByte_GB(0x4000, (currBank >> 5) & 0x03);
+        writeByte_GB(0x2000, 0);
+        romAddress = 0x0000;
+        endAddress = 0x3FFF;
+      } else {
+        writeByte_GB(0x6000, 0);
+        writeByte_GB(0x4000, (currBank >> 5) & 0x03);
+        writeByte_GB(0x2000, currBank & 0x1F);
+        romAddress = (currBank == 1) ? 0x0000 : 0x4000;
+        endAddress = 0x7FFF;
+      }
     }
 
     // Read banks and save to SD
