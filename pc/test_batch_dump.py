@@ -88,6 +88,7 @@ class BatchDumpTests(unittest.TestCase):
         run.on_line("for 12345678...")
         run.on_line("Select your cartridge")
         run.on_line("Known NES Game")
+        run.on_line("[Control] cartridge-select")
         self.assertEqual(run.on_candidate(), " ")
         self.assertTrue(run.nes_candidate_selected)
         run.on_line("RAM SIZE: 0K")
@@ -112,6 +113,7 @@ class BatchDumpTests(unittest.TestCase):
         run.on_line("CRC not found in database")
         run.on_line("Using manual selection")
         run.on_line("Select your cartridge")
+        run.on_line("[Control] cartridge-select")
         self.assertIsNone(run.on_candidate())
         self.assertFalse(run.active)
         self.assertIn("DB一致を確認できません", run.reason)
@@ -122,6 +124,7 @@ class BatchDumpTests(unittest.TestCase):
         run.on_line("No data found.")
         run.on_line("Using manual selection")
         run.on_line("Select your cartridge")
+        run.on_line("[Control] cartridge-select")
         self.assertIsNone(run.on_candidate())
         self.assertFalse(run.active)
         self.assertIn("手動選択", run.reason)
@@ -149,6 +152,13 @@ class BatchDumpTests(unittest.TestCase):
         self.assertEqual(run.on_candidate(), " ")
         self.assertIsNone(run.on_candidate())
         self.assertFalse(run.active)
+
+    def test_other_console_candidate_screen_still_stops(self):
+        run = BatchDump()
+        run.begin("GB")
+        self.assertIsNone(run.on_candidate())
+        self.assertFalse(run.active)
+        self.assertIn("手動選択", run.reason)
 
     def test_gui_nes_candidate_control_is_wired_to_batch(self):
         gui = Path(__file__).with_name("cartreader_pc.py").read_text(encoding="utf-8")
