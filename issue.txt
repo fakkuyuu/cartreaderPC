@@ -1,173 +1,147 @@
 cartreaderPC Issues
-最終更新日時: 2026-11-02 22:26:26 JST
-対象: PCツールPC91 / ファームPC89 / HW3（PCはGitHub1975283由来）
+Last updated: 2026-11-02 22:26:26 JST
+Applies to: PC tool PC91 / firmware PC89 / HW3 (PC based on GitHub 1975283)
 
-これは要望・不具合・案の管理表。ローカルの正本を公開用に転記したもの。GitHub Issuesの個別チケット登録とは別。
-変更履歴.txtは「何を変えたか」、このファイルは「何が残っているか」を管理する。
-参照した資料: 本チャット、変更履歴.txt、USER_FEEDBACK_LOG.txt、履歴の原記録、RAM安定化案。
-古いメモは作成当時の状態。最新結果で上書きされた主張を現在の不具合として扱わない。
-全チャット・全機種の網羅監査は未実施。記録が曖昧な項目は「要確認」にした。
+This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
+"変更履歴.txt" records what changed; this file records what remains outstanding.
+Sources consulted: this chat, 変更履歴.txt, USER_FEEDBACK_LOG.txt, original historical records, and RAM-stabilization proposals.
+Older notes describe the situation at the time they were written. Do not treat superseded claims as current bugs.
+A complete audit of all conversations and all consoles has not been performed. Unclear entries are marked for verification.
 
-状態:
-  OPEN       対応対象。未実装・未修正。
-  VERIFY     実装はあるが追加試験が必要。
-  TRIAGE     古い報告等。現在の再現・対応状況を確認する必要あり。
-  IDEA       検討案。実装を確約・承認した意味ではない。
-  HOLD       ユーザーが保留、または優先度を下げた項目。
-  CLOSED     記載した範囲で完了・不採用・対象外。
-分類: bug / enhancement / upstream / test / performance / memory / docs / workflow / research
-優先度（暫定）: P1=誤動作・データ/配布整合性、P2=通常改善、P3=調査・将来案。
-日時: 追加日時はこの管理表への登録日時。既存26件はファイル作成日時で一括登録。過去の報告日時ではない。
-最終更新日時は各項目の内容・状態・試験結果を更新した日時。過去の報告日時が不明な場合は推測しない。
-番号は固定。実装版・コミット・実機結果を同じ項目へ追記し、履歴を失う削除はしない。
+Status definitions:
+  OPEN       In scope, not yet implemented or fixed.
+  VERIFY     Implemented, but further testing is required.
+  TRIAGE     Old reports or unresolved status requiring current reproduction/checks.
+  IDEA       Proposal, not an implementation commitment or approval.
+  HOLD       Deferred by the user or deprioritized.
+  CLOSED     Completed, rejected, or out of scope to the stated extent.
+Categories: bug / enhancement / upstream / test / performance / memory / docs / workflow / research
+Provisional priority: P1=malfunction or data/release integrity; P2=ordinary improvement; P3=research or future proposal.
+Dates: "Added" is the date an issue entered this tracker. The original 26 entries were all registered on file creation, not on their original report dates.
+"Last updated" records changes to the issue's content, status, or test results. Do not guess unknown historical report times.
+IDs are stable. Append implementation versions, commits and hardware results to the same issue rather than deleting history.
 
-【一覧】
-ID    状態     優先 分類                    件名
-001   OPEN     P2   bug/browser             キャンセルをSD操作失敗と表示
-002   OPEN     P1   bug/upstream/nes        MMC1 CHR修正の取り込み
-003   OPEN     P2   upstream                旧本家最終更新相当の差分取り込み
-004   VERIFY   P1   test/browser/memory     深階層・長い名前・連続操作の検証
-005   OPEN     P1   enhancement/memory      RAM不足を検出し壊れず終了する
-006   IDEA     P2   enhancement/memory      機種別作業領域・固定データの省RAM化
-007   IDEA     P2   memory/browser          呼出スタックと512Bキャッシュの整理
-008   HOLD     P3   enhancement/display     液晶の省メモリ描画
-009   OPEN     P2   workflow/git            ローカルGitによる変更・要望管理
-010   OPEN     P2   workflow/files          配置統一と重複ファイルの整理
-011   OPEN     P1   bug/release             過去の混入ZIPと配布工程の是正
-012   OPEN     P2   docs/release            公開ソース・文書・実行版を一致させる
-013   TRIAGE   P2   enhancement/nes/save    セーブ名・上書き防止
-014   TRIAGE   P2   bug/n64/display         単体吸出し時の液晶下部の乱れ
-015   TRIAGE   P2   bug/led                 エラー時のLED色とPC表示
-016   TRIAGE   P2   enhancement/database    DBが一部欠けた場合の案内
-017   VERIFY   P2   test/ui/hardware        全操作方式・追加機種・別HWの確認
-018   HOLD     P3   performance/diagnostic  方向別UART診断と追加高速化
-019   HOLD     P3   enhancement/dump        ROM吸出し中の中断
-020   IDEA     P3   enhancement/browser     既存ファイルの扱いを選べるようにする
-021   HOLD     P3   research/sa1            CLK0/1 OFFで成立する条件の調査
-022   CLOSED   --   browser/memory          ブラウザの階層依存RAM消費を削減
-023   CLOSED   --   bug/browser             ルート/子フォルダのopen・パス復元
-024   CLOSED   --   enhancement/ui          既存GUI・言語・速度表示等
-025   CLOSED   --   performance             採用済み高速化と不採用案
-026   CLOSED   --   scope/md                Turrican固有改修は対象外
+[INDEX]
+ID    Status   Prio Categories               Title
+001   OPEN     P2   bug/browser              Cancellation displayed as "SD operation failed"
+002   OPEN     P1   bug/upstream/nes         Incorporate NES MMC1 CHR read fix
+003   OPEN     P2   upstream                 Incorporate last upstream changes from old project
+004   VERIFY   P1   test/browser/memory      Verify deep paths, long names and repeated browser actions
+005   OPEN     P1   enhancement/memory       Detect insufficient RAM and fail safely
+006   IDEA     P2   enhancement/memory       Reduce resident RAM for per-console workspaces and constant data
+007   IDEA     P2   memory/browser           Reorganize call stack and 512-byte cache
+008   HOLD     P3   enhancement/display      Memory-efficient LCD rendering
+009   OPEN     P2   workflow/git             Track changes and requests using local Git
+010   OPEN     P2   workflow/files           Normalize directory layout and remove duplicates
+011   OPEN     P1   bug/release              Eliminate stray build products from distributed ZIPs
+012   OPEN     P2   docs/release             Align published source, documentation and executables
+013   TRIAGE   P2   enhancement/nes/save     NES save filenames and overwrite prevention
+014   TRIAGE   P2   bug/n64/display          LCD bottom-edge corruption during standalone N64 dumping
+015   TRIAGE   P2   bug/led                  Error LED color and PC-tool display
+016   TRIAGE   P2   enhancement/database     Explain partially missing databases
+017   VERIFY   P2   test/ui/hardware         Verify all input methods, consoles and HW revisions
+018   HOLD     P3   performance/diagnostic   Direction-specific UART diagnostics and speedups
+019   HOLD     P3   enhancement/dump         Interrupt ROM dumping mid-transfer
+020   IDEA     P3   enhancement/browser      Options when an SD-copy destination already exists
+021   HOLD     P3   research/sa1             Investigate SA-1 with CLK0/1 off
+022   CLOSED   --   browser/memory           Reduce browser RAM consumption by folder depth
+023   CLOSED   --   bug/browser              Fix root/child-folder open and CRLF path reconstruction
+024   CLOSED   --   enhancement/ui           Existing GUI and ordinary controls
+025   CLOSED   --   performance              Adopted and rejected performance changes
+026   CLOSED   --   scope/md                 No Turrican-specific modification
+027   OPEN     P2   enhancement/ui/i18n      Default first launch to English; label Japanese as JAPANESE
+028   VERIFY   P2   bug/gb/mbc1             GB MBC1 special-bank fix and MBC1M compatibility
+029   VERIFY   P2   enhancement/ui/automation One-click ROM/save dumping
+030   CLOSED   P2   enhancement/ui/files     Open the output folder in Windows Explorer
+031   CLOSED   P2   enhancement/logging      Save the PC console to OSCR_LOG.txt
+032   VERIFY   P2   bug/logging/docs         Clean ROM companion TXT and separate from shared logs
+033   CLOSED   P2   bug/ui/storage           Clear stale queued-storage notice after reconnection
+034   CLOSED   P2   enhancement/logging      Rename PC shared log to OSCR_LOGPC.txt
+035   CLOSED   P2   bug/verification/gba     Restore GBA header checksum validation for PC storage
+036   IDEA     P2   enhancement/automation   Launch a preset console's batch on power-on
+037   OPEN     P2   bug/ui/i18n              Untranslated controls and messages in English mode
+038   OPEN     P2   bug/ui/menu              Out-of-range menu page leaves GUI stuck in "processing"
 
-027   OPEN     P2   enhancement/ui/i18n     初回は英語・日本語の選択名をJAPANESEにする
+[DETAILS]
 
-028   VERIFY   P2   bug/gb/mbc1             GB MBC1特殊バンク修正・MBC1M互換性検証
+#001 Cancellation is displayed as "SD operation failed"
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: OPEN / P2 / bug, browser
+Source: User report, reproduced with PC88b + PC88a.
+Reproduction: Cancel an SD copy.
+Observed: The partial ROM is removed; however, a "request failed" follows "copy cancelled" and the UI reports failure.
+Cause confirmed: The reader also returns false on cancellation and emits the common "request failed"; the GUI clears its cancelled flag in its copy-failed handler, allowing a later notice to overwrite the cancelled state.
+Remedy: Distinguish cancellation, actual errors and normal completion as terminal states. Preserve cancellation reason until the next request.
+Completion: Show cancellation, delete partial ROM, produce no spurious verification TXT, and permit another copy or move.
+Version/commit: Not addressed. Earlier cancellation-display work did not cover the additional PC88 path.
 
-029   VERIFY     P2   enhancement/ui/automation  ワンクリックでROM吸出し完了まで自動操作
+#002 Incorporate the NES MMC1 CHR read fix
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:35:44 JST
+Status: OPEN / P1 / bug, upstream, nes
+Source: Claude's analysis supplied by the user; current code compared with the official GitHub compare API.
+Scope: readCHR cases 1 / 155; old upstream commit 8e804d83 (2026-03-07).
+Change: Move reset outside the bank loop and configure the MMC1 control register.
+Observed: Not applied to current PC88a. The user has not reported a present-day mismatch on an affected cartridge.
+Completion: Retrieve and apply the actual upstream diff, check other mapper behavior and, if possible, verify an affected cartridge.
+Version/commit: Not addressed.
+Related: A component of #003. #003 must include application/validation of this fix; resolve both together.
 
-030   CLOSED   P2   enhancement/ui/files    保存先フォルダをエクスプローラーで開くボタン
+#003 Incorporate the old upstream project's final updates
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:35:44 JST
+Status: OPEN / P2 / upstream
+Verified: Old upstream master is five commits ahead of V15.5: V15.6 version text, Sky Alien in the 2600 DB, #002, VSMILE unit display, and a README relocation URL.
+Plan: Assess function fixes, DB and docs separately, document each source commit, and reconcile bundled-DB policy. Do not merely label the application V15.6 and claim full adoption.
+Completion: Document adopted/rejected changes, reasons, and commits.
+Addendum (2026-11-01 21:33:08 JST): The user requested incorporation of the old upstream project's final changes. Recorded as an issue only; apply diffs, including MMC1 #002, only after explicit implementation approval. No source, EXE or firmware changes were made at this point.
+Related: Includes #002. When closing #003, verify #002 as well and update both.
 
-031   CLOSED   P2   enhancement/logging     PCのOSCR_LOG.txtへコンソールと同じ内容を保存
+#004 Verify browser boundary conditions
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: VERIFY / P1 / test, browser, memory
+Implementation: PC88-family firmware, currently PC88a and PC88b tool.
+User verified: CRC-matching copy, no freeze when navigating folders, and almost unchanged free RAM; lowest observed RAM in logs was 530B. An older additional-console build stopped at 110B during listing.
+Still to verify separately: Copy correctness with long names, 40/100 nested folders, consecutive folder copies, repeat operation after cancellation, browser just after a dump, short/partial/empty files, 512/1024-byte transfers.
+Test data: [local test data]/SDTEST, corrected for Windows copying. Old outputs3/SD-browser-stress-test/CRPC_TEST has excessively long source paths and is not recommended.
+Limits: UTF-8 filename component up to 255 bytes, PC/SD path limits and protocol limit of 65,534 elements.
+Completion: Record results and CRC/SHA for each scenario. Do not claim simulated 1,000-level paths passed on a real card.
 
-032   VERIFY     P2   bug/logging/docs        ROM付属TXTの不要ログ・空行・項目名を整理
+#005 Detect insufficient RAM and avoid freezes/corruption
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: OPEN / P1 / enhancement, memory
+Source: User request to prevent malfunctions regardless of selected firmware options.
+Current state: Memory measured in PC87; browser usage reduced in PC88. No general low-memory protection is implemented.
+Proposal: Budget resident/heap/deepest stack/interrupt usage; check high-water marks and corruption sentinels in diagnostics. Reject unsafe configurations at build time or before startup with an explanation. One instantaneous free-memory reading is not proof of safety.
+Completion: State supported configurations/build options and test safe behavior under insufficient RAM.
 
-033   CLOSED     P2   bug/ui/storage          再接続後に保存先変更予約の表示が残る
+#006 Reduce resident RAM used by additional console support
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: IDEA / P2 / enhancement, memory
+Source: RAM optimization proposal suggested after browser improvements.
+Proposal: Share console-specific workspaces not used simultaneously; move fixed strings/tables to PROGMEM.
+Note: A project-wide refactor has not been implemented. Review initialization, console switching, and shared-buffer lifetimes.
+Completion: Record per-console savings, switching tests, and performance/content equivalence.
 
-034   CLOSED     P2   enhancement/logging     PC共通ログ名をOSCR_LOGPC.txtへ変更
+#007 Reorganize browser call stack and cache
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: IDEA / P2 / memory, browser
+Proposal: Consider common dispatch that does not retain deeply nested console-menu call frames. Clarify ownership/lifetime of the PC 512B cache and possible duplicate allocations.
+Current state: PC88 reduced listing/path buffers. Common dispatch and total cache redesign remain unimplemented.
+Note: Replacing malloc with fixed arrays does not itself lower memory usage; do not casually reuse PC transfer data.
 
-035   CLOSED     P2   bug/verification/gba    PC保存時のGBAヘッダチェックサム確認が欠落
-
-036   IDEA     P2   enhancement/automation  電源オンで事前指定機種の一括吸出しを自動開始
-
-037   OPEN     P2   bug/ui/i18n             英語モードのボタン・診断メニュー・案内の翻訳漏れ
-
-038   OPEN     P2   bug/ui/menu             最初/最後のページで範囲外移動すると処理中のまま
-
-【詳細】
-
-#001 キャンセルを「SD操作失敗」と表示する
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: OPEN / P2 / bug, browser
-出所: ユーザー報告。PC88b + PC88aで確認。
-再現: SDコピー中にキャンセル。
-観測: 未完成ROMは削除され、copy cancelled後にrequest failedが出て失敗表示になる。
-原因確認: 本体はキャンセルもfalseで返し、共通request failedを出す。
-  GUIもcopy failed処理でcancelledを解除するため、後の通知がキャンセル表示を上書き。
-対応: キャンセル・実エラー・正常完了の終端状態を区別。次要求開始まで取消し理由を保持。
-完了条件: キャンセル表示、部分ROM除去、不要な検証TXTなし、次のコピー/移動が可能。
-対応版/コミット: 未対応。以前の取消し表示修正ではPC88追加経路を扱えていなかった。
-
-#002 NES MMC1のCHR読出し修正を取り込む
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:35:44 JST
-状態: OPEN / P1 / bug, upstream, nes
-出所: ユーザーが提示したClaudeの調査。現行コードと公式比較APIを照合済み。
-対象: readCHRのcase 1 / 155。旧本家コミット8e804d83（2026-03-07）。
-内容: リセットをバンクループ外へ移し、MMC1制御レジスタを設定する上流修正。
-観測: 現在のPC88aには未適用。該当カートでの現行不一致をユーザーが報告したわけではない。
-完了条件: 上流の実差分を取得・適用、他マッパーへの影響確認、可能なら対象カートで照合。
-対応版/コミット: 未対応。
-関連: #003に含まれる個別修正。#003の完了条件にMMC1修正の適用・確認を含め、#003完了時に本項目も解決とする。
-
-
-#003 旧本家最終更新相当の差分を取り込む
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:35:44 JST
-状態: OPEN / P2 / upstream
-確認済み: 旧本家masterはV15.5より5コミット先。
-  V15.6表記 / 2600 DBのSky Alien追加 / #002 / VSMILE単位表示 / README移転先URL。
-対応: #002と区別し、機能修正・DB・文書を選別して取り込み元を記録。
-  表記だけV15.6にして全対応と見せない。DB同梱の方針と照合する。
-完了条件: 採用/不採用・理由・対応コミットの一覧が残る。
-
-追記（2026-11-01 21:33:08 JST）: ユーザー要望「旧本家最終更新相当の差分を当てる」。
-  今はissue登録のみ。#002のMMC1修正を含め、実装開始の明示後に差分を適用する。
-  この追記時点でソース・EXE・ファームへの差分適用は行っていない。
-関連: #002（MMC1 CHR修正）を含む。#003を完了とする際は#002の適用・確認も済ませ、両方を解決として更新する。
-
-
-#004 ブラウザの境界条件を検証する
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: VERIFY / P1 / test, browser, memory
-実装版: FW PC88系、現在PC88a + ツールPC88b。
-ユーザー確認済み: コピーCRC一致、フォルダ移動で停止なし、RAM空きがほぼ変わらない。
-  ログの観測最小530B。以前の追加機種構成では一覧取得時110Bで停止。
-まだ分けて確認する項目:
-  長い名前のコピー内容、40/100階層のコピー、連続フォルダコピー、取消し後再操作、
-  吸出し直後のブラウザ、短い/端数/空ファイル、512/1024転送。
-試験データ: [ローカル試験データ]/SDTEST（Windowsコピー用の修正版）。
-  旧outputs3/SD-browser-stress-test/CRPC_TESTはコピー元パスが長く使用非推奨。
-境界: 名前1個UTF8 255B、PC/SD側パス制限、通信上限65534要素。
-完了条件: 対象条件ごとに結果とCRC/SHAを記録。模擬1000階層を実カード成功としない。
-
-#005 RAMが足りない構成を検出し、停止・破損を防ぐ
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: OPEN / P1 / enhancement, memory
-出所: ユーザー要望「どういうオプションで書き込もうが動作不良起こらないように」。
-現状: PC87で計測、PC88でブラウザ使用量を削減。全般的な不足防止機構は未実装。
-対応案: 常駐/ヒープ/最深呼出し/割込みの予算検査、診断で高水位・境界破壊を確認。
-  収まらない構成はビルド時または開始前に理由を出す。瞬間のfree値だけで安全保証しない。
-完了条件: 対応する構成・ビルド条件を明記し、不足条件で安全に戻る試験。
-
-#006 機種追加で増える常駐RAMを抑える
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: IDEA / P2 / enhancement, memory
-出所: RAM対策として提示した案。ブラウザ改修後の次候補。
-案: 同時に使わない機種固有作業領域を共有し、固定文字列/表をPROGMEMへ移す。
-注意: 現行はこの全体改修を実施していない。初期化・機種切替・共有領域の寿命を精査する。
-完了条件: 機種別の削減量、切替試験、性能/内容一致を記録。
-
-#007 ブラウザ呼出し位置とキャッシュを整理する
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: IDEA / P2 / memory, browser
-案: 機種メニューの深い呼出し位置を抱えたまま実行しない共通ディスパッチを検討。
-  PC用512Bキャッシュの所有者・寿命を整理し、重複確保を減らせるか調べる。
-現状: PC88で一覧/パス領域は削減。共通ディスパッチ化・キャッシュ全体再設計は未実装。
-注意: mallocを固定配列にするだけでは使用量は減らない。PC通信dataを安易に共用しない。
-
-#008 液晶の省メモリ化
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: HOLD / P3 / enhancement, display, memory
-出所: 追加案。ユーザーは「とにかくブラウザだから問題」とブラウザを優先。
-案: 全画面1024Bから部分描画へ。表示処理の大きな変更が必要。
-現状: 未実装。ブラウザ修正に混ぜない。次の実装を承認済みとは扱わない。
+#008 Memory-efficient LCD drawing
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: HOLD / P3 / enhancement, display, memory
+Source: Additional proposal; user prioritized the browser ("the browser is the real problem").
+Proposal: Replace full-screen 1024B buffering with partial drawing; would require significant display changes.
+Current state: Not implemented. Do not mix this into browser fixes or treat the next implementation as approved.
 
 #009 ローカルGitでソース・要望・結果を管理する
 追加日時: 2026-11-01 21:13:34 JST
