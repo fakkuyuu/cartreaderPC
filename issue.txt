@@ -657,8 +657,8 @@ PC93 implementation (2026-11-02 23:07:16 JST): Includes PC92 English UI fixes: b
 
 #038 Navigating outside the first/last main-menu page leaves the PC operation screen stuck
 Added: 2026-11-02 22:26:26 JST
-Last updated: 2026-11-02 23:07:16 JST
-Status: VERIFY / P2 / bug, ui, menu
+Last updated: 2026-11-02 23:08:53 JST
+Status: CLOSED / P2 / bug, ui, menu
 Source: User hardware report; checked the relevant code path in PC91 tool and PC89 firmware.
 Reproduction: On the first main-menu page, press Previous Page; or on the final page (page 2 in the user's configuration), press Next Page.
 Observed: Tool displays "processing" and the controls do not reappear. Reader's physical buttons still respond.
@@ -679,6 +679,8 @@ Historical change analysis (2026-11-02 22:32:25 JST):
 - This entry records investigation only; no fix, build or firmware flash was performed.
 
 PC93 implementation (2026-11-02 23:07:16 JST): Page requests retain the current operation controls until a new menu arrives. An input-ready-only boundary response no longer leaves an empty processing screen. Shared path covers mouse, 7/8, arrows and PageUp/PageDown. Normal selection clearing and input gating remain. Syntax and 32 batch tests passed. Hardware confirmation pending; firmware unchanged.
+
+Hardware confirmation (2026-11-02 23:08:53 JST): User reports the PC93 fix works. Close #038 for the reported page-boundary GUI lockout; this does not establish all-console/all-operation reliability.
 
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
