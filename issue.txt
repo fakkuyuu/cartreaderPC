@@ -1,6 +1,6 @@
 cartreaderPC Issues
-最終更新日時: 2026-11-02 13:54:09 JST
-対象: PCツールPC88g（画面版名PC88eを維持） / ファームPC88a / HW3
+最終更新日時: 2026-11-02 14:26:00 JST
+対象: PCツールPC88h（画面版名PC88eを維持） / ファームPC88a / HW3
 
 これは要望・不具合・案の管理表。ローカルの正本を公開用に転記したもの。GitHub Issuesの個別チケット登録とは別。
 変更履歴.txtは「何を変えたか」、このファイルは「何が残っているか」を管理する。
@@ -62,7 +62,7 @@ ID    状態     優先 分類                    件名
 
 032   VERIFY     P2   bug/logging/docs        ROM付属TXTの不要ログ・空行・項目名を整理
 
-033   OPEN     P2   bug/ui/storage          再接続後に保存先変更予約の表示が残る
+033   VERIFY     P2   bug/ui/storage          再接続後に保存先変更予約の表示が残る
 
 034   VERIFY     P2   enhancement/logging     PC共通ログ名をOSCR_LOGPC.txtへ変更
 
@@ -539,8 +539,8 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 
 #033 再接続でSD保存が緑になった後も保存先変更予約の表示が残る
 追加日時: 2026-11-02 12:11:24 JST
-最終更新日時: 2026-11-02 14:21:15 JST
-状態: VERIFY（GUI修正済み・模擬試験PASS、EXE/実機確認待ち） / P2 / bug, ui, storage, reconnect
+最終更新日時: 2026-11-02 14:26:00 JST
+状態: VERIFY（PC88h EXE作成・模擬試験PASS、実機確認待ち） / P2 / bug, ui, storage, reconnect
 出所: ユーザーの実機操作報告。現行PC88d利用中の会話での報告だが、ログ/版番号の追加確認は未実施。
 再現手順:
 1. PC保存で接続したまま本体電源を切る。
@@ -556,6 +556,8 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 修正記録（2026-11-02 14:21:15 JST）: GitHub master の pc/cartreader_pc.py で [Storage Mode] 通知処理を修正。再接続時に旧保存先PCの報告を受けても、未適用のSD予約を破棄しない。予約先への切替確定時、または既に送信済みの切替通知時のみ、上部の「保存先変更予約: ...」を「転送: 待機」へ戻す。実転送中など他の表示は上書きしない。GUIの他の処理・ファーム・storage.pyは変更なし。
 ソフト確認: GUI状態処理の模擬6ケースPASS（再接続時の未適用予約維持、PC/SD双方向の切替確定、送信済み通知、旧保存先通知、転送表示保全）。GUI実機・EXEビルドは未実施。完了条件の連続実機操作と実際の保存先確認は引き続き必要。
 対応コミット: c6b97db0e583a24a55943e0bc0b2e30488d04271（fix(pc): clear queued storage notice on confirmed mode change）。
+
+取り込み/ビルド（2026-11-02 14:26:00 JST）: CodexがGitHub c6b97db（issue更新891350f）を取得しPC88hへ反映。PC88gからcartreader_pc.pyのみ変更。PC/SD双方の予約確定、再接続旧通知で予約保持、送信済み通知、進捗表示保護など6ケースを再確認しPASS。全Python構文PASS、PyInstallerビルド成功、EXE --self-test exit0/PASS。ファーム変更・書込みなし。実際の切替・SD保存はユーザー確認待ち。成果物outputs3/cartreader-v15.5-pc88h/CartReaderPC.exe、ソースwork/pc88h/pc。画面版名は取得ソースどおりPC88eのまま。
 
 #034 PCツールの共通ログ名をOSCR_LOGPC.txtへ変更する
 追加日時: 2026-11-02 12:18:38 JST
