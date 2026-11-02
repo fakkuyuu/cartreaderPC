@@ -79,6 +79,92 @@ class BatchDumpTests(unittest.TestCase):
         self.assertEqual(run.on_menu("NES CART READER",
                          (("0", "Read iNES Rom"), ("2", "Read Save"))), "2")
 
+    def test_nes_db_hit_candidate_confirmation_then_rom(self):
+        # NES.ino getMapping: CRC matches nes.txt, checkCartSelection prints
+        # "Select your cartridge", then [Control] cartridge-select.
+        run = BatchDump()
+        run.begin("NES")
+        run.on_line("Searching database")
+        run.on_line("for 12345678...")
+        run.on_line("Select your cartridge")
+        run.on_line("Known NES Game")
+        self.assertEqual(run.on_candidate(), " ")
+        self.assertTrue(run.nes_candidate_selected)
+        run.on_line("RAM SIZE: 0K")
+        self.assertEqual(run.on_press(), " ")
+        menu = (("0", "Read iNES Rom"), ("2", "Read Save"),
+                ("3", "Write Save"), ("6", "Reset"))
+        self.assertEqual(run.on_menu("NES CART READER", menu), "0")
+        run.on_line("[SAVED] NES/ROM/Known Game/1/Known Game.nes (32784 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678 DB=Known NES Game")
+        self.assertEqual(run.on_press(), " ")
+        self.assertIsNone(run.on_menu("NES CART READER", menu))
+        self.assertFalse(run.active)
+        self.assertEqual(run.reason, "一括吸出し完了: ROM")
+
+    def test_nes_db_miss_manual_candidate_never_confirmed(self):
+        # The same candidate widget can follow a manual alphabet/database
+        # selection; a previous "Searching database" is not sufficient.
+        run = BatchDump()
+        run.begin("NES")
+        run.on_line("Searching database")
+        run.on_line("for 12345678...")
+        run.on_line("CRC not found in database")
+        run.on_line("Using manual selection")
+        run.on_line("Select your cartridge")
+        self.assertIsNone(run.on_candidate())
+        self.assertFalse(run.active)
+        self.assertIn("DB一致を確認できません", run.reason)
+
+    def test_nes_all_ff_manual_candidate_never_confirmed(self):
+        run = BatchDump()
+        run.begin("NES")
+        run.on_line("No data found.")
+        run.on_line("Using manual selection")
+        run.on_line("Select your cartridge")
+        self.assertIsNone(run.on_candidate())
+        self.assertFalse(run.active)
+        self.assertIn("手動選択", run.reason)
+
+    def test_nes_candidate_without_db_evidence_stops(self):
+        for lines in ((), ("Searching database",),
+                      ("Select your cartridge",)):
+            with self.subTest(lines=lines):
+                run = BatchDump()
+                run.begin("NES")
+                for line in lines:
+                    run.on_line(line)
+                self.assertIsNone(run.on_candidate())
+                self.assertFalse(run.active)
+        run = BatchDump()
+        run.begin("NES")
+        self.assertIsNone(run.on_press())
+        self.assertIn("DB候補未確認", run.reason)
+
+    def test_nes_candidate_confirmation_cannot_be_sent_twice(self):
+        run = BatchDump()
+        run.begin("NES")
+        run.on_line("Searching database")
+        run.on_line("Select your cartridge")
+        self.assertEqual(run.on_candidate(), " ")
+        self.assertIsNone(run.on_candidate())
+        self.assertFalse(run.active)
+
+    def test_gui_nes_candidate_control_is_wired_to_batch(self):
+        gui = Path(__file__).with_name("cartreader_pc.py").read_text(encoding="utf-8")
+        tree = ast.parse(gui)
+        def named_function(name):
+            return next(node for node in ast.walk(tree)
+                        if isinstance(node, ast.FunctionDef) and node.name == name)
+        handler = named_function("render_candidate_controls")
+        parsed = named_function("parse_console")
+        names = {ast.unparse(node.func) for node in ast.walk(handler)
+                 if isinstance(node, ast.Call)}
+        self.assertIn("batch.on_candidate", names)
+        self.assertIn("batch_report", names)
+        self.assertIn("batch_schedule", names)
+        self.assertIn("[Control] cartridge-select", ast.get_source_segment(gui, parsed))
+
     def test_snes_with_save_uses_firmware_read_save_label(self):
         # The actual SNES menu uses FSTRING_READ_SAVE ("Read Save"), not "Read SRAM".
         run = BatchDump()
