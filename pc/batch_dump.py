@@ -33,6 +33,7 @@ class BatchDump:
         self.rom_verified = False
         self.save_saved = False
         self.save_expected_bytes = None
+        self.db_says_no_save = False
         self.reason = ""
         self.db_match = None
 
@@ -47,6 +48,7 @@ class BatchDump:
         self.rom_verified = False
         self.save_saved = False
         self.save_expected_bytes = None
+        self.db_says_no_save = False
         self.reason = ""
         self.db_match = None
 
@@ -92,7 +94,9 @@ class BatchDump:
             elif line.startswith("Save Type:"):
                 value = line.partition(":")[2].strip().lower()
                 if value == "none/unknown":
-                    self.save = None
+                    # GBA reports "None/Unknown" for both cases. A specific
+                    # database Save Lib=None means no save is expected.
+                    self.save = False if self.db_says_no_save else None
                 elif value:
                     self.save = True
                     for prefix, expected in (
@@ -105,6 +109,7 @@ class BatchDump:
                             break
             elif line.startswith("Save Lib:"):
                 if line.partition(":")[2].strip().lower() == "none":
+                    self.db_says_no_save = True
                     self.save = False
             elif line.startswith("Sram:"):
                 value = line.partition(":")[2].strip().lower()
