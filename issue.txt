@@ -1,5 +1,5 @@
 cartreaderPC Issues
-最終更新日時: 2026-11-02 18:52:19 JST
+最終更新日時: 2026-11-02 19:10:01 JST
 対象: PCツールPC89 / ファームPC89 / HW3（GitHub 54b3e88由来）
 
 これは要望・不具合・案の管理表。ローカルの正本を公開用に転記したもの。GitHub Issuesの個別チケット登録とは別。
@@ -450,8 +450,8 @@ Codexビルド/書込結果（2026-11-02 18:52:19 JST）: GitHub f85877aのMBC1�
 
 #029 ワンクリック吸出しモード（ボタン送り・メニュー選択を自動化）
 追加日時: 2026-11-01 22:02:12 JST
-最終更新日時: 2026-11-02 18:52:19 JST
-状態: VERIFY（実装済み・PC/FW再ビルドと実機確認待ち） / P2 / enhancement, ui, automation
+最終更新日時: 2026-11-02 19:10:01 JST
+状態: VERIFY（PC89実装・ビルド/書込み済み。GB/GBA/SNES/MD一括実機成功、残機種・セーブ分岐等の確認待ち） / P2 / enhancement, ui, automation
 出所: ユーザー案。接点不良などがなければ、開始1ボタンでROM吸出し完了まで進めたい。
 目的: カート情報の確認・Press Button・Read ROMの選択など、定型操作の手間を減らす。
 要望: 自動操作モードを用意し、対応する画面遷移を認識して吸出し・PC検証まで進める。
@@ -490,6 +490,8 @@ Codexビルド/書込結果（2026-11-02 18:52:19 JST）: GitHub 54b3e88由来�
 追補・後方互換保護（2026-11-02 18:12:20 JST）: NES専用Resetコマンド「!」は新ファームが[Control] nes-reset-supportedで機能対応を宣言した場合にのみPC GUIが送る。旧FWがこの通知を送らない場合はNESのタイトル選択画面で自動停止し、未対応コマンドを送らない。all-FF等のNo data found分岐も、直接停止する代わりに安全なNESアルファベット画面の復帰操作まで進める。コマンドはファーム内のNESアルファベット/候補選択待ちの2箇所だけ有効、読出し・書込み中には適用しない。GBA DB Save Lib=Noneが明示されている場合は後続のSave Type: None/Unknown表示で『不明』に戻さずセーブなし扱い。テストは pc/test_batch_dump.py に計9件を追加したが、このチャットではPythonテスト実行とArduinoコンパイルをまだ行っていない。直近追加コミット 01dffeb, 06e4ac0, e296eec, 6cfbca5, 8e70530, 7220d82。Windows EXE・ファーム再ビルド/書込みおよび実機確認が残課題。
 
 Codexレビューによる不具合修正（2026-11-02 18:37:20 JST）: Codex側から「新規9テストはパスしたが実際の画面経路に2点問題がある」と報告。①SNESの一括セーブ遷移で pc/batch_dump.py が実メニューの FSTRING_READ_SAVE=Read Save ではなく Read SRAM を選択肢検索して停止していた。実メニューと一致する Read Save に修正（e7b0a0d）。②GBAの gba.txt DB候補画面は printInstructions() が [Control] physical-buttons を通知して決定待ちになるが、GUI render_physical_fallback() に一括ステートマシンが未接続だった。PC GUIから batch.on_physical() を呼ぶ処理を追加（b7e0cba）。BatchDump はGBA/rom_menu段階の Save Lib 表示による候補認識後に1回だけ Space を送り、他のphysical-buttons画面・未認識状態・CARTRIDGE ERROR・Checksum Error では一括を停止する。GBAで候補確定前に不意のPress Buttonが来た場合も自動続行しない。pc/test_batch_dump.py にSNESのRead Saveセーブ完了経路、GBAのDB候補→physical決定→ROM→SAVE、未認識physical画面では停止、Python ASTでGUI側 physical-buttons 呼出し接続を確認する回帰テストを追加して計13件（1d80e3c、cf1582d）。現時点でChatGPT側は追加テスト実行、EXE化、ファームビルド・書込み、実機動作確認を行っていない。ユーザー報告どおりCodex側では取り込み・EXE化・書込みはまだ。これらが終わるまで状態 VERIFY を維持。
+
+ユーザー実機確認（2026-11-02 19:10:01 JST、#029一括吸出し）: ユーザーから「無事GB、GBA、SNES、MDで一括吸出しできた」と明示報告を受領。PC89の一括ボタンから4機種で正常経路が機能した実機成功例として扱い、#029にも記録する。同じ4機種のROM吸出し成功およびCRC一致は既に#028の「ユーザー実機テスト報告」に記録済みであるが、#028はMBC1案件であり一括UIの成否と混同しない。今回の報告では、各カートのセーブ有無・ROM＋セーブ両ファイルが一括で保存できたか・個別タイトル/CRC値・NES/PCE一括ボタン（PCE swapped/not swappedの双方）・NES認識失敗時専用Reset・異常時停止は明示されていないため未確認のまま。PC89のPC EXEビルド・13テストPASS・HW3ファームビルドおよびCOM5書込みは18:52:19 JSTのCodex記録どおり完了済みであり、旧「ビルド/書込み待ち」は現在状態に当てはまらない。#029は部分実機確認済みとしてVERIFY継続。手動機種選択およびMSX対象外、PCEの2ボタン仕様は不変。
 
 #030 保存先フォルダをエクスプローラーで開くボタン
 追加日時: 2026-11-01 22:05:38 JST
