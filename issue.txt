@@ -1,5 +1,5 @@
 cartreaderPC Issues
-最終更新日時: 2026-11-02 14:46:29 JST
+最終更新日時: 2026-11-02 16:34:04 JST
 対象: PCツールPC88h（画面版名PC88eを維持） / ファームPC88a / HW3
 
 これは要望・不具合・案の管理表。ローカルの正本を公開用に転記したもの。GitHub Issuesの個別チケット登録とは別。
@@ -503,8 +503,8 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 
 #032 ROM付属TXTの内容を整理し、共通コンソールログと区別する
 追加日時: 2026-11-01 22:42:57 JST
-最終更新日時: 2026-11-02 13:54:09 JST
-状態: VERIFY（PC88g、空行調整を取り込み・実機確認待ち） / P2 / bug, logging, docs
+最終更新日時: 2026-11-02 16:34:04 JST
+状態: VERIFY（GBA/SNESでTXT整形・検証表示の実機確認済み、連続吸出し等の追加確認待ち） / P2 / bug, logging, docs
 出所: ユーザー提供の本家/ツール生成TXTを実読比較。
 比較資料:
   本家: [ローカルSD]/GBA/ROM/HPOTTER COS/4/HPOTTER COS.txt
@@ -536,6 +536,8 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 取り込み（2026-11-02 13:35:54 JST）: 明示指示によりGitHub 7256c48の整形変更をPC88gへ取り込み。機種/カート情報/吸出し/検証の段落間に空行を追加。storage.pyのみ変更。レビュー時11テストPASSのコードと一致し、EXEビルド・--self-test exit0/PASS。実機確認待ち。成果物outputs3/cartreader-v15.5-pc88g/CartReaderPC.exe。
 
 ユーザー確認（2026-11-02 13:54:09 JST）: PC88gのTXTについて「改行入ったね」と報告。段落空行の表示を実利用で確認。連続吸出し等の全実機条件まで確認した意味ではなく、VERIFYを維持。
+
+ユーザー実機確認（2026-11-02 16:34:04 JST）: SNES/SFCのSA-1搭載「SHINING SCORPION」4MB/Save 32KBのROM付属TXTを確認。保存先「SNES/ROM/SHINING SCORPION/107/...」、ヘッダ表示「Checksum: B859」「Header CRC32: 8214C6C2」、保存後「CRC32... B17E95D4 -> Mini Yonku Shining Scorpion - Let's & Go!! (Japan).sfc」「SNES-CHECKSUM=B859 OK」「RENAMED=SNES/ROM/SHINING SCORPION/107/Mini Yonku Shining Scorpion - Let's & Go!! (Japan).sfc」。機種/カート情報・吸出し・検証結果が段落で整理され、今回のTXTに無関係な操作履歴・LED通知の混入なし。SNESチェックサム照合・DB名でのリネーム表示も正常。これによりGBAに加えてSNESの正常系実機結果を確認した。複数連続ROM吸出し・セーブ後・別カート切替の各条件を全て確認したことにはならずVERIFYを維持。
 
 #033 再接続でSD保存が緑になった後も保存先変更予約の表示が残る
 追加日時: 2026-11-02 12:11:24 JST
