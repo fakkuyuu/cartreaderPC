@@ -1117,7 +1117,17 @@ def gui(args):
                     f"完了: 平均 {float(transfer_done.group(3)):.1f} KiB/s / "
                     f"{copied:.2f} MiB / {float(transfer_done.group(2)):.1f}秒")
             if storage_match:
-                set_storage_state(storage_match.group(1), None)
+                reported = storage_match.group(1)
+                pending = storage_current["pending"]
+                # An initial mode report after reconnect must not discard
+                # a queued change to the other backend.
+                set_storage_state(reported, pending if pending != reported else None)
+                # The transfer label is separate from the storage buttons.
+                # Clear a stale reservation only after confirmation, and do
+                # not overwrite an active transfer/progress indication.
+                if (pending is None or pending == reported) and \
+                        transfer_speed.get().startswith("保存先変更予約:"):
+                    transfer_speed.set("転送: 待機")
             if led_match:
                 set_led_state(led_match.group(1))
             if led_activity_match:
