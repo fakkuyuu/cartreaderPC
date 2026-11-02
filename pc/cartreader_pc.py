@@ -836,6 +836,7 @@ def gui(args):
             "Game Boy": (("一括GB", "GB"), ("一括GBA", "GBA")),
             "NES/Famicom": (("一括吸出し", "NES"),),
             "Super Nintendo/SFC": (("一括吸出し", "SNES"),),
+            "Nintendo 64 (3V)": (("一括吸出し", "N64"),),
             "Mega Drive/Genesis": (("一括吸出し", "MD"),),
             "PC Engine/TG16": (("一括(swapped)", "PCE_SWAP"),
                                 ("一括(not swapped)", "PCE_RAW")),
