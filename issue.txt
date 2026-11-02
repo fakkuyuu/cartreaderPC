@@ -539,8 +539,8 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 
 #033 再接続でSD保存が緑になった後も保存先変更予約の表示が残る
 追加日時: 2026-11-02 12:11:24 JST
-最終更新日時: 2026-11-02 14:26:00 JST
-状態: VERIFY（PC88h EXE作成・模擬試験PASS、実機確認待ち） / P2 / bug, ui, storage, reconnect
+最終更新日時: 2026-11-02 14:28:51 JST
+状態: VERIFY（PC88h、再接続時の予約表示解除を実機確認済み・SD実保存/逆方向未確認） / P2 / bug, ui, storage, reconnect
 出所: ユーザーの実機操作報告。現行PC88d利用中の会話での報告だが、ログ/版番号の追加確認は未実施。
 再現手順:
 1. PC保存で接続したまま本体電源を切る。
@@ -558,6 +558,8 @@ USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持�
 対応コミット: c6b97db0e583a24a55943e0bc0b2e30488d04271（fix(pc): clear queued storage notice on confirmed mode change）。
 
 取り込み/ビルド（2026-11-02 14:26:00 JST）: CodexがGitHub c6b97db（issue更新891350f）を取得しPC88hへ反映。PC88gからcartreader_pc.pyのみ変更。PC/SD双方の予約確定、再接続旧通知で予約保持、送信済み通知、進捗表示保護など6ケースを再確認しPASS。全Python構文PASS、PyInstallerビルド成功、EXE --self-test exit0/PASS。ファーム変更・書込みなし。実際の切替・SD保存はユーザー確認待ち。成果物outputs3/cartreader-v15.5-pc88h/CartReaderPC.exe、ソースwork/pc88h/pc。画面版名は取得ソースどおりPC88eのまま。
+
+実機確認（2026-11-02 14:28:51 JST、ユーザー報告）: SD保存への切替を予約した状態で本体電源をONにすると、自動的に接続が復旧し、残っていた「保存先変更予約」の表示も消えた。再接続後の表示不整合は当該手順で解消を確認。実際にSDへROMが保存されたか、SD→PCへの逆方向切替、未適用時の予約維持はこの報告だけでは未確認。完了条件の残項目があるためVERIFYを維持。
 
 #034 PCツールの共通ログ名をOSCR_LOGPC.txtへ変更する
 追加日時: 2026-11-02 12:18:38 JST
