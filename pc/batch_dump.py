@@ -78,7 +78,7 @@ class BatchDump:
             return self.stop("通信切断・キャンセルのため一括停止")
         if (line.startswith(("Error:", "[ERROR", "HEADER CHECKSUM ERROR", "Fatal error"))
                 or ("MISMATCH" in line and (line.startswith("[VERIFY]") or line.startswith("Checksum:")))
-                or line.startswith("No data found.")):
+                or (line.startswith("No data found.") and self.target != "NES")):
             return self.stop(f"読み取り異常のため一括停止: {line[:100]}")
         if self.phase in ("entry", "rom_menu"):
             if line.startswith("Save Size:"):
