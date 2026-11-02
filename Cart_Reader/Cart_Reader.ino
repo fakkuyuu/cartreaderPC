@@ -889,6 +889,15 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
 #endif
     uint8_t b = 0;
     while (1) {
+#ifdef PC_MENU
+      // Safe NES-only escape from the database candidate browser.
+      // Transfer and flash routines never read commands in this loop.
+      if (mode == CORE_NES && PcConsole.available() && PcConsole.peek() == '!') {
+        PcConsole.read();
+        PcConsole.println(F("[+] Reset"));
+        resetArduino();
+      }
+#endif
       // Check button input
       b = checkButton();
 
@@ -1127,6 +1136,12 @@ byte starting_letter(const char* databaseName) {
     // avoids the reader scanning from A to Z over the serial filesystem.
     if (PcConsole.available()) {
       char direct = PcConsole.peek();
+      // One-command NES return to the system menu on manual alphabet screen.
+      if (mode == CORE_NES && direct == '!') {
+        PcConsole.read();
+        PcConsole.println(F("[+] Reset"));
+        resetArduino();
+      }
       if (direct == '@') {
         PcConsole.read();
         char encoded[9];
