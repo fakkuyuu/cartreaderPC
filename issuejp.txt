@@ -70,9 +70,9 @@ ID    状態     優先 分類                    件名
 
 036   IDEA     P2   enhancement/automation  電源オンで事前指定機種の一括吸出しを自動開始
 
-037   VERIFY        P2   bug/ui/i18n             英語モードのボタン・診断メニュー・案内の翻訳漏れ
+037   VERIFY   P2   bug/ui/i18n             英語モードのボタン・診断メニュー・案内の翻訳漏れ
 
-038   CLOSED        P2   bug/ui/menu             最初/最後のページで範囲外移動すると処理中のまま
+038   CLOSED   P2   bug/ui/menu             最初/最後のページで範囲外移動すると処理中のまま
 
 【詳細】
 
