@@ -861,16 +861,16 @@ def gui(args):
         if rendered:
             select_row(0)
             window.focus_set()
-        if batch.active:
-            was_active = batch.active
-            action = batch.on_menu(title, options)
-            batch_report(was_active)
-            batch_schedule(action)
         if paged:
             nav = ttk.Frame(menu_items)
             nav.pack(fill="x", pady=(5, 0))
             ttk.Button(nav, text="7  ◀ 前のページ (←)", command=lambda: send_menu_key("[")).pack(side="left")
             ttk.Button(nav, text="8  次のページ (→) ▶", command=lambda: send_menu_key("]")).pack(side="right")
+        if batch.active:
+            was_active = batch.active
+            action = batch.on_menu(title, options)
+            batch_report(was_active)
+            batch_schedule(action)
 
     def render_press_button():
         input_mode.set("press")
