@@ -206,7 +206,7 @@ def acquire_single_instance():
     if kernel32.GetLastError() == 183:  # ERROR_ALREADY_EXISTS
         kernel32.CloseHandle(handle)
         ctypes.windll.user32.MessageBoxW(
-            None, "CartReaderPC は既に起動しています。", "Cart Reader", 0x30)
+            None, "CartReaderPC is already running. / 既に起動しています。", "Cart Reader", 0x30)
         return False
     _SINGLE_INSTANCE_HANDLE = handle
     return True
@@ -481,7 +481,7 @@ def gui(args):
     ui_settings = load_ui_settings()
     language = tk.StringVar(value=ui_settings.get("language", "日本語"))
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC88e — Disconnected")
+    window.title("cartreaderPC PC93 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -791,7 +791,11 @@ def gui(args):
         if batch.active and not automated:
             batch_stop("手動操作に切り替えました")
         if worker and worker.is_alive() and input_ready.get():
-            clear_operation(message)
+            # Page-boundary requests may only return input-ready, without
+            # resending the menu. Keep its controls until a new menu arrives.
+            # send_key still blocks repeated input while awaiting the reader.
+            if value not in ("[", "]"):
+                clear_operation(message)
             send_key(value, automated=automated)
 
     # Keep the actual left/right controls available on non-numbered screens.
@@ -1172,7 +1176,7 @@ def gui(args):
                 set_storage_state("PC", storage_current["pending"])
             if version_match:
                 window.title(
-                    f"cartreaderPC PC88e — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC93 — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1238,7 +1242,7 @@ def gui(args):
             if line.startswith(("[Disconnected", "[RECONNECT]")):
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC88e — Disconnected")
+                window.title("cartreaderPC PC93 — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")
@@ -1516,10 +1520,8 @@ def gui(args):
                 for name in ("gb.txt", "gba.txt", "snes.txt", "md.txt", "n64.txt", "nes.txt")):
             from tkinter import messagebox
             messagebox.showwarning(
-                "Database files / データベース",
-                "Database TXT files were not found in the output folder.\n"
-                "Download the upstream SD files and copy the required TXT files there.\n\n"
-                "保存先にDBがありません。上流のsdフォルダ内の必要なTXTを配置してください。\n"
+                translator.translate("データベース"),
+                translator.translate("保存先にDBがありません。上流のsdフォルダ内の必要なTXTを配置してください。") + "\n"
                 "https://github.com/sanni/cartreader/tree/master/sd")
         set_connection_state("接続中…")
         safe_rate, dump_rate = load_profile(port_identity(port.get()))
@@ -1932,6 +1934,9 @@ def gui(args):
                 if not diagnostic_log.get():
                     shown = "".join(line for line in shown.splitlines(keepends=True)
                                     if not line.startswith(("[Input]", "[Reader]", "[Menu]", "[SD Progress]")))
+                # Translate only presentation text; parse the original protocol below.
+                shown = "".join(translator.translate(line) if line.startswith("[Batch] ")
+                                else line for line in shown.splitlines(keepends=True))
                 text.insert("end", shown)
                 displayed_chunks.append(shown)
                 parse_console(chunk)
@@ -1946,7 +1951,7 @@ def gui(args):
                     from tkinter import messagebox
                     messagebox.showwarning(
                         "OSCR_LOGPC.txt",
-                        f"OSCR_LOGPC.txt に書き込めませんでした。\n{exc}",
+                        translator.translate("OSCR_LOGPC.txt に書き込めませんでした。") + "\n" + str(exc),
                         parent=window,
                     )
                     oscr_log_error["reported"] = True

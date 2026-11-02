@@ -629,8 +629,8 @@ Version/commit: Not implemented; issue registration only, awaiting explicit user
 
 #037 Some buttons, menus and messages remain Japanese in English mode
 Added: 2026-11-02 22:23:29 JST
-Last updated: 2026-11-02 22:23:29 JST
-Status: OPEN / P2 / bug, ui, i18n
+Last updated: 2026-11-02 23:07:16 JST
+Status: VERIFY / P2 / bug, ui, i18n
 Source: User reported that some buttons do not switch to English. Investigated PC91 source and actual translation implementation.
 Scope: work/pc91/pc/cartreader_pc.py, i18n.py and batch_dump.py. This was a source review, not comprehensive actual GUI testing.
 Confirmed untranslated button labels (eight kinds; some occur for multiple consoles):
@@ -652,11 +652,13 @@ Remedy proposal: Cover English UI controls and guidance comprehensively without 
 Verification: Set UiTranslator to English and apply it to Python string labels; the above buttons retained Japanese. A static scan found 34 Japanese string occurrences, including internal comparison literals and duplicates, so this does not mean 34 separate UI bugs.
 Completion: Batch/page/diagnostics buttons and menu entries become English, dynamically created screens and round-trip language switching follow the selection, and relevant warning/help coverage is explicitly documented. Switching back to Japanese must work.
 Version/commit: Not addressed. Investigation and issue entry only; no code, EXE or firmware changed.
+PC93 implementation (2026-11-02 23:07:16 JST): Includes PC92 English UI fixes: batch/page/diagnostics labels, Tk Menu entries, batch messages and warnings. Real Tk English/Japanese round-trip checks passed. Initial-language policy #027 is outside scope. Syntax and 32 batch tests passed. Hardware confirmation pending; firmware unchanged.
+
 
 #038 Navigating outside the first/last main-menu page leaves the PC operation screen stuck
 Added: 2026-11-02 22:26:26 JST
-Last updated: 2026-11-02 22:32:25 JST
-Status: OPEN / P2 / bug, ui, menu
+Last updated: 2026-11-02 23:07:16 JST
+Status: VERIFY / P2 / bug, ui, menu
 Source: User hardware report; checked the relevant code path in PC91 tool and PC89 firmware.
 Reproduction: On the first main-menu page, press Previous Page; or on the final page (page 2 in the user's configuration), press Next Page.
 Observed: Tool displays "processing" and the controls do not reappear. Reader's physical buttons still respond.
@@ -675,6 +677,8 @@ Historical change analysis (2026-11-02 22:32:25 JST):
 - The examined reader versions PC83/PC87/PC88a/PC89 all use the same out-of-range page handling: send only menuReady.
 - Therefore this is most likely a regression introduced by the PC85 -> PC86 PC-tool change, not by recent GPT batch-mode additions. This is consistent with the user's memory that navigating to a nonexistent page previously did nothing, although older versions have not been retested on hardware.
 - This entry records investigation only; no fix, build or firmware flash was performed.
+
+PC93 implementation (2026-11-02 23:07:16 JST): Page requests retain the current operation controls until a new menu arrives. An input-ready-only boundary response no longer leaves an empty processing screen. Shared path covers mouse, 7/8, arrows and PageUp/PageDown. Normal selection clearing and input gating remain. Syntax and 32 batch tests passed. Hardware confirmation pending; firmware unchanged.
 
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
