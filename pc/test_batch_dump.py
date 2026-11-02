@@ -178,6 +178,137 @@ class BatchDumpTests(unittest.TestCase):
                                       (("0", "Read ROM"), ("1", "Read Save"))))
         self.assertEqual(run.reason, "一括吸出し完了: ROM（DB照合なし）")
 
+    def test_n64_database_hit_rom_then_eeprom(self):
+        # Exact N64.ino flow: Select N64 device -> Game Cartridge ->
+        # n64.txt CRC1 match -> ROM Size / Save Type / CRC1 -> Press Button
+        # -> N64 Cart Reader -> Read ROM -> Press Button -> Read Save.
+        run = BatchDump()
+        run.begin("N64")
+        self.assertEqual(run.on_menu("Select N64 device",
+                         (("0", "Game Cartridge"), ("1", "Controller"),
+                          ("2", "Flash Repro"))), "0")
+        run.on_line("Searching database...")
+        run.on_line("ROM Size: 8 MB")
+        run.on_line("Save Type: 4K EEPROM")
+        run.on_line("CRC1: A1B2C3D4")
+        self.assertEqual(run.save_expected_bytes, 512)
+        self.assertEqual(run.on_press(), " ")
+        menu = (("0", "Read ROM"), ("1", "Read Save"),
+                ("2", "Write Save"), ("3", "Force Savetype"),
+                ("4", "Force ROM size"))
+        self.assertEqual(run.on_menu("N64 Cart Reader", menu), "0")
+        run.on_line("[SAVED] N64/ROM/TEST/1/TEST.Z64 (8388608 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678  DB=Known Game")
+        self.assertEqual(run.on_press(), " ")
+        self.assertEqual(run.on_menu("N64 Cart Reader", menu), "1")
+        run.on_line("[SAVED] N64/SAVE/TEST/1/TEST.eep (512 bytes) SHA256=abcd")
+        self.assertIsNone(run.on_menu("N64 Cart Reader", menu))
+        self.assertEqual(run.reason, "一括吸出し完了: ROM + SAVE")
+
+    def test_n64_database_hit_no_save_rom_only(self):
+        run = BatchDump()
+        run.begin("N64")
+        self.assertEqual(run.on_menu("Select N64 device", (("0", "Game Cartridge"),)), "0")
+        run.on_line("ROM Size: 4 MB")
+        run.on_line("Save Type: None/Unknown")
+        run.on_line("CRC1: 0123ABCD")
+        self.assertFalse(run.save)
+        self.assertEqual(run.on_press(), " ")
+        menu = (("0", "Read ROM"), ("1", "Read Save"), ("2", "Write Save"))
+        self.assertEqual(run.on_menu("N64 Cart Reader", menu), "0")
+        run.on_line("[SAVED] N64/ROM/TEST/1/TEST.z64 (4194304 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678 DB=no match")
+        self.assertEqual(run.on_press(), " ")
+        self.assertIsNone(run.on_menu("N64 Cart Reader", menu))
+        self.assertEqual(run.reason, "一括吸出し完了: ROM（DB照合なし）")
+
+    def test_n64_database_miss_stops_before_fallback_dump(self):
+        # N64.ino shows GAMEPAK ERROR and waits, then sets cartSize=2.
+        # The batch mode must not acknowledge that prompt automatically.
+        run = BatchDump()
+        run.begin("N64")
+        self.assertEqual(run.on_menu("Select N64 device", (("0", "Game Cartridge"),)), "0")
+        run.on_line("Searching database...")
+        run.on_line("GAMEPAK ERROR")
+        self.assertFalse(run.active)
+        self.assertIn("GAMEPAK ERROR", run.reason)
+        self.assertIsNone(run.on_press())
+        self.assertIsNone(run.on_menu("N64 Cart Reader", (("0", "Read ROM"),)))
+
+    def test_n64_unconfirmed_database_never_acknowledged(self):
+        for lines in (
+            ("ROM Size: 8 MB", "CRC1: A1B2C3D4"),
+            ("Save Type: SRAM", "CRC1: A1B2C3D4"),
+            ("ROM Size: Unknown", "Save Type: SRAM", "CRC1: A1B2C3D4"),
+            ("ROM Size: 8 MB", "Save Type: SRAM", "CRC1: Not valid"),
+        ):
+            with self.subTest(lines=lines):
+                run = BatchDump()
+                run.begin("N64")
+                run.on_menu("Select N64 device", (("0", "Game Cartridge"),))
+                for line in lines:
+                    run.on_line(line)
+                self.assertIsNone(run.on_press())
+                self.assertFalse(run.active)
+                self.assertIn("DB照合が未完了", run.reason)
+
+    def test_n64_save_types_and_dump_size_guards(self):
+        for value, expected in (
+            ("SRAM", 32768), ("SRAM 768", 98304),
+            ("FLASH", 131072), ("4K EEPROM", 512), ("16K EEPROM", 2048),
+        ):
+            with self.subTest(value=value):
+                run = BatchDump()
+                run.begin("N64")
+                run.on_menu("Select N64 device", (("0", "Game Cartridge"),))
+                run.on_line("ROM Size: 4 MB")
+                run.on_line("Save Type: " + value)
+                run.on_line("CRC1: A1B2C3D4")
+                self.assertTrue(run.save)
+                self.assertEqual(run.save_expected_bytes, expected)
+                self.assertEqual(run.on_press(), " ")
+                self.assertEqual(run.on_menu("N64 Cart Reader", (("0", "Read ROM"),)), "0")
+                run.on_line("[SAVED] N64/ROM/T/1/T.z64 (4194304 bytes) SHA256=abcd")
+                run.on_line("[VERIFY] CRC32=12345678 DB=Known Game")
+                self.assertEqual(run.on_press(), " ")
+                self.assertEqual(run.on_menu("N64 Cart Reader",
+                                 (("0", "Read ROM"), ("1", "Read Save"),
+                                  ("2", "Write Save"))), "1")
+                run.on_line(f"[SAVED] N64/SAVE/T/1/T.eep ({expected} bytes) SHA256=abcd")
+                self.assertIsNone(run.on_menu("N64 Cart Reader", (("0", "Read ROM"), ("1", "Read Save"))))
+                self.assertTrue(run.reason.startswith("一括吸出し完了"))
+
+    def test_n64_wrong_rom_size_or_save_size_stops(self):
+        run = BatchDump()
+        run.begin("N64")
+        run.on_menu("Select N64 device", (("0", "Game Cartridge"),))
+        for line in ("ROM Size: 8 MB", "Save Type: SRAM", "CRC1: A1B2C3D4"):
+            run.on_line(line)
+        self.assertEqual(run.on_press(), " ")
+        self.assertEqual(run.on_menu("N64 Cart Reader", (("0", "Read ROM"),)), "0")
+        run.on_line("[SAVED] N64/ROM/T/1/T.z64 (4194304 bytes) SHA256=abcd")
+        self.assertFalse(run.active)
+        self.assertIn("ROMサイズ不一致", run.reason)
+
+        run.begin("N64")
+        run.on_menu("Select N64 device", (("0", "Game Cartridge"),))
+        for line in ("ROM Size: 4 MB", "Save Type: 4K EEPROM", "CRC1: A1B2C3D4"):
+            run.on_line(line)
+        run.on_press()
+        run.on_menu("N64 Cart Reader", (("0", "Read ROM"),))
+        run.on_line("[SAVED] N64/ROM/T/1/T.z64 (4194304 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678 DB=Known Game")
+        run.on_press()
+        self.assertEqual(run.on_menu("N64 Cart Reader",
+                         (("0", "Read ROM"), ("1", "Read Save"))), "1")
+        run.on_line("[SAVED] N64/SAVE/T/1/T.eep (128 bytes) SHA256=abcd")
+        self.assertFalse(run.active)
+        self.assertIn("セーブサイズ不一致", run.reason)
+
+    def test_gui_n64_has_adjacent_one_click_button(self):
+        gui = Path(__file__).with_name("cartreader_pc.py").read_text(encoding="utf-8")
+        self.assertIn('"Nintendo 64 (3V)": (("一括吸出し", "N64"),)', gui)
+
     def test_pce_variants_never_read_ram(self):
         for target, expected in (("PCE_SWAP", "0"), ("PCE_RAW", "1")):
             with self.subTest(target=target):
