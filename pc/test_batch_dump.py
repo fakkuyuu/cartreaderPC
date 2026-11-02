@@ -1,4 +1,6 @@
 """Unit tests for #029 menu-drive decisions. Run: python -m unittest discover -s pc -p 'test_batch_dump.py'"""
+import ast
+from pathlib import Path
 import unittest
 
 from batch_dump import BatchDump
@@ -71,6 +73,87 @@ class BatchDumpTests(unittest.TestCase):
         self.assertEqual(run.on_press(), " ")
         self.assertEqual(run.on_menu("NES CART READER",
                          (("0", "Read iNES Rom"), ("2", "Read Save"))), "2")
+
+    def test_snes_with_save_uses_firmware_read_save_label(self):
+        # The actual SNES menu uses FSTRING_READ_SAVE ("Read Save"), not "Read SRAM".
+        run = BatchDump()
+        run.begin("SNES")
+        self.assertEqual(run.on_menu("Select Cart Type",
+                         (("0", "SNES/SFC cartridge"),)), "0")
+        run.on_line("Save Size: 8 KB")
+        self.assertEqual(run.on_press(), " ")
+        menu = (("0", "Read ROM"), ("1", "Read Save"),
+                ("2", "Write Save"), ("3", "Test SRAM"), ("6", "Reset"))
+        self.assertEqual(run.on_menu("SNES Cart Reader", menu), "0")
+        run.on_line("[SAVED] SNES/ROM/Test/1/Test.sfc (524288 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678 SNES-CHECKSUM=ABCD OK DB=Known Game")
+        self.assertEqual(run.on_press(), " ")
+        self.assertEqual(run.on_menu("SNES Cart Reader", menu), "1")
+        self.assertEqual(run.phase, "save_read")
+        run.on_line("[SAVED] SNES/SAVE/Test/1/Test.srm (8192 bytes) SHA256=abcd")
+        self.assertIsNone(run.on_menu("SNES Cart Reader", menu))
+        self.assertEqual(run.reason, "一括吸出し完了: ROM + SAVE")
+
+    def test_gba_real_database_confirmation_path(self):
+        run = BatchDump()
+        run.begin("GBA")
+        self.assertEqual(run.on_menu("Select Game Boy", GB_CHOICES), "1")
+        # Database candidate displayed by getCartInfo_GBA, then
+        # printInstructions() emits [Control] physical-buttons.
+        run.on_line("Serial: AXVE")
+        run.on_line("ROM Size: 8 MB")
+        run.on_line("Save Lib: EEPROM_V120")
+        self.assertEqual(run.on_physical(), " ")
+        self.assertTrue(run.gba_candidate_selected)
+        self.assertEqual(run.on_menu("GBA Cart Reader", GBA_MENU), "0")
+        run.on_line("[SAVED] GBA/ROM/Test/1/Test.gba (8388608 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678 DB=Known Game")
+        self.assertEqual(run.on_press(), " ")
+        self.assertFalse(run.active)
+        self.assertIn("セーブ有無が不明", run.reason)
+
+    def test_gba_unknown_physical_screen_is_not_confirmed(self):
+        run = BatchDump()
+        run.begin("GBA")
+        self.assertEqual(run.on_menu("Select Game Boy", GB_CHOICES), "1")
+        self.assertIsNone(run.on_physical())
+        self.assertFalse(run.active)
+        self.assertIn("想定外", run.reason)
+        run.begin("GBA")
+        self.assertEqual(run.on_menu("Select Game Boy", GB_CHOICES), "1")
+        run.on_line("CARTRIDGE ERROR")
+        self.assertFalse(run.active)
+        run.begin("GBA")
+        self.assertEqual(run.on_menu("Select Game Boy", GB_CHOICES), "1")
+        self.assertIsNone(run.on_press())
+        self.assertFalse(run.active)
+        self.assertIn("ゲーム情報確定前", run.reason)
+
+    def test_gui_physical_control_is_wired_to_batch_handler(self):
+        # Regression for a green state-machine suite while the GUI forgot to
+        # call the handler on [Control] physical-buttons.
+        gui = Path(__file__).with_name("cartreader_pc.py").read_text(encoding="utf-8")
+        tree = ast.parse(gui)
+        def function_named(name):
+            return next(node for node in ast.walk(tree)
+                        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                        and node.name == name)
+        handler = function_named("render_physical_fallback")
+        parsed = function_named("parse_console")
+        handler_calls = {
+            ast.unparse(node.func)
+            for node in ast.walk(handler)
+            if isinstance(node, ast.Call)
+        }
+        self.assertIn("batch.on_physical", handler_calls)
+        self.assertIn("batch_schedule", handler_calls)
+        self.assertIn("batch_report", handler_calls)
+        self.assertIn("render_physical_fallback", {
+            ast.unparse(node.func) for node in ast.walk(parsed)
+            if isinstance(node, ast.Call)
+        })
+        self.assertIn("[Control] physical-buttons", ast.get_source_segment(
+            gui, parsed))
 
     def test_snes_no_save(self):
         run = BatchDump()
