@@ -205,6 +205,49 @@ class BatchDumpTests(unittest.TestCase):
         self.assertIsNone(run.on_menu("N64 Cart Reader", menu))
         self.assertEqual(run.reason, "一括吸出し完了: ROM + SAVE")
 
+    def test_n64_parentheses_in_rom_filename_and_folder(self):
+        # Regression: splitting on the first " (" truncates this path.
+        run = BatchDump()
+        run.begin("N64")
+        self.assertEqual(run.on_menu("Select N64 device",
+                         (("0", "Game Cartridge"),)), "0")
+        for line in ("ROM Size: 4 MB", "Save Type: SRAM", "CRC1: A1B2C3D4"):
+            run.on_line(line)
+        self.assertEqual(run.on_press(), " ")
+        menu = (("0", "Read ROM"), ("1", "Read Save"), ("2", "Write Save"))
+        self.assertEqual(run.on_menu("N64 Cart Reader", menu), "0")
+        run.on_line("[SAVED] N64/ROM/Archive (2026)/1/GAME (J).Z64 "
+                    "(4194304 bytes) SHA256=abcd")
+        self.assertTrue(run.rom_saved)
+        self.assertTrue(run.active, run.reason)
+        run.on_line("[VERIFY] CRC32=12345678 DB=Known Game")
+        run.on_line("[SAVED] N64/ROM/Archive (2026)/1/GAME (J).txt "
+                    "(927 bytes) SHA256=abcd")
+        self.assertTrue(run.rom_saved)
+        self.assertTrue(run.active)
+        self.assertEqual(run.on_press(), " ")
+        self.assertEqual(run.on_menu("N64 Cart Reader", menu), "1")
+        run.on_line("[SAVED] N64/SAVE/Archive (2026)/1/GAME (J).sra "
+                    "(32768 bytes) SHA256=abcd")
+        self.assertIsNone(run.on_menu("N64 Cart Reader", menu))
+        self.assertEqual(run.reason, "一括吸出し完了: ROM + SAVE")
+
+    def test_rom_saved_trailer_matches_rightmost_size_marker(self):
+        # Also reject a misleading, earlier "(digits bytes)" segment in
+        # the directory name. The final SHA256 trailer is authoritative.
+        run = BatchDump()
+        run.begin("N64")
+        run.phase = "rom_read"
+        run.n64_rom_bytes = 4 * 1024 * 1024
+        run.on_line("[SAVED] N64/ROM/Archive (12 bytes)/GAME (J).z64 "
+                    "(4194304 bytes) SHA256=abcd")
+        self.assertTrue(run.rom_saved)
+        self.assertTrue(run.active)
+        run.on_line("[SAVED] N64/ROM/Archive (12 bytes)/GAME (J).txt "
+                    "(999 bytes) SHA256=abcd")
+        self.assertTrue(run.rom_saved)
+        self.assertTrue(run.active)
+
     def test_n64_rom_companion_txt_does_not_trigger_size_mismatch(self):
         # storage.py emits [SAVED] both for the ROM payload and for the
         # post-verification companion TXT *under the same N64/ROM directory*.
