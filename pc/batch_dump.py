@@ -34,6 +34,8 @@ class BatchDump:
         self.save_saved = False
         self.save_expected_bytes = None
         self.db_says_no_save = False
+        self.gba_candidate_seen = False
+        self.gba_candidate_selected = False
         self.reason = ""
         self.db_match = None
 
@@ -49,6 +51,8 @@ class BatchDump:
         self.save_saved = False
         self.save_expected_bytes = None
         self.db_says_no_save = False
+        self.gba_candidate_seen = False
+        self.gba_candidate_selected = False
         self.reason = ""
         self.db_match = None
 
@@ -78,7 +82,8 @@ class BatchDump:
             return self.stop("通信切断・キャンセルのため一括停止")
         if (line.startswith(("Error:", "[ERROR", "HEADER CHECKSUM ERROR", "Fatal error"))
                 or ("MISMATCH" in line and (line.startswith("[VERIFY]") or line.startswith("Checksum:")))
-                or (line.startswith("No data found.") and self.target != "NES")):
+                or (line.startswith("No data found.") and self.target != "NES")
+                or "CARTRIDGE ERROR" in line or "Checksum Error" in line):
             return self.stop(f"読み取り異常のため一括停止: {line[:100]}")
         if self.phase in ("entry", "rom_menu"):
             if line.startswith("Save Size:"):
@@ -108,6 +113,10 @@ class BatchDump:
                             self.save_expected_bytes = expected
                             break
             elif line.startswith("Save Lib:"):
+                if self.target == "GBA" and self.phase == "rom_menu":
+                    # getCartInfo_GBA prints this field immediately before
+                    # printInstructions() and [Control] physical-buttons.
+                    self.gba_candidate_seen = bool(line.partition(":")[2].strip())
                 if line.partition(":")[2].strip().lower() == "none":
                     self.db_says_no_save = True
                     self.save = False
@@ -207,16 +216,29 @@ class BatchDump:
             return self.stop("ROM保存完了。セーブ有無が不明なため以降は手動操作")
         if self.save is False:
             return self.complete()
-        value = self._choice(options, "Read SRAM" if self.target == "SNES" else "Read Save")
+        value = self._choice(options, "Read Save")
         if value is None:
             return self.stop("セーブ読出し項目を確認できません")
         self.phase = "save_read"
         return value
 
+    def on_physical(self):
+        """Confirm only an identified GBA database candidate; never guess elsewhere."""
+        if not self.active:
+            return None
+        if (self.target == "GBA" and self.phase == "rom_menu"
+                and self.gba_candidate_seen and not self.gba_candidate_selected):
+            self.gba_candidate_selected = True
+            return " "
+        return self.stop("想定外の本体操作画面です。手動操作に切り替えてください")
+
     def on_press(self):
         if not self.active:
             return None
         if self.phase in ("entry", "rom_menu"):
+            if (self.target == "GBA" and self.phase == "rom_menu"
+                    and not self.gba_candidate_selected):
+                return self.stop("GBAのゲーム情報確定前に操作待ちが発生しました。手動確認してください")
             return " "
         if self.phase == "rom_read":
             if not (self.rom_saved and self.rom_verified):
