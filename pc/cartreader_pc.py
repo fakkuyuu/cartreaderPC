@@ -36,6 +36,15 @@ def record_ram_diagnostic(message, port):
         target.write(time.strftime("%Y-%m-%d %H:%M:%S ") + port + " " + message.rstrip() + "\n")
 
 
+def append_oscr_log(output_directory, message):
+    """Append precisely what the console displayed to the shared PC log."""
+    if not message:
+        return
+    path = Path(output_directory).expanduser() / "OSCR_LOGPC.txt"
+    with path.open("a", encoding="utf-8", newline="") as target:
+        target.write(message)
+
+
 def ensure_settings():
     """Create missing user settings; never replace an existing file."""
     defaults = {
@@ -446,8 +455,18 @@ def terminal(args):
             for b in line.encode("ascii", errors="replace"):
                 keys.put(b)
     threading.Thread(target=keyboard, daemon=True).start()
+    log_error_reported = False
+    def console_log(message):
+        nonlocal log_error_reported
+        print(message, end="", flush=True)
+        try:
+            append_oscr_log(args.output, message)
+        except OSError as exc:
+            if not log_error_reported:
+                print(f"[OSCR_LOGPC.txt] Cannot write log: {exc}", file=sys.stderr)
+                log_error_reported = True
     try:
-        serve(args.port, args.output, args.sd, keys, lambda s: print(s, end="", flush=True), stop)
+        serve(args.port, args.output, args.sd, keys, console_log, stop)
     except KeyboardInterrupt:
         stop.set()
 
@@ -461,7 +480,7 @@ def gui(args):
     ui_settings = load_ui_settings()
     language = tk.StringVar(value=ui_settings.get("language", "日本語"))
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC88b — Disconnected")
+    window.title("cartreaderPC PC88e — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -493,6 +512,29 @@ def gui(args):
             output.set(selected)
     output_button = ttk.Button(folder, text="選択", command=choose)
     output_button.pack(side="left")
+    def open_output_folder():
+        from tkinter import messagebox
+        selected = output.get().strip()
+        if not selected:
+            messagebox.showwarning(
+                translator.translate("保存先"),
+                translator.translate("保存先フォルダを指定してください。"), parent=window)
+            return
+        path = Path(selected)
+        try:
+            if not path.is_dir():
+                messagebox.showwarning(
+                    translator.translate("保存先"),
+                    translator.translate("保存先フォルダが存在しません。") + "\n" + str(path),
+                    parent=window)
+                return
+            os.startfile(str(path.resolve()))
+        except OSError as exc:
+            messagebox.showerror(
+                translator.translate("保存先"),
+                translator.translate("フォルダを開けませんでした。") + "\n" + str(exc),
+                parent=window)
+    ttk.Button(folder, text="開く", command=open_output_folder).pack(side="left", padx=(6, 0))
     def persist_output(*unused):
         ui_settings["output_directory"] = output.get()
         try:
@@ -514,6 +556,7 @@ def gui(args):
     menu_panel = ttk.LabelFrame(window, text="操作メニュー", padding=8)
     menu_panel.pack(fill="x", padx=8, pady=(0, 8))
     text = ScrolledText(window, wrap="word", font=("Consolas", 10), state="disabled")
+    oscr_log_error = {"reported": False}
     inbox, keys = queue.Queue(), queue.Queue()
     transfer_updates = queue.Queue()
     stop = threading.Event()
@@ -1034,7 +1077,7 @@ def gui(args):
                 set_storage_state("PC", storage_current["pending"])
             if version_match:
                 window.title(
-                    f"cartreaderPC PC88b — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC88e — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1090,7 +1133,7 @@ def gui(args):
             if line.startswith(("[Disconnected", "[RECONNECT]")):
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC88b — Disconnected")
+                window.title("cartreaderPC PC88e — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")
@@ -1741,6 +1784,7 @@ def gui(args):
         window.after(100, refresh_capture)
     refresh_capture()
     def pump():
+        displayed_chunks = []
         destination_state = "disabled" if worker and worker.is_alive() else "normal"
         output_entry.configure(state=destination_state)
         output_button.configure(state=destination_state)
@@ -1766,6 +1810,7 @@ def gui(args):
                         ram_detail.set(labels[1])
                     if diagnostic_log.get():
                         text.insert("end", item[1])
+                        displayed_chunks.append(item[1])
                     continue
                 if isinstance(item, tuple) and item[0] == "status":
                     parse_console(item[1])
@@ -1778,10 +1823,23 @@ def gui(args):
                     shown = "".join(line for line in shown.splitlines(keepends=True)
                                     if not line.startswith(("[Input]", "[Reader]", "[Menu]", "[SD Progress]")))
                 text.insert("end", shown)
+                displayed_chunks.append(shown)
                 parse_console(chunk)
                 text.see("end")
             except queue.Empty:
                 break
+        if displayed_chunks:
+            try:
+                append_oscr_log(output.get(), "".join(displayed_chunks))
+            except OSError as exc:
+                if not oscr_log_error["reported"]:
+                    from tkinter import messagebox
+                    messagebox.showwarning(
+                        "OSCR_LOGPC.txt",
+                        f"OSCR_LOGPC.txt に書き込めませんでした。\n{exc}",
+                        parent=window,
+                    )
+                    oscr_log_error["reported"] = True
         text.configure(state="disabled")
         translator.refresh()
         window.after(50, pump)

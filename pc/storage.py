@@ -131,6 +131,13 @@ class Storage:
             total = sum(data[:4 * 1024 * 1024]) + 2 * sum(data[4 * 1024 * 1024:])
         return total & 0xFFFF
 
+    @staticmethod
+    def _gba_header_checksum(header):
+        """Match checksumHeader_GBA; byte BD stores the expected checksum."""
+        if len(header) < 0xBE:
+            return None
+        return header[0xBD], (-sum(header[0xA0:0xBD]) - 0x19) & 0xFF
+
     def verify_rom(self, path):
         """Verify a completed ROM and search its database entirely on the PC."""
         suffix = path.suffix.lower()
@@ -138,6 +145,7 @@ class Storage:
         if not database_names:
             return 0
         crc = 0
+        gba_header = bytearray() if suffix == ".gba" else None
         rom_data = bytearray() if suffix in (".sfc", ".smc") else None
         offset = 16 if suffix == ".nes" else (64 if suffix == ".lnx" else 0)
         with path.open("rb") as source:
@@ -145,6 +153,8 @@ class Storage:
                 source.seek(offset)
             for block in iter(lambda: source.read(1024 * 1024), b""):
                 crc = zlib.crc32(block, crc)
+                if gba_header is not None and len(gba_header) < 0xBE:
+                    gba_header.extend(block[:0xBE - len(gba_header)])
                 if rom_data is not None:
                     rom_data.extend(block)
         crc_text = f"{crc & 0xffffffff:08X}"
@@ -167,6 +177,17 @@ class Storage:
                 break
         result = f"[VERIFY] CRC32={crc_text}"
         checksum_ok = True
+        gba_status = None
+        if gba_header is not None:
+            header_check = self._gba_header_checksum(gba_header)
+            if header_check is None:
+                checksum_ok = False
+                gba_status = "Checksum: unavailable -> ERROR (GBA header too short)"
+            else:
+                stored, calculated = header_check
+                checksum_ok = calculated == stored
+                gba_status = (f"Checksum: {calculated:02X} -> OK" if checksum_ok else
+                              f"Checksum: {calculated:02X} != {stored:02X} -> MISMATCH (GBA header)")
         if rom_data is not None:
             stored, chips = self._snes_header(rom_data)
             calculated = self._snes_checksum(rom_data, chips)
@@ -194,6 +215,8 @@ class Storage:
                         self.record()
                         result += f"  RENAMED={new_name}"
                         path = renamed
+        if gba_status is not None:
+            result += "\n" + gba_status
         self.last_verification = result
         self.last_rom_path = path
         self.log(result + "\n")

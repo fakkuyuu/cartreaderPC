@@ -1,5 +1,8 @@
 """Presentation-only Japanese/English translation. GPL-3.0-or-later."""
 WORDS = {
+    "保存先フォルダを指定してください。": "Please select an output folder.",
+    "保存先フォルダが存在しません。": "The output folder does not exist.",
+    "フォルダを開けませんでした。": "Could not open the folder.",
     "SDブラウザにはPC88ファームが必要です": "SD browser requires PC88 firmware",
     "SD操作失敗。コンソールの理由を確認してください": "SD operation failed; see console for details",
     "RAM：未受信（PC87以降の対応ファームが必要）": "RAM: no telemetry (requires compatible PC87+ firmware)",
