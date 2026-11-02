@@ -8,6 +8,14 @@ import re
 
 
 class BatchDump:
+    # Explicitly distinguish a ROM payload from its companion .txt report.
+    # Storage emits [SAVED] for BOTH; directory alone is insufficient.
+    ROM_EXTENSIONS = {
+        "GB": (".gb", ".gbc"), "GBA": (".gba",),
+        "SNES": (".sfc", ".smc"), "MD": (".md", ".bin", ".gen"),
+        "N64": (".z64", ".n64", ".v64"), "NES": (".nes",),
+        "PCE_SWAP": (".pce",), "PCE_RAW": (".pce",),
+    }
     ROOT_NAMES = {
         "GB": "Game Boy", "GBA": "Game Boy",
         "SNES": "Super Nintendo/SFC", "MD": "Mega Drive/Genesis",
@@ -170,6 +178,12 @@ class BatchDump:
                     self.save = int(size.group(1)) > 0
         if self.phase == "rom_read":
             if line.startswith("[SAVED] ") and "/ROM/" in line.upper():
+                # storage.py also reports the companion .txt with [SAVED]
+                # under the same /ROM/ directory. Ignore it entirely, rather
+                # than replacing rom_saved or comparing its size to the ROM.
+                saved_path = line[len("[SAVED] "):].split(" (", 1)[0]
+                if not saved_path.lower().endswith(self.ROM_EXTENSIONS[self.target]):
+                    return
                 size = re.search(r"\((\d+) bytes\)", line)
                 self.rom_saved = bool(size and int(size.group(1)) > 0)
                 if (self.target == "N64" and size and self.n64_rom_bytes
