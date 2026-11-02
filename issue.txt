@@ -473,161 +473,146 @@ Codex build (2026-11-02 21:56:37 JST): Integrated NES DB-hit candidate automatic
 
 User verification of NES candidate auto-confirmation (2026-11-02 21:57:59 JST): User reported "operation verified OK" for the preceding NES one-click DB-hit candidate fix. Record successful physical operation of automatic candidate confirmation on PC91 after the build. This does not indicate hardware testing of unregistered/CRC-miss/all-FF manual fallback or every NES save variant. Keep those unverified, while retaining the previously reported 32 passing regression tests and EXE self-test. No N64 hardware confirmation was reported either; #029 as a whole remains VERIFY.
 
-#030 保存先フォルダをエクスプローラーで開くボタン
-追加日時: 2026-11-01 22:05:38 JST
-最終更新日時: 2026-11-02 09:43:23 JST
-状態: CLOSED（PC88c、ユーザー動作確認済み） / P2 / enhancement, ui, files
-出所: ユーザー要望。
-要望: PCツールに、設定されている保存先フォルダをWindowsのエクスプローラーで開くボタンを付ける。
-目的: 保存したROMやTXTをすぐ確認できるようにする。
-完了条件: ボタンから現在の保存先フォルダを開ける。フォルダが存在しない・開けない場合は理由を案内する。
-対応版/コミット: 未実装。issueへの登録のみ。実装開始指示待ち。
+#030 Add a button to open the output directory in Windows Explorer
+Added: 2026-11-01 22:05:38 JST
+Last updated: 2026-11-02 09:43:23 JST
+Status: CLOSED (PC88c, user confirmed operation) / P2 / enhancement, ui, files
+Source: User request.
+Request: Add a PC-tool button that opens the configured save destination in Windows Explorer.
+Purpose: Quickly inspect saved ROMs and TXT reports.
+Completion: The button opens the current output folder; explain absent/inaccessible folders.
+Original version/commit: Not implemented when registered; awaiting explicit approval.
 
-進捗（2026-11-02 09:36:48 JST）: ユーザーがGPT無料枠へ#030の実装を依頼し、現在作業中。こちらでは重複実装しない。成果物・変更差分・動作結果は未共有で、現行版への取り込みは未実施。
+Progress (2026-11-02 09:36:48 JST): User asked a GPT Free chat to implement #030, and it was working on it. Do not duplicate its effort. Artifacts, code diff and behavior were not yet shared or integrated.
 
-外部GPTの修正案共有（2026-11-02 09:38:08 JST、元回答は2026-11-02 09:35 JST）:
-・pc/cartreader_pc.pyの保存先「選択」の右に「開く」ボタンを追加する案。ファーム変更なし。
-・open_output_folder内でPath(output.get().strip())を取得し、is_dir()で存在確認。
-  不在ならmessagebox.showwarning、存在すればos.startfile(str(path.resolve()))。
-  OSError時はmessagebox.showerror。parent=window。フォルダ自動作成なし。
-・設定・転送処理を変更しない方針。既存「開く→Open」の翻訳を使えるとの外部回答。
-・外部回答の成果は修正コード案のみ。GitHub変更なし、Windows動作確認なし。
-・参照元はGitHubとの説明で、ローカル最新PC88bを読んだ証拠はない。統合時に基準版、os/Path、翻訳の適用、警告文の言語対応を確認する。
-・貼付コードは改行が潰れているため、そのまま貼り付けず、構文とインデントを復元・確認する。
-・こちらでは取り込み・実装・ビルド・実機試験をしていない。統合開始指示待ち。
+External GPT proposal (2026-11-02 09:38:08 JST; original reply at 09:35):
+- Add an "Open" button to the right of "Select" for the output path in pc/cartreader_pc.py; no firmware change.
+- In open_output_folder, obtain Path(output.get().strip()), check is_dir(), show messagebox.showwarning if absent, otherwise os.startfile(str(path.resolve())); catch OSError with messagebox.showerror, parent=window; do not auto-create the folder.
+- Do not change settings or transfers. External reply suggested reusing the existing translation for Open.
+- External reply provided only a code suggestion: no GitHub edits or Windows verification.
+- Although it claimed to refer to GitHub, there was no evidence it read the latest local PC88b. Before integrating, check the base revision, os/Path imports, translation coverage and localized warning texts.
+- Pasted code had collapsed line breaks; restore/check syntax and indentation instead of pasting verbatim.
+- This chat had not integrated, built or tested it; awaited approval.
 
-実装記録（2026-11-02 09:40:31 JST）: ユーザーから代行実装の明示指示を受け、PC88bを基準にPC88cへ実装。選択ボタン右に開くボタン、空欄/不在/OSエラー案内、英語翻訳を追加。接続中も開くボタンは利用可能。既存保存先/転送処理は変更なし。ファーム変更・書込みなし。
-ソフト確認: 全Python構文、空欄/不在/既存/起動エラーのコールバック、英語翻訳を確認（Explorer起動はモック）。PyInstaller EXE生成成功、EXE --self-testはexit0/PASS。
-実動作: 実Explorer起動・実カート接続は未確認。成果物 outputs3/cartreader-v15.5-pc88c/CartReaderPC.exe、ソース work/pc88c/pc。
+Implementation (2026-11-02 09:40:31 JST): With explicit user authorization, based implementation on PC88b and created PC88c. Added Open button beside Select, with warnings for empty/missing paths and OS errors, plus English translations. Opening remains available while connected. Existing output destination and transfer behavior unchanged; no firmware edit/flash.
+Software checks: All Python syntax, callbacks for blank/missing/existing/open-error folders, and English translation (Explorer mocked). PyInstaller EXE built; --self-test exit 0/PASS.
+Actual operation: Real Explorer launch and cartridge connection were not yet tested. Artifacts: outputs3/cartreader-v15.5-pc88c/CartReaderPC.exe; source work/pc88c/pc.
+User verification (2026-11-02 09:43:23 JST): User confirmed that PC88c's Open button opened the selected output folder in Explorer. Close #030. This does not imply actual testing of English mode or missing/error UI.
 
-ユーザー動作確認（2026-11-02 09:43:23 JST）: PC88cの「開く」ボタンで、指定した保存先フォルダがエクスプローラーに開くことを確認。#030を完了。英語切替や不在/エラーの実UI試験を追加で確認した意味ではない。
+#031 Save the PC-tool console to OSCR_LOG.txt
+Added: 2026-11-01 22:19:41 JST
+Last updated: 2026-11-02 12:18:38 JST
+Status: CLOSED (PC88d, user confirmed) / P2 / enhancement, logging
+Source: User request and finalized specifications.
+Request: Create PC-side OSCR_LOG.txt with content matching the PC tool's console display.
+Specification: Record reader messages and PC-generated verification, connection and transfer messages that are displayed in the console. Do not add hidden internal LED traffic or other messages already excluded from the console. No requirement to reproduce the reader's standalone SD log byte-for-byte. Keep this shared log distinct from companion TXT beside each ROM.
+Code review: FW PC88a Config.h enables ENABLE_GLOBAL_LOG. Cart_Reader.ino suppresses myLog open/output/save_log during PC storage and no PC-side OSCR_LOG.txt writer existed.
+Architectural distinction: Write already-received displayed data on the PC; no need for the reader to transfer a second log concurrently with the ROM.
+Initially undecided: Location, append/session delimiters, maximum size/rotation and an enable/disable setting.
+Completion: PC-side file contains displayed console content without invisible LED traffic, while existing ROM saving, checks and companion TXT are preserved.
+Original version/commit: Not implemented; only source review and issue registration before approval.
 
-#031 PCのOSCR_LOG.txtへツールのコンソールと同じ内容を保存する
-追加日時: 2026-11-01 22:19:41 JST
-最終更新日時: 2026-11-02 12:18:38 JST
-状態: CLOSED（PC88d、ユーザー確認） / P2 / enhancement, logging
-出所: ユーザー要望・仕様決定。
-要望: PC側にもOSCR_LOG.txtを作成する。内容はツールのコンソールに表示するものと同じでよい。
-仕様: コンソールに表示する本体メッセージ・PC側の検証/接続/転送等を記録する。
-  コンソールから除外済みのLED通知などの内部通信を、ログへ別途混入させない。
-  SD版のログ内容を完全再現することは要求しない。既存のROM横TXTとは別の共通ログとして扱う。
-ソース確認済み: FW PC88aのConfig.hはENABLE_GLOBAL_LOG有効。
-  Cart_Reader.inoではPC保存時にmyLogのopen/出力/save_logを抑止し、PC側にもOSCR_LOG.txt作成処理がない。
-設計上の区別: PCで受信済みの表示情報をファイルへ保存する方式。本体から第2のログファイルをROMと同時転送する必要はない。
-未決定: 保存場所、追記/起動ごとの区切り、容量上限・ローテーション、PC側の有効/無効設定。
-完了条件: コンソールの表示内容をPCのOSCR_LOG.txtに記録でき、LED等の非表示通信が入らず、既存ROM保存・検証・ROM横TXTを維持する。
-対応版/コミット: 未実装。ソース確認とissue登録のみ。実装開始指示待ち。
+Implementation (2026-11-02 11:47:24 JST): Applied user-provided diff to PC88c without Git, creating PC88d. Added append_oscr_log, CLI console_log and writing from the GUI pump after rendering. Append UTF-8 text to OSCR_LOG.txt under output root, preserving received display line breaks. Display file-write warning only once. #032 unchanged.
+Verification: All Python syntax, actual file appending/Japanese text/newlines, GUI pump display-vs-log equality (diagnostic on/off, RAM, cancellation and hidden status), and one-time write error warning; GUI widgets mocked. EXE built and --self-test exit 0/PASS. Hardware connection logging not yet checked.
+Artifacts: outputs3/cartreader-v15.5-pc88d/CartReaderPC.exe; source work/pc88d/pc; no FW changes or flash.
+User feedback (2026-11-02 11:59:37 JST): "031 seems to have worked." Treat the common log saving feature as user-verified/completed. Full display equality across all cases, long sessions and transfer-speed overhead were not measured; do not guarantee zero impact.
+Related request (2026-11-02 12:18:38 JST): Renaming the PC common log to distinguish it from reader-generated logs is tracked separately in #034. #031 remains completed.
 
-実装記録（2026-11-02 11:47:24 JST）: ユーザー貼付diffをGitなしでPC88cへ反映しPC88dを作成。append_oscr_log、CLIのconsole_log、GUI pumpの表示後保存を追加。保存先直下OSCR_LOG.txtへUTF-8追記、改行は受信表示のまま。書込失敗の案内は1回。#032は変更なし。
-確認: 全Python構文、実ファイルへの追記/日本語/改行、GUI pumpの表示と保存の一致（診断オン/オフ、RAM、取消し、非表示status）、書込エラー案内1回を確認。GUI部品はモック。EXEビルド成功、--self-test exit0/PASS。実機接続ログ確認は未実施。
-成果物: outputs3/cartreader-v15.5-pc88d/CartReaderPC.exe。ソース work/pc88d/pc。ファーム変更・書込みなし。
+#032 Clean ROM companion TXT and distinguish it from shared console logs
+Added: 2026-11-01 22:42:57 JST
+Last updated: 2026-11-02 16:34:04 JST
+Status: VERIFY (GBA/SNES companion TXT layout and verification results checked on hardware; repeated dumping and other cases pending) / P2 / bug, logging, docs
+Source: Direct comparison of user-provided original CartReader and PC-tool TXT files.
+Compared examples:
+  Original: [local SD]/GBA/ROM/HPOTTER COS/4/HPOTTER COS.txt
+  PC tool: [local SD]/GBA/ROM/SYLVANIA4/99/Sylvanian Families 4 - Meguru Kisetsu no Tapestry (Japan).txt
+Observations:
+- Original focuses on version, console/cartridge info, output location, checksum and CRC32/DB title.
+- Tool includes top/submenu navigation, accepted/returning choices, Press Button, and prior unrelated operations (e.g., Read Save).
+- "[LED Activity] blinking" leaked into the tool TXT; an old LED log issue is reproduced in this PC88a-generated sample.
+- Nearly every line is followed by a blank line, making the report much more verbose than the original.
+- The label corresponding to original "Serial" is "PcConsole" for the cartridge identifier (A4LJ). Correctness of the identifier value was not determined here.
+- The compared games differ, so differences in ROM/save sizes and checksum values are not themselves bugs.
+Proposed remedy: Limit companion TXT to current cartridge/current save operation and relevant verification; remove unrelated history, internal traffic and excessive blank lines; verify labels such as Serial.
+Related: #031 requests a shared OSCR_LOG.txt matching the console; it does not require companion TXT to match that full common log.
+Completion: Preserve cartridge identity, setup, output path and CRC/DB/verification data, without preceding unrelated operations or LED traffic, with readable paragraphs and field names.
+Original status at registration: Not addressed; comparison and issue entry only.
 
-ユーザー確認（2026-11-02 11:59:37 JST）: 「031はうまくいったと思う」と報告。共通ログ保存機能は利用確認として完了扱い。詳細な全表示との一致比較・長時間運用・転送速度への影響は実測未確認であり、無負荷と保証しない。
+Source review addendum (2026-11-01 22:53:11 JST): In work/pc88a/Cart_Reader/OSCR.cpp line 82, FSTRING_SERIAL was defined as "PcConsole: ". GBA.ino uses that constant for cartridge/DB display. Thus the label arose from a changed shared firmware display string, not the PC TXT formatter. Record it as a candidate to restore "Serial"; not yet fixed.
 
-関連要望（2026-11-02 12:18:38 JST）: PC作成の共通ログ名を本体側と区別する変更は#034で管理。#031のログ保存機能自体の完了は維持。
+Implementation (2026-11-02 13:03:19 JST): On user's redesign instruction, changed only storage.py. Rejected the earlier simple formatter. Store cartridge facts in a separate cache of fixed fields, and separate the current ROM's action/output/progress from the Read ROM operation. Clear current-operation data on completion, retaining cartridge metadata for subsequent reads of the same cartridge. Clear stale cartridge identity on recognition, console change or reboot. Do not keep full historical console logs.
+Verification: 11 tests in work/pc88f/test_companion.py passed, including seven mandatory cases, split frames, SNES checksum mismatch/DB miss/rename info, reboot, cartridge change, and ensuring SD copies do not reuse cartridge metadata. Also verified byte equality of the common log for identical console input. Syntax and existing EXE self-test passed.
+Change constraints: Leave PcConsole value/label, #035 validation, execute/close_handle, original ROM save/rename/SHA/manifest logic and firmware unchanged. Only storage.py differs; all other source files byte-identical to PC88e. Existing SHA/manifest/notification sequence after TXT generation was preserved.
+Hardware: Not checked at implementation time; cannot guarantee every console's format. Status moved to VERIFY after passing tests, not CLOSED.
+Artifacts: outputs3/cartreader-v15.5-pc88f/CartReaderPC.exe, source of truth work/pc88f/pc/storage.py. Because cartreader_pc.py was not to be changed, displayed version remained PC88e.
 
-#032 ROM付属TXTの内容を整理し、共通コンソールログと区別する
-追加日時: 2026-11-01 22:42:57 JST
-最終更新日時: 2026-11-02 16:34:04 JST
-状態: VERIFY（GBA/SNESでTXT整形・検証表示の実機確認済み、連続吸出し等の追加確認待ち） / P2 / bug, logging, docs
-出所: ユーザー提供の本家/ツール生成TXTを実読比較。
-比較資料:
-  本家: [ローカルSD]/GBA/ROM/HPOTTER COS/4/HPOTTER COS.txt
-  ツール: [ローカルSD]/GBA/ROM/SYLVANIA4/99/Sylvanian Families 4 - Meguru Kisetsu no Tapestry (Japan).txt
-観測:
-・本家は版、機種/カート情報、保存先、チェックサム、CRC32/DB名を中心に記録。
-・ツールはトップ/サブメニュー、accepted/returning choice、Press Button、直前の別操作（Read Save）も含む。
-・ツールTXTに[LED Activity] blinkingが残っている。LEDログ混入の旧報告が今回のPC88a生成例にも残ることを確認。
-・ほぼ各行間に空行が入り、本家より冗長。
-・本家のSerialに相当するカート識別子の項目名がPcConsoleとなっている（A4LJ）。値の正誤は今回の比較では未判定。
-・比較対象は別ゲームなので、ROM/セーブサイズ・チェックサム値そのものの相違をバグとはしない。
-対応案: ROM付属TXTは当該カート/当該保存処理の情報と検証結果に絞り、不要な操作履歴・内部通知・過剰な空行を除く。Serial等の項目名を確認する。
-関連: #031はコンソールと同内容の共通OSCR_LOG.txt。ROM付属TXTまで共通ログと同じ内容にする要求ではない。
-完了条件: 当該ROMの識別・設定・保存先・CRC/DB/検証情報を維持し、無関係な前操作やLED通知が混入せず、読みやすい改行と項目名になる。
-対応版/コミット: 未対応。資料比較・issue登録のみ。生成経路の原因調査・実装は未着手。
+Hardware result (2026-11-02 13:07:43 JST): User provided PC88f #032 companion TXT for ROCKMAN_EXE2/103, 8MB. It showed Header Checksum 69, "Checksum: 69 -> OK", CRC32 98E4F096, DB=Battle Network - Rockman EXE 2 (Japan).gba, and RENAMED destination 103. Cartridge identity, current save destination, progress and verification were present; provided TXT had no menu/LED leakage or excessive blank lines. PcConsole label deliberately retained as instructed. Does not verify second dump of same cartridge, read after save or cartridge switching on hardware. Remain VERIFY.
 
-ソース確認追記（2026-11-01 22:53:11 JST）: work/pc88a/Cart_Reader/OSCR.cppのFSTRING_SERIAL定義が「PcConsole: 」になっている（82行）。GBA.inoのカート情報・DB表示はこの定数を使用。PC側TXT加工による置換ではなく、共通表示文字列の誤変更。Serial表記へ戻す対象として記録。修正は未実施。
+External update review (2026-11-02 13:31:40 JST): Reviewed third-party GPT GitHub update 7256c48, "fix(pc): restore readable spacing in ROM companion TXT." Diff only changes _format_companion_log in storage.py to add blank lines between sections, not cartridge/current-ROM separation or verification. Ran 11 tests against retrieved code in memory and all passed. Adjusted only the old test's zero-blank-lines expectation to allow one blank line between paragraphs while forbidding consecutive blank lines. No integration/build into local PC88f, and no hardware test at this stage.
 
-実装記録（2026-11-02 13:03:19 JST）: ユーザーの再設計指示に基づきstorage.pyのみ変更。元の単純フォーマッタ案は未採用。カート情報は独立した固定項目キャッシュ、今回ROMはRead ROM基準のaction/保存先/進捗として分離。完了時に今回分だけ消去し、同一カートの次回へメタ情報を継承。識別/機種選択/再起動で古い情報を解除。履歴全保持はしない。
-検証: work/pc88f/test_companion.pyの11テストPASS（必須7条件、フレーム分割、SNES不一致/DB未一致/リネーム情報、再起動、カート切替、SDコピー時にカート情報を流用しない）。同一コンソール入力で共通ログのバイト一致も確認。構文/EXE既存セルフテストPASS。
-変更制約: PcConsoleの値/表記・#035検証処理・execute/close_handle・ROM保存/リネーム/SHA/manifest関連既存処理・ファームは変更なし。対象はstorage.pyのみで他ソースはPC88eとバイト一致。TXT本文生成後の既存SHA/manifest/通知処理は維持。
-実機結果: 未確認。全機種の表示形式を網羅した保証ではない。状態は上記試験通過後に初めてVERIFYへ更新、CLOSEDではない。
-成果物: outputs3/cartreader-v15.5-pc88f/CartReaderPC.exe、正本work/pc88f/pc/storage.py。cartreader_pc.pyを変えない指示により画面の版名はPC88eのまま。
+Integration (2026-11-02 13:35:54 JST): On explicit request, integrated GitHub 7256c48 formatting into PC88g. Added blank lines separating console/cartridge, dump and verification blocks; storage.py only. Code matched reviewed 11-test-passing version. EXE built and --self-test exit 0/PASS. Hardware check pending. Artifact: outputs3/cartreader-v15.5-pc88g/CartReaderPC.exe.
+User confirmation (2026-11-02 13:54:09 JST): User noted paragraph spacing was now present in PC88g's TXT. Confirmed appearance in actual use, not all multi-dump cases; remain VERIFY.
 
-実機結果（2026-11-02 13:07:43 JST）: PC88f #032 ユーザー提供ROM付属TXT: ROCKMAN_EXE2/103、8MB、Header Checksum69、Checksum69 OK、CRC32 98E4F096、DB=Battle Network - Rockman EXE 2 (Japan).gba、RENAMED先103を確認。機種/カート情報・今回保存先・進捗・検証結果あり、提示TXTにメニュー/LED/空行過多なし。PcConsole表記は指示どおり維持。同一カート2回目・セーブ後・カート切替の実機試験を確認した意味ではない。 状態はVERIFYを維持。
+Hardware confirmation (2026-11-02 16:34:04 JST): Reviewed companion TXT for SNES/SFC SA-1 cartridge "SHINING SCORPION", 4MB ROM/32KB save. Output path "SNES/ROM/SHINING SCORPION/107/...", header "Checksum: B859", "Header CRC32: 8214C6C2"; after saving, "CRC32... B17E95D4 -> Mini Yonku Shining Scorpion - Let's & Go!! (Japan).sfc", "SNES-CHECKSUM=B859 OK", and "RENAMED=SNES/ROM/SHINING SCORPION/107/Mini Yonku Shining Scorpion - Let's & Go!! (Japan).sfc". Cartridge/dump/verification details formed readable sections; no unrelated operation history or LED traffic. SNES checksum match and DB-based renamed filename looked correct. Alongside GBA, normal SNES hardware behavior is verified. Repeated ROM dumps, save-after-ROM, and switching cartridges were not all tested; remain VERIFY.
 
-外部更新レビュー（2026-11-02 13:31:40 JST）: GitHubの外部GPT更新7256c48（fix(pc): restore readable spacing in ROM companion TXT）を確認。差分はstorage.pyの_format_companion_logのみで、段落間に空行を追加。カート情報/今回ROMの分離や検証処理への変更なし。取得したコードをメモリ上で11テスト実行しPASS。旧テストの空行ゼロ条件のみ、段落空行1行許容・連続空行禁止へ合わせて確認。ローカルPC88f製品ソース/EXEへの取り込み・ビルドは未実施。実機確認なし。
+#033 Stale storage-change reservation shown after reconnecting into SD mode
+Added: 2026-11-02 12:11:24 JST
+Last updated: 2026-11-02 14:39:47 JST
+Status: CLOSED (PC88h; queued notice cleared after reconnect, two-way switching and SD ROM save confirmed) / P2 / bug, ui, storage, reconnect
+Source: User hardware-operation report, during PC88d conversation; log/build identification not independently reconfirmed.
+Reproduction:
+1. With PC-storage connection active, power off the reader.
+2. During connection error, request switching to SD storage; SD button turns yellow (queued).
+3. Power reader on; connection recovers, SD-storage button turns green.
+Observed: The header still reads "Storage change queued: switch to SD on next dump."
+Expected: Queued notice and buttons update consistently once reader confirms the mode.
+Investigation: The green button and leftover reservation were observed; whether the next dump actually saved to SD was initially unverified. Cause not yet established; could be mismatch between reconnect mode notification and clearing queued text, but source had not been reviewed.
+Completion: On the same path, queued text disappears after confirmed switch and actual files save to SD. If switch is not applied, queue stays; reverse PC-storage switch also stays consistent.
+Original version/commit: Not implemented when first recorded.
 
-取り込み（2026-11-02 13:35:54 JST）: 明示指示によりGitHub 7256c48の整形変更をPC88gへ取り込み。機種/カート情報/吸出し/検証の段落間に空行を追加。storage.pyのみ変更。レビュー時11テストPASSのコードと一致し、EXEビルド・--self-test exit0/PASS。実機確認待ち。成果物outputs3/cartreader-v15.5-pc88g/CartReaderPC.exe。
+Fix (2026-11-02 14:21:15 JST): Edited "[Storage Mode]" handling in pc/cartreader_pc.py on GitHub master. During reconnect, an old PC-mode report no longer discards an as-yet-unapplied SD reservation. Only on confirmation of the requested mode, or an already-sent switch notification, change "Storage change queued: ..." to "Transfer: idle". Do not overwrite active transfer/progress text. Other GUI paths, firmware and storage.py unchanged.
+Software verification: Six GUI state simulations passed: unapplied reservation retained during reconnect, confirmed PC/SD transitions in both directions, already-sent notices, old-mode notices and preservation of transfer status. No GUI hardware or EXE build then; still needed physical mode switching and actual destination checks.
+Commit: c6b97db0e583a24a55943e0bc0b2e30488d04271 (fix(pc): clear queued storage notice on confirmed mode change).
 
-ユーザー確認（2026-11-02 13:54:09 JST）: PC88gのTXTについて「改行入ったね」と報告。段落空行の表示を実利用で確認。連続吸出し等の全実機条件まで確認した意味ではなく、VERIFYを維持。
+Integration/build (2026-11-02 14:26:00 JST): Codex fetched GitHub c6b97db (issue update 891350f) and incorporated into PC88h; only cartreader_pc.py differs from PC88g. Re-ran the six cases including PC/SD confirmation, preserving an old queued request on reconnect and transfer-progress status; passed. All Python syntax passed; PyInstaller built EXE; --self-test exit 0/PASS. No FW edits or flash; actual switching and saving awaited the user. Artifacts: outputs3/cartreader-v15.5-pc88h/CartReaderPC.exe, source work/pc88h/pc. Displayed version still PC88e as in source.
+Hardware report (2026-11-02 14:28:51 JST): With SD storage queued, powering the reader on restored the connection and removed stale "storage change queued" text. This confirmed the display fix on this path. Did not yet confirm real SD file saving, reverse SD->PC switch or retaining an unapplied request; stay VERIFY.
+Hardware report (2026-11-02 14:31:09 JST): In addition to PC->SD queue, automatic power-on reconnect and cleared notice, user reported successful reverse SD->PC switching. Two-way label consistency verified. Actual SD save and a pending-but-unapplied request were not yet directly verified; stay VERIFY.
+Hardware completion (2026-11-02 14:39:47 JST): After changing to SD storage, a ROM dump showed "[+] Read ROM", "Saving to GBA/ROM/ROCKMAN_EXE2/106/...", "[*******************]", "Checksum: 69 -> OK", "CRC32... 98E4F096 -> Battle Network - Rockman EXE 2 (Japan).gba" and "Press Button..."; user confirmed actual SD save. Together with prior reconnect notice removal, successful reverse SD->PC switch and simulated retention of unapplied requests, the main completion requirements are met: CLOSED. Separate physical testing of retaining an unapplied reservation was not done; reopen if it recurs.
 
-ユーザー実機確認（2026-11-02 16:34:04 JST）: SNES/SFCのSA-1搭載「SHINING SCORPION」4MB/Save 32KBのROM付属TXTを確認。保存先「SNES/ROM/SHINING SCORPION/107/...」、ヘッダ表示「Checksum: B859」「Header CRC32: 8214C6C2」、保存後「CRC32... B17E95D4 -> Mini Yonku Shining Scorpion - Let's & Go!! (Japan).sfc」「SNES-CHECKSUM=B859 OK」「RENAMED=SNES/ROM/SHINING SCORPION/107/Mini Yonku Shining Scorpion - Let's & Go!! (Japan).sfc」。機種/カート情報・吸出し・検証結果が段落で整理され、今回のTXTに無関係な操作履歴・LED通知の混入なし。SNESチェックサム照合・DB名でのリネーム表示も正常。これによりGBAに加えてSNESの正常系実機結果を確認した。複数連続ROM吸出し・セーブ後・別カート切替の各条件を全て確認したことにはならずVERIFYを維持。
+#034 Rename the PC tool's shared log to OSCR_LOGPC.txt
+Added: 2026-11-02 12:18:38 JST
+Last updated: 2026-11-02 16:41:28 JST
+Status: CLOSED (PC88e and later, user confirmed) / P2 / enhancement, logging
+Source: User request. PC tool produces a shared log even in SD-storage mode and should not be confused with the reader's own log.
+Request: Name the PC-generated common log OSCR_LOGPC.txt. Keep standalone reader-side OSCR_LOG.txt unchanged.
+Scope: Use this name in GUI/CLI outputs and file-write warnings. Preserve log contents/append semantics established by #031.
+Old logs: Do not move, rename, delete or merge existing OSCR_LOG.txt merely because of this request.
+Related: #031 had already been implemented/user-verified; treat renaming as a separate enhancement.
+Completion: Whether saving to PC or SD, the PC side writes OSCR_LOGPC.txt and users can distinguish it from reader OSCR_LOG.txt.
+Original status: Not implemented when registered; updated after the PC88e implementation and software verification.
+Implementation (2026-11-02 12:28:53 JST): Changed common PC log name and failure warnings to OSCR_LOGPC.txt for GUI and CLI. No migration of existing OSCR_LOG.txt. No changes to log contents/append behavior.
+Software verification: Tested checksum 69 OK, 68-vs-69 mismatch, short headers, no DB, DB hit with rename, ROM companion TXT results, append behavior and unchanged old log. EXE built, --self-test exit 0/PASS. #032 extraction/formatting methods were byte-identical to previous version. Hardware not checked at this point.
+Artifacts: outputs3/cartreader-v15.5-pc88e/CartReaderPC.exe; source work/pc88e/pc; no FW change/flash.
+User confirmation (2026-11-02 16:41:28 JST): User said "034 OK". Treat common-log rename as successful in actual usage and mark CLOSED. Individual test coverage across PC/SD storage and GUI/CLI was not specified; do not claim every combination was hardware-tested.
 
-#033 再接続でSD保存が緑になった後も保存先変更予約の表示が残る
-追加日時: 2026-11-02 12:11:24 JST
-最終更新日時: 2026-11-02 14:39:47 JST
-状態: CLOSED（PC88h、再接続時の予約表示解除・双方向切替・SDへのROM保存を確認） / P2 / bug, ui, storage, reconnect
-出所: ユーザーの実機操作報告。現行PC88d利用中の会話での報告だが、ログ/版番号の追加確認は未実施。
-再現手順:
-1. PC保存で接続したまま本体電源を切る。
-2. 接続エラー中にSD保存へ変更。SD保存ボタンが黄色（予約）になる。
-3. 本体電源を入れる。再接続と同時にSD保存ボタンが緑になる。
-観測: コンソール上部には「保存先変更予約:次回の吸出しからSD保存」が残ったまま。
-期待: 本体による保存先適用の確認に合わせて、ボタンと予約表示が一貫して更新される。
-切り分け: ボタン緑への遷移と予約表示残留は観測済み。実際の次回保存先がSDかどうかはこの報告では未検証。
-原因: 未調査。再接続時の適用通知と予約表示解除の不整合が候補だが、ソース未確認で断定しない。
-完了条件: 同手順で適用確認後は予約表示が消え、SDへ実保存される。未適用時には予約が正しく残り、PC保存への逆方向も表示が一致する。
-対応版/コミット: 未対応。issueへの記録のみ。実装開始指示待ち。
+#035 Add GBA header-checksum verification to ROMs saved on the PC
+Added: 2026-11-02 12:24:29 JST
+Last updated: 2026-11-02 14:46:29 JST
+Status: CLOSED (PC88e and later; normal GBA header checksum verified during actual PC storage) / P2 / bug, verification, gba
+Source: User compared PC-storage and standalone reader ROM logs and noted missing "Checksum: 69 -> OK" on the PC.
+Source review: FW PC88a GBA.ino Read ROM skipped both compare_checksum_GBA and compareCRC under PC storage. compare_checksum_GBA reads the first 512B of saved ROM, computes checksumHeader_GBA, and compares against checksumStr from recognition. PC88d storage.py verifies CRC32/DB and SNES checksum, but lacked a PC-side GBA header-checksum equivalent.
+Diagnosis: Initial GBA recognition checks the header on the reader, which is distinct from verifying a ROM after dumping. This was a missing validation operation, not only a display omission.
+Proposal: Validate the header of a saved GBA ROM on PC; include computed value and OK/mismatch in console, shared log and ROM companion TXT. Confirm expected comparison semantics against the original reader.
+Caution: Header checksum is not a checksum of the entire ROM. Keep CRC32/DB and SHA256. The example "69" is not a constant.
+Related: #032 concerns companion TXT layout; this issue tracks the missing verification logic itself.
+Completion: Handle valid/invalid/too-short headers, record value and result under PC storage, and preserve standalone SD validation.
+Originally not implemented; later PC88e implementation and tests supersede that note.
 
-修正記録（2026-11-02 14:21:15 JST）: GitHub master の pc/cartreader_pc.py で [Storage Mode] 通知処理を修正。再接続時に旧保存先PCの報告を受けても、未適用のSD予約を破棄しない。予約先への切替確定時、または既に送信済みの切替通知時のみ、上部の「保存先変更予約: ...」を「転送: 待機」へ戻す。実転送中など他の表示は上書きしない。GUIの他の処理・ファーム・storage.pyは変更なし。
-ソフト確認: GUI状態処理の模擬6ケースPASS（再接続時の未適用予約維持、PC/SD双方向の切替確定、送信済み通知、旧保存先通知、転送表示保全）。GUI実機・EXEビルドは未実施。完了条件の連続実機操作と実際の保存先確認は引き続き必要。
-対応コミット: c6b97db0e583a24a55943e0bc0b2e30488d04271（fix(pc): clear queued storage notice on confirmed mode change）。
+Implementation (2026-11-02 12:28:53 JST): During the existing CRC32 scan on PC, retain the first 190B; compute the low eight bits of the negative sum over 0xA0-0xBC minus 0x19, and compare with saved-ROM byte 0xBD. Emit "Checksum: XX -> OK/mismatch/too short", and pass result via last_verification into companion TXT. Full-ROM CRC32/DB/SHA256 remain. Mismatch uses existing verification failure code 3. This compares internal consistency with the expected byte in the saved ROM, rather than the reader's checksumStr captured at recognition.
+Software verification: Tested 69 OK, 68 vs 69 mismatch, short header, no DB, matching DB/rename and companion TXT records, log appends and preservation of old log. Built EXE; --self-test exit 0/PASS. #032 extraction/formatting unchanged. Hardware not checked yet.
+Artifacts: outputs3/cartreader-v15.5-pc88e/CartReaderPC.exe; source work/pc88e/pc; no firmware change/flash.
 
-取り込み/ビルド（2026-11-02 14:26:00 JST）: CodexがGitHub c6b97db（issue更新891350f）を取得しPC88hへ反映。PC88gからcartreader_pc.pyのみ変更。PC/SD双方の予約確定、再接続旧通知で予約保持、送信済み通知、進捗表示保護など6ケースを再確認しPASS。全Python構文PASS、PyInstallerビルド成功、EXE --self-test exit0/PASS。ファーム変更・書込みなし。実際の切替・SD保存はユーザー確認待ち。成果物outputs3/cartreader-v15.5-pc88h/CartReaderPC.exe、ソースwork/pc88h/pc。画面版名は取得ソースどおりPC88eのまま。
-
-実機確認（2026-11-02 14:28:51 JST、ユーザー報告）: SD保存への切替を予約した状態で本体電源をONにすると、自動的に接続が復旧し、残っていた「保存先変更予約」の表示も消えた。再接続後の表示不整合は当該手順で解消を確認。実際にSDへROMが保存されたか、SD→PCへの逆方向切替、未適用時の予約維持はこの報告だけでは未確認。完了条件の残項目があるためVERIFYを維持。
-
-実機確認（2026-11-02 14:31:09 JST、ユーザー報告）: 先に確認済みのPC→SDへの予約・電源ON後の自動再接続・予約表示解除に加え、逆方向のSD→PC切替も成功したとの追加報告。双方向の表示不整合が解消したことを確認。実際のSDへのROM保存と、予約が未適用の場合の保持は明示的に確認されたものではないため、VERIFYを維持。
-
-実機確認・完了（2026-11-02 14:39:47 JST、ユーザー報告）: SD保存へ切替後のROM吸出しで「[+] Read ROM」「Saving to GBA/ROM/ROCKMAN_EXE2/106/...」「[*******************]」「Checksum: 69 -> OK」「CRC32... 98E4F096 -> Battle Network - Rockman EXE 2 (Japan).gba」「Press Button...」を確認し、ユーザーがSDへの保存成功を報告。先行する自動再接続後の予約表示解除とSD→PC逆方向の成功、未適用予約保持の模擬テストPASSを合わせ、#033の主要完了条件を満たすと判断してCLOSED。未適用予約維持の実機個別試験は未実施であり、当該点が再発すれば別途再開する。
-
-#034 PCツールの共通ログ名をOSCR_LOGPC.txtへ変更する
-追加日時: 2026-11-02 12:18:38 JST
-最終更新日時: 2026-11-02 16:41:28 JST
-状態: CLOSED（PC88e以降、ユーザー動作確認済み） / P2 / enhancement, logging
-出所: ユーザー要望。SD保存モードでもPCツールが共通ログを作るため、本体のログと区別したい。
-要望: PCツールが作成する共通ログ名をOSCR_LOGPC.txtにする。本体の単体動作で作るOSCR_LOG.txtはそのまま。
-範囲: GUI/CLI共通の出力ファイル名、および書込失敗案内等のファイル名表示を揃える。保存内容・追記方式は#031の仕様を維持。
-既存ログ: 既存OSCR_LOG.txtの移動・改名・削除・内容統合はこの要望だけで行わない。
-関連: #031は実装/ユーザー確認済み。この名前変更は追加要望として別管理。
-完了条件: PC保存/SD保存どちらでもPC側はOSCR_LOGPC.txtへ記録し、本体側OSCR_LOG.txtと混同しない。
-登録時点の記録: 未対応（実装前）。後述のPC88e実装・ソフト確認で更新済み。
-実装記録（2026-11-02 12:28:53 JST）: PC共通ログと書込み失敗案内をOSCR_LOGPC.txtへ変更。GUI/CLI共通。既存OSCR_LOG.txtは改名/削除/移行しない。保存内容・追記方式は変更なし。
-ソフト確認: 正常69/不一致68対69/短いヘッダ/DBなし/DB一致リネーム/ROM横TXTへの結果記録、ログ追記と旧ログ非変更を確認。EXE生成・--self-test exit0/PASS。#032の抽出/整形メソッドは前版と一致。実機確認は未実施。
-成果物: outputs3/cartreader-v15.5-pc88e/CartReaderPC.exe、ソース work/pc88e/pc。ファーム変更・書込みなし。
-ユーザー動作確認（2026-11-02 16:41:28 JST）: ユーザーより「034おｋ」との確認報告を受領。PC共通ログのOSCR_LOGPC.txtへの名称変更は実利用で問題なしと判断しCLOSEDに変更。PC/SDモード別やGUI/CLI別の個別試験内訳は報告されておらず、全組合せの実機確認を意味しない。
-
-#035 PC保存時のGBAヘッダチェックサム確認・結果表示を補う
-追加日時: 2026-11-02 12:24:29 JST
-最終更新日時: 2026-11-02 14:46:29 JST
-状態: CLOSED（PC88e以降、GBAヘッダチェックサム正常判定をPC実利用で確認） / P2 / bug, verification, gba
-出所: ユーザーのPC保存ログと本体単体ROMログの比較で「Checksum: 69 -> OK」がPC側にないとの報告。
-ソース確認: FW PC88a GBA.inoのRead ROMでは、PC保存時にcompare_checksum_GBAとcompareCRCを両方省略。
-  compare_checksum_GBAは保存済みROM先頭512Bを読み、checksumHeader_GBAで計算したヘッダチェックサムを認識時のchecksumStrと比較する。
-  PC88d storage.pyの検証はCRC32/DB照合とSNESチェックサムを実装するが、GBAヘッダチェックサムの代替処理がない。
-切り分け: GBA初期認識時には本体でヘッダチェックがあるが、吸出し後の保存済みROMの確認とは別。表示だけの欠落ではない。
-対応案: PC側で保存済みGBA ROMのヘッダチェックサムを確認し、値とOK/不一致をコンソール・共通ログ・ROM横TXTへ反映。比較基準は既存本体処理との一致を確認して決める。
-注意: ヘッダチェックサムはROM全体のチェックサムではない。既存CRC32/DB照合・SHA256は維持する。69はユーザーの例であり固定値にしない。
-関連: #032はROM横TXT整理。本項目は欠けた検証処理そのものなので別管理。
-完了条件: 正常/不正/短すぎるヘッダを処理し、PC保存でも計算結果と判定が残る。本体SD保存の検証は維持。
-登録時点の記録: 未対応（実装前）。後述のPC88e実装・検証記録で更新済み。
-
-実装記録（2026-11-02 12:28:53 JST）: PCでCRC32を読む既存走査時に先頭190Bを保持し、0xA0〜0xBCの負の和から0x19を引いた下位8bitを、保存ROMの0xBDと比較。Checksum: XX -> OK/不一致/短すぎるヘッダを表示し、last_verification経由でROM横TXTにも記録。全ROM CRC32/DB/SHA256は維持。不一致は既存検証失敗コード3。認識時の本体checksumStrではなく、保存ROM内の期待値との内部整合チェック。
-ソフト確認: 正常69/不一致68対69/短いヘッダ/DBなし/DB一致リネーム/ROM横TXTへの結果記録、ログ追記と旧ログ非変更を確認。EXE生成・--self-test exit0/PASS。#032の抽出/整形メソッドは前版と一致。実機確認は未実施。
-成果物: outputs3/cartreader-v15.5-pc88e/CartReaderPC.exe、ソース work/pc88e/pc。ファーム変更・書込みなし。
-
-完了確認（2026-11-02 14:46:29 JST）: ユーザーからCodex側で#035完了扱いとの連絡を受領。PC保存の実利用で生成されたGBA ROM付属TXT（ROCKMAN_EXE2/103、8 MB）に「Checksum: 69 -> OK」とCRC32「98E4F096」、DB一致、RENAMED先が記録されたことは#032で既報。保存ROMのGBAヘッダチェックサム正常判定とTXT反映を実利用で確認した。異常ヘッダ・不一致・DB未一致はソフト試験で確認済みだが、実機で意図的な不一致を再現したものではない。GBAヘッダチェックサムはROM全体の整合性を保証するものではない。以上により#035をCLOSEDとする。
+Completion review (2026-11-02 14:46:29 JST): User said Codex had marked #035 completed. As previously recorded under #032, companion TXT generated from actual PC-storage GBA ROM (ROCKMAN_EXE2/103, 8 MB) contained "Checksum: 69 -> OK", CRC32 98E4F096, DB match and RENAMED destination. Thus actual use verified successful GBA header checksum and TXT recording. Software tests included deliberately bad headers, mismatches and DB misses, but these were not physically reproduced. GBA header checksum does not guarantee full-ROM integrity. Mark #035 CLOSED.
 
 
 #036 電源オンで事前指定した機種の一括吸出しを自動開始するモード
