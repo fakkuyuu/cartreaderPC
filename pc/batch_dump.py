@@ -181,13 +181,20 @@ class BatchDump:
                 # storage.py also reports the companion .txt with [SAVED]
                 # under the same /ROM/ directory. Ignore it entirely, rather
                 # than replacing rom_saved or comparing its size to the ROM.
-                saved_path = line[len("[SAVED] "):].split(" (", 1)[0]
+                # Match the final size/hash trailer, never an earlier
+                # " (" inside a ROM filename or its parent directories.
+                saved = re.fullmatch(
+                    r"\[SAVED\] (?P<path>.+) \((?P<size>\d+) bytes\) SHA256=[0-9a-fA-F]+",
+                    line)
+                if saved is None:
+                    return
+                saved_path = saved.group("path")
                 if not saved_path.lower().endswith(self.ROM_EXTENSIONS[self.target]):
                     return
-                size = re.search(r"\((\d+) bytes\)", line)
-                self.rom_saved = bool(size and int(size.group(1)) > 0)
-                if (self.target == "N64" and size and self.n64_rom_bytes
-                        and int(size.group(1)) != self.n64_rom_bytes):
+                actual_size = int(saved.group("size"))
+                self.rom_saved = actual_size > 0
+                if (self.target == "N64" and self.n64_rom_bytes
+                        and actual_size != self.n64_rom_bytes):
                     return self.stop("N64 ROMサイズ不一致。自動操作を停止")
             elif line.startswith("[VERIFY] CRC32="):
                 self.rom_verified = True
