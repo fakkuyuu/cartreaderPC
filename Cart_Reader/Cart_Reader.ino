@@ -895,6 +895,7 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
       if (mode == CORE_NES && PcConsole.available() && PcConsole.peek() == '!') {
         PcConsole.read();
         PcConsole.println(F("[+] Reset"));
+        delay(150);  // Let the PC receive the reset notice before reboot.
         resetArduino();
       }
 #endif
@@ -1140,6 +1141,7 @@ byte starting_letter(const char* databaseName) {
       if (mode == CORE_NES && direct == '!') {
         PcConsole.read();
         PcConsole.println(F("[+] Reset"));
+        delay(150);  // Let the PC receive the reset notice before reboot.
         resetArduino();
       }
       if (direct == '@') {
