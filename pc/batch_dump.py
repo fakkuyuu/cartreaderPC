@@ -4,6 +4,8 @@ The firmware remains the authority for cartridge recognition and read operations
 Only named, observed menu choices are sent; manual selection is never guessed.
 """
 
+import re
+
 
 class BatchDump:
     ROOT_NAMES = {
@@ -30,6 +32,7 @@ class BatchDump:
         self.rom_saved = False
         self.rom_verified = False
         self.save_saved = False
+        self.save_expected_bytes = None
         self.reason = ""
         self.db_match = None
 
@@ -43,6 +46,7 @@ class BatchDump:
         self.rom_saved = False
         self.rom_verified = False
         self.save_saved = False
+        self.save_expected_bytes = None
         self.reason = ""
         self.db_match = None
 
@@ -81,12 +85,24 @@ class BatchDump:
                     self.save = False
                 elif value and value[0].isdigit():
                     self.save = True
+                    amount = re.match(r"(\d+)\s*(kb|byte)", value)
+                    if amount:
+                        count = int(amount.group(1))
+                        self.save_expected_bytes = count * (1024 if amount.group(2) == "kb" else 1)
             elif line.startswith("Save Type:"):
                 value = line.partition(":")[2].strip().lower()
                 if value == "none/unknown":
                     self.save = None
                 elif value:
                     self.save = True
+                    for prefix, expected in (
+                        ("4k eeprom", 512), ("64k eeprom", 8192),
+                        ("256k sram", 32768), ("512k sram", 65536),
+                        ("512k flash", 65536), ("1m flash", 131072),
+                    ):
+                        if value.startswith(prefix):
+                            self.save_expected_bytes = expected
+                            break
             elif line.startswith("Save Lib:"):
                 if line.partition(":")[2].strip().lower() == "none":
                     self.save = False
@@ -100,7 +116,8 @@ class BatchDump:
                 self.save = None
         if self.phase == "rom_read":
             if line.startswith("[SAVED] ") and "/ROM/" in line.upper():
-                self.rom_saved = True
+                size = re.search(r"\((\d+) bytes\)", line)
+                self.rom_saved = bool(size and int(size.group(1)) > 0)
             elif line.startswith("[VERIFY] CRC32="):
                 self.rom_verified = True
                 if "DB=no match" in line or "DB=not installed" in line:
@@ -109,7 +126,17 @@ class BatchDump:
                     self.db_match = True
         elif self.phase == "save_read":
             if line.startswith("[SAVED] ") and "/SAVE/" in line.upper():
-                self.save_saved = True
+                size = re.search(r"\((\d+) bytes\)", line)
+                if size:
+                    actual = int(size.group(1))
+                    if actual <= 0:
+                        return self.stop("セーブファイルが0バイトでした")
+                    if (self.save_expected_bytes is not None
+                            and actual != self.save_expected_bytes):
+                        return self.stop(
+                            f"セーブサイズ不一致: {actual} bytes "
+                            f"(想定 {self.save_expected_bytes} bytes)")
+                    self.save_saved = True
 
     def on_menu(self, title, options):
         if not self.active:
