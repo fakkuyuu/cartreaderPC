@@ -59,8 +59,8 @@ ID    Status   Prio Categories               Title
 034   CLOSED   P2   enhancement/logging      Rename PC shared log to OSCR_LOGPC.txt
 035   CLOSED   P2   bug/verification/gba     Restore GBA header checksum validation for PC storage
 036   IDEA     P2   enhancement/automation   Launch a preset console's batch on power-on
-037   VERIFY        P2   bug/ui/i18n              Untranslated controls and messages in English mode
-038   CLOSED        P2   bug/ui/menu              Out-of-range menu page leaves GUI stuck in "processing"
+037   VERIFY   P2   bug/ui/i18n              Untranslated controls and messages in English mode
+038   CLOSED   P2   bug/ui/menu              Out-of-range menu page leaves GUI stuck in "processing"
 
 [DETAILS]
 
