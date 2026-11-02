@@ -46,6 +46,10 @@ class BatchDump:
         self.db_says_no_save = False
         self.gba_candidate_seen = False
         self.gba_candidate_selected = False
+        self.nes_database_search_seen = False
+        self.nes_manual_selection = False
+        self.nes_candidate_seen = False
+        self.nes_candidate_selected = False
         self.n64_rom_bytes = None
         self.n64_save_type_seen = False
         self.n64_crc1_seen = False
@@ -66,6 +70,10 @@ class BatchDump:
         self.db_says_no_save = False
         self.gba_candidate_seen = False
         self.gba_candidate_selected = False
+        self.nes_database_search_seen = False
+        self.nes_manual_selection = False
+        self.nes_candidate_seen = False
+        self.nes_candidate_selected = False
         self.n64_rom_bytes = None
         self.n64_save_type_seen = False
         self.n64_crc1_seen = False
@@ -103,6 +111,19 @@ class BatchDump:
                 or (self.target == "N64" and
                     ("GAMEPAK ERROR" in line or "Cartridge unknown" in line))):
             return self.stop(f"読み取り異常のため一括停止: {line[:100]}")
+        if self.target == "NES" and self.phase == "entry":
+            # A successful NES CRC lookup reaches the candidate browser
+            # directly. Misses first print "Using manual selection" (or
+            # "No data found.") before opening the alphabet/database browser.
+            if line == "Searching database":
+                self.nes_database_search_seen = True
+            elif line in ("No data found.", "CRC not found in database",
+                          "Using manual selection"):
+                self.nes_manual_selection = True
+                self.nes_candidate_seen = False
+            elif line == "Select your cartridge":
+                self.nes_candidate_seen = (
+                    self.nes_database_search_seen and not self.nes_manual_selection)
         if self.phase in ("entry", "rom_menu"):
             if self.target == "N64" and self.phase == "rom_menu":
                 if line.startswith("ROM Size:"):
@@ -285,6 +306,19 @@ class BatchDump:
         self.phase = "save_read"
         return value
 
+    def on_candidate(self):
+        """Accept a NES CRC-matched DB candidate once; never choose manually."""
+        if not self.active:
+            return None
+        if (self.target == "NES" and self.phase == "entry"
+                and self.nes_database_search_seen
+                and self.nes_candidate_seen
+                and not self.nes_manual_selection
+                and not self.nes_candidate_selected):
+            self.nes_candidate_selected = True
+            return " "
+        return self.stop("NESのDB一致を確認できません。候補は手動選択してください")
+
     def on_physical(self):
         """Confirm only an identified GBA database candidate; never guess elsewhere."""
         if not self.active:
@@ -299,6 +333,9 @@ class BatchDump:
         if not self.active:
             return None
         if self.phase in ("entry", "rom_menu"):
+            if (self.target == "NES" and self.phase == "entry"
+                    and not self.nes_candidate_selected):
+                return self.stop("NESのDB候補未確認。手動で確認してください")
             if (self.target == "GBA" and self.phase == "rom_menu"
                     and not self.gba_candidate_selected):
                 return self.stop("GBAのゲーム情報確定前に操作待ちが発生しました。手動確認してください")
