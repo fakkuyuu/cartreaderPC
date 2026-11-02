@@ -112,8 +112,11 @@ class BatchDump:
             elif line.startswith("PcConsole EEPROM:"):
                 self.save = True
             elif line.startswith("RAM SIZE:") and self.target == "NES":
-                # The NES RAM size alone does not prove battery-backed storage.
-                self.save = None
+                # NES database-derived iNES 2.0 PRG nonvolatile RAM size.
+                value = line.partition(":")[2].strip().lower()
+                size = re.match(r"(\d+)\s*k", value)
+                if size:
+                    self.save = int(size.group(1)) > 0
         if self.phase == "rom_read":
             if line.startswith("[SAVED] ") and "/ROM/" in line.upper():
                 size = re.search(r"\((\d+) bytes\)", line)
