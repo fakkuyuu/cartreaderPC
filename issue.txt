@@ -24,8 +24,8 @@ IDs are stable. Append implementation versions, commits and hardware results to 
 [INDEX]
 ID    Status   Prio Categories               Title
 001   OPEN     P2   bug/browser              Cancellation displayed as "SD operation failed"
-002   OPEN     P1   bug/upstream/nes         Incorporate NES MMC1 CHR read fix
-003   OPEN     P2   upstream                 Incorporate last upstream changes from old project
+002   VERIFY     P1   bug/upstream/nes         Incorporate NES MMC1 CHR read fix
+003   VERIFY     P2   upstream                 Incorporate last upstream changes from old project
 004   VERIFY   P1   test/browser/memory      Verify deep paths, long names and repeated browser actions
 005   OPEN     P1   enhancement/memory       Detect insufficient RAM and fail safely
 006   IDEA     P2   enhancement/memory       Reduce resident RAM for per-console workspaces and constant data
@@ -78,8 +78,8 @@ Version/commit: Not addressed. Earlier cancellation-display work did not cover t
 
 #002 Incorporate the NES MMC1 CHR read fix
 Added: 2026-11-01 21:13:34 JST
-Last updated: 2026-11-01 21:35:44 JST
-Status: OPEN / P1 / bug, upstream, nes
+Last updated: 2026-11-03 08:23:12 JST
+Status: VERIFY / P1 / bug, upstream, nes
 Source: Claude's analysis supplied by the user; current code compared with the official GitHub compare API.
 Scope: readCHR cases 1 / 155; old upstream commit 8e804d83 (2026-03-07).
 Change: Move reset outside the bank loop and configure the MMC1 control register.
@@ -87,6 +87,10 @@ Observed: Not applied to current PC88a. The user has not reported a present-day 
 Completion: Retrieve and apply the actual upstream diff, check other mapper behavior and, if possible, verify an affected cartridge.
 Version/commit: Not addressed.
 Related: A component of #003. #003 must include application/validation of this fix; resolve both together.
+PC94 integration (2026-11-03 08:23:12 JST): Applied MMC1 CHR fix 8e804d83 and VSMILE unit correction b4b8d4c2. Sky Alien be42198f already exists in sd/2600.txt. Deliberately retained V15.5-PC94 identity rather than automatic V15.6 bump 8593a266; documented relocation 060d8ae0 in this fork README. Public HW/module defaults restored to upstream V15.5; local HW3 test configuration retained. GCC16.1 HW3 build passed: flash217812, static RAM6676. VSMILE is disabled in the test build, so its changed path was not compiled/tested on hardware. Affected NES cartridges untested; no upload performed. Keep #002/#003 VERIFY pending hardware testing.
+
+PC94 integration (2026-11-03 08:23:12 JST): Applied MMC1 CHR fix 8e804d83 and VSMILE unit correction b4b8d4c2. Sky Alien be42198f already exists in sd/2600.txt. Deliberately retained V15.5-PC94 identity rather than automatic V15.6 bump 8593a266; documented relocation 060d8ae0 in this fork README. Public HW/module defaults restored to upstream V15.5; local HW3 test configuration retained. GCC16.1 HW3 build passed: flash217812, static RAM6676. VSMILE is disabled in the test build, so its changed path was not compiled/tested on hardware. Affected NES cartridges untested; no upload performed. Keep #002/#003 VERIFY pending hardware testing.
+
 
 #003 Incorporate the old upstream project's final updates
 Added: 2026-11-01 21:13:34 JST

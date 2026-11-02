@@ -276,7 +276,7 @@ void setROMSize_VSMILE()
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(VSMILE[newvsmilesize]);
-  println_Msg(F("KB"));
+  println_Msg(F("MB"));
   display_Update();
   delay(1000);
 #else
@@ -290,7 +290,7 @@ setrom:
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(VSMILE[i + vsmilelo]);
-      PcConsole.println(F("KB"));
+      PcConsole.println(F("MB"));
     }
     PcConsole.print(F("Enter ROM Size: "));
     while (PcConsole.available() == 0) {}
@@ -305,7 +305,7 @@ setrom:
   }
   PcConsole.print(F("ROM Size = "));
   PcConsole.print(VSMILE[newvsmilesize]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(F("MB"));
 #endif
   EEPROM_writeAnything(8, newvsmilesize);
   vsmilesize = newvsmilesize;

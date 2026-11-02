@@ -33,7 +33,7 @@
 
 //#define HW5
 //#define HW4
-#define HW3
+//#define HW3
 //#define HW2
 //#define HW1
 //#define SERIAL_MONITOR
@@ -196,7 +196,7 @@
 /* [ Neo Geo Pocket ----------------------------------------------- ]
 */
 
-#define ENABLE_NGP
+//#define ENABLE_NGP
 /****/
 
 /* [ Nintendo 64 -------------------------------------------------- ]
@@ -221,13 +221,13 @@
 /* [ MSX ---------------------------------------------------------- ]
 */
 
-#define ENABLE_MSX
+//#define ENABLE_MSX
 /****/
 
 /* [ PC Engine/TurboGrafx 16 -------------------------------------- ]
 */
 
-#define ENABLE_PCE
+//#define ENABLE_PCE
 /****/
 
 /* [ Pokemon Mini ------------------------------------------------- ]
@@ -257,19 +257,19 @@
 /* [ Super Famicom SF Memory Cassette (needs ENABLE_SNES)---------- ]
 */
 
-#define ENABLE_SFM
+//#define ENABLE_SFM
 /****/
 
 /* [ Super Famicom Satellaview (needs ENABLE_SNES)----------------- ]
 */
 
-#define ENABLE_SV
+//#define ENABLE_SV
 /****/
 
 /* [ Super Famicom Sufami Turbo (needs ENABLE_SNES)---------------- ]
 */
 
-#define ENABLE_ST
+//#define ENABLE_ST
 /****/
 
 /* [ Super Famicom Game Processor RAM Cassette (needs ENABLE_SNES)- ]
@@ -311,7 +311,7 @@
 /* [ Virtual Boy -------------------------------------------------- ]
 */
 
-#define ENABLE_VBOY
+//#define ENABLE_VBOY
 /****/
 
 /* [ Vtech V.Smile ------------------------------------------------ ]
@@ -329,7 +329,7 @@
 /* [ WonderSwan and Benesse Pocket Challenge v2 ------------------- ]
 */
 
-#define ENABLE_WS
+//#define ENABLE_WS
 /****/
 
 /* [ Super A'can -------------------------------------------------- ]
