@@ -1,5 +1,5 @@
 cartreaderPC Issues
-最終更新日時: 2026-11-02 20:19:49 JST
+最終更新日時: 2026-11-02 21:05:05 JST
 対象: PCツールPC89 / ファームPC89 / HW3（GitHub 54b3e88由来）
 
 これは要望・不具合・案の管理表。ローカルの正本を公開用に転記したもの。GitHub Issuesの個別チケット登録とは別。
@@ -450,7 +450,7 @@ Codexビルド/書込結果（2026-11-02 18:52:19 JST）: GitHub f85877aのMBC1�
 
 #029 ワンクリック吸出しモード（ボタン送り・メニュー選択を自動化）
 追加日時: 2026-11-01 22:02:12 JST
-最終更新日時: 2026-11-02 20:19:49 JST
+最終更新日時: 2026-11-02 21:05:05 JST
 状態: VERIFY（PC89でGB/GBA/SNES/MD実機成功。N64一括ソース追加、次期PCツールの再ビルド・テスト・実機確認待ち） / P2 / enhancement, ui, automation
 出所: ユーザー案。接点不良などがなければ、開始1ボタンでROM吸出し完了まで進めたい。
 目的: カート情報の確認・Press Button・Read ROMの選択など、定型操作の手間を減らす。
@@ -496,6 +496,8 @@ Codexレビューによる不具合修正（2026-11-02 18:37:20 JST）: Codex側
 N64一括吸出し対応（2026-11-02 19:26:36 JST、ユーザー指定）: 「N64のDB未一致はNES同様その場で止めればよい」との指示により、N64を一括対象に追加。メインメニューの通常「Nintendo 64 (3V)」ボタンの右に専用「一括吸出し」ボタンを設置（pc/cartreader_pc.py、コミット cae56ff）。BatchDumpにN64を追加（pc/batch_dump.py、コミット 8d72972）。「Select N64 device」→「Game Cartridge」を自動選択。ファームのn64.txtによるCRC1照合に成功したときに表示されるROM Size・Save Type・CRC1の3項目を確認した後のみ最初のPress Buttonを自動送信して「N64 Cart Reader」→「Read ROM」に進む。DB未一致時の「GAMEPAK ERROR」または「Cartridge unknown」、DB情報未完了・ROMサイズ不明・未対応セーブ形式では自動操作を停止し、N64.inoが不明カートへ暫定cartSize=2を設定してもそれを使ってROM吸出ししない。ROM保存サイズはDB由来ROM Sizeと一致していることを確認し、正常な[VERIFY]受信後、DB由来Save TypeがSRAM(32768B)/SRAM 768(98304B)/FLASH(131072B)/4K EEPROM(512B)/16K EEPROM(2048B)の場合はRead Saveを続け、DB上None/Unknown(0)の場合はROMのみで完了。セーブ保存後は形式別想定サイズと比較し、不一致時は停止。書込み・消去・Force Savetype・Force ROM size・ControllerPak操作は一括で選択しない。ROM吸出し後のPC側CRC32のDB no matchは、読出し前のCRC1 DB照合失敗とは別の事象なのでROM/セーブ転送の異常なしなら既存の一括ルールで扱う。pc/test_batch_dump.pyへDB一致/未一致、ROMのみ、5セーブ形式、ROM・セーブサイズ不一致、UI配置の計7テストを追加し合計20件（コミット3144a8a）。Arduinoファーム自体は変更せずPCツール側のみ変更。N64新コードのテスト実行、Windows EXE再ビルド、実機でのN64正常・DB未一致・セーブ分岐の検証は未実施。既存PC89 EXEには新しいN64一括ボタンは含まれないため、Codex側でmaster最新のPCソースを取り込んで再ビルドが必要。状態VERIFY維持。
 
 Codex指摘のN64実不具合修正（2026-11-02 20:19:49 JST）: Codexから「N64のROM付属TXTをROM本体と誤認してサイズ不一致で自動停止する」再現報告。pc/storage.pyはROM完成時に[ S A V E D ]ではなく実際は「[SAVED] N64/ROM/.../GAME.Z64 (NN bytes) SHA256=...」、PCによるCRC照合後に付属TXTも「[SAVED] N64/ROM/.../GAME.txt (NN bytes) SHA256=...」として同じ/ROM/配下へ出す。従来のpc/batch_dump.pyはphase=rom_readで「[SAVED]」かつ「/ROM/」のみをROM保存通知と認識していたため、TXTをROMとして扱い、DB由来ROMサイズと比較して誤停止した。修正: ターゲット機種別の実ROM拡張子を確認してからROM保存/サイズチェックし、付属.txtなどを無視する（コミット6d46f00）。対象はGB/.gb,.gbc、GBA/.gba、SNES/.sfc,.smc、MD/.bin,.md,.gen、N64/.z64,.n64,.v64、NES/.nes、PCE/.pce。N64でROM保存→CRC照合→同ディレクトリのTXT保存→Press Button→Read Save→セーブ保存まで継続するケース、TXTだけではROM保存扱いしないケース、全一括対象機種のTXT除外ケースを追加して計23テスト（コミットe412bdd）。現時点で本チャットでは更新後テストの実行、PC EXE再ビルド、N64実機試験は未実施。既存PC89 EXEには修正が含まれず、Codexによる最新masterの取得・23テスト実行・EXE再ビルド・実機確認が必要。なお、過去の本チャットで述べた「N64 None/Unknownが必ず不具合」「18-in-1に停止経路がない」は断定が不正確だった。N64でDB照合成功のセーブコード0の解釈と、18-in-1の汎用操作待ち停止は別件として扱い、今回の修正では変更しない。状態VERIFY維持。
+
+Codex再検証のSAVEDパス不具合修正（2026-11-02 21:05:05 JST）: 先の付属TXT誤認修正で保存ログのパスを [SAVED] 以降最初の「 (」で分割していたため、ファイル名「GAME (J).Z64」やフォルダ名「Archive (2026)」など括弧を含む正規のROMパスが途中で切れ、拡張子照合に失敗しROM保存を認識できず安全停止することをCodexが再現。pc/batch_dump.py を修正して、末尾の厳密な「 (数字 bytes) SHA256=16進文字列」まで含む[SAVED]行を正規表現 fullmatch で照合し、パスと実バイト数を別々に抽出。ファイル名・フォルダ名に「 (」や「 (数字 bytes)」が含まれても途中で切断しない。パスの実ROM拡張子照合による付属TXT除外とN64のROMサイズ一致確認は維持。修正コミット04e4e91。pc/test_batch_dump.py に括弧を含むN64ファイル名/フォルダ名のROM→TXT→Read Save正常経路、および途中の「(12 bytes)」に惑わされず末尾のサイズを採用する回帰テスト2件を追加、合計25テストメソッド（コミットb951838）。Codexによる修正前23テストPASSはユーザー報告済み。新たな25テストの再実行、EXE再ビルド、N64実機確認は未実施。EXE化はユーザー報告どおりまだ行っておらず、ビルド指示までは既存PC89を変更しない。状態VERIFYを継続。
 
 #030 保存先フォルダをエクスプローラーで開くボタン
 追加日時: 2026-11-01 22:05:38 JST
