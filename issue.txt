@@ -143,182 +143,171 @@ Source: Additional proposal; user prioritized the browser ("the browser is the r
 Proposal: Replace full-screen 1024B buffering with partial drawing; would require significant display changes.
 Current state: Not implemented. Do not mix this into browser fixes or treat the next implementation as approved.
 
-#009 ローカルGitでソース・要望・結果を管理する
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: OPEN / P2 / workflow, git
-出所: ユーザーが繰返し要望。「どの版で何を変えたか分かるように」。
-対応: 作業対象を一本化し、変更ごとに理由付きコミット、配布版タグ、検証結果を対応付け。
-  このissue.txtの追加・訂正も同じGitで追う。GitHub反映は区切りで行う。
-現状: 会話上の方針のみ。今回、Git化や過去版の再構成を完了したわけではない。
-完了条件: 実際のコミット/タグから版差分と対応成果物を辿れる。
-  過去の履歴がない部分は推測で捏造しない。GitHub公開は別途依頼範囲で行う。
+#009 Manage source, requests and results in local Git
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: OPEN / P2 / workflow, git
+Source: Repeated user request to identify what changed in each version.
+Plan: Establish one working source of truth; associate each reasoned commit, release tag and test result with the corresponding build. Track additions/corrections to this issue.txt in the same Git history and publish to GitHub at appropriate milestones.
+Current state: This was a discussion policy, not proof that Git migration or reconstruction of old versions was completed.
+Completion: Commits/tags must identify version differences and related artifacts. Do not invent unavailable historical commits. Publish on GitHub only as separately requested.
 
-#010 フォルダ配置と重複ファイルを整理する
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: OPEN / P2 / workflow, files
-出所: ユーザーが配置の不統一・生成スクリプト/TXT/ZIPの増加を指摘。
-対応: ソース/試験中/配布/テストデータ/過去資料の配置を決める。
-  試験中フォルダは勝手に動かさず、古い履歴TXTは固有記録を照合してから統合。
-  毎回の全コピーやZIP作成をやめ、不要な一度きりスクリプトを増やさない。
-現状: 本格整理・削除は未実施。#009と連動。
-完了条件: 正本と現行実行物が一意に分かり、退避物から過去版も復元できる。
+#010 Normalize folder layout and clean duplicate files
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: OPEN / P2 / workflow, files
+Source: User noted inconsistent layout and growing scripts, TXT files and ZIPs.
+Plan: Define locations for source, work in progress, distributions, test data and archives. Never move active-test folders unilaterally; compare unique historical TXT records before consolidation. Stop unnecessary full copies and ZIP generation, and avoid accumulating disposable scripts.
+Current state: No comprehensive cleanup or deletion; linked to #009.
+Completion: Clearly identify a unique current source of truth and executable, with recoverable archived versions.
 
-#011 配布ZIPのビルド残骸混入を是正する
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: OPEN / P1 / bug, release
-観測: 過去PC86系ZIPにGCC7.3製の古いbuild/HEXが混入。正しいHEXと矛盾。
-対応済み範囲: PC87/88系の新規梱包ではスケッチ内buildを除外、ソース/HEX対応を検査。
-未対応: 過去の公開物・ZIPをどこまで差し替えるかの整理。
-完了条件: 公開対象を監査し、対応Config/ソース/コンパイラ/HEXのハッシュを残す。
-  古い試験版を黙って上書きしない。IDE縮小版も起動/展開/ビルドを確認する。
+#011 Remove old build debris from distribution ZIPs
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: OPEN / P1 / bug, release
+Observed: Some earlier PC86-family ZIPs contained old build/HEX files compiled by GCC 7.3, conflicting with the correct HEX.
+Already corrected: New PC87/88 packaging excludes sketch-local build directories and checks source/HEX correspondence.
+Outstanding: Decide which previously published artifacts and ZIPs need correction.
+Completion: Audit published artifacts; record matching Config, source, compiler and HEX hashes. Do not silently overwrite old test releases. Also check that reduced IDE packages start, extract and compile correctly.
 
-#012 公開ソースとドキュメントを現行版へ揃える
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: OPEN / P2 / docs, release
-出所: GitHub公開、日英説明、配布の手順についてのユーザー要望。
-現状: ローカルのPC88系と、GitHubへ以前上げたソース/Releaseが一致しているとは未確認。
-対応: #009の後、対応コミットから配布物を作り、README日英・ビルド手順・DB配置・
-  確認済HWと未確認HW・既知問題を整備。DB同梱/取得方法は最終配布方針を確認。
-  GitHub Actions自動EXE化は案であり必須と決まっていない。
-完了条件: 配布タグから対応ソースを取得でき、説明と同じ手順でビルド/起動できる。
+#012 Synchronize published source and documentation with current builds
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: OPEN / P2 / docs, release
+Source: User requests concerning GitHub publication, Japanese/English explanations and release procedure.
+Current state: The local PC88-family source has not been confirmed identical to the earlier GitHub source/releases.
+Plan: Following #009, package builds from specific commits and maintain bilingual README, build instructions, database placement, verified/unverified hardware and known issues. Confirm whether databases should be bundled or downloaded. Automated EXE builds with GitHub Actions are only a proposal.
+Completion: A release tag resolves to its source and the documented build/startup instructions work.
 
-#013 NESセーブのゲーム名と上書き防止
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: TRIAGE / P2 / enhancement, nes, save
-出所: ユーザーが通常版のRAM.sav等ではゲームが分からず、上書きした気がすると報告。
-要望: ROM吸出し/手動選択したタイトルをセーブ名へ引き継ぐ等、区別できる保存にする。
-未確認: 現行の全NESセーブ経路でどう保存するか、上書きが実際に起きた条件。
-対応: まず実装と通常版/PC保存/SD保存の条件を照合。過去報告だけで現行破損と断定しない。
+#013 NES save filenames and overwrite prevention
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: TRIAGE / P2 / enhancement, nes, save
+Source: User reported that generic RAM.sav-style filenames make games hard to distinguish and might have caused overwriting.
+Request: Carry the title from ROM dumping or manual selection into distinguishable save filenames.
+Unverified: Actual save-path behavior for every current NES mode and conditions under which overwrites occurred.
+Plan: Compare code and original/PC-storage/SD-storage cases first; do not call a historical report current corruption without verification.
 
-#014 N64単体SD吸出し中の液晶下部の乱れ
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: TRIAGE / P2 / bug, n64, display
-出所: PC30付近、単体吸出しは完了したが液晶下部が乱れた写真をユーザー提示。
-未確認: 現行PC88aで再現するか、その報告に対応した修正の有無。
-対応: 古い版の修正記録と照合し、再現しなければ当時の報告と現行確認を区別して閉じる。
+#014 Bottom of LCD garbled during standalone N64 SD dump
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: TRIAGE / P2 / bug, n64, display
+Source: Around PC30, user supplied a photo showing bottom-of-LCD corruption, although standalone dumping completed.
+Unverified: Reproducibility on PC88a and whether the old issue received a fix.
+Plan: Check old version history. If unreproducible, distinguish the original report from current verification when closing.
 
-#015 エラー時LED色・ツール表示
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: TRIAGE / P2 / bug, led
-出所: エラーなのに緑LEDだったという過去報告。
-対応済み記録: PC表示へLED状態・点滅通知、色矩形、不要ログ除外は実装あり。
-未確認: 全エラー/CRC不一致の本体赤表示まで正しく連動しているか。
-対応: 保存成功と検証失敗を区別し、接続状態の色と混同しない。
+#015 Error LED colors and PC tool display
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: TRIAGE / P2 / bug, led
+Source: Historical report of a green LED during an error.
+Previously implemented: PC-side LED status/blink notifications, colored rectangle and filtering of unnecessary log records.
+Unverified: Whether all reader-side errors, including CRC mismatches, correctly show red.
+Plan: Distinguish saved-data success from verification failure; do not confuse error color with connection status.
 
-#016 一部のDBだけがない場合の案内
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: TRIAGE / P2 / enhancement, database
-記録: PC63で「DBが全くない場合」の案内は追加。一つだけ欠損の個別案内は未実装と記載。
-要望案: 機種選択や検索時に、欠けたDB名と取得/配置方法を明示。
-未確認: 現行での個別エラー表示と、起動時全DB必須チェックにする必要性。
-対応: 使わない機種のDBまで一律必須にはしない。
+#016 Guidance when only some database files are missing
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: TRIAGE / P2 / enhancement, database
+History: PC63 added guidance when all DB files are absent, but per-file missing DB messages were described as unimplemented.
+Proposal: During console selection/search, identify missing DB files and explain how to obtain/install them.
+Unverified: Current per-file error displays and whether any startup all-DB requirement is desirable.
+Plan: Do not require databases for consoles the user does not use.
 
-#017 操作方式・機種・HW対応の確認
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: VERIFY / P2 / test, ui, hardware
-出所: マウスだけ/キーボードだけ/併用、本体とPCどちらでも操作、全機種の特殊選択対応。
-実装記録: 数字/テンキー/矢印/Enter、文字一覧・ゲーム一覧・NES/MSX手動設定、7/8ページ送り等。
-未確認: 全特殊画面、IME/NumLock/フォーカス条件、追加NGP/VB/WS/SF系、HW4/5の実機。
-完了条件: 条件別の実機結果を残す。HW3成功だけで全HW対応済みとしない。
+#017 Verify control modes, consoles and hardware revisions
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: VERIFY / P2 / test, ui, hardware
+Source: Requirement for mouse-only, keyboard-only, mixed and reader/PC operation, including special selections for all consoles.
+Implemented: Number keys, numpad, arrows, Enter, alphabet and title lists, NES/MSX manual settings and 7/8 page switching, among others.
+Unverified: All special screens, IME/NumLock/focus cases, added NGP/VB/WS/SF systems and physical HW4/5.
+Completion: Record hardware results per case. HW3 success does not prove all revisions work.
 
-#018 方向別UART診断と高速化
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: HOLD / P3 / performance, diagnostic
-出所: 高速転送の原因切分け、Claudeを交えた診断案。
-案: MEGA→PC/PC→MEGAを分離し、DOR/FE/UPE、最初の不一致位置等を調べる。
-現状: 速度ベンチと1MiB転送試験は既存。詳細な方向別診断は未実装。
-その他案: SD読込単独試験、実SPI速度記録、SD/UARTの重ね合わせ等。
-条件: 既存の内容一致・取消し・メモリ余裕を維持。2M等の過去不合格を無条件採用しない。
+#018 Direction-specific UART diagnostics and further speed improvements
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: HOLD / P3 / performance, diagnostic
+Source: Investigations into transfer bottlenecks and diagnostic proposals involving Claude.
+Proposal: Test MEGA-to-PC and PC-to-MEGA separately; inspect DOR/FE/UPE and first mismatch offset.
+Current state: Existing baud-rate benchmark and 1MiB transfer test; no detailed direction-specific diagnostics.
+Other ideas: Independent SD read benchmark, measurement of actual SPI frequency, overlapped SD/UART processing.
+Constraints: Preserve data equivalence, cancellation and RAM margin. Do not automatically adopt historical failing 2M rates.
 
-#019 ROM吸出し途中の中断
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: HOLD / P3 / enhancement, dump
-出所: ユーザーが吸出し中断について質問後、「保留」と指定。
-現状: SDコピーのキャンセルとは別。中断機能を追加したとは扱わない。
-再開条件: ユーザーが実装を求めた時に検討。
+#019 Interrupt ROM dumping mid-transfer
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: HOLD / P3 / enhancement, dump
+Source: User inquired about interruption and then explicitly deferred the feature.
+Current state: Separate from cancelling SD copies; no ROM-transfer abort feature should be assumed.
+Resume only if the user asks to implement it.
 
-#020 SDコピー先に既存ファイルがある場合の選択
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: IDEA / P3 / enhancement, browser
-現状: 既存はskip。ユーザーは「このままでもいい」と話しており変更確定ではない。
-案: スキップ/別名/置換の選択、サイズ・ハッシュ比較等。
-注意: 意図しない上書きは避ける。実装前に既存挙動を変更する必要性を整理。
+#020 Handle existing destination files during SD copies
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: IDEA / P3 / enhancement, browser
+Current behavior: Skip existing files. The user said this was acceptable, so a change was not agreed.
+Proposal: Prompt to skip, rename or replace; optionally compare file size and hashes.
+Note: Avoid accidental overwrites. First establish why the existing behavior should change.
 
-#021 SA-1クロックOFFの調査
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: HOLD / P3 / research, sa1
-観測: 実況パロディウスでCLK0/1物理OFF、ROM CRC一致、セーブ読出し、書込verify OK報告。
-  PIC搭載後は多数の手持ちSA-1で失敗経験なし。全てを物理OFFで試した意味ではない。
-コード確認: CLK2(CIC)は動作。CLK1はROM/セーブ読出しで有効化せず、書込側で有効化。
-未確定: CLK0 OFFで成立する電気的条件、実配線/波形、異なるセーブでの電源断後照合。
-ユーザーは追加の面倒な試験を保留。ファーム修正要求ではない。
+#021 Investigate SA-1 operation with clocks disabled
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: HOLD / P3 / research, sa1
+Observed: User reports Jikkyou Parodius with physical CLK0/1 OFF, matching ROM CRC, successful save read and write verification. After installing the PIC, no failures were reported on numerous owned SA-1 cartridges; this does not imply all were tested with clocks physically off.
+Code review: CLK2 (CIC) operates; CLK1 is not enabled during ROM/save reads but is enabled for writes.
+Unknown: Electrical conditions under CLK0 OFF, wiring/waveforms, and post-power-cycle comparisons for other saves.
+User deferred burdensome additional tests. No firmware change requested.
 
-【完了・採用済み・対象外（未対応と混同しないための記録）】
+[COMPLETED / ADOPTED / OUT OF SCOPE — DO NOT CONFUSE WITH OPEN ISSUES]
 
-#022 ブラウザの階層管理とRAM削減
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: CLOSED（実装・限定実機確認） / memory, browser
-対応版: PC88系。パスString/260B/192Bを削減、本体再帰を廃止、PC側へ管理移管。
-結果: 観測最小110→530B、ユーザーの移動試験で空き変動なし、コピーCRC一致。
-追加の境界条件は#004。全般的RAM不足ガードや液晶変更を含む完了ではない。
+#022 Reduce folder-depth-dependent browser RAM usage
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: CLOSED (implemented, limited hardware verification) / memory, browser
+Implementation: PC88 family. Removed path String/260B/192B allocations, reader recursion and shifted tree management to the PC.
+Result: Lowest observed free RAM improved from 110 to 530 bytes; user reported stable free memory during folder navigation and CRC-matching copies.
+Additional boundary testing remains #004. This does not close general RAM safety or LCD-memory changes.
 
-#023 PC88のルートopenとCRLFパス復元
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: CLOSED（修正・限定実機確認） / bug, browser
-対応版: FW PC88aでルート/子フォルダopen、ツールPC88bでCRLFの現在地復元。
-結果: ユーザーのフォルダ移動・コピー成功報告。取消し表示は#001として未修正。
+#023 Fix root-folder open and CRLF path restoration
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: CLOSED (fixed, limited hardware verification) / bug, browser
+Implementation: FW PC88a root/child-folder open; PC tool PC88b restoration of current path from CRLF.
+Result: User reported successful navigation and copies. Cancellation display remains open under #001.
 
-#024 既存GUI・通常操作関連
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: CLOSED（実装済み項目のまとめ、網羅試験は#017） / enhancement, ui
-実装記録あり: 日英切替、メニュークリック、キー操作、Press Button専用表示、
-  ウィンドウ位置/サイズ保存、接続表示、LED色矩形、通信速度の通常/吸出し別表示、
-  進捗・速度、SDブラウザ、欠損設定生成、保存先記録、二重起動防止等。
-保存先変更: 接続中の反映問題はPC78で保存と編集制限を追加、ユーザーが記録OK確認。
-USER_FEEDBACK_LOG.txtの古い「未実装」をこの一覧へそのまま持ち込まない。
+#024 Existing GUI and ordinary-control features
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: CLOSED (summary of implemented features; full coverage tracked in #017) / enhancement, ui
+Implemented features include: JA/EN language toggle, clickable menus, keyboard input, dedicated Press Button screen, saved window geometry, connection status, colored LED indicator, normal/dump baud rate labels, progress and speed, SD browser, regeneration of missing configuration, output-directory persistence and single-instance enforcement.
+Output destination: PC78 added storage/locking for edits made while connected; user confirmed the setting persisted.
+Do not blindly copy older "unimplemented" claims from USER_FEEDBACK_LOG.txt into the current index.
 
-#025 高速化の採用・不採用
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: CLOSED（既存方針） / performance
-採用記録: PC側検証/DB処理、CRC16テーブル、512/1024転送、確認16KiB、
-  GBA読出し最適化/先読み、PC保存N64の本体CRC省略、SD専用SPI、取消し問い合わせ削減。
-不採用/戻した案: TX128、失敗したSD先読み、効果の薄い32KiB間隔等。
-注意: GBA先読みと失敗したSD先読みは別。2Mは実転送失敗の履歴あり。
-新しい調査は#018。JSONを増やすだけで未実装案が有効になるとは扱わない。
+#025 Adopted and rejected speed optimizations
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: CLOSED (existing decisions) / performance
+Adopted: PC-side validation/DB processing, CRC16 lookup table, 512/1024-byte transfer, confirmation interval 16KiB, optimized GBA reading/prefetch, omission of reader-side CRC for PC-storage N64, dedicated SD SPI and fewer cancellation polls.
+Rejected/reverted: TX128, unsuccessful SD prefetch, and low-impact 32KiB confirmation intervals.
+Note: GBA prefetch differs from the failed SD prefetch. 2M has a history of failed actual transfers.
+Further investigation is #018. Adding JSON configurations alone does not make unimplemented ideas operational.
 
-#026 Turrican固有のソフト改修
-追加日時: 2026-11-01 21:13:34 JST
-最終更新日時: 2026-11-01 21:16:55 JST
-状態: CLOSED（対象外） / scope, md
-出所: ユーザーが配線で対処し、ファーム/ツールの固有改修をしない方針と指定。
-今後の更新で過去の診断コードを勝手に復活させない。
+#026 Turrican-specific software modification
+Added: 2026-11-01 21:13:34 JST
+Last updated: 2026-11-01 21:16:55 JST
+Status: CLOSED (out of scope) / scope, md
+Source: User chose a hardware wiring fix and instructed that no dedicated firmware/tool changes be made.
+Do not reintroduce old diagnostic modifications during future updates without authorization.
 
-#027 初回起動は英語にし、言語選択名をJAPANESEにする
-追加日時: 2026-11-01 21:31:40 JST
-最終更新日時: 2026-11-01 21:31:40 JST
-状態: OPEN / P2 / enhancement, ui, i18n
-出所: ユーザー要望。今は実装せずissueへの登録のみ。
-要望: 言語設定が未保存の初回起動では英語を既定にする。言語選択の「日本語」を「JAPANESE」と表示する。
-目的: 日本語を読めない利用者も言語選択肢を判別できるようにする。
-完了条件: 初回起動は英語、日本語の選択肢はJAPANESE表記で日本語へ切替可能。
-対応版/コミット: 未対応。ソース検索のみ実施し、コード・EXE・ファームは変更していない。
+#027 Default to English on first launch and label Japanese as JAPANESE
+Added: 2026-11-01 21:31:40 JST
+Last updated: 2026-11-01 21:31:40 JST
+Status: OPEN / P2 / enhancement, ui, i18n
+Source: User request, recorded only; no implementation authorization.
+Request: Default to English on the first launch when no saved language setting exists; show the language option "JAPANESE" instead of "日本語".
+Purpose: Make the language choice understandable to users who cannot read Japanese.
+Completion: First launch uses English, and the "JAPANESE" option switches to Japanese.
+Version/commit: Not addressed. Only source search was performed; no code, EXE or firmware changes.
 
 #028 GB MBC1特殊バンク修正の取り込み・互換性検証とMBC1Mの扱い
 追加日時: 2026-11-01 21:41:54 JST
