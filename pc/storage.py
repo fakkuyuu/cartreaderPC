@@ -331,33 +331,51 @@ class Storage:
 
     def _format_companion_log(self, verification):
         """Format only cached card details and the current ROM operation."""
-        result = [self.companion_boot] if self.companion_boot else []
+        result = []
+
+        def add_group(*lines):
+            lines = [line for line in lines if line]
+            if not lines:
+                return
+            if result:
+                result.append("")
+            result.extend(lines)
+
+        add_group(self.companion_boot)
         if self.companion_dump is not None:
-            result.extend(self.companion_devices)
+            for device in self.companion_devices:
+                add_group(device)
             if self.companion_search:
-                result.append("Searching database...")
-            if self.companion_title:
-                result.append(self.companion_title)
-            result.extend(self.companion_card.values())
-            result.append(self.companion_dump["action"])
-            if self.companion_dump["saving"]:
-                result.append(self.companion_dump["saving"])
-            if self.companion_dump["stars"]:
-                result.append("[" + "*" * self.companion_dump["stars"] + "]")
+                add_group("Searching database...")
+            card_lines = list(self.companion_card.values())
+            name_index = next(
+                (i for i, line in enumerate(card_lines) if line.startswith("Name:")),
+                len(card_lines),
+            )
+            add_group(self.companion_title, *card_lines[:name_index])
+            add_group(*card_lines[name_index:])
+            add_group(self.companion_dump["action"])
+            progress = (
+                "[" + "*" * self.companion_dump["stars"] + "]"
+                if self.companion_dump["stars"] else ""
+            )
+            add_group(self.companion_dump["saving"], progress)
+
         verify_lines = [line.strip() for line in verification.splitlines() if line.strip()]
-        result.extend(line for line in verify_lines if line.startswith("Checksum:"))
+        details = [line for line in verify_lines if line.startswith("Checksum:")]
         for line in verify_lines:
             if line.startswith("Checksum:"):
                 continue
             match = re.match(r"^\[VERIFY\]\s+CRC32=([0-9A-Fa-f]{8})(.*)$", line)
             if not match:
-                result.append(line)
+                details.append(line)
                 continue
             fields = [field.strip() for field in match.group(2).split("  ") if field.strip()]
             db = next((field[3:] for field in fields if field.startswith("DB=")), None)
             crc_line = "CRC32... " + match.group(1).upper()
-            result.append(crc_line + (" -> " + db if db is not None else ""))
-            result.extend(field for field in fields if not field.startswith("DB="))
+            details.append(crc_line + (" -> " + db if db is not None else ""))
+            details.extend(field for field in fields if not field.startswith("DB="))
+        add_group(*details)
         return "\n".join(result).rstrip() + "\n"
 
     def write_companion_log(self, rom_path):
