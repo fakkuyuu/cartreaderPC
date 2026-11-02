@@ -110,6 +110,14 @@ class BatchDumpTests(unittest.TestCase):
         run.on_line("HEADER CHECKSUM ERROR")
         self.assertFalse(run.active)
 
+    def test_nes_no_data_can_reach_safe_reset_screen(self):
+        run = BatchDump()
+        run.begin("NES")
+        run.on_line("No data found.")
+        run.on_line("Using manual selection")
+        self.assertTrue(run.active)
+        self.assertEqual(run.phase, "entry")
+
     def test_no_auto_writing(self):
         run = BatchDump()
         run.begin("NES")
