@@ -963,6 +963,9 @@ void pcPhysicalControlsReady() {
 
 void pcAlphabetReady(byte index, const char* databaseName) {
 #ifdef PC_MENU
+  // Capability marker: older firmware must not receive the '!' escape.
+  if (mode == CORE_NES)
+    PcConsole.println(F("[Control] nes-reset-supported"));
   PcConsole.print(F("[Control] alphabet\t"));
   PcConsole.print(index);
   PcConsole.print('\t');
