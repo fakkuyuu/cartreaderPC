@@ -205,6 +205,68 @@ class BatchDumpTests(unittest.TestCase):
         self.assertIsNone(run.on_menu("N64 Cart Reader", menu))
         self.assertEqual(run.reason, "一括吸出し完了: ROM + SAVE")
 
+    def test_n64_rom_companion_txt_does_not_trigger_size_mismatch(self):
+        # storage.py emits [SAVED] both for the ROM payload and for the
+        # post-verification companion TXT *under the same N64/ROM directory*.
+        # Before the fix the TXT's byte count was compared to 4 MiB and
+        # incorrectly stopped the batch.
+        run = BatchDump()
+        run.begin("N64")
+        self.assertEqual(run.on_menu("Select N64 device",
+                         (("0", "Game Cartridge"),)), "0")
+        for line in ("ROM Size: 4 MB", "Save Type: SRAM", "CRC1: A1B2C3D4"):
+            run.on_line(line)
+        self.assertEqual(run.on_press(), " ")
+        menu = (("0", "Read ROM"), ("1", "Read Save"),
+                ("2", "Write Save"), ("3", "Force Savetype"))
+        self.assertEqual(run.on_menu("N64 Cart Reader", menu), "0")
+        run.on_line("[SAVED] N64/ROM/TEST/1/TEST.z64 (4194304 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678 DB=Known Game")
+        run.on_line("[SAVED] N64/ROM/TEST/1/TEST.txt (927 bytes) SHA256=abcd")
+        self.assertTrue(run.active, run.reason)
+        self.assertTrue(run.rom_saved)
+        self.assertTrue(run.rom_verified)
+        self.assertEqual(run.on_press(), " ")
+        self.assertEqual(run.on_menu("N64 Cart Reader", menu), "1")
+        run.on_line("[SAVED] N64/SAVE/TEST/1/TEST.sra (32768 bytes) SHA256=abcd")
+        self.assertIsNone(run.on_menu("N64 Cart Reader", menu))
+        self.assertEqual(run.reason, "一括吸出し完了: ROM + SAVE")
+
+    def test_n64_companion_txt_alone_is_not_accepted_as_rom(self):
+        run = BatchDump()
+        run.begin("N64")
+        run.on_menu("Select N64 device", (("0", "Game Cartridge"),))
+        for line in ("ROM Size: 4 MB", "Save Type: SRAM", "CRC1: A1B2C3D4"):
+            run.on_line(line)
+        run.on_press()
+        run.on_menu("N64 Cart Reader", (("0", "Read ROM"),))
+        run.on_line("[SAVED] N64/ROM/TEST/1/TEST.txt (4194304 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678 DB=Known Game")
+        self.assertFalse(run.rom_saved)
+        self.assertIsNone(run.on_press())
+        self.assertFalse(run.active)
+        self.assertIn("ROMの保存・検証が未完了", run.reason)
+
+    def test_companion_txt_is_ignored_for_every_batch_target(self):
+        payloads = {
+            "GB": ("GB", ".gb"), "GBA": ("GBA", ".gba"),
+            "SNES": ("SNES", ".sfc"), "MD": ("MD", ".bin"),
+            "N64": ("N64", ".Z64"), "NES": ("NES", ".nes"),
+            "PCE_SWAP": ("PCE", ".pce"), "PCE_RAW": ("PCE", ".pce"),
+        }
+        for target, (folder, extension) in payloads.items():
+            with self.subTest(target=target):
+                run = BatchDump()
+                run.begin(target)
+                # Isolate SAVED-message parsing from the initial menu flow.
+                run.phase = "rom_read"
+                run.on_line(f"[SAVED] {folder}/ROM/T/1/T.txt (123 bytes) SHA256=abcd")
+                self.assertFalse(run.rom_saved)
+                self.assertTrue(run.active)
+                run.on_line(f"[SAVED] {folder}/ROM/T/1/T{extension} (32768 bytes) SHA256=abcd")
+                self.assertTrue(run.rom_saved)
+                self.assertTrue(run.active)
+
     def test_n64_database_hit_no_save_rom_only(self):
         run = BatchDump()
         run.begin("N64")
