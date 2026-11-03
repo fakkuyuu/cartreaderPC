@@ -1457,7 +1457,7 @@ def gui(args):
                 # A driver exception during a baud-rate probe belongs in
                 # detailed diagnostics, not the ordinary console.
                 inbox.put(("connection_detail", message))
-                inbox.put("[Baud] 通信速度の切替に失敗しました。詳細ログを確認してください。\n")
+                inbox.put("[Connection] 通信速度の切替に失敗しました。詳細ログを確認してください。\n")
                 return
             if message.startswith("[RAM]\t"):
                 inbox.put(("ram", message))
