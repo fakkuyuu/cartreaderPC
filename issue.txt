@@ -23,7 +23,7 @@ IDs are stable. Append implementation versions, commits and hardware results to 
 
 [INDEX]
 ID    Status   Prio Categories                    Title
-001   VERIFY     P2   bug/browser                   Cancellation displayed as "SD operation failed"
+001   CLOSED     P2   bug/browser                   Cancellation displayed as "SD operation failed"
 002   VERIFY   P1   bug/upstream/nes              Incorporate NES MMC1 CHR read fix
 003   VERIFY   P2   upstream                      Incorporate last upstream changes from old project
 004   VERIFY   P1   test/browser/memory           Verify deep paths, long names and repeated browser actions
@@ -67,8 +67,8 @@ ID    Status   Prio Categories                    Title
 
 #001 Cancellation is displayed as "SD operation failed"
 Added: 2026-11-01 21:13:34 JST
-Last updated: 2026-11-03 14:38:03 JST
-Status: VERIFY / P2 / bug, browser
+Last updated: 2026-11-03 14:41:34 JST
+Status: CLOSED / P2 / bug, browser
 Source: User report, reproduced with PC88b + PC88a.
 Reproduction: Cancel an SD copy.
 Observed: The partial ROM is removed; however, a "request failed" follows "copy cancelled" and the UI reports failure.
@@ -77,6 +77,7 @@ Remedy: Distinguish cancellation, actual errors and normal completion as termina
 Completion: Show cancellation, delete partial ROM, produce no spurious verification TXT, and permit another copy or move.
 Version/commit: Not addressed. Earlier cancellation-display work did not cover the additional PC88 path.
 PC97 build (2026-11-03 14:38:03 JST): Built GitHub5cbd80b. Cancellation becomes confirmed only after reader copy-cancelled; preserve it through trailing failure notices and reset for the next request. Syntax, cancellation/error branch checks and 42 existing tests passed. EXE self-test PASS/exit0. Includes #027 Japanese label. Hardware confirmation pending; no firmware change/upload.
+Hardware confirmation (2026-11-03 14:41:34 JST): User confirms PC97 SD-copy cancellation displays Cancelled and accepts the result. Close #001 for the reported erroneous failure display; this does not establish hardware coverage of every subsequent-copy path.
 
 #002 Incorporate the NES MMC1 CHR read fix
 Added: 2026-11-01 21:13:34 JST
