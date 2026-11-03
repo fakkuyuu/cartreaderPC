@@ -63,6 +63,7 @@ ID    Status   Prio Categories                    Title
 038   CLOSED   P2   bug/ui/menu                   Out-of-range menu page leaves GUI stuck in "processing"
 039   VERIFY   P2   bug/ui/connection             Consistent connection-wait state and user-facing disconnect messages
 040   VERIFY     P2   enhancement/ui          Persistent red/green console backgrounds for dump outcomes
+041   IDEA     P2   enhancement/detection   Identify cartridge console by sequential read-only probing
 
 [DETAILS]
 
@@ -750,6 +751,17 @@ PC98 implementation (2026-11-03 17:05:19 JST): Black console text; success #86EF
 Follow-up (2026-11-03 17:09:44 JST): User reports PC98 retains result colors after reader power cycling. Reset the console to white when a new connection/HELLO is established, while preserving colors through ordinary automatic menus.
 PC99 follow-up (2026-11-03 17:10:29 JST): Reset result state/background to white on [Connected:] for a new connection after power cycling/recovery. Ordinary automatic menu transitions still retain results. 56 tests/syntax/EXE self-test PASS; hardware retest pending. Firmware unchanged.
 Hardware result (2026-11-03 17:12:02 JST): User confirms PC99 returns the console to white after reader power cycling/reconnection. Other #040 hardware cases remain separately tracked.
+
+#041 Identify cartridge console by sequential read-only probing
+Added: 2026-11-03 17:25:44 JST
+Last updated: 2026-11-03 17:25:44 JST
+Status: IDEA / P2 / enhancement, detection, research
+Request: Sequentially probe candidate console formats on the reader and use fast PC-side header/checksum/database matching to infer the inserted cartridge's console.
+Assumptions: User sets the correct voltage; automatic voltage selection is separate. PC matching speed does not eliminate reader initialization/read time.
+Scope to investigate: Identifiers for GB/GBA/SNES/MD/N64 and fallback to candidate confirmation/manual selection for ambiguous systems such as NES. Do not promise universal detection.
+Safety investigation: Even at correct voltage, per-console pin directions/control signals differ. Audit HW3 wiring and initialization for possible output contention. No specific hazardous combination has yet been established. Do not indiscriminately run normal setup routines; consider dedicated probing without write/erase/special-cartridge operations.
+Proposed behavior: Present high-confidence candidates for confirmation before dumping; specify ambiguity, empty slots, multiple inserted carts and unsupported cartridges.
+Implementation: Issue registration only; implementation not started.
 
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
