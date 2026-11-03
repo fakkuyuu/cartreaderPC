@@ -22,46 +22,46 @@ Dates: "Added" is the date an issue entered this tracker. The original 26 entrie
 IDs are stable. Append implementation versions, commits and hardware results to the same issue rather than deleting history.
 
 [INDEX]
-ID    Status   Prio Categories               Title
-001   OPEN     P2   bug/browser              Cancellation displayed as "SD operation failed"
-002   VERIFY     P1   bug/upstream/nes         Incorporate NES MMC1 CHR read fix
-003   VERIFY     P2   upstream                 Incorporate last upstream changes from old project
-004   VERIFY   P1   test/browser/memory      Verify deep paths, long names and repeated browser actions
-005   OPEN     P1   enhancement/memory       Detect insufficient RAM and fail safely
-006   IDEA     P2   enhancement/memory       Reduce resident RAM for per-console workspaces and constant data
-007   IDEA     P2   memory/browser           Reorganize call stack and 512-byte cache
-008   HOLD     P3   enhancement/display      Memory-efficient LCD rendering
-009   OPEN     P2   workflow/git             Track changes and requests using local Git
-010   OPEN     P2   workflow/files           Normalize directory layout and remove duplicates
-011   OPEN     P1   bug/release              Eliminate stray build products from distributed ZIPs
-012   OPEN     P2   docs/release             Align published source, documentation and executables
-013   TRIAGE   P2   enhancement/nes/save     NES save filenames and overwrite prevention
-014   TRIAGE   P2   bug/n64/display          LCD bottom-edge corruption during standalone N64 dumping
-015   TRIAGE   P2   bug/led                  Error LED color and PC-tool display
-016   TRIAGE   P2   enhancement/database     Explain partially missing databases
-017   VERIFY   P2   test/ui/hardware         Verify all input methods, consoles and HW revisions
-018   HOLD     P3   performance/diagnostic   Direction-specific UART diagnostics and speedups
-019   HOLD     P3   enhancement/dump         Interrupt ROM dumping mid-transfer
-020   IDEA     P3   enhancement/browser      Options when an SD-copy destination already exists
-021   HOLD     P3   research/sa1             Investigate SA-1 with CLK0/1 off
-022   CLOSED   --   browser/memory           Reduce browser RAM consumption by folder depth
-023   CLOSED   --   bug/browser              Fix root/child-folder open and CRLF path reconstruction
-024   CLOSED   --   enhancement/ui           Existing GUI and ordinary controls
-025   CLOSED   --   performance              Adopted and rejected performance changes
-026   CLOSED   --   scope/md                 No Turrican-specific modification
-027   VERIFY     P2   enhancement/ui/i18n      Default first launch to English; label Japanese as Japanese
-028   VERIFY   P2   bug/gb/mbc1             GB MBC1 special-bank fix and MBC1M compatibility
-029   VERIFY   P2   enhancement/ui/automation One-click ROM/save dumping
-030   CLOSED   P2   enhancement/ui/files     Open the output folder in Windows Explorer
-031   CLOSED   P2   enhancement/logging      Save the PC console to OSCR_LOG.txt
-032   VERIFY   P2   bug/logging/docs         Clean ROM companion TXT and separate from shared logs
-033   CLOSED   P2   bug/ui/storage           Clear stale queued-storage notice after reconnection
-034   CLOSED   P2   enhancement/logging      Rename PC shared log to OSCR_LOGPC.txt
-035   CLOSED   P2   bug/verification/gba     Restore GBA header checksum validation for PC storage
-036   IDEA     P2   enhancement/automation   Launch a preset console's batch on power-on
-037   VERIFY   P2   bug/ui/i18n              Untranslated controls and messages in English mode
-038   CLOSED   P2   bug/ui/menu              Out-of-range menu page leaves GUI stuck in "processing"
-039   VERIFY     P2   bug/ui/connection        Consistent connection-wait state and user-facing disconnect messages
+ID    Status   Prio Categories                    Title
+001   OPEN     P2   bug/browser                   Cancellation displayed as "SD operation failed"
+002   VERIFY   P1   bug/upstream/nes              Incorporate NES MMC1 CHR read fix
+003   VERIFY   P2   upstream                      Incorporate last upstream changes from old project
+004   VERIFY   P1   test/browser/memory           Verify deep paths, long names and repeated browser actions
+005   OPEN     P1   enhancement/memory            Detect insufficient RAM and fail safely
+006   IDEA     P2   enhancement/memory            Reduce resident RAM for per-console workspaces and constant data
+007   IDEA     P2   memory/browser                Reorganize call stack and 512-byte cache
+008   HOLD     P3   enhancement/display           Memory-efficient LCD rendering
+009   OPEN     P2   workflow/git                  Track changes and requests using local Git
+010   OPEN     P2   workflow/files                Normalize directory layout and remove duplicates
+011   OPEN     P1   bug/release                   Eliminate stray build products from distributed ZIPs
+012   OPEN     P2   docs/release                  Align published source, documentation and executables
+013   TRIAGE   P2   enhancement/nes/save          NES save filenames and overwrite prevention
+014   TRIAGE   P2   bug/n64/display               LCD bottom-edge corruption during standalone N64 dumping
+015   TRIAGE   P2   bug/led                       Error LED color and PC-tool display
+016   TRIAGE   P2   enhancement/database          Explain partially missing databases
+017   VERIFY   P2   test/ui/hardware              Verify all input methods, consoles and HW revisions
+018   HOLD     P3   performance/diagnostic        Direction-specific UART diagnostics and speedups
+019   HOLD     P3   enhancement/dump              Interrupt ROM dumping mid-transfer
+020   IDEA     P3   enhancement/browser           Options when an SD-copy destination already exists
+021   HOLD     P3   research/sa1                  Investigate SA-1 with CLK0/1 off
+022   CLOSED   --   browser/memory                Reduce browser RAM consumption by folder depth
+023   CLOSED   --   bug/browser                   Fix root/child-folder open and CRLF path reconstruction
+024   CLOSED   --   enhancement/ui                Existing GUI and ordinary controls
+025   CLOSED   --   performance                   Adopted and rejected performance changes
+026   CLOSED   --   scope/md                      No Turrican-specific modification
+027   VERIFY   P2   enhancement/ui/i18n           Default first launch to English; label Japanese as Japanese
+028   VERIFY   P2   bug/gb/mbc1                   GB MBC1 special-bank fix and MBC1M compatibility
+029   VERIFY   P2   enhancement/ui/automation     One-click ROM/save dumping
+030   CLOSED   P2   enhancement/ui/files          Open the output folder in Windows Explorer
+031   CLOSED   P2   enhancement/logging           Save the PC console to OSCR_LOG.txt
+032   VERIFY   P2   bug/logging/docs              Clean ROM companion TXT and separate from shared logs
+033   CLOSED   P2   bug/ui/storage                Clear stale queued-storage notice after reconnection
+034   CLOSED   P2   enhancement/logging           Rename PC shared log to OSCR_LOGPC.txt
+035   CLOSED   P2   bug/verification/gba          Restore GBA header checksum validation for PC storage
+036   IDEA     P2   enhancement/automation        Launch a preset console's batch on power-on
+037   VERIFY   P2   bug/ui/i18n                   Untranslated controls and messages in English mode
+038   CLOSED   P2   bug/ui/menu                   Out-of-range menu page leaves GUI stuck in "processing"
+039   VERIFY   P2   bug/ui/connection             Consistent connection-wait state and user-facing disconnect messages
 
 [DETAILS]
 
@@ -91,7 +91,6 @@ Related: A component of #003. #003 must include application/validation of this f
 PC94 integration (2026-11-03 08:23:12 JST): Applied MMC1 CHR fix 8e804d83 and VSMILE unit correction b4b8d4c2. Sky Alien be42198f already exists in sd/2600.txt. Deliberately retained V15.5-PC94 identity rather than automatic V15.6 bump 8593a266; documented relocation 060d8ae0 in this fork README. Public HW/module defaults restored to upstream V15.5; local HW3 test configuration retained. GCC16.1 HW3 build passed: flash217812, static RAM6676. VSMILE is disabled in the test build, so its changed path was not compiled/tested on hardware. Affected NES cartridges untested; no upload performed. Keep #002/#003 VERIFY pending hardware testing.
 
 PC94 integration (2026-11-03 08:23:12 JST): Applied MMC1 CHR fix 8e804d83 and VSMILE unit correction b4b8d4c2. Sky Alien be42198f already exists in sd/2600.txt. Deliberately retained V15.5-PC94 identity rather than automatic V15.6 bump 8593a266; documented relocation 060d8ae0 in this fork README. Public HW/module defaults restored to upstream V15.5; local HW3 test configuration retained. GCC16.1 HW3 build passed: flash217812, static RAM6676. VSMILE is disabled in the test build, so its changed path was not compiled/tested on hardware. Affected NES cartridges untested; no upload performed. Keep #002/#003 VERIFY pending hardware testing.
-
 
 #003 Incorporate the old upstream project's final updates
 Added: 2026-11-01 21:13:34 JST
@@ -421,7 +420,6 @@ User hardware test report (2026-11-02, after the GitHub fix):
 - Since #028 concerns GB MBC1, record results for the other three platforms as post-fix regression evidence. Remain in VERIFY.
 Codex build/flash record (2026-11-02 18:52:19 JST): Built PC89 firmware including the MBC1 special-bank fix from GitHub f85877a with GCC 16.1; flashing to COM5 succeeded. A software model checked aggregate window sizes for ordinary MBC1 at 256KiB/512KiB/1MiB/2MiB (not hardware signal testing). Actual hardware CRC re-comparison after the fix was not performed; remain in VERIFY.
 
-
 #029 One-click dumping mode (automate button presses and menu selections)
 Added: 2026-11-01 22:02:12 JST
 Last updated: 2026-11-03 10:20:08 JST
@@ -642,7 +640,6 @@ Artifacts: outputs3/cartreader-v15.5-pc88e/CartReaderPC.exe; source work/pc88e/p
 
 Completion review (2026-11-02 14:46:29 JST): User said Codex had marked #035 completed. As previously recorded under #032, companion TXT generated from actual PC-storage GBA ROM (ROCKMAN_EXE2/103, 8 MB) contained "Checksum: 69 -> OK", CRC32 98E4F096, DB match and RENAMED destination. Thus actual use verified successful GBA header checksum and TXT recording. Software tests included deliberately bad headers, mismatches and DB misses, but these were not physically reproduced. GBA header checksum does not guarantee full-ROM integrity. Mark #035 CLOSED.
 
-
 #036 Automatically start one-click dumping for a preset console when the reader powers on
 Added: 2026-11-02 22:01:51 JST
 Last updated: 2026-11-02 22:01:51 JST
@@ -681,7 +678,6 @@ Verification: Set UiTranslator to English and apply it to Python string labels; 
 Completion: Batch/page/diagnostics buttons and menu entries become English, dynamically created screens and round-trip language switching follow the selection, and relevant warning/help coverage is explicitly documented. Switching back to Japanese must work.
 Version/commit: Not addressed. Investigation and issue entry only; no code, EXE or firmware changed.
 PC93 implementation (2026-11-02 23:07:16 JST): Includes PC92 English UI fixes: batch/page/diagnostics labels, Tk Menu entries, batch messages and warnings. Real Tk English/Japanese round-trip checks passed. Initial-language policy #027 is outside scope. Syntax and 32 batch tests passed. Hardware confirmation pending; firmware unchanged.
-
 
 #038 Navigating outside the first/last main-menu page leaves the PC operation screen stuck
 Added: 2026-11-02 22:26:26 JST
