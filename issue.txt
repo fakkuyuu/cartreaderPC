@@ -1,5 +1,5 @@
 cartreaderPC Issues
-Last updated: 2026-11-03 06:44:12 JST
+Last updated: 2026-11-03 10:20:08 JST
 Applies to: PC tool PC91 / firmware PC89 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
@@ -421,8 +421,29 @@ Codex build/flash record (2026-11-02 18:52:19 JST): Built PC89 firmware includin
 
 #029 One-click dumping mode (automate button presses and menu selections)
 Added: 2026-11-01 22:02:12 JST
-Last updated: 2026-11-02 21:57:59 JST
-Status: VERIFY (GB/GBA/SNES/MD hardware success on PC89; user-confirmed NES DB-hit candidate confirmation and 32 tests PASS on PC91; N64 batch and other paths still need hardware verification) / P2 / enhancement, ui, automation
+Last updated: 2026-11-03 10:20:08 JST
+Status: VERIFY (see per-console implementation/verification matrix below; GB/GBA/SNES/MD and a limited NES normal path verified on hardware; N64/PCE still unverified, SMS-family and other targets have no batch implementation) / P2 / enhancement, ui, automation
+
+Per-console implementation and verification matrix (2026-11-03 10:20:08 JST; based on GitHub master PC batch/menu code and firmware source, not on new hardware testing):
+[HARDWARE-VERIFIED — ONLY FOR THE REPORTED NORMAL PATH]
+- GB / GBA / SNES (SFC) / MD (Mega Drive): User confirmed successful one-click ROM dumps on PC89. This does not validate every ROM+save branch or recognition-failure stop for each console.
+- NES (Famicom): User confirmed PC91 automatically accepted the candidate following a DB hit. This does not confirm hardware behavior for unregistered carts, CRC mismatches, all-FF reads, or every save branch.
+[IMPLEMENTED — HARDWARE NOT YET VERIFIED]
+- N64: PC90 and later contain batch-state handling; relevant regression tests are included among the 32 tests reported passing. ROM -> save -> verify -> optional save-read flow exists. Hardware success, DB-miss behavior and save branches remain unverified for the N64 batch.
+- PCE: Separate PC-side one-click buttons for HuCARD(swapped) and HuCARD(not swapped), ROM-only; never automatically choose Read RAM Bank. Neither preset has a reported one-click hardware test. The current published Config.h disables ENABLE_PCE, so availability also depends on the firmware actually flashed.
+[BATCH UNIMPLEMENTED — SOURCE REVIEW SUGGESTS POTENTIAL PATHS, NOT APPROVAL OR HARDWARE SUCCESS]
+- SMS / Mark III / Game Gear / SG-1000: Firmware has adapter-dependent ROM operations, but the PC has no batch target. Requires explicit adapter preset and safe stops for missing headers/manual ROM-size selection. ENABLE_SMS is currently enabled in published Config.h.
+- WonderSwan / WonderSwan Color: Firmware exposes Read ROM / Read Save and derives ROM capacity and SRAM/EEPROM format from cartridge header. No PC batch target. Invalid-header loops and unknown save types need safe handling. Published ENABLE_WS is disabled.
+- Virtual Boy: Firmware has Read ROM / Read Save and recognizes ROM size/SRAM for known titles. No PC batch target; do not auto-advance with unknown ROM size. Published ENABLE_VBOY is disabled.
+- Sufami Turbo: Firmware has Slot A / Slot B ROM-dump branches. No PC batch target; a per-slot preset and stop on missing cartridges would be required. Published ENABLE_ST is disabled.
+- Neo Geo Pocket: Firmware identifies ROM capacity from chip ID and exposes ROM read. No PC batch target. Unknown IDs require manual size selection, and PC-side verification for .ngp must be checked. Published ENABLE_NGP is disabled.
+- Satellaview 8M Memory Pack: Firmware has a Read Memory Pack path. No PC batch target. Need PC-side .bs save/verification handling and safeguards against adjacent write operations. Published ENABLE_SV is disabled.
+- SF Memory Cassette: Firmware navigates game listings and separate Game/Flash menus; do not guess a game choice. No PC batch target. Published ENABLE_SFM is disabled.
+- Other console cores exist in firmware, but their inclusion and priority for batch support have not been decided. Unlisted consoles must not be assumed implemented or hardware-verified.
+[EXPLICITLY OUT OF SCOPE]
+- MSX: Excluded from #029 batch buttons by explicit user direction; retain manual title/mapper selection. Do not treat this intentional exclusion as an implementation defect.
+Classification rules: A batch implementation requires both a pc/batch_dump.py target and an associated button in pc/cartreader_pc.py. Hardware-verified requires a user report for the stated path; a normal firmware ROM-read routine alone is insufficient. Published Config.h flags are separate from PC batch implementation and may differ from the firmware actually flashed. Keep overall #029 at VERIFY for this documentation-only update; whether all presently unimplemented consoles belong to #029's mandatory completion scope remains undecided. No code, EXE or firmware changes were made.
+
 Source: User proposal. Ideally a single start button should complete dumping when cartridge contacts are sound.
 Purpose: Reduce routine cartridge-information confirmation, Press Button and Read ROM menu selections.
 Request: Provide an automated mode that recognizes expected screen transitions and runs through dumping and PC-side verification.
