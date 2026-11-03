@@ -15,6 +15,7 @@ import time
 from protocol import ProtocolError, encode, receive
 from storage import Storage
 from batch_dump import BatchDump
+from connection_status import ConnectionFeedback
 from i18n import UiTranslator
 from ram_status import ram_labels
 from browser_request import make_request
@@ -581,6 +582,7 @@ def gui(args):
     storage_mode = tk.StringVar(value="保存先: PC")
     storage_current = {"mode": "PC", "pending": None}
     connection_state = tk.StringVar(value="未接続")
+    connection_session = {"ever_connected": False}
     led_state = tk.StringVar(value="本体LED: 状態未取得")
     connection_widgets = {"button": None}
     storage_widgets = {"PC": None, "SD": None}
@@ -588,7 +590,7 @@ def gui(args):
         "未接続": ("#e5e7eb", "#111827"),
         "接続中…": ("#fde68a", "#78350f"),
         "接続済み": ("#86efac", "#14532d"),
-        "再接続待ち": ("#fdba74", "#7c2d12"),
+        "接続待ち": ("#fdba74", "#7c2d12"),
         "接続エラー": ("#fca5a5", "#7f1d1d"),
     }
     def set_connection_state(value):
@@ -1172,6 +1174,11 @@ def gui(args):
                 checkpoint_label.set(f"確認間隔：{checkpoint_match.group(1)} KiB")
             if line.startswith("[Connected:"):
                 reset_capability["nes"] = False
+                if connection_state.get() != "接続済み":
+                    notice = ("本体との接続が復旧しました。" if connection_session["ever_connected"]
+                              else "本体に接続しました。")
+                    inbox.put(f"[Connection] {notice}\n")
+                connection_session["ever_connected"] = True
                 set_connection_state("接続済み")
                 set_storage_state("PC", storage_current["pending"])
             if version_match:
@@ -1234,10 +1241,19 @@ def gui(args):
             if msx_title_match:
                 host_state["msx_title"] = msx_title_match.group(1).strip()
             if line.startswith("[RECONNECT]"):
-                set_connection_state("接続エラー")
-            elif line.startswith("[Reconnect] waiting"):
-                set_connection_state("再接続待ち")
-            elif line.startswith("[Disconnected"):
+                # Internal retry notifications are never raw user-facing logs.
+                if stop.is_set():
+                    set_connection_state("未接続")
+                elif line == "[RECONNECT] ACTION_REQUIRED":
+                    if connection_state.get() != "接続エラー":
+                        set_connection_state("接続エラー")
+                        inbox.put("[Connection] PC保存先への書込みに失敗しました。保存先を確認してください。\n")
+                elif connection_state.get() not in ("接続待ち", "接続エラー"):
+                    set_connection_state("接続待ち")
+                    inbox.put("[Connection] 本体の接続を待っています。\n")
+            elif line.startswith("[Disconnected") and stop.is_set():
+                # During automatic recovery, the worker will classify the
+                # failure before announcing a wait or actionable error.
                 set_connection_state("未接続")
             if line.startswith(("[Disconnected", "[RECONNECT]")):
                 set_led_activity(False)
@@ -1429,11 +1445,10 @@ def gui(args):
             inbox.put(f"[Benchmark] independent test {index + 1}/{len(benchmark_rates)}\n")
 
     def run(selected_port, selected_output):
-        last_error = None
-        waiting_announced = False
+        feedback = ConnectionFeedback()
         ram_log_failed = False
         def service_log(message):
-            nonlocal last_error, waiting_announced, ram_log_failed
+            nonlocal ram_log_failed
             if "[Browser protocol] 1" in message:
                 host_state["component_browser"] = True
             if message.startswith("[RAM]\t"):
@@ -1447,8 +1462,7 @@ def gui(args):
                 return
             if "[Connected:" in message:
                 host_state["component_browser"] = False
-                last_error = None
-                waiting_announced = False
+                feedback.connected()
             if message.strip() == "[Input] acknowledged by reader: <detach>":
                 detach_ack.set()
                 # Close COM before the reader finishes its watchdog restart.
@@ -1492,8 +1506,8 @@ def gui(args):
             except Exception as exc:
                 message = str(exc)
                 if message == "benchmark next rate":
-                    last_error = None
-                    waiting_announced = False
+                    feedback.connected()
+                    inbox.put(("status", "[RECONNECT] WAIT\n"))
                     host_state["suppress_dtr_reset_once"] = True
                     stop.wait(1.0)
                     continue
@@ -1504,13 +1518,12 @@ def gui(args):
                     selected = demote_profile(port_identity(selected_port), runtime_baud)
                     inbox.put(
                         f"[Baud] runtime {runtime_baud} failed; auto-demoted to {selected}\n")
-                if message != last_error:
-                    inbox.put(f"\n[RECONNECT] {message}\n")
-                    last_error = message
-            if not stop.wait(1.0):
-                if not waiting_announced:
-                    inbox.put(f"[Reconnect] waiting for {selected_port}...\n")
-                    waiting_announced = True
+                event, detail = feedback.failure(exc)
+                if detail is not None:
+                    inbox.put(("connection_detail", detail))
+                if event is not None:
+                    inbox.put(("status", event))
+            stop.wait(1.0)
     def connect():
         nonlocal worker
         if worker and worker.is_alive():
@@ -1523,7 +1536,9 @@ def gui(args):
                 translator.translate("データベース"),
                 translator.translate("保存先にDBがありません。上流のsdフォルダ内の必要なTXTを配置してください。") + "\n"
                 "https://github.com/sanni/cartreader/tree/master/sd")
-        set_connection_state("接続中…")
+        connection_session["ever_connected"] = False
+        set_connection_state("接続待ち")
+        inbox.put("[Connection] 本体の接続を待っています。\n")
         safe_rate, dump_rate = load_profile(port_identity(port.get()))
         normal_baud.set(f"通信速度（通常）：{safe_rate:,} baud")
         dump_baud.set(f"通信速度（吸い出し）：{dump_rate:,} baud")
@@ -1927,16 +1942,28 @@ def gui(args):
                 if isinstance(item, tuple) and item[0] == "status":
                     parse_console(item[1])
                     continue
+                if isinstance(item, tuple) and item[0] == "connection_detail":
+                    if diagnostic_log.get():
+                        text.insert("end", item[1])
+                        displayed_chunks.append(item[1])
+                        text.see("end")
+                    continue
                 chunk = item
                 shown = chunk
                 if sd_browser["cancelled"]:
                     shown = shown.replace("[SD Browser] copy failed\t", "[SD Browser] copy cancelled\t")
                 if not diagnostic_log.get():
-                    shown = "".join(line for line in shown.splitlines(keepends=True)
-                                    if not line.startswith(("[Input]", "[Reader]", "[Menu]", "[SD Progress]")))
-                # Translate only presentation text; parse the original protocol below.
-                shown = "".join(translator.translate(line) if line.startswith("[Batch] ")
-                                else line for line in shown.splitlines(keepends=True))
+                    shown = shown.replace(
+                        "[Disconnected. Check .pc-manifest.json; open files remain incomplete.]",
+                        "[Connection] 転送が中断され、未完了のファイルがあります。.pc-manifest.jsonを確認してください。")
+                    shown = "".join(
+                        line for line in shown.splitlines(keepends=True)
+                        if not line.startswith(("[Input]", "[Reader]", "[Menu]",
+                                                "[SD Progress]", "[Disconnected.]")))
+                # Translate presentation text; parse the original protocol below.
+                shown = "".join(
+                    translator.translate(line) if line.startswith(("[Batch] ", "[Connection] "))
+                    else line for line in shown.splitlines(keepends=True))
                 text.insert("end", shown)
                 displayed_chunks.append(shown)
                 parse_console(chunk)
