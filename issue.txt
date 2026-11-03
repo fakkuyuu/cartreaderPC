@@ -62,6 +62,7 @@ ID    Status   Prio Categories                    Title
 037   VERIFY   P2   bug/ui/i18n                   Untranslated controls and messages in English mode
 038   CLOSED   P2   bug/ui/menu                   Out-of-range menu page leaves GUI stuck in "processing"
 039   VERIFY   P2   bug/ui/connection             Consistent connection-wait state and user-facing disconnect messages
+040   VERIFY     P2   enhancement/ui          Persistent red/green console backgrounds for dump outcomes
 
 [DETAILS]
 
@@ -739,6 +740,13 @@ PC95 build report (2026-11-03 13:31:46 JST): Built GitHub4f0e098 with only local
 Hardware feedback (2026-11-03 13:35:12 JST): User accepts the simpler ordinary connection-wait display in PC95. Red/action-required errors could not be tested on hardware. Ordinary waiting is accepted; actionable-error handling remains software-tested only. Keep VERIFY for the untested hardware path.
 
 USB-unplug-during-dump test (2026-11-03 13:38:22 JST): User log shows GBA ROCKMAN_EXE2/134 interrupted after ROM transfer started, followed by incomplete-file notice, batch stop, waiting notice, COM5 reconnection, recovery notice, and successful 500000-baud check. No automatic dump resume appears. Partial file/manifest contents not inspected. Storage points to the PC93 directory, which may be an inherited output setting and does not establish the running EXE version. Red/actionable state remains hardware-untested.
+
+#040 Persistent red/green console backgrounds for dump outcomes
+Added: 2026-11-03 17:02:32 JST
+Last updated: 2026-11-03 17:05:19 JST
+Status: VERIFY / P2 / enhancement, ui
+Specification: Console only: success #86EFAC, failure #FCA5A5, black text. Retain through automatic transitions and batch input; reset to white on the next user action. Batch success requires the entire ROM/save operation to finish. No additional status colors. User authorized implementation.
+PC98 implementation (2026-11-03 17:05:19 JST): Black console text; success #86EFAC / failure #FCA5A5. Individual dump completion waits for save/verification evidence and Press Button; batch green waits for the full ROM/save operation. Preserve through automatic menus/input; reset on PC manual input, new batch, connect/disconnect or browser requests. A DB miss alone is not a confirmed read failure: green means completion without detected errors, not guaranteed ROM authenticity. SD success requires recognized OK/CRC output. 55 software tests, syntax and EXE self-test PASS. Hardware color confirmation pending; firmware unchanged. Clearing from reader physical-button-only input is not supported because manual/automated input is distinguished at the PC send path.
 
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.

@@ -15,6 +15,7 @@ import time
 from protocol import ProtocolError, encode, receive
 from storage import Storage
 from batch_dump import BatchDump
+from dump_result import DumpResult
 from connection_status import ConnectionFeedback
 from i18n import UiTranslator
 from ram_status import ram_labels
@@ -483,7 +484,7 @@ def gui(args):
     _saved_lang = ui_settings.get("language", "English")
     language = tk.StringVar(value="Japanese" if _saved_lang in ("日本語", "JAPANESE") else _saved_lang)
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC93 — Disconnected")
+    window.title("cartreaderPC PC98 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -669,11 +670,19 @@ def gui(args):
     input_ready = tk.BooleanVar(value=False)
     input_mode = tk.StringVar(value="menu")
     batch = BatchDump()
+    dump_result = DumpResult()
+    def paint_dump_result():
+        text.configure(background=DumpResult.COLORS[dump_result.state], foreground="black")
+    def reset_dump_result():
+        dump_result.reset()
+        paint_dump_result()
     batch_pending = {"key": None}
     reset_capability = {"nes": False}
     def batch_report(was_active):
         if was_active and not batch.active:
             batch_pending["key"] = None
+            dump_result.finish_batch(batch.reason.startswith("一括吸出し完了:"))
+            paint_dump_result()
             inbox.put(f"[Batch] {batch.reason}\n")
     def batch_stop(reason):
         active = batch.active
@@ -696,6 +705,8 @@ def gui(args):
                 or benchmark["index"] is not None):
             inbox.put("[Batch] 一括吸出しはPC保存・接続済みの機種選択メニューから開始してください\n")
             return
+        dump_result.begin_batch()
+        paint_dump_result()
         batch.begin(target)
         inbox.put(f"[Batch] {target} 一括吸出しを開始\n")
         batch_schedule(selected_number)
@@ -725,6 +736,7 @@ def gui(args):
                 send_menu_key(" ")
             return False
         sd_browser["deferred"] = None
+        reset_dump_result()
         input_ready.set(False)
         sd_browser["busy"] = True
         sd_browser["action"] = action
@@ -775,11 +787,14 @@ def gui(args):
         if batch.active and not automated:
             batch_stop("手動操作に切り替えました")
         if worker and worker.is_alive() and input_ready.get():
+            if not automated:
+                reset_dump_result()
             input_ready.set(False)
             keys.put(ord(value))
 
     def send_bytes(values):
         if worker and worker.is_alive() and input_ready.get():
+            reset_dump_result()
             input_ready.set(False)
             keys.put(bytes(values))
 
@@ -1141,6 +1156,8 @@ def gui(args):
         parser_buffer += chunk.replace("\r", "")
         while "\n" in parser_buffer:
             line, parser_buffer = parser_buffer.split("\n", 1)
+            dump_result.feed(line)
+            paint_dump_result()
             was_active = batch.active
             if line == "[+] Reset" and batch.phase == "nes_reset_wait":
                 batch.stop("NES認識失敗。Reset実行後、自動操作を終了しました")
@@ -1185,7 +1202,7 @@ def gui(args):
                 set_storage_state("PC", storage_current["pending"])
             if version_match:
                 window.title(
-                    f"cartreaderPC PC93 — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC98 — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1260,7 +1277,7 @@ def gui(args):
             if line.startswith(("[Disconnected", "[RECONNECT]")):
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC93 — Disconnected")
+                window.title("cartreaderPC PC98 — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")
@@ -1545,6 +1562,7 @@ def gui(args):
                 translator.translate("データベース"),
                 translator.translate("保存先にDBがありません。上流のsdフォルダ内の必要なTXTを配置してください。") + "\n"
                 "https://github.com/sanni/cartreader/tree/master/sd")
+        reset_dump_result()
         connection_session["ever_connected"] = False
         set_connection_state("接続待ち")
         inbox.put("[Connection] 本体の接続を待っています。\n")
@@ -1557,6 +1575,7 @@ def gui(args):
         worker = threading.Thread(target=run, args=(port.get(), output.get()), daemon=True)
         worker.start()
     def disconnect():
+        reset_dump_result()
         if batch.active:
             batch_stop("切断によって一括操作を終了しました")
         if worker and worker.is_alive():
