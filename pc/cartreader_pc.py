@@ -1713,7 +1713,6 @@ def gui(args):
             sd_browser["scan_active"] = False
             if sd_browser["busy"]:
                 if sd_browser["action"] == "C":
-                    sd_browser["cancelled"] = True
                     copy_cancel.set()
                     status.set("キャンセル要求中...")
                 else:
