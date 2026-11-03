@@ -710,7 +710,7 @@ Hardware confirmation (2026-11-02 23:08:53 JST): User reports the PC93 fix works
 
 #039 Consistent connection-wait state and user-facing disconnect messages
 Added: 2026-11-03 12:18:00 JST
-Last updated: 2026-11-03 13:25:21 JST
+Last updated: 2026-11-03 13:31:46 JST
 Status: VERIFY / P2 / bug, ui, connection
 User observations: Connecting with the reader absent/off briefly shows red before orange. The reconnect-wait wording is inaccurate on the first connection. Powering off a connected reader exposes ClearCommError/PermissionError/FileNotFoundError in the normal console; file-not-found wording misleadingly suggests a missing saved file.
 Request: Use the same connection-wait state for initial connection and recovery, without a transient red error for ordinary waiting. Explain reader/COM absence in plain language; reserve raw exceptions for detailed logs. Do not claim to distinguish power-off from unplugging. Consider separate actionable guidance for genuine port contention where identifiable. Cover English/Japanese and preserve automatic reconnect functionality.
@@ -732,6 +732,8 @@ Implementation started and PC source committed (2026-11-03 13:22:13 JST, followi
 - Added 10 regression tests in pc/test_connection_status.py covering ambiguous missing/permission/driver errors, retry deduplication, actionable host writes, recovery notification reset, batch cancellation on reconnect, Japanese/English notices and separation of GUI diagnostic detail.
 - Commits: f198663 (classification helper), 3624a6e (GUI), 8a44922 (i18n), 8a9cbfd (tests). Follow-up commits 4bfcd38, 8dea587, f06a124 and 7caf369 also route baud driver exceptions to detailed diagnostics, clear partial menu lines on reconnect and add localized notices/tests. PC source changes only; no GUI version bump, Windows EXE rebuild, firmware edit or hardware flash.
 - Status VERIFY: the ten new tests have NOT been executed yet. Pending Codex Python tests (new and existing), syntax checks, EXE self-test/rebuild, and user Windows hardware verification of power-off initial connection, disconnect/unplug after connection, power restoration, manual disconnect, detailed logging on/off, and interrupted transfers. Reliable detection of an occupied COM port is not implemented because the reported raw errors are ambiguous.
+
+PC95 build report (2026-11-03 13:31:46 JST): Built GitHub4f0e098 with only local version branding changed to PC95. Syntax check, 10 connection + 32 batch tests passed (42 total). EXE self-test PASS/exit0. No firmware changes/upload. Hardware confirmation pending.
 
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
