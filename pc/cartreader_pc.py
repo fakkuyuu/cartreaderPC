@@ -728,6 +728,7 @@ def gui(args):
         input_ready.set(False)
         sd_browser["busy"] = True
         sd_browser["action"] = action
+        sd_browser["cancelled"] = False
         if action == "C":
             copy_cancel.clear()
         try:
@@ -1337,7 +1338,7 @@ def gui(args):
                 sd_browser["scan_queue"] = []
                 sd_browser["scan_active"] = False
                 sd_browser["deferred"] = None
-                if sd_browser["status"]:
+                if sd_browser["status"] and not sd_browser["cancelled"]:
                     sd_browser["status"].set("SD操作失敗。コンソールの理由を確認してください")
             elif line.startswith("[SD Progress]\t"):
                 parts = line.split("\t")
@@ -1356,7 +1357,6 @@ def gui(args):
                     sd_browser["progress"].configure(value=0)
                 if sd_browser["status"] and not sd_browser["cancelled"]:
                     sd_browser["status"].set("コピー完了" if "complete" in line else "コピー失敗")
-                sd_browser["cancelled"] = False
             elif line == "[SD Browser] copy cancelled":
                 sd_browser["busy"] = False
                 sd_browser["action"] = None
@@ -1713,6 +1713,7 @@ def gui(args):
             sd_browser["scan_active"] = False
             if sd_browser["busy"]:
                 if sd_browser["action"] == "C":
+                    sd_browser["cancelled"] = True
                     copy_cancel.set()
                     status.set("キャンセル要求中...")
                 else:
@@ -1970,6 +1971,8 @@ def gui(args):
                 shown = chunk
                 if sd_browser["cancelled"]:
                     shown = shown.replace("[SD Browser] copy failed\t", "[SD Browser] copy cancelled\t")
+                    shown = shown.replace("[SD Browser] request failed\n", "")
+                    shown = shown.replace("[SD Browser] request failed", "")
                 if not diagnostic_log.get():
                     shown = shown.replace(
                         "[Disconnected. Check .pc-manifest.json; open files remain incomplete.]",
