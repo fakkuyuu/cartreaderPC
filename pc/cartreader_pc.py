@@ -484,7 +484,7 @@ def gui(args):
     _saved_lang = ui_settings.get("language", "English")
     language = tk.StringVar(value="Japanese" if _saved_lang in ("日本語", "JAPANESE") else _saved_lang)
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC99 — Disconnected")
+    window.title("cartreaderPC PC101 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -582,7 +582,7 @@ def gui(args):
     checkpoint_label = tk.StringVar(value=f"確認間隔：{load_checkpoint_kib()} KiB（設定）")
     transfer_speed = tk.StringVar(value="転送: 待機")
     storage_mode = tk.StringVar(value="保存先: PC")
-    storage_current = {"mode": "PC", "pending": None}
+    storage_current = {"mode": "PC", "pending": None, "desired": "PC"}
     connection_state = tk.StringVar(value="未接続")
     connection_session = {"ever_connected": False}
     led_state = tk.StringVar(value="本体LED: 状態未取得")
@@ -1224,10 +1224,14 @@ def gui(args):
                     inbox.put(f"[Connection] {notice}\n")
                 connection_session["ever_connected"] = True
                 set_connection_state("接続済み")
-                set_storage_state("PC", storage_current["pending"])
+                # HELLO starts a new reader session in PC mode. Keep the
+                # user's intent separate from the actual reader mode and
+                # restore it only once the numbered menu is ready.
+                desired = storage_current["desired"]
+                set_storage_state("PC", desired if desired != "PC" else None)
             if version_match:
                 window.title(
-                    f"cartreaderPC PC99 — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC101 — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1302,7 +1306,7 @@ def gui(args):
             if line.startswith(("[Disconnected", "[RECONNECT]")):
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC99 — Disconnected")
+                window.title("cartreaderPC PC101 — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")
@@ -1787,6 +1791,7 @@ def gui(args):
     ttk.Button(row, text="本体SDブラウザ", command=open_sd_browser).pack(side="left", padx=(0, 8))
     def choose_storage(code):
         requested = "PC" if code == "J" else "SD"
+        storage_current["desired"] = requested
         if input_ready.get() and input_mode.get() == "menu":
             send_key(code)
             storage_mode.set(f"保存先: {storage_current['mode']}（{requested}へ切替中）")

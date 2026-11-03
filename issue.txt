@@ -65,7 +65,7 @@ ID    Status   Prio Categories                    Title
 040   VERIFY     P2   enhancement/ui          Persistent result colors integrated with #029 batch ROM/save
 041   IDEA     P2   enhancement/detection   Identify cartridge console by sequential read-only probing
 042   OPEN     P2   enhancement/ui          Compact automatic-dump controls and unambiguous focus/hover feedback
-043   OPEN     P2   bug/storage/reset       Reset after SD dump unexpectedly switches storage to PC
+043   VERIFY     P2   bug/storage/reset       Reset after SD dump unexpectedly switches storage to PC
 
 [DETAILS]
 PC100 build report (2026-11-03 20:42:14 JST): Built GitHub1de58ba with local PC100 branding. All 67 tests and independent integration checks pass: MD internal checksum error stops before save with solid red; valid ROM followed by save error alternates at 1-second intervals. EXE self-test PASS/exit0. Preserve results during USB loss and reset on reconnect. No firmware changes/upload. Hardware confirmation pending; retain VERIFY.
@@ -790,14 +790,15 @@ Undecided: Layout, click count, console selection and GB/GBA/PCE-swapped choices
 
 #043 Reset after SD dump unexpectedly switches storage to PC
 Added: 2026-11-03 22:50:26 JST
-Last updated: 2026-11-03 22:50:26 JST
-Status: OPEN / P2 / bug, storage, reset
+Last updated: 2026-11-03 22:54:12 JST
+Status: VERIFY / P2 / bug, storage, reset
 User hardware reproduction: Confirmed on GBA and MD.
 Steps: With PC tool connected, finish dumping to SD; reader shows Press Button; press the physical reader button once; click Reset in the PC tool. As the main menu returns, SD storage switches to PC storage.
 Expected: Keep the user's SD storage selection across Reset when no storage-mode change was requested.
 Unconfirmed: Display-only versus actual next dump destination, exact firmware/tool versions, other consoles, Reset without a prior dump, and power-cycle behavior. Cause not investigated.
 Related: Distinguish from #033 queued-storage label handling; review Reset/reconnection initialization and intended storage persistence.
 Status: Report recorded only; no source/EXE/firmware changes. Await implementation instruction.
+PC101 fix (2026-11-03 22:54:12 JST): [Connected:] previously overwrote confirmed SD selection with reader-default PC mode. Track desired user mode separately from actual mode. Reconnection shows PC actual/SD pending, sends I once at numbered-menu readiness, and confirms SD only after reader Storage Mode SD. Preserve latest offline selection and allow PC to override SD. Failed SD restoration keeps actual PC mode visible without retry loops. No new settings files; default new app startup remains PC. Covers Reset/reconnect/power cycle within the same app session. 73 tests (including six actual-GUI-handler restore cases), syntax and EXE self-test PASS. GBA/MD hardware retest pending. No firmware change/upload.
 
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
