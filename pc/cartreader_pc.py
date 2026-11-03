@@ -1451,6 +1451,14 @@ def gui(args):
             nonlocal ram_log_failed
             if "[Browser protocol] 1" in message:
                 host_state["component_browser"] = True
+            if message.startswith("[Baud]") and (
+                    " transport error: " in message
+                    or "USB serial driver rejected" in message):
+                # A driver exception during a baud-rate probe belongs in
+                # detailed diagnostics, not the ordinary console.
+                inbox.put(("connection_detail", message))
+                inbox.put("[Baud] 通信速度の切替に失敗しました。詳細ログを確認してください。\n")
+                return
             if message.startswith("[RAM]\t"):
                 inbox.put(("ram", message))
                 try:
@@ -1911,6 +1919,7 @@ def gui(args):
         window.after(100, refresh_capture)
     refresh_capture()
     def pump():
+        nonlocal parser_buffer, pending_title, pending_options, pending_paged
         displayed_chunks = []
         destination_state = "disabled" if worker and worker.is_alive() else "normal"
         output_entry.configure(state=destination_state)
@@ -1940,6 +1949,14 @@ def gui(args):
                         displayed_chunks.append(item[1])
                     continue
                 if isinstance(item, tuple) and item[0] == "status":
+                    if item[1].startswith("[RECONNECT]"):
+                        # The interrupted reader may have left a partial menu
+                        # line in the parser buffer. Never concatenate our
+                        # synthetic retry status with that stale text.
+                        parser_buffer = ""
+                        pending_title = ""
+                        pending_options = []
+                        pending_paged = False
                     parse_console(item[1])
                     continue
                 if isinstance(item, tuple) and item[0] == "connection_detail":
