@@ -77,10 +77,18 @@ class ConnectionFeedbackTests(unittest.TestCase):
             "本体との接続が復旧しました。",
             "PC保存先への書込みに失敗しました。保存先を確認してください。",
             "転送が中断され、未完了のファイルがあります。.pc-manifest.jsonを確認してください。",
+            "通信速度の切替に失敗しました。詳細ログを確認してください。",
         ):
             with self.subTest(label=label):
                 self.assertIn(label, WORDS)
                 self.assertTrue(WORDS[label])
+
+    def test_driver_baud_errors_are_private_and_partial_menu_is_discarded(self):
+        gui = (Path(__file__).parent / "cartreader_pc.py").read_text(encoding="utf-8")
+        self.assertIn('"USB serial driver rejected" in message', gui)
+        self.assertIn('inbox.put(("connection_detail", message))', gui)
+        self.assertIn('if item[1].startswith("[RECONNECT]"):', gui)
+        self.assertIn('nonlocal parser_buffer, pending_title, pending_options, pending_paged', gui)
 
     def test_gui_routes_raw_exceptions_only_to_diagnostics(self):
         gui = (Path(__file__).parent / "cartreader_pc.py").read_text(encoding="utf-8")
