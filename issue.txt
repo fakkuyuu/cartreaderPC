@@ -799,6 +799,7 @@ Unconfirmed: Display-only versus actual next dump destination, exact firmware/to
 Related: Distinguish from #033 queued-storage label handling; review Reset/reconnection initialization and intended storage persistence.
 Status: Report recorded only; no source/EXE/firmware changes. Await implementation instruction.
 PC101 fix (2026-11-03 22:54:12 JST): [Connected:] previously overwrote confirmed SD selection with reader-default PC mode. Track desired user mode separately from actual mode. Reconnection shows PC actual/SD pending, sends I once at numbered-menu readiness, and confirms SD only after reader Storage Mode SD. Preserve latest offline selection and allow PC to override SD. Failed SD restoration keeps actual PC mode visible without retry loops. No new settings files; default new app startup remains PC. Covers Reset/reconnect/power cycle within the same app session. 73 tests (including six actual-GUI-handler restore cases), syntax and EXE self-test PASS. GBA/MD hardware retest pending. No firmware change/upload.
+Reproduction clarification (2026-11-03 23:06:02 JST): User retested PC100 and confirms Reset alone returns storage to PC; no prior dump/Press Button sequence is required. Not limited to post-dump GBA/MD. User also observes PC101 briefly showing PC then restoring SD; actual subsequent output destination remains separately unconfirmed.
 
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
