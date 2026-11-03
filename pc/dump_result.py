@@ -20,6 +20,8 @@ class DumpResult:
         self.batch = False
         self.saved = False
         self.failed = False
+        self.rom_stage = False
+        self.rom_failed = False
 
     def begin_batch(self):
         self.reset()
@@ -41,7 +43,7 @@ class DumpResult:
     def finish_batch(self, success, save_failure_after_rom=False):
         self.batch = False
         self.active = False
-        if save_failure_after_rom and not self.failed:
+        if save_failure_after_rom and not self.rom_failed:
             self.state = "save_failure_green"
         else:
             self.state = "success" if success and not self.failed else "failure"
@@ -51,6 +53,8 @@ class DumpResult:
         if line in ("[+] Read ROM", "[+] Read iNES Rom", "[+] Read Cart", "[+] Read Save", "[+] Read SRAM"):
             if not self.batch:
                 self.reset()
+            else:
+                self.rom_stage = line in ("[+] Read ROM", "[+] Read iNES Rom", "[+] Read Cart")
             self.active = True
             self.saved = False
         if not (self.active or self.batch):
@@ -73,6 +77,8 @@ class DumpResult:
                 or (line.startswith(("[VERIFY]", "Checksum:", "Internal checksum", "Checksum", "CRC32"))
                     and re.search(r"MISMATCH|\bError\b|\bERROR\b|\bFAIL(?:ED)?\b", status_text))):
             self.failed = True
+            if self.batch and self.rom_stage:
+                self.rom_failed = True
             self.state = "failure"
         if line.startswith("[SAVED] "):
             match = re.fullmatch(r"\[SAVED\] (.+) \((\d+) bytes\) SHA256=[0-9a-fA-F]+", line)

@@ -84,6 +84,7 @@ class ResultTests(unittest.TestCase):
         )
         self.r.finish_batch(False, save_failure_after_rom=True)
         self.assertEqual(self.r.state, "failure")
+        self.assertTrue(self.r.rom_failed)
         self.assertFalse(self.r.blinking)
 
     def test_error_in_filename_or_database_title_is_not_a_read_error(self):
