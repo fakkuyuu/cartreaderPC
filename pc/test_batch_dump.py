@@ -53,6 +53,56 @@ class BatchDumpTests(unittest.TestCase):
         self.assertFalse(run.save_failure_after_rom)
         self.assertIn("通信切断", run.reason)
 
+    @staticmethod
+    def _md_rom_verified_before_reader_checksum_result():
+        run = BatchDump()
+        run.begin("MD")
+        menu = (("0", "Read ROM"), ("1", "Read Save"),
+                ("2", "Write Save"), ("3", "Reset"))
+        run.on_menu("Select MD device", (("0", "Game Cartridge"),))
+        run.on_line("Save Type: SRAM")
+        run.on_press()
+        run.on_menu("MEGA DRIVE Reader", menu)
+        run.on_line("[SAVED] MD/ROM/Test/1/Test.md (131072 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678  DB=Known Game")
+        return run, menu
+
+    def test_md_normal_rom_then_save_remains_automatic(self):
+        run, menu = self._md_rom_verified_before_reader_checksum_result()
+        self.assertTrue(run.active)
+        self.assertEqual(run.phase, "rom_read")
+        self.assertEqual(run.on_press(), " ")
+        self.assertEqual(run.on_menu("MEGA DRIVE Reader", menu), "1")
+        run.on_line("[SAVED] MD/SAVE/Test/1/Test.srm (32768 bytes) SHA256=abcd")
+        self.assertIsNone(run.on_menu("MEGA DRIVE Reader", menu))
+        self.assertFalse(run.active)
+        self.assertFalse(run.save_failure_after_rom)
+        self.assertEqual(run.reason, "一括吸出し完了: ROM + SAVE")
+
+    def test_md_internal_checksum_error_after_saved_and_verified_rom_stops_before_save(self):
+        run, menu = self._md_rom_verified_before_reader_checksum_result()
+        run.on_line("Internal checksum...Error")
+        self.assertFalse(run.active)
+        self.assertFalse(run.save_failure_after_rom)
+        self.assertIn("ROM内部チェックサム異常", run.reason)
+
+        # Later save/verification notifications cannot revive the stopped batch.
+        run.on_line("[SAVED] MD/SAVE/Test/1/Test.srm (32768 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=87654321  DB=Error Title")
+        self.assertFalse(run.active)
+        self.assertFalse(run.save_saved)
+        self.assertIsNone(run.on_menu("MEGA DRIVE Reader", menu))
+
+    def test_md_internal_checksum_status_does_not_stop_other_console_batches(self):
+        for target in ("GB", "GBA", "SNES", "N64", "NES", "PCE_SWAP", "PCE_RAW"):
+            with self.subTest(target=target):
+                run = BatchDump()
+                run.begin(target)
+                run.phase = "rom_read"
+                run.on_line("Internal checksum...Error")
+                self.assertTrue(run.active)
+                self.assertFalse(run.save_failure_after_rom)
+
     def test_gb_rom_then_save(self):
         run = BatchDump()
         run.begin("GB")

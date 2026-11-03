@@ -111,9 +111,23 @@ class BatchDump:
                 return number
         return None
 
+    @staticmethod
+    def _is_md_internal_checksum_error(line):
+        # This is an explicit Mega Drive reader status, not a substring test:
+        # filenames and database titles may legitimately contain "Error".
+        return re.fullmatch(
+            r"Internal checksum\s*\.{3}\s*Error",
+            line.strip(),
+            re.IGNORECASE,
+        ) is not None
+
     def on_line(self, line):
         if not self.active:
             return
+        if (self.target == "MD" and self.phase == "rom_read"
+                and self._is_md_internal_checksum_error(line)):
+            return self._stop_for_read_error(
+                f"MD ROM内部チェックサム異常のため一括停止: {line[:100]}")
         if line.startswith(("[Disconnected", "[RECONNECT]", "[CANCELLED]")):
             return self.stop("通信切断・キャンセルのため一括停止")
         if (line.startswith(("Error:", "[ERROR", "HEADER CHECKSUM ERROR",

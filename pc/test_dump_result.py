@@ -1,3 +1,4 @@
+import ast
 import unittest
 from dump_result import DumpResult
 
@@ -71,6 +72,56 @@ class ResultTests(unittest.TestCase):
     def test_filenames_are_not_error_messages(self):
         self.feed("[+] Read ROM", "[SAVED] GB/ROM/ERROR.gb (32768 bytes) SHA256=abcd", "Press Button...")
         self.assertEqual(self.r.state, "success")
+
+    def test_rom_checksum_error_cannot_be_overridden_by_partial_save_blink(self):
+        self.r.begin_batch()
+        self.feed(
+            "[+] Read ROM",
+            "[VERIFY] CRC32=12345678 DB=Known Game",
+            "Internal checksum...Error",
+            "[+] Read Save",
+            "Error: read timeout",
+        )
+        self.r.finish_batch(False, save_failure_after_rom=True)
+        self.assertEqual(self.r.state, "failure")
+        self.assertFalse(self.r.blinking)
+
+    def test_error_in_filename_or_database_title_is_not_a_read_error(self):
+        self.feed(
+            "[+] Read ROM",
+            "[SAVED] MD/ROM/Error Title/1/Error.md (131072 bytes) SHA256=abcd",
+            "[VERIFY] CRC32=12345678 DB=Error In Database",
+            "Press Button...",
+        )
+        self.assertEqual(self.r.state, "success")
+
+    def test_usb_loss_does_not_clear_completed_partial_success_blink(self):
+        self.r.begin_batch()
+        self.feed(
+            "[+] Read ROM",
+            "[VERIFY] CRC32=12345678 DB=Known Game",
+            "[+] Read Save",
+            "Error: read timeout",
+        )
+        self.r.finish_batch(False, save_failure_after_rom=True)
+        self.assertEqual(self.r.state, "save_failure_green")
+        self.feed("[Disconnected: COM5]", "[RECONNECT] WAIT")
+        self.assertEqual(self.r.state, "save_failure_green")
+        self.assertTrue(self.r.blinking)
+
+    def test_new_connection_clears_partial_success_blink(self):
+        from pathlib import Path
+        source = (Path(__file__).with_name("cartreader_pc.py")
+                  .read_text(encoding="utf-8"))
+        tree = ast.parse(source)
+        branch = next(n for n in ast.walk(tree) if isinstance(n, ast.If)
+                      and ast.unparse(n.test) == "line.startswith('[Connected:')")
+        self.r.state = "save_failure_green"
+        self.r.active = False
+        exec(compile(ast.Module(body=[branch.body[0]], type_ignores=[]), "connect", "exec"),
+             {"reset_dump_result": self.r.reset})
+        self.assertEqual(self.r.state, "idle")
+        self.assertFalse(self.r.blinking)
 
     def test_copy_and_tx_test_do_not_claim_dump_success(self):
         self.feed("[SAVED] __diagnostics__/tx-test.crpctest (1048576 bytes) SHA256=abcd", "[VERIFY] CRC32=12345678", "Press Button...")

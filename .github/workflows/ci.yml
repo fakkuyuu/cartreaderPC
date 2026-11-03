@@ -8,6 +8,19 @@ env:
   ARDUINO_LIBRARY_ENABLE_UNSAFE_INSTALL: false
 
 jobs:
+  pc-tests:
+    name: PC Python regression tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run PC regression tests
+        run: python -m unittest discover -s pc -p 'test_*.py' -v
+
   # JOB 1: Determine which cores need to be tested based on changed files
   setup:
     name: Calculate Matrix

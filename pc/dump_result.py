@@ -41,7 +41,7 @@ class DumpResult:
     def finish_batch(self, success, save_failure_after_rom=False):
         self.batch = False
         self.active = False
-        if save_failure_after_rom:
+        if save_failure_after_rom and not self.failed:
             self.state = "save_failure_green"
         else:
             self.state = "success" if success and not self.failed else "failure"
@@ -64,10 +64,14 @@ class DumpResult:
                 self.active = False
                 self.state = "idle"
             return
-        # Restrict error matching to status lines: filenames may contain ERROR.
+        # Restrict error matching to status fields: filenames and database
+        # titles may contain "Error" without indicating a failed read.
+        status_text = line
+        if line.startswith("[VERIFY]"):
+            status_text = re.split(r"\s+DB=", line, maxsplit=1, flags=re.IGNORECASE)[0]
         if (line.startswith(("[ERROR", "Error:", "Fatal error", "SD Error", "Cartridge Error", "GAMEPAK ERROR", "HEADER CHECKSUM ERROR"))
                 or (line.startswith(("[VERIFY]", "Checksum:", "Internal checksum", "Checksum", "CRC32"))
-                    and re.search(r"MISMATCH|\bError\b|\bERROR\b|\bFAIL(?:ED)?\b", line))):
+                    and re.search(r"MISMATCH|\bError\b|\bERROR\b|\bFAIL(?:ED)?\b", status_text))):
             self.failed = True
             self.state = "failure"
         if line.startswith("[SAVED] "):
