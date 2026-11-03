@@ -762,6 +762,9 @@ Independent Codex review (2026-11-03 20:11:05 JST, ac135cd): 60 existing tests P
 
 
 #029 integration fix (2026-11-03 20:37:37 JST; commit 642e6bfe35e9ebbd949862d6ce7c9b0f9227eab0): While #029 is reading an MD ROM in batch mode, the reader's "Internal checksum...Error" is retained as a ROM-stage failure. #040 distinguishes ROM-stage and SAVE-stage failures: a ROM error remains solid red regardless of later SAVE notifications/errors. An explicit SAVE-only failure after verified ROM retains the existing 1-second green/red alternation. "Error" occurring only in a database title or filename is not treated as a failure. No USB disconnect/unplug handling was changed: disconnect during an active batch remains solid red; disconnect while partial-success blinking preserves the current color/timer, and a new [Connected:] returns the background to white. GitHub Actions PC Python regression suite: 67 tests PASS (run 41629006413). No firmware or EXE changes. Hardware verification has not been performed; retain VERIFY. #029 owns batch sequencing/stops; #040 owns outcome colors.
+Hardware confirmation (2026-11-03 21:51:39 JST): User confirms N64 green/red alternation for ROM success followed by save failure. MD internal-checksum failure stopping remains separately software-tested, not hardware-confirmed.
+
+
 #041 Identify cartridge console by sequential read-only probing
 Added: 2026-11-03 17:25:44 JST
 Last updated: 2026-11-03 17:25:44 JST
