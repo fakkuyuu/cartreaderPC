@@ -55,6 +55,7 @@ class BatchDump:
         self.n64_crc1_seen = False
         self.reason = ""
         self.db_match = None
+        self.save_failure_after_rom = False
 
     def begin(self, target):
         if target not in self.ROOT_NAMES:
@@ -79,12 +80,23 @@ class BatchDump:
         self.n64_crc1_seen = False
         self.reason = ""
         self.db_match = None
+        self.save_failure_after_rom = False
 
     def stop(self, reason):
         self.active = False
         self.phase = "idle"
         self.reason = reason
         return None
+
+    def _stop_for_read_error(self, reason):
+        # Only signal partial success when a verified ROM is already saved
+        # and a known save type is currently being read. Disconnects,
+        # cancellations, unexpected menus, and missing completion messages
+        # deliberately remain ordinary fixed failures.
+        if (self.phase == "save_read" and self.rom_saved and self.rom_verified
+                and self.save is True and not self.save_saved):
+            self.save_failure_after_rom = True
+        return self.stop(reason)
 
     def complete(self):
         detail = "ROM + SAVE" if self.save_saved else "ROM"
@@ -104,13 +116,16 @@ class BatchDump:
             return
         if line.startswith(("[Disconnected", "[RECONNECT]", "[CANCELLED]")):
             return self.stop("通信切断・キャンセルのため一括停止")
-        if (line.startswith(("Error:", "[ERROR", "HEADER CHECKSUM ERROR", "Fatal error"))
+        if (line.startswith(("Error:", "[ERROR", "HEADER CHECKSUM ERROR",
+                             "Fatal error", "SD Error", "Cartridge Error"))
                 or ("MISMATCH" in line and (line.startswith("[VERIFY]") or line.startswith("Checksum:")))
-                or (line.startswith("No data found.") and self.target != "NES")
+                or (line.startswith("No data found.") and
+                    (self.target != "NES" or self.phase == "save_read"))
                 or "CARTRIDGE ERROR" in line or "Checksum Error" in line
                 or (self.target == "N64" and
                     ("GAMEPAK ERROR" in line or "Cartridge unknown" in line))):
-            return self.stop(f"読み取り異常のため一括停止: {line[:100]}")
+            return self._stop_for_read_error(
+                f"読み取り異常のため一括停止: {line[:100]}")
         if self.target == "NES" and self.phase == "entry":
             # A successful NES CRC lookup reaches the candidate browser
             # directly. Misses first print "Using manual selection" (or
@@ -229,10 +244,10 @@ class BatchDump:
                 if size:
                     actual = int(size.group(1))
                     if actual <= 0:
-                        return self.stop("セーブファイルが0バイトでした")
+                        return self._stop_for_read_error("セーブファイルが0バイトでした")
                     if (self.save_expected_bytes is not None
                             and actual != self.save_expected_bytes):
-                        return self.stop(
+                        return self._stop_for_read_error(
                             f"セーブサイズ不一致: {actual} bytes "
                             f"(想定 {self.save_expected_bytes} bytes)")
                     self.save_saved = True

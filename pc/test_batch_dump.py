@@ -18,6 +18,41 @@ PCE_MENU = (("0", "Read ROM"), ("1", "Read RAM Bank 1"), ("2", "Write RAM Bank 1
 
 
 class BatchDumpTests(unittest.TestCase):
+    @staticmethod
+    def _snes_waiting_for_save_read():
+        run = BatchDump()
+        run.begin("SNES")
+        menu = (("0", "Read ROM"), ("1", "Read Save"), ("2", "Write Save"))
+        run.on_menu("Select Cart Type", (("0", "SNES/SFC cartridge"),))
+        run.on_line("Save Size: 8 KB")
+        run.on_press()
+        run.on_menu("SNES Cart Reader", menu)
+        run.on_line("[SAVED] SNES/ROM/Test/1/Test.sfc (1048576 bytes) SHA256=abcd")
+        run.on_line("[VERIFY] CRC32=12345678  SNES-CHECKSUM=ABCD OK DB=Known Test")
+        run.on_press()
+        run.on_menu("SNES Cart Reader", menu)
+        return run
+
+    def test_verified_rom_followed_by_explicit_save_error_is_classified(self):
+        run = self._snes_waiting_for_save_read()
+        self.assertEqual(run.phase, "save_read")
+        run.on_line("Error: read timeout")
+        self.assertFalse(run.active)
+        self.assertTrue(run.save_failure_after_rom)
+
+    def test_verified_rom_followed_by_save_size_mismatch_is_classified(self):
+        run = self._snes_waiting_for_save_read()
+        run.on_line("[SAVED] SNES/SAVE/Test/1/Test.srm (4096 bytes) SHA256=abcd")
+        self.assertFalse(run.active)
+        self.assertTrue(run.save_failure_after_rom)
+        self.assertIn("セーブサイズ不一致", run.reason)
+
+    def test_disconnect_during_save_is_not_classified_as_explicit_save_error(self):
+        run = self._snes_waiting_for_save_read()
+        run.on_line("[RECONNECT] WAIT")
+        self.assertFalse(run.save_failure_after_rom)
+        self.assertIn("通信切断", run.reason)
+
     def test_gb_rom_then_save(self):
         run = BatchDump()
         run.begin("GB")

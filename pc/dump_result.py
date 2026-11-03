@@ -3,7 +3,13 @@ import re
 
 
 class DumpResult:
-    COLORS = {"idle": "white", "success": "#86EFAC", "failure": "#FCA5A5"}
+    COLORS = {
+        "idle": "white",
+        "success": "#86EFAC",
+        "failure": "#FCA5A5",
+        "save_failure_green": "#86EFAC",
+        "save_failure_red": "#FCA5A5",
+    }
 
     def __init__(self):
         self.reset()
@@ -19,10 +25,26 @@ class DumpResult:
         self.reset()
         self.batch = True
 
-    def finish_batch(self, success):
+    @property
+    def blinking(self):
+        return self.state in ("save_failure_green", "save_failure_red")
+
+    def advance_blink(self):
+        if self.state == "save_failure_green":
+            self.state = "save_failure_red"
+        elif self.state == "save_failure_red":
+            self.state = "save_failure_green"
+        else:
+            return False
+        return True
+
+    def finish_batch(self, success, save_failure_after_rom=False):
         self.batch = False
         self.active = False
-        self.state = "success" if success and not self.failed else "failure"
+        if save_failure_after_rom:
+            self.state = "save_failure_green"
+        else:
+            self.state = "success" if success and not self.failed else "failure"
 
     def feed(self, line):
         line = line.strip()

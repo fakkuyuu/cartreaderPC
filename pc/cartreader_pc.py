@@ -671,9 +671,27 @@ def gui(args):
     input_mode = tk.StringVar(value="menu")
     batch = BatchDump()
     dump_result = DumpResult()
+    dump_result_blink = {"after": None}
     def paint_dump_result():
         text.configure(background=DumpResult.COLORS[dump_result.state], foreground="black")
+    def cancel_dump_result_blink():
+        callback = dump_result_blink["after"]
+        dump_result_blink["after"] = None
+        if callback is not None:
+            try:
+                window.after_cancel(callback)
+            except tk.TclError:
+                pass
+    def schedule_dump_result_blink():
+        if dump_result.blinking and dump_result_blink["after"] is None:
+            dump_result_blink["after"] = window.after(1000, tick_dump_result_blink)
+    def tick_dump_result_blink():
+        dump_result_blink["after"] = None
+        if dump_result.advance_blink():
+            paint_dump_result()
+            schedule_dump_result_blink()
     def reset_dump_result():
+        cancel_dump_result_blink()
         dump_result.reset()
         paint_dump_result()
     batch_pending = {"key": None}
@@ -681,8 +699,13 @@ def gui(args):
     def batch_report(was_active):
         if was_active and not batch.active:
             batch_pending["key"] = None
-            dump_result.finish_batch(batch.reason.startswith("一括吸出し完了:"))
+            dump_result.finish_batch(
+                batch.reason.startswith("一括吸出し完了:"),
+                save_failure_after_rom=batch.save_failure_after_rom,
+            )
             paint_dump_result()
+            if dump_result.blinking:
+                schedule_dump_result_blink()
             inbox.put(f"[Batch] {batch.reason}\n")
     def batch_stop(reason):
         active = batch.active
@@ -705,6 +728,7 @@ def gui(args):
                 or benchmark["index"] is not None):
             inbox.put("[Batch] 一括吸出しはPC保存・接続済みの機種選択メニューから開始してください\n")
             return
+        reset_dump_result()
         dump_result.begin_batch()
         paint_dump_result()
         batch.begin(target)

@@ -48,6 +48,19 @@ class ResultTests(unittest.TestCase):
         self.feed("[+] Read Save", "Error: no data received", "[SAVED] N64/SAVE/a.eep (0 bytes) SHA256=abcd")
         self.r.finish_batch(False)
         self.assertEqual(self.r.state, "failure")
+        self.assertFalse(self.r.blinking)
+
+    def test_verified_rom_then_explicit_save_failure_alternates_colors(self):
+        self.r.begin_batch()
+        self.feed("[+] Read ROM", "[VERIFY] CRC32=12345678 DB=Known Game")
+        self.feed("[+] Read Save", "Error: read timeout")
+        self.r.finish_batch(False, save_failure_after_rom=True)
+        self.assertEqual(self.r.state, "save_failure_green")
+        self.assertTrue(self.r.blinking)
+        self.assertTrue(self.r.advance_blink())
+        self.assertEqual(self.r.state, "save_failure_red")
+        self.assertTrue(self.r.advance_blink())
+        self.assertEqual(self.r.state, "save_failure_green")
 
     def test_success_does_not_override_batch_mismatch(self):
         self.r.begin_batch()
