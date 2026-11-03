@@ -73,6 +73,7 @@ ID    状態     優先 分類                    件名
 037   VERIFY   P2   bug/ui/i18n             英語モードのボタン・診断メニュー・案内の翻訳漏れ
 
 038   CLOSED   P2   bug/ui/menu             最初/最後のページで範囲外移動すると処理中のまま
+039   OPEN     P2   bug/ui/connection        初回・切断後の接続待機表示と通常ログの整理
 
 【詳細】
 

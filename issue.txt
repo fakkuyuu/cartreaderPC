@@ -61,6 +61,7 @@ ID    Status   Prio Categories               Title
 036   IDEA     P2   enhancement/automation   Launch a preset console's batch on power-on
 037   VERIFY   P2   bug/ui/i18n              Untranslated controls and messages in English mode
 038   CLOSED   P2   bug/ui/menu              Out-of-range menu page leaves GUI stuck in "processing"
+039   OPEN     P2   bug/ui/connection        Consistent connection-wait state and user-facing disconnect messages
 
 [DETAILS]
 
