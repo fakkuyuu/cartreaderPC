@@ -74,3 +74,15 @@ class ResultTests(unittest.TestCase):
     def test_real_error_without_saved_file(self):
         self.feed("[+] Read ROM", "SD Error", "Press Button...")
         self.assertEqual(self.r.state, "failure")
+
+    def test_new_connection_resets_previous_result(self):
+        import ast
+        from pathlib import Path
+        source = (Path(__file__).parent / "cartreader_pc.py").read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        branch = next(n for n in ast.walk(tree) if isinstance(n, ast.If)
+                      and ast.unparse(n.test) == "line.startswith('[Connected:')")
+        self.r.state = "success"
+        exec(compile(ast.Module(body=[branch.body[0]], type_ignores=[]), "connect", "exec"),
+             {"reset_dump_result": self.r.reset})
+        self.assertEqual(self.r.state, "idle")

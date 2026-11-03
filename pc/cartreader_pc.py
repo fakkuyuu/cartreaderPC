@@ -484,7 +484,7 @@ def gui(args):
     _saved_lang = ui_settings.get("language", "English")
     language = tk.StringVar(value="Japanese" if _saved_lang in ("日本語", "JAPANESE") else _saved_lang)
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC98 — Disconnected")
+    window.title("cartreaderPC PC99 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -1192,6 +1192,7 @@ def gui(args):
             if checkpoint_match:
                 checkpoint_label.set(f"確認間隔：{checkpoint_match.group(1)} KiB")
             if line.startswith("[Connected:"):
+                reset_dump_result()
                 reset_capability["nes"] = False
                 if connection_state.get() != "接続済み":
                     notice = ("本体との接続が復旧しました。" if connection_session["ever_connected"]
@@ -1202,7 +1203,7 @@ def gui(args):
                 set_storage_state("PC", storage_current["pending"])
             if version_match:
                 window.title(
-                    f"cartreaderPC PC98 — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC99 — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1277,7 +1278,7 @@ def gui(args):
             if line.startswith(("[Disconnected", "[RECONNECT]")):
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC98 — Disconnected")
+                window.title("cartreaderPC PC99 — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")
