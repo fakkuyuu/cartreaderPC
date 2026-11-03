@@ -735,6 +735,8 @@ Implementation started and PC source committed (2026-11-03 13:22:13 JST, followi
 
 PC95 build report (2026-11-03 13:31:46 JST): Built GitHub4f0e098 with only local version branding changed to PC95. Syntax check, 10 connection + 32 batch tests passed (42 total). EXE self-test PASS/exit0. No firmware changes/upload. Hardware confirmation pending.
 
+Hardware feedback (2026-11-03 13:35:12 JST): User accepts the simpler ordinary connection-wait display in PC95. Red/action-required errors could not be tested on hardware. Ordinary waiting is accepted; actionable-error handling remains software-tested only. Keep VERIFY for the untested hardware path.
+
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
 - For new reports, check whether an existing issue ID applies and append to it; otherwise create the next ID.
