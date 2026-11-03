@@ -49,7 +49,7 @@ ID    Status   Prio Categories               Title
 024   CLOSED   --   enhancement/ui           Existing GUI and ordinary controls
 025   CLOSED   --   performance              Adopted and rejected performance changes
 026   CLOSED   --   scope/md                 No Turrican-specific modification
-027   OPEN     P2   enhancement/ui/i18n      Default first launch to English; label Japanese as JAPANESE
+027   VERIFY     P2   enhancement/ui/i18n      Default first launch to English; label Japanese as JAPANESE
 028   VERIFY   P2   bug/gb/mbc1             GB MBC1 special-bank fix and MBC1M compatibility
 029   VERIFY   P2   enhancement/ui/automation One-click ROM/save dumping
 030   CLOSED   P2   enhancement/ui/files     Open the output folder in Windows Explorer
@@ -306,13 +306,14 @@ Do not reintroduce old diagnostic modifications during future updates without au
 
 #027 Default to English on first launch and label Japanese as JAPANESE
 Added: 2026-11-01 21:31:40 JST
-Last updated: 2026-11-01 21:31:40 JST
-Status: OPEN / P2 / enhancement, ui, i18n
+Last updated: 2026-11-03 13:47:19 JST
+Status: VERIFY / P2 / enhancement, ui, i18n
 Source: User request, recorded only; no implementation authorization.
 Request: Default to English on the first launch when no saved language setting exists; show the language option "JAPANESE" instead of "日本語".
 Purpose: Make the language choice understandable to users who cannot read Japanese.
 Completion: First launch uses English, and the "JAPANESE" option switches to Japanese.
 Version/commit: Not addressed. Only source search was performed; no code, EXE or firmware changes.
+PC96 build (2026-11-03 13:47:19 JST): Built #027 from GitHub95829d1. Missing preference defaults to English; legacy Japanese preference migrates to JAPANESE; existing English/JAPANESE retained. Four migration cases, syntax and 42 existing tests passed. EXE self-test PASS/exit0. No firmware changes/upload. Inherited PC95 settings mean an existing Japanese preference still starts in Japanese; English default applies only without a saved language. GUI confirmation pending.
 
 #028 Integrate the GB MBC1 special-bank fix, verify compatibility and handle MBC1M
 Added: 2026-11-01 21:41:54 JST
