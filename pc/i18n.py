@@ -79,6 +79,7 @@ WORDS = {
     "接続済み": "Connected", "接続中…": "Connecting...",
     "接続エラー": "Connection error", "接続待ち": "Waiting for connection",
     "本体の接続を待っています。": "Waiting for the reader to connect.",
+    "通信速度の切替に失敗しました。詳細ログを確認してください。": "Serial speed change failed. See detailed logs.",
     "本体に接続しました。": "Reader connected.",
     "本体との接続が復旧しました。": "Reader connection restored.",
     "PC保存先への書込みに失敗しました。保存先を確認してください。": "Could not write to the PC destination. Check the output folder.",
