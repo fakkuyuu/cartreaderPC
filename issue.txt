@@ -65,6 +65,7 @@ ID    Status   Prio Categories                    Title
 040   VERIFY     P2   enhancement/ui          Persistent result colors integrated with #029 batch ROM/save
 041   IDEA     P2   enhancement/detection   Identify cartridge console by sequential read-only probing
 042   OPEN     P2   enhancement/ui          Compact automatic-dump controls and unambiguous focus/hover feedback
+043   OPEN     P2   bug/storage/reset       Reset after SD dump unexpectedly switches storage to PC
 
 [DETAILS]
 PC100 build report (2026-11-03 20:42:14 JST): Built GitHub1de58ba with local PC100 branding. All 67 tests and independent integration checks pass: MD internal checksum error stops before save with solid red; valid ROM followed by save error alternates at 1-second intervals. EXE self-test PASS/exit0. Preserve results during USB loss and reset on reconnect. No firmware changes/upload. Hardware confirmation pending; retain VERIFY.
@@ -786,6 +787,17 @@ Status: OPEN / P2 / enhancement, ui
 User report: NES row and Batch GB button simultaneously appear blue. Independent mouse hover, keyboard selection and button focus make the active action unclear. Per-console batch buttons consume excessive horizontal space.
 Request: Clarify selection/hover/focus without removing keyboard operation, avoid ambiguous multiple highlights, and compact automatic-dump controls. Consider Auto dump naming because Batch dump can suggest multiple cartridges.
 Undecided: Layout, click count, console selection and GB/GBA/PCE-swapped choices. Agree the design before implementation. Issue registration only.
+
+#043 Reset after SD dump unexpectedly switches storage to PC
+Added: 2026-11-03 22:50:26 JST
+Last updated: 2026-11-03 22:50:26 JST
+Status: OPEN / P2 / bug, storage, reset
+User hardware reproduction: Confirmed on GBA and MD.
+Steps: With PC tool connected, finish dumping to SD; reader shows Press Button; press the physical reader button once; click Reset in the PC tool. As the main menu returns, SD storage switches to PC storage.
+Expected: Keep the user's SD storage selection across Reset when no storage-mode change was requested.
+Unconfirmed: Display-only versus actual next dump destination, exact firmware/tool versions, other consoles, Reset without a prior dump, and power-cycle behavior. Cause not investigated.
+Related: Distinguish from #033 queued-storage label handling; review Reset/reconnection initialization and intended storage persistence.
+Status: Report recorded only; no source/EXE/firmware changes. Await implementation instruction.
 
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
