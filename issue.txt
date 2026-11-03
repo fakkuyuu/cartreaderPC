@@ -64,6 +64,7 @@ ID    Status   Prio Categories                    Title
 039   VERIFY   P2   bug/ui/connection             Consistent connection-wait state and user-facing disconnect messages
 040   VERIFY     P2   enhancement/ui          Persistent result colors integrated with #029 batch ROM/save
 041   IDEA     P2   enhancement/detection   Identify cartridge console by sequential read-only probing
+042   OPEN     P2   enhancement/ui          Compact automatic-dump controls and unambiguous focus/hover feedback
 
 [DETAILS]
 PC100 build report (2026-11-03 20:42:14 JST): Built GitHub1de58ba with local PC100 branding. All 67 tests and independent integration checks pass: MD internal checksum error stops before save with solid red; valid ROM followed by save error alternates at 1-second intervals. EXE self-test PASS/exit0. Preserve results during USB loss and reset on reconnect. No firmware changes/upload. Hardware confirmation pending; retain VERIFY.
@@ -775,6 +776,14 @@ Scope to investigate: Identifiers for GB/GBA/SNES/MD/N64 and fallback to candida
 Safety investigation: Even at correct voltage, per-console pin directions/control signals differ. Audit HW3 wiring and initialization for possible output contention. No specific hazardous combination has yet been established. Do not indiscriminately run normal setup routines; consider dedicated probing without write/erase/special-cartridge operations.
 Proposed behavior: Present high-confidence candidates for confirmation before dumping; specify ambiguity, empty slots, multiple inserted carts and unsupported cartridges.
 Implementation: Issue registration only; implementation not started.
+
+#042 Compact automatic-dump controls and unambiguous focus/hover feedback
+Added: 2026-11-03 22:06:08 JST
+Last updated: 2026-11-03 22:06:08 JST
+Status: OPEN / P2 / enhancement, ui
+User report: NES row and Batch GB button simultaneously appear blue. Independent mouse hover, keyboard selection and button focus make the active action unclear. Per-console batch buttons consume excessive horizontal space.
+Request: Clarify selection/hover/focus without removing keyboard operation, avoid ambiguous multiple highlights, and compact automatic-dump controls. Consider Auto dump naming because Batch dump can suggest multiple cartridges.
+Undecided: Layout, click count, console selection and GB/GBA/PCE-swapped choices. Agree the design before implementation. Issue registration only.
 
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
