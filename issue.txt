@@ -1,5 +1,5 @@
 cartreaderPC Issues
-Last updated: 2026-11-03 13:22:13 JST
+Last updated: 2026-11-03 13:25:21 JST
 Applies to: PC tool PC91 / firmware PC89 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
@@ -710,7 +710,7 @@ Hardware confirmation (2026-11-02 23:08:53 JST): User reports the PC93 fix works
 
 #039 Consistent connection-wait state and user-facing disconnect messages
 Added: 2026-11-03 12:18:00 JST
-Last updated: 2026-11-03 13:22:13 JST
+Last updated: 2026-11-03 13:25:21 JST
 Status: VERIFY / P2 / bug, ui, connection
 User observations: Connecting with the reader absent/off briefly shows red before orange. The reconnect-wait wording is inaccurate on the first connection. Powering off a connected reader exposes ClearCommError/PermissionError/FileNotFoundError in the normal console; file-not-found wording misleadingly suggests a missing saved file.
 Request: Use the same connection-wait state for initial connection and recovery, without a transient red error for ordinary waiting. Explain reader/COM absence in plain language; reserve raw exceptions for detailed logs. Do not claim to distinguish power-off from unplugging. Consider separate actionable guidance for genuine port contention where identifiable. Cover English/Japanese and preserve automatic reconnect functionality.
@@ -729,9 +729,9 @@ Implementation started and PC source committed (2026-11-03 13:22:13 JST, followi
 - Added pc/connection_status.py: classify connection failures as WAIT or actionable PC-side write failures; suppress repeated retry notices without suppressing changing diagnostic details. Never infer port contention or a particular reader power state from PermissionError, FileNotFoundError or ClearCommError alone. Raw exception names and messages are preserved for detailed logging.
 - Updated pc/cartreader_pc.py: use one orange "Waiting for connection" state for initial connection and later automatic recovery; ordinary retries no longer flash red or display the raw exception in the normal console. Show a plain waiting notice on state transitions, and announce a successful connection/recovery. Manual disconnect stays grey; successful connections stay green. Retain existing internal [RECONNECT] handling to stop batch actions, clear transfer/menu state and preserve automatic retry. Red is only used for explicitly identifiable PC-side file-write failures; subsequent ambiguous retry exceptions do not downgrade that red state.
 - The console shows raw COM/driver exception details only while detailed logging is enabled. An interrupted transfer still produces a plain-language incomplete-file warning in normal mode. Added Japanese/English translations for waiting, connected, recovered, actionable write error and incomplete-transfer notices in pc/i18n.py.
-- Added 9 regression tests in pc/test_connection_status.py covering ambiguous missing/permission/driver errors, retry deduplication, actionable host writes, recovery notification reset, batch cancellation on reconnect, Japanese/English notices and separation of GUI diagnostic detail.
-- Commits: f198663 (classification helper), 3624a6e (GUI), 8a44922 (i18n), 8a9cbfd (tests). PC source changes only; no GUI version bump, Windows EXE rebuild, firmware edit or hardware flash.
-- Status VERIFY: the nine new tests have NOT been executed yet. Pending Codex Python tests (new and existing), syntax checks, EXE self-test/rebuild, and user Windows hardware verification of power-off initial connection, disconnect/unplug after connection, power restoration, manual disconnect, detailed logging on/off, and interrupted transfers. Reliable detection of an occupied COM port is not implemented because the reported raw errors are ambiguous.
+- Added 10 regression tests in pc/test_connection_status.py covering ambiguous missing/permission/driver errors, retry deduplication, actionable host writes, recovery notification reset, batch cancellation on reconnect, Japanese/English notices and separation of GUI diagnostic detail.
+- Commits: f198663 (classification helper), 3624a6e (GUI), 8a44922 (i18n), 8a9cbfd (tests). Follow-up commits 4bfcd38, 8dea587, f06a124 and 7caf369 also route baud driver exceptions to detailed diagnostics, clear partial menu lines on reconnect and add localized notices/tests. PC source changes only; no GUI version bump, Windows EXE rebuild, firmware edit or hardware flash.
+- Status VERIFY: the ten new tests have NOT been executed yet. Pending Codex Python tests (new and existing), syntax checks, EXE self-test/rebuild, and user Windows hardware verification of power-off initial connection, disconnect/unplug after connection, power restoration, manual disconnect, detailed logging on/off, and interrupted transfers. Reliable detection of an occupied COM port is not implemented because the reported raw errors are ambiguous.
 
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
