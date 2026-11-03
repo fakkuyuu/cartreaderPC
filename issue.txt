@@ -709,11 +709,20 @@ Hardware confirmation (2026-11-02 23:08:53 JST): User reports the PC93 fix works
 
 #039 Consistent connection-wait state and user-facing disconnect messages
 Added: 2026-11-03 12:18:00 JST
-Last updated: 2026-11-03 12:18:00 JST
+Last updated: 2026-11-03 12:27:52 JST
 Status: OPEN / P2 / bug, ui, connection
 User observations: Connecting with the reader absent/off briefly shows red before orange. The reconnect-wait wording is inaccurate on the first connection. Powering off a connected reader exposes ClearCommError/PermissionError/FileNotFoundError in the normal console; file-not-found wording misleadingly suggests a missing saved file.
 Request: Use the same connection-wait state for initial connection and recovery, without a transient red error for ordinary waiting. Explain reader/COM absence in plain language; reserve raw exceptions for detailed logs. Do not claim to distinguish power-off from unplugging. Consider separate actionable guidance for genuine port contention where identifiable. Cover English/Japanese and preserve automatic reconnect functionality.
 Implementation: Not started; issue registration only.
+
+Specification update / handoff to ChatGPT (2026-11-03 12:27:52 JST):
+- Agreed rule: orange means waiting is sufficient; red is reserved for a condition requiring user intervention.
+- Reader absent, power off, USB disconnect and automatic retry delays use one orange "Waiting for connection" state for both initial connection and recovery. Avoid briefly flashing red on ordinary failed attempts.
+- Red is only for errors identifiable as requiring action rather than waiting. Port contention is a possible example, but never infer contention solely from PermissionError/access denied: reader power-off has also produced it.
+- Emit clear normal-log guidance on state transitions, not every retry. Hide raw FileNotFoundError/ClearCommError and exception traces in detailed logs; these concern COM port availability, not a missing saved file. Announce successful recovery.
+- Cover English/Japanese; retain grey for manual disconnection and green for a successful connection. Keep connection state separate from reader LED state. Preserve retry/recovery and safe transfer termination behavior.
+- Test: initial attempt with reader off, power-off/unplug while connected, power-on recovery, manual disconnect, identifiable actionable errors, detailed logging on/off. Ordinary waiting must neither flash red nor expose raw exceptions and must recover normally.
+- Another ChatGPT chat will implement this. Codex only records the specification here; no code, EXE or firmware changes.
 
 [WORKFLOW RULES]
 - For new change requests, bugs or ideas, first record them as issues only. Do not edit code, build or flash until the user explicitly approves implementation.
