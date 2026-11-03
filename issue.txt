@@ -130,6 +130,8 @@ Current state: Memory measured in PC87; browser usage reduced in PC88. No genera
 Proposal: Budget resident/heap/deepest stack/interrupt usage; check high-water marks and corruption sentinels in diagnostics. Reject unsafe configurations at build time or before startup with an explanation. One instantaneous free-memory reading is not proof of safety.
 Completion: State supported configurations/build options and test safe behavior under insufficient RAM.
 User RAM observation (2026-11-03 17:38:21 JST): GBA batch ROM startup, around the first progress stars, reaches sampled minimum 160–169 bytes; N64 ROM dumping reaches 440 bytes. GBA shows lower headroom in these trials; no malfunction reported. Telemetry is sampled, not a guaranteed instantaneous minimum. GBA-specific call paths are a candidate, but the roughly 280-byte difference has not been traced to a particular buffer or prefetch path. Firmware version for these measurements not confirmed. This does not establish safety for other consoles. No investigation/code changes started.
+Storage-path measurement (2026-11-03 22:44:00 JST): User reports sampled minimum 329 bytes during GBA dumping to SD, compared with 160–169 bytes for PC storage (approximately 160–169 bytes more headroom). Do not assume this establishes the tool-disconnected standalone minimum. Cause of the mode difference remains untraced; do not judge standalone auto-dump feasibility solely from the PC-storage 160-byte reading.
+
 
 #006 Reduce resident RAM used by additional console support
 Added: 2026-11-01 21:13:34 JST
