@@ -480,7 +480,7 @@ def gui(args):
     from serial.tools import list_ports
     window = tk.Tk()
     ui_settings = load_ui_settings()
-    _saved_lang = ui_settings.get("language", "JAPANESE")
+    _saved_lang = ui_settings.get("language", "English")
     language = tk.StringVar(value="JAPANESE" if _saved_lang == "日本語" else _saved_lang)
     translator = UiTranslator(window, language)
     window.title("cartreaderPC PC93 — Disconnected")
