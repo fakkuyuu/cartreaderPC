@@ -88,19 +88,20 @@ Observed: Not applied to current PC88a. The user has not reported a present-day 
 Completion: Retrieve and apply the actual upstream diff, check other mapper behavior and, if possible, verify an affected cartridge.
 Version/commit: Not addressed.
 Related: A component of #003. #003 must include application/validation of this fix; resolve both together.
-PC94 integration (2026-11-03 08:23:12 JST): Applied MMC1 CHR fix 8e804d83 and VSMILE unit correction b4b8d4c2. Sky Alien be42198f already exists in sd/2600.txt. Deliberately retained V15.5-PC94 identity rather than automatic V15.6 bump 8593a266; documented relocation 060d8ae0 in this fork README. Public HW/module defaults restored to upstream V15.5; local HW3 test configuration retained. GCC16.1 HW3 build passed: flash217812, static RAM6676. VSMILE is disabled in the test build, so its changed path was not compiled/tested on hardware. Affected NES cartridges untested; no upload performed. Keep #002/#003 VERIFY pending hardware testing.
 
 PC94 integration (2026-11-03 08:23:12 JST): Applied MMC1 CHR fix 8e804d83 and VSMILE unit correction b4b8d4c2. Sky Alien be42198f already exists in sd/2600.txt. Deliberately retained V15.5-PC94 identity rather than automatic V15.6 bump 8593a266; documented relocation 060d8ae0 in this fork README. Public HW/module defaults restored to upstream V15.5; local HW3 test configuration retained. GCC16.1 HW3 build passed: flash217812, static RAM6676. VSMILE is disabled in the test build, so its changed path was not compiled/tested on hardware. Affected NES cartridges untested; no upload performed. Keep #002/#003 VERIFY pending hardware testing.
 
 #003 Incorporate the old upstream project's final updates
 Added: 2026-11-01 21:13:34 JST
-Last updated: 2026-11-01 21:35:44 JST
-Status: OPEN / P2 / upstream
+Last updated: 2026-11-03 08:23:12 JST
+Status: VERIFY / P2 / upstream
 Verified: Old upstream master is five commits ahead of V15.5: V15.6 version text, Sky Alien in the 2600 DB, #002, VSMILE unit display, and a README relocation URL.
 Plan: Assess function fixes, DB and docs separately, document each source commit, and reconcile bundled-DB policy. Do not merely label the application V15.6 and claim full adoption.
 Completion: Document adopted/rejected changes, reasons, and commits.
 Addendum (2026-11-01 21:33:08 JST): The user requested incorporation of the old upstream project's final changes. Recorded as an issue only; apply diffs, including MMC1 #002, only after explicit implementation approval. No source, EXE or firmware changes were made at this point.
 Related: Includes #002. When closing #003, verify #002 as well and update both.
+
+PC94 integration (2026-11-03 08:23:12 JST): Applied MMC1 CHR fix 8e804d83 and VSMILE unit correction b4b8d4c2. Sky Alien be42198f already exists in sd/2600.txt. Deliberately retained V15.5-PC94 identity rather than automatic V15.6 bump 8593a266; documented relocation 060d8ae0 in this fork README. Public HW/module defaults restored to upstream V15.5; local HW3 test configuration retained. GCC16.1 HW3 build passed: flash217812, static RAM6676. VSMILE is disabled in the test build, so its changed path was not compiled/tested on hardware. Affected NES cartridges untested; no upload performed. Keep #002/#003 VERIFY pending hardware testing.
 
 #004 Verify browser boundary conditions
 Added: 2026-11-01 21:13:34 JST
