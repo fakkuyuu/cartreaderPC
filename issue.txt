@@ -1,5 +1,5 @@
 cartreaderPC Issues
-Last updated: 2026-11-03 13:25:21 JST
+Last updated: 2026-11-03 20:37:37 JST
 Applies to: PC tool PC91 / firmware PC89 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
@@ -51,7 +51,7 @@ ID    Status   Prio Categories                    Title
 026   CLOSED   --   scope/md                      No Turrican-specific modification
 027   VERIFY   P2   enhancement/ui/i18n           Default first launch to English; label Japanese as Japanese
 028   VERIFY   P2   bug/gb/mbc1                   GB MBC1 special-bank fix and MBC1M compatibility
-029   VERIFY   P2   enhancement/ui/automation     One-click ROM/save dumping
+029   VERIFY   P2   enhancement/ui/automation     One-click ROM/save dumping (see #040 for result colors)
 030   CLOSED   P2   enhancement/ui/files          Open the output folder in Windows Explorer
 031   CLOSED   P2   enhancement/logging           Save the PC console to OSCR_LOG.txt
 032   VERIFY   P2   bug/logging/docs              Clean ROM companion TXT and separate from shared logs
@@ -62,7 +62,7 @@ ID    Status   Prio Categories                    Title
 037   VERIFY   P2   bug/ui/i18n                   Untranslated controls and messages in English mode
 038   CLOSED   P2   bug/ui/menu                   Out-of-range menu page leaves GUI stuck in "processing"
 039   VERIFY   P2   bug/ui/connection             Consistent connection-wait state and user-facing disconnect messages
-040   VERIFY     P2   enhancement/ui          Persistent red/green console backgrounds for dump outcomes
+040   VERIFY     P2   enhancement/ui          Persistent result colors integrated with #029 batch ROM/save
 041   IDEA     P2   enhancement/detection   Identify cartridge console by sequential read-only probing
 
 [DETAILS]
@@ -428,7 +428,7 @@ Codex build/flash record (2026-11-02 18:52:19 JST): Built PC89 firmware includin
 
 #029 One-click dumping mode (automate button presses and menu selections)
 Added: 2026-11-01 22:02:12 JST
-Last updated: 2026-11-03 10:20:08 JST
+Last updated: 2026-11-03 20:37:37 JST
 Status: VERIFY (see per-console implementation/verification matrix below; GB/GBA/SNES/MD and a limited NES normal path verified on hardware; N64/PCE still unverified, SMS-family and other targets have no batch implementation) / P2 / enhancement, ui, automation
 
 Per-console implementation and verification matrix (2026-11-03 10:20:08 JST; based on GitHub master PC batch/menu code and firmware source, not on new hardware testing):
@@ -505,6 +505,8 @@ Codex build (2026-11-02 21:56:37 JST): Integrated NES DB-hit candidate automatic
 
 User verification of NES candidate auto-confirmation (2026-11-02 21:57:59 JST): User reported "operation verified OK" for the preceding NES one-click DB-hit candidate fix. Record successful physical operation of automatic candidate confirmation on PC91 after the build. This does not indicate hardware testing of unregistered/CRC-miss/all-FF manual fallback or every NES save variant. Keep those unverified, while retaining the previously reported 32 passing regression tests and EXE self-test. No N64 hardware confirmation was reported either; #029 as a whole remains VERIFY.
 
+
+#029 fix and #040 integration (2026-11-03 20:37:37 JST; commit 642e6bfe35e9ebbd949862d6ce7c9b0f9227eab0): Detect the Mega Drive reader's explicit "Internal checksum...Error" during the ROM-read phase and stop batch immediately, even when it arrives after [SAVED] and [VERIFY] CRC32=. Do not proceed to SAVE, and do not allow subsequent notifications to revive the batch as a ROM success. #040 separately retains the ROM-stage failure so it remains solid red and cannot be misclassified as a save-only partial success. Regression coverage includes normal MD ROM->SAVE success, stopping on the late MD checksum error without entering SAVE, and ensuring the same text does not stop other console targets. An explicit SAVE-only failure after verified ROM continues to alternate green/red every second. "Error" in a filename or DB title is data, not an error signal. Existing USB disconnect/unplug behavior is unchanged: an active batch disconnect remains solid red; a completed partial-success blink continues through disconnect/wait and a new [Connected:] resets to white. GitHub Actions CI run 41629006413: all 67 PC Python regression tests PASS. No firmware or EXE changes. Normal MD hardware batch, MD checksum-failure stop/save suppression and cross-console hardware impact remain unverified; keep VERIFY. #040 owns result colors; #029 owns batch sequencing and stop conditions.
 #030 Add a button to open the output directory in Windows Explorer
 Added: 2026-11-01 22:05:38 JST
 Last updated: 2026-11-02 09:43:23 JST
@@ -745,7 +747,7 @@ USB-unplug-during-dump test (2026-11-03 13:38:22 JST): User log shows GBA ROCKMA
 
 #040 Persistent red/green console backgrounds for dump outcomes
 Added: 2026-11-03 17:02:32 JST
-Last updated: 2026-11-03 19:06:40 JST
+Last updated: 2026-11-03 20:37:37 JST
 Status: VERIFY / P2 / enhancement, ui
 Specification: Console only: success #86EFAC, failure #FCA5A5, black text. Retain through automatic transitions and batch input; reset to white on the next user action. Batch success requires the entire ROM/save operation to finish. No additional status colors. User authorized implementation.
 PC98 implementation (2026-11-03 17:05:19 JST): Black console text; success #86EFAC / failure #FCA5A5. Individual dump completion waits for save/verification evidence and Press Button; batch green waits for the full ROM/save operation. Preserve through automatic menus/input; reset on PC manual input, new batch, connect/disconnect or browser requests. A DB miss alone is not a confirmed read failure: green means completion without detected errors, not guaranteed ROM authenticity. SD success requires recognized OK/CRC output. 55 software tests, syntax and EXE self-test PASS. Hardware color confirmation pending; firmware unchanged. Clearing from reader physical-button-only input is not supported because manual/automated input is distinguished at the PC send path.
@@ -756,6 +758,8 @@ Additional requirement, not implemented (2026-11-03 19:06:40 JST): If batch ROM 
 Independent Codex review (2026-11-03 20:11:05 JST, ac135cd): 60 existing tests PASS. Executed actual GUI functions extracted via AST with a fake timer: 1000ms alternation and timer cancellation on reset pass. (1) Active-batch disconnect ends red because reset precedes batch_stop (pre-existing path). (2) Disconnected after partial-success completion retains the timer; stopping on USB loss requires a policy decision since agreed stop conditions were PC manual action/reconnection. (3) Concrete MD Internal checksum...Error is detected by DumpResult but missed by BatchDump; a subsequent save error incorrectly produces partial-success blinking. Reproduced with actual state machines; ROM failure must be retained and exclude partial success. GUI branding remains PC99; implementation issue entry was not updated. Review only; no source/EXE/firmware changes.
 
 
+
+#029 integration fix (2026-11-03 20:37:37 JST; commit 642e6bfe35e9ebbd949862d6ce7c9b0f9227eab0): While #029 is reading an MD ROM in batch mode, the reader's "Internal checksum...Error" is retained as a ROM-stage failure. #040 distinguishes ROM-stage and SAVE-stage failures: a ROM error remains solid red regardless of later SAVE notifications/errors. An explicit SAVE-only failure after verified ROM retains the existing 1-second green/red alternation. "Error" occurring only in a database title or filename is not treated as a failure. No USB disconnect/unplug handling was changed: disconnect during an active batch remains solid red; disconnect while partial-success blinking preserves the current color/timer, and a new [Connected:] returns the background to white. GitHub Actions PC Python regression suite: 67 tests PASS (run 41629006413). No firmware or EXE changes. Hardware verification has not been performed; retain VERIFY. #029 owns batch sequencing/stops; #040 owns outcome colors.
 #041 Identify cartridge console by sequential read-only probing
 Added: 2026-11-03 17:25:44 JST
 Last updated: 2026-11-03 17:25:44 JST
