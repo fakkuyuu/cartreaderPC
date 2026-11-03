@@ -481,7 +481,7 @@ def gui(args):
     window = tk.Tk()
     ui_settings = load_ui_settings()
     _saved_lang = ui_settings.get("language", "English")
-    language = tk.StringVar(value="JAPANESE" if _saved_lang == "日本語" else _saved_lang)
+    language = tk.StringVar(value="Japanese" if _saved_lang in ("日本語", "JAPANESE") else _saved_lang)
     translator = UiTranslator(window, language)
     window.title("cartreaderPC PC93 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
@@ -2023,7 +2023,7 @@ def gui(args):
     window.bind("<Configure>", remember_geometry, add="+")
     window.protocol("WM_DELETE_WINDOW", quit_app)
     language_picker = ttk.Combobox(info_row, textvariable=language,
-                                  values=("JAPANESE", "English"), state="readonly", width=9)
+                                  values=("Japanese", "English"), state="readonly", width=9)
     language_picker.pack(side="left", padx=6)
     def change_language(event=None):
         ui_settings["language"] = language.get()
