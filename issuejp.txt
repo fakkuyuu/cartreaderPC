@@ -22,58 +22,46 @@ cartreaderPC Issues
 番号は固定。実装版・コミット・実機結果を同じ項目へ追記し、履歴を失う削除はしない。
 
 【一覧】
-ID    状態     優先 分類                    件名
-001   OPEN     P2   bug/browser             キャンセルをSD操作失敗と表示
-002   VERIFY     P1   bug/upstream/nes        MMC1 CHR修正の取り込み
-003   VERIFY     P2   upstream                旧本家最終更新相当の差分取り込み
-004   VERIFY   P1   test/browser/memory     深階層・長い名前・連続操作の検証
-005   OPEN     P1   enhancement/memory      RAM不足を検出し壊れず終了する
-006   IDEA     P2   enhancement/memory      機種別作業領域・固定データの省RAM化
-007   IDEA     P2   memory/browser          呼出スタックと512Bキャッシュの整理
-008   HOLD     P3   enhancement/display     液晶の省メモリ描画
-009   OPEN     P2   workflow/git            ローカルGitによる変更・要望管理
-010   OPEN     P2   workflow/files          配置統一と重複ファイルの整理
-011   OPEN     P1   bug/release             過去の混入ZIPと配布工程の是正
-012   OPEN     P2   docs/release            公開ソース・文書・実行版を一致させる
-013   TRIAGE   P2   enhancement/nes/save    セーブ名・上書き防止
-014   TRIAGE   P2   bug/n64/display         単体吸出し時の液晶下部の乱れ
-015   TRIAGE   P2   bug/led                 エラー時のLED色とPC表示
-016   TRIAGE   P2   enhancement/database    DBが一部欠けた場合の案内
-017   VERIFY   P2   test/ui/hardware        全操作方式・追加機種・別HWの確認
-018   HOLD     P3   performance/diagnostic  方向別UART診断と追加高速化
-019   HOLD     P3   enhancement/dump        ROM吸出し中の中断
-020   IDEA     P3   enhancement/browser     既存ファイルの扱いを選べるようにする
-021   HOLD     P3   research/sa1            CLK0/1 OFFで成立する条件の調査
-022   CLOSED   --   browser/memory          ブラウザの階層依存RAM消費を削減
-023   CLOSED   --   bug/browser             ルート/子フォルダのopen・パス復元
-024   CLOSED   --   enhancement/ui          既存GUI・言語・速度表示等
-025   CLOSED   --   performance             採用済み高速化と不採用案
-026   CLOSED   --   scope/md                Turrican固有改修は対象外
-
-027   VERIFY     P2   enhancement/ui/i18n     初回は英語・日本語の選択名をJapaneseにする
-
-028   VERIFY   P2   bug/gb/mbc1             GB MBC1特殊バンク修正・MBC1M互換性検証
-
-029   VERIFY     P2   enhancement/ui/automation  ワンクリックでROM吸出し完了まで自動操作
-
-030   CLOSED   P2   enhancement/ui/files    保存先フォルダをエクスプローラーで開くボタン
-
-031   CLOSED   P2   enhancement/logging     PCのOSCR_LOG.txtへコンソールと同じ内容を保存
-
-032   VERIFY     P2   bug/logging/docs        ROM付属TXTの不要ログ・空行・項目名を整理
-
-033   CLOSED     P2   bug/ui/storage          再接続後に保存先変更予約の表示が残る
-
-034   CLOSED     P2   enhancement/logging     PC共通ログ名をOSCR_LOGPC.txtへ変更
-
-035   CLOSED     P2   bug/verification/gba    PC保存時のGBAヘッダチェックサム確認が欠落
-
-036   IDEA     P2   enhancement/automation  電源オンで事前指定機種の一括吸出しを自動開始
-
-037   VERIFY   P2   bug/ui/i18n             英語モードのボタン・診断メニュー・案内の翻訳漏れ
-
-038   CLOSED   P2   bug/ui/menu             最初/最後のページで範囲外移動すると処理中のまま
-039   VERIFY   P2   bug/ui/connection        初回・切断後の接続待機表示と通常ログの整理
+ID    状態       優先   分類                            件名
+001   OPEN     P2   bug/browser                   キャンセルをSD操作失敗と表示
+002   VERIFY   P1   bug/upstream/nes              MMC1 CHR修正の取り込み
+003   VERIFY   P2   upstream                      旧本家最終更新相当の差分取り込み
+004   VERIFY   P1   test/browser/memory           深階層・長い名前・連続操作の検証
+005   OPEN     P1   enhancement/memory            RAM不足を検出し壊れず終了する
+006   IDEA     P2   enhancement/memory            機種別作業領域・固定データの省RAM化
+007   IDEA     P2   memory/browser                呼出スタックと512Bキャッシュの整理
+008   HOLD     P3   enhancement/display           液晶の省メモリ描画
+009   OPEN     P2   workflow/git                  ローカルGitによる変更・要望管理
+010   OPEN     P2   workflow/files                配置統一と重複ファイルの整理
+011   OPEN     P1   bug/release                   過去の混入ZIPと配布工程の是正
+012   OPEN     P2   docs/release                  公開ソース・文書・実行版を一致させる
+013   TRIAGE   P2   enhancement/nes/save          セーブ名・上書き防止
+014   TRIAGE   P2   bug/n64/display               単体吸出し時の液晶下部の乱れ
+015   TRIAGE   P2   bug/led                       エラー時のLED色とPC表示
+016   TRIAGE   P2   enhancement/database          DBが一部欠けた場合の案内
+017   VERIFY   P2   test/ui/hardware              全操作方式・追加機種・別HWの確認
+018   HOLD     P3   performance/diagnostic        方向別UART診断と追加高速化
+019   HOLD     P3   enhancement/dump              ROM吸出し中の中断
+020   IDEA     P3   enhancement/browser           既存ファイルの扱いを選べるようにする
+021   HOLD     P3   research/sa1                  CLK0/1 OFFで成立する条件の調査
+022   CLOSED   --   browser/memory                ブラウザの階層依存RAM消費を削減
+023   CLOSED   --   bug/browser                   ルート/子フォルダのopen・パス復元
+024   CLOSED   --   enhancement/ui                既存GUI・言語・速度表示等
+025   CLOSED   --   performance                   採用済み高速化と不採用案
+026   CLOSED   --   scope/md                      Turrican固有改修は対象外
+027   VERIFY   P2   enhancement/ui/i18n           初回は英語・日本語の選択名をJapaneseにする
+028   VERIFY   P2   bug/gb/mbc1                   GB MBC1特殊バンク修正・MBC1M互換性検証
+029   VERIFY   P2   enhancement/ui/automation     ワンクリックでROM吸出し完了まで自動操作
+030   CLOSED   P2   enhancement/ui/files          保存先フォルダをエクスプローラーで開くボタン
+031   CLOSED   P2   enhancement/logging           PCのOSCR_LOG.txtへコンソールと同じ内容を保存
+032   VERIFY   P2   bug/logging/docs              ROM付属TXTの不要ログ・空行・項目名を整理
+033   CLOSED   P2   bug/ui/storage                再接続後に保存先変更予約の表示が残る
+034   CLOSED   P2   enhancement/logging           PC共通ログ名をOSCR_LOGPC.txtへ変更
+035   CLOSED   P2   bug/verification/gba          PC保存時のGBAヘッダチェックサム確認が欠落
+036   IDEA     P2   enhancement/automation        電源オンで事前指定機種の一括吸出しを自動開始
+037   VERIFY   P2   bug/ui/i18n                   英語モードのボタン・診断メニュー・案内の翻訳漏れ
+038   CLOSED   P2   bug/ui/menu                   最初/最後のページで範囲外移動すると処理中のまま
+039   VERIFY   P2   bug/ui/connection             初回・切断後の接続待機表示と通常ログの整理
 
 【詳細】
 
@@ -104,7 +92,6 @@ ID    状態     優先 分類                    件名
 
 PC94取り込み (2026-11-03 08:23:12 JST): MMC1 CHR修正8e804d83、VSMILE単位修正b4b8d4c2を適用。Sky Alien追加be42198fは既存sd/2600.txtに反映済み。V15.6自動番号変更8593a266は採用せずV15.5-PC94表記を維持。移転告知060d8ae0は本フォークREADMEに出典として記載。公開Config.hのHW/機種選択を本家V15.5へ復元。手元テストはHW3/既存機種設定を維持。GCC16.1 HW3ビルド成功、Flash217812/RAM6676。VSMILEはテスト設定で無効のため修正経路の実コンパイル/実機未確認。NES対象カセットも実機未確認。本体未書込み。#002/#003とも実機確認待ちVERIFY。
 
-
 #003 旧本家最終更新相当の差分を取り込む
 追加日時: 2026-11-01 21:13:34 JST
 最終更新日時: 2026-11-03 08:23:12 JST
@@ -121,7 +108,6 @@ PC94取り込み (2026-11-03 08:23:12 JST): MMC1 CHR修正8e804d83、VSMILE単�
 関連: #002（MMC1 CHR修正）を含む。#003を完了とする際は#002の適用・確認も済ませ、両方を解決として更新する。
 
 PC94取り込み (2026-11-03 08:23:12 JST): MMC1 CHR修正8e804d83、VSMILE単位修正b4b8d4c2を適用。Sky Alien追加be42198fは既存sd/2600.txtに反映済み。V15.6自動番号変更8593a266は採用せずV15.5-PC94表記を維持。移転告知060d8ae0は本フォークREADMEに出典として記載。公開Config.hのHW/機種選択を本家V15.5へ復元。手元テストはHW3/既存機種設定を維持。GCC16.1 HW3ビルド成功、Flash217812/RAM6676。VSMILEはテスト設定で無効のため修正経路の実コンパイル/実機未確認。NES対象カセットも実機未確認。本体未書込み。#002/#003とも実機確認待ちVERIFY。
-
 
 #004 ブラウザの境界条件を検証する
 追加日時: 2026-11-01 21:13:34 JST
@@ -460,7 +446,6 @@ PC96ビルド (2026-11-03 13:47:19 JST): GitHub95829d1の#027を取得。言語�
 ・#028はGB MBC1案件のため、他3機種の結果は今回の修正後の回帰テスト実績として記録。状態VERIFYを維持。
 Codexビルド/書込結果（2026-11-02 18:52:19 JST）: GitHub f85877aのMBC1特殊バンク修正を含むPC89ファームをGCC16.1でビルドし、COM5へ書込み成功。通常MBC1 256KiB/512KiB/1MiB/2MiBの窓サイズ合計をソフトモデルで確認（実ハード信号試験ではない）。実機CRC再照合は未実施、VERIFY継続。
 
-
 #029 ワンクリック吸出しモード（ボタン送り・メニュー選択を自動化）
 追加日時: 2026-11-01 22:02:12 JST
 最終更新日時: 2026-11-03 10:20:08 JST
@@ -517,7 +502,6 @@ UI対象機種の訂正（2026-11-02 17:44:16 JST、ユーザー確認）: MSX�
 
 PCE一括吸出し仕様（2026-11-02 17:50:04 JST、ユーザー所有カード条件）: ユーザー所有のPCEカードはすべて日本版のため、PCE機種行の『一括吸出し』は Select device → HuCARD(swapped) を既定で自動選択し、その後PCE HuCARD menu → Read ROM のみを自動実行する。現行 PCE.ino には HuCARD(swapped)/HuCARD(not swapped)/Turbochip/Flash Repro の機器種別選択があるが、一括はあくまでユーザーの日本版HuCARD向けプリセットとし、他種別への一般的自動判定と誤認しない。HuCARD(not swapped)・Turbochip・Flash Repro等は従来の通常PCEボタンから手動操作する。PCEの Read RAM Bank は天の声バンク向けで通常のHuCARDセーブ読出しとして自動実行しない。検出ROMサイズなどで手動判断を要する場合は停止。UI設定画面は追加せず、一括ボタンは既存PCE行の横に配置。コード・EXE・ファームは未変更。
 Codexビルド/書込結果（2026-11-02 18:52:19 JST）: GitHub 54b3e88由来の一括吸出しをPC89へ取り込み。13回帰テスト/全Python構文/EXEセルフテストPASS。NES復帰対応を含むHW3ファームはGCC16.1/IDE1.8.19/core1.8.3、-Os+LTO・mcall-prologues・relaxでコンパイル成功。Flash217800B、静的RAM6676B（残1516B）。処理終了をユーザー確認後、PCツールを終了してCOM5へ217800Bを32.42秒で書込み、exit0。ユーザー指定-Vでベリファイ省略。表示名のみPC89へ変更、ConfigはGitHubと一致。成果物outputs3/cartreader-v15.5-pc89/CartReaderPC.exeとhex/Cart_Reader.ino.hex、ソースwork/pc89。実機一括動作は未確認、VERIFY継続。
-
 
 #029実装報告（2026-11-02 18:08:34 JST）: ユーザーの「じゃあ作って」に対し master へ実装。PC側は pc/batch_dump.py の状態管理を追加、pc/cartreader_pc.py のメイン機種選択行に機種別一括ボタンを実装。GB行は「一括GB」「一括GBA」、NES・SNES・MDは「一括吸出し」、PCE行は「一括(swapped)」「一括(not swapped)」。MSXには一括ボタンを付けない。通常の機種選択は維持。対応する選択肢と読出し状態が観測できるときのみ次へ進み、ROM先行、保存済みROMの[VERIFY]受信後に既存ヘッダ/DB由来のセーブ情報に応じてRead Saveまたは終了。セーブファイルは保存完了・非0バイト、およびサイズが判明する場合はサイズ一致を確認。DB=none/no matchはROMデータのCRC照合未達として記録するが、転送・形式エラーがない限り一括を続ける（実機で挙動を要確認）。セーブが不明・手動Mapper/サイズ/タイトル選択・想定外メニュー・通信/転送エラーでは停止、書込み・消去へは進まない。PCEはどちらもRead ROMのみ、天の声バンクは自動で読まない。PC保存モードのみ開始可（FWローカルSDモードのSAVED/VERIFYがPCへ返らないため）。NESの自動認識失敗でアルファベット画面に入った場合、Cart_Reader/Cart_Reader.ino のNES専用安全待機状態限定「!」コマンドで[+] Reset通知を出して本体再起動、PC一括はそこで停止する。一般の転送中は「!」を解釈しない。pc/test_batch_dump.py にユニットテストを追加。未実施: Windows EXE再ビルド・ファーム再ビルド/書込み・実機によるGB/GBA/SNES/MD/NES/PCE動作/セーブ有無・フォールバックと接続復帰の確認。コード未検証のためCLOSEDにしない。
 
@@ -697,7 +681,6 @@ NES候補自動確定のユーザー動作確認（2026-11-02 21:57:59 JST）: �
 
 完了確認（2026-11-02 14:46:29 JST）: ユーザーからCodex側で#035完了扱いとの連絡を受領。PC保存の実利用で生成されたGBA ROM付属TXT（ROCKMAN_EXE2/103、8 MB）に「Checksum: 69 -> OK」とCRC32「98E4F096」、DB一致、RENAMED先が記録されたことは#032で既報。保存ROMのGBAヘッダチェックサム正常判定とTXT反映を実利用で確認した。異常ヘッダ・不一致・DB未一致はソフト試験で確認済みだが、実機で意図的な不一致を再現したものではない。GBAヘッダチェックサムはROM全体の整合性を保証するものではない。以上により#035をCLOSEDとする。
 
-
 #036 電源オンで事前指定した機種の一括吸出しを自動開始するモード
 追加日時: 2026-11-02 22:01:51 JST
 最終更新日時: 2026-11-02 22:01:51 JST
@@ -736,7 +719,6 @@ NES候補自動確定のユーザー動作確認（2026-11-02 21:57:59 JST）: �
 完了条件: 一括/ページ送り/診断とメニュー項目が英語になり、動的生成画面・言語往復切替で追従。関連警告/操作案内の対応範囲を明記し、日本語へ戻せることを確認。
 対応版/コミット: 未対応。調査とissue登録のみ。コード・EXE・ファームは変更していない。
 PC93対応（2026-11-02 23:07:16 JST）: PC92の英語UI修正を継承。ボタン・診断Menu項目・一括案内・警告を翻訳。実Tkの日英往復試験成功。#027の初期言語は対象外。構文確認・既存一括32テスト成功。実機確認待ち。ファーム変更なし。
-
 
 #038 メインメニューのページ端で範囲外へ移動するとPC操作画面が処理中のまま
 追加日時: 2026-11-02 22:26:26 JST
