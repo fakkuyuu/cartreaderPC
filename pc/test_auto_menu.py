@@ -166,14 +166,34 @@ class AutoMenuTests(unittest.TestCase):
         self.assertEqual(navigator.current_action(), ("reader", "0"))
         self.assertEqual(navigator.move_horizontal(-1), "previous-page")
 
-    def test_right_from_rightmost_pce_auto_moves_to_next_page(self):
+    def test_right_from_rightmost_auto_on_any_row_moves_to_next_page(self):
+        auto_rows = [
+            (row_index, row["auto_entries"])
+            for row_index, row in enumerate(self.rows)
+            if row["auto_entries"]
+        ]
+        self.assertGreater(len(auto_rows), 1)
+        for row_index, entries in auto_rows:
+            with self.subTest(row=row_index, target=entries[-1][1]):
+                navigator = MenuNavigator(self.rows, paged=True)
+                self.assertTrue(navigator.select_auto(row_index, len(entries) - 1))
+                self.assertEqual(navigator.current_action()[0], "auto")
+                self.assertEqual(navigator.move_horizontal(1), "next-page")
+
+    def test_left_from_normal_row_on_any_row_moves_to_previous_page(self):
+        for row_index in range(len(self.rows)):
+            with self.subTest(row=row_index, label=self.rows[row_index]["label"]):
+                navigator = MenuNavigator(self.rows, paged=True)
+                navigator.select_row(row_index)
+                self.assertEqual(navigator.current_action()[0], "reader")
+                self.assertEqual(navigator.move_horizontal(-1), "previous-page")
+
+    def test_left_from_first_auto_returns_to_row_before_previous_page(self):
         navigator = MenuNavigator(self.rows, paged=True)
-        navigator.select_row(5)
-        self.assertIsNone(navigator.move_horizontal(1))
-        self.assertEqual(navigator.current_action()[1][1], "PCE_SWAP")
-        self.assertIsNone(navigator.move_horizontal(1))
-        self.assertEqual(navigator.current_action()[1][1], "PCE_RAW")
-        self.assertEqual(navigator.move_horizontal(1), "next-page")
+        self.assertTrue(navigator.select_auto(1, 0))  # NES row
+        self.assertIsNone(navigator.move_horizontal(-1))
+        self.assertEqual(navigator.current_action(), ("reader", "1"))
+        self.assertEqual(navigator.move_horizontal(-1), "previous-page")
 
     def test_vertical_navigation_retains_auto_column_when_possible(self):
         navigator = MenuNavigator(self.rows, paged=True)
