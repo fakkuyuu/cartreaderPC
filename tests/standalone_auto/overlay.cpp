@@ -15,7 +15,7 @@ template<bool R> class Panel {
  uint8_t getDrawColor(){return color;}void setDrawColor(uint8_t c){color=c;}
  void drawPixel(uint8_t x,uint8_t y){draws++;if(R){x=127-x;y=63-y;}uint16_t a=(y/8)*128+x;uint8_t m=1<<(y%8);if(color)buffer[a]|=m;else buffer[a]&=~m;}
  void drawBox(uint8_t x,uint8_t y,uint8_t w,uint8_t h){for(uint8_t a=0;a<w;a++)for(uint8_t b=0;b<h;b++)drawPixel(x+a,y+b);}
- void updateDisplay(){updates++;uint16_t a=R?896:119;for(uint8_t i=0;i<9;i++)sent[i]=buffer[a+i];}
+ void updateDisplay(){updates++;uint16_t a=R?0:1015;for(uint8_t i=0;i<9;i++)sent[i]=buffer[a+i];}
  void sendBuffer(){updateDisplay();}
 };
 template<bool R> void run(){
@@ -25,8 +25,8 @@ template<bool R> void run(){
  connected=true;p.updateDisplay();CHECK(p.updates==2 && p.draws>0);CHECK(p.color==2);
  const uint8_t glyph[7]={31,5,2,0,14,17,17};
  for(uint8_t i=0;i<9;i++) {
-  uint8_t col=i>=1 && i<=7 ? glyph[i-1] : 0;uint8_t expected=R?1:0;
-  for(uint8_t y=0;y<5;y++)if(col&(1<<y))expected|=1<<(R?6-y:y+1);
+  uint8_t col=i>=2 && i<=8 ? glyph[i-2] : 0;uint8_t expected=R?0:1;
+  for(uint8_t y=0;y<5;y++)if(col&(1<<y))expected|=1<<(R?4-y:y+3);
   CHECK(p.sent[R?8-i:i]==expected);
  }
  for(uint16_t i=0;i<1024;i++)CHECK(p.buffer[i]==0x55);
