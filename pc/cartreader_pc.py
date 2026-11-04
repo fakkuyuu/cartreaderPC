@@ -21,7 +21,11 @@ from connection_status import ConnectionFeedback
 from i18n import UiTranslator
 from ram_status import ram_labels
 from browser_request import make_request
-from auto_menu import ZeroChord, build_auto_entries, display_auto_reason
+from auto_menu import (
+    ZeroChord, build_menu_rows, build_auto_entries, resolve_menu_number,
+    MenuNavigator, is_main_menu, is_widget_within, normalize_digit,
+    display_auto_reason,
+)
 
 BASE = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent.parent
 PROFILE_FILE = BASE / "baud_profiles.json"
@@ -490,7 +494,7 @@ def gui(args):
     _saved_lang = ui_settings.get("language", "English")
     language = tk.StringVar(value="Japanese" if _saved_lang in ("日本語", "JAPANESE") else _saved_lang)
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC106 — Disconnected")
+    window.title("cartreaderPC PC108 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -594,7 +598,7 @@ def gui(args):
     power_on_picker.bind("<<ComboboxSelected>>", remember_power_on)
     menu_title = tk.StringVar(value="接続すると、ここに選択肢が表示されます")
     ttk.Label(menu_panel, textvariable=menu_title).pack(anchor="w")
-    menu_items = ttk.Frame(menu_panel)
+    menu_items = ttk.Frame(menu_panel, takefocus=1)
     menu_items.pack(fill="x", pady=(5, 0))
     parser_buffer = ""
     pending_title = ""
@@ -780,8 +784,9 @@ def gui(args):
         inbox.put(f"[自動吸出し] {target} 自動吸出しを開始\n")
         batch_schedule(selected_number)
     menu_navigation = {
-        "items": [], "options": [], "selected": 0,
-        "auto_entries": (), "activate_auto": None,
+        "items": [], "options": [], "selected": 0, "selected_auto": None,
+        "auto_entries": (), "activate_auto": None, "navigator": None,
+        "rows": (), "root_menu": False, "auto_buttons": {},
     }
     sd_browser = {"window": None, "tree": None, "path": "/", "pending": [],
                   "busy": False, "progress": None, "progress_text": None,
@@ -918,113 +923,167 @@ def gui(args):
 
     def render_menu(title, options, paged):
         auto_shortcut.reset()
+        root_menu = is_main_menu(title)
         menu_navigation["title"] = title
-        if title == "OPEN SOURCE CART READER" and benchmark["index"] is None:
+        if root_menu and benchmark["index"] is None:
             power_on_guard["benchmark"] = False
         input_mode.set("menu")
         menu_title.set(title or "選択してください")
         for child in menu_items.winfo_children():
             child.destroy()
+
+        rows = build_menu_rows(title, options, paged)
+        navigator = MenuNavigator(rows, paged) if root_menu else None
         rendered = []
         auto_buttons = {}
+        auto_entries = tuple(
+            entry for row_data in rows for entry in row_data["auto_entries"]
+        )
 
-        def clear_auto_highlights():
-            for button in auto_buttons.values():
-                button.configure(background="white", foreground="black",
-                                 highlightbackground="white", highlightthickness=0,
-                                 relief="raised")
-
-        def select_row(index):
-            if not rendered:
-                return
-            clear_auto_highlights()
-            menu_navigation["selected"] = index % len(rendered)
-            for position, widget in enumerate(rendered):
-                active = position == menu_navigation["selected"]
-                widget.configure(background="#dbeafe" if active else "white",
-                                 highlightbackground="#2563eb" if active else "white",
-                                 highlightthickness=2 if active else 0)
-
-        def select_auto(button):
-            # Hovering an Auto control supersedes, but does not erase, the
-            # keyboard row index. Returning to a row restores row highlighting.
+        def paint_selection():
             for widget in rendered:
-                widget.configure(background="white", highlightbackground="white",
-                                 highlightthickness=0)
-            for candidate in auto_buttons.values():
-                active = candidate is button
-                candidate.configure(
-                    background="#dbeafe" if active else "white",
-                    foreground="#1d4ed8" if active else "black",
-                    highlightbackground="#2563eb" if active else "white",
-                    highlightthickness=2 if active else 0,
-                    relief="solid" if active else "raised",
+                widget.configure(
+                    background="white", highlightbackground="white",
+                    highlightthickness=0,
+                )
+            for button in auto_buttons.values():
+                button.configure(
+                    background="white", foreground="black",
+                    highlightbackground="white", highlightthickness=0,
+                    relief="raised",
+                )
+            if root_menu and navigator is not None:
+                row_index, auto_index = navigator.current()
+                if auto_index is None:
+                    widget = rendered[row_index]
+                    widget.configure(
+                        background="#dbeafe",
+                        highlightbackground="#2563eb",
+                        highlightthickness=2,
+                    )
+                else:
+                    button = auto_buttons[(row_index, auto_index)]
+                    button.configure(
+                        background="#dbeafe", foreground="#1d4ed8",
+                        highlightbackground="#2563eb",
+                        highlightthickness=2, relief="solid",
+                    )
+                menu_navigation["selected"] = row_index
+                menu_navigation["selected_auto"] = auto_index
+            elif rendered:
+                selected = menu_navigation["selected"] % len(rendered)
+                menu_navigation["selected"] = selected
+                rendered[selected].configure(
+                    background="#dbeafe", highlightbackground="#2563eb",
+                    highlightthickness=2,
                 )
 
-        def clear_auto_button(button):
-            button.configure(background="white", foreground="black",
-                             highlightbackground="white", highlightthickness=0,
-                             relief="raised")
+        def select_row(index):
+            if root_menu and navigator is not None:
+                navigator.select_row(index)
+            else:
+                menu_navigation["selected"] = index % max(1, len(rendered))
+            paint_selection()
 
-        auto_entries = build_auto_entries(title, options)
-        for position, (number, label) in enumerate(options):
-            row_frame = ttk.Frame(menu_items)
+        def select_auto(row_index, auto_index):
+            if navigator is not None and navigator.select_auto(row_index, auto_index):
+                paint_selection()
+
+        def activate_auto(entry, row_index, auto_index):
+            select_auto(row_index, auto_index)
+            menu_items.focus_set()
+            start_batch(entry[1], entry[2])
+
+        def click_reader_option(index, reader_number):
+            select_row(index)
+            menu_items.focus_set()
+            send_menu_key(reader_number)
+
+        for position, row_data in enumerate(rows):
+            row_frame = ttk.Frame(menu_items, takefocus=0)
             row_frame.pack(fill="x", pady=2)
-            item = tk.Label(row_frame, text=f"{number}  {label}", anchor="w",
-                            padx=10, pady=5, relief="solid", borderwidth=1,
-                            background="white", cursor="hand2")
+            display_number = row_data["display_number"]
+            prefix = f"{display_number}  " if display_number else "   "
+            item = tk.Label(
+                row_frame, text=f"{prefix}{row_data['label']}",
+                anchor="w", padx=10, pady=5, relief="solid",
+                borderwidth=1, background="white", cursor="hand2",
+                takefocus=0,
+            )
             item.pack(side="left", fill="x", expand=True)
             rendered.append(item)
             item.bind("<Enter>", lambda event, i=position: select_row(i))
-            item.bind("<Button-1>", lambda event, n=number: send_menu_key(n))
-        if auto_entries:
-            auto_panel = ttk.LabelFrame(
-                menu_items,
-                text="自動吸出し（0を押しながら1〜8）",
-                padding=(5, 4),
+            item.bind(
+                "<Button-1>",
+                lambda event, i=position, n=row_data["reader_number"]:
+                    click_reader_option(i, n),
             )
-            auto_panel.pack(fill="x", pady=(6, 2))
-            for column in range(2):
-                auto_panel.columnconfigure(column, weight=1)
-            for index, entry in enumerate(auto_entries):
-                shortcut, target, number, button_label = entry
-                cell = ttk.Frame(auto_panel)
-                cell.grid(row=index // 2, column=index % 2,
-                          sticky="ew", padx=3, pady=2)
-                ttk.Label(cell, text=f"0+{shortcut}", width=4).pack(side="left")
+            for auto_index, entry in enumerate(row_data["auto_entries"]):
+                shortcut, _target, _reader_number, button_label = entry
                 button = tk.Button(
-                    cell, text=button_label,
-                    command=lambda t=target, n=number: start_batch(t, n),
-                    padx=5, pady=2, bd=1, relief="raised",
+                    row_frame, text=f"0+{shortcut}  {button_label}",
+                    command=lambda e=entry, r=position, a=auto_index:
+                        activate_auto(e, r, a),
+                    padx=5, pady=3, bd=1, relief="raised",
                     background="white", activebackground="#dbeafe",
                     highlightthickness=0, cursor="hand2", takefocus=0,
+                    font=("TkDefaultFont", 8),
                 )
-                button.pack(side="left", fill="x", expand=True)
-                auto_buttons[shortcut] = button
-                button.bind("<Enter>", lambda event, w=button: select_auto(w))
-                button.bind("<Leave>", lambda event, w=button: clear_auto_button(w))
-
-        def activate_auto(entry):
-            button = auto_buttons.get(entry[0])
-            if button is not None:
-                select_auto(button)
-            start_batch(entry[1], entry[2])
+                button.pack(side="left", padx=(4, 0))
+                auto_buttons[(position, auto_index)] = button
+                button.bind(
+                    "<Enter>",
+                    lambda event, r=position, a=auto_index: select_auto(r, a),
+                )
+                button.bind(
+                    "<Button-1>",
+                    lambda event: menu_items.focus_set(),
+                    add="+",
+                )
 
         menu_navigation["items"] = rendered
         menu_navigation["options"] = list(options)
         menu_navigation["paged"] = paged
         menu_navigation["selected"] = 0
+        menu_navigation["selected_auto"] = None
+        menu_navigation["root_menu"] = root_menu
+        menu_navigation["rows"] = rows
+        menu_navigation["navigator"] = navigator
         menu_navigation["auto_entries"] = auto_entries
-        menu_navigation["activate_auto"] = activate_auto if auto_entries else None
+        menu_navigation["auto_buttons"] = auto_buttons
+        menu_navigation["activate_auto"] = (
+            lambda entry: activate_auto(entry,
+                next((i for i, row_data in enumerate(rows)
+                      for a, candidate in enumerate(row_data["auto_entries"])
+                      if candidate[0] == entry[0]), 0),
+                next((a for row_data in rows for a, candidate in enumerate(row_data["auto_entries"])
+                      if candidate[0] == entry[0]), 0))
+        ) if root_menu and auto_entries else None
         menu_navigation["select_row"] = select_row if rendered else None
+        menu_navigation["paint_selection"] = paint_selection
+        menu_items.configure(takefocus=1)
+        paint_selection()
         if rendered:
-            select_row(0)
-            window.focus_set()
+            # The menu is one focus stop; its individual rows and Auto controls
+            # are mouse targets, not separate Tab stops.
+            menu_items.focus_set()
         if paged:
-            nav = ttk.Frame(menu_items)
+            nav = ttk.Frame(menu_items, takefocus=0)
             nav.pack(fill="x", pady=(5, 0))
-            ttk.Button(nav, text="7  ◀ 前のページ (←)", command=lambda: send_menu_key("[")).pack(side="left")
-            ttk.Button(nav, text="8  次のページ (→) ▶", command=lambda: send_menu_key("]")).pack(side="right")
+            previous = ttk.Button(
+                nav, text="7  ◀ 前のページ",
+                command=lambda: send_menu_key("["),
+                takefocus=0,
+            )
+            previous.pack(side="left")
+            following = ttk.Button(
+                nav, text="8  次のページ ▶",
+                command=lambda: send_menu_key("]"),
+                takefocus=0,
+            )
+            following.pack(side="right")
+            previous.bind("<Button-1>", lambda event: menu_items.focus_set(), add="+")
+            following.bind("<Button-1>", lambda event: menu_items.focus_set(), add="+")
         if batch.active:
             was_active = batch.active
             action = batch.on_menu(title, options)
@@ -1352,7 +1411,7 @@ def gui(args):
                 set_storage_state("PC", desired if desired != "PC" else None)
             if version_match:
                 window.title(
-                    f"cartreaderPC PC106 — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC108 — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1428,7 +1487,7 @@ def gui(args):
                 power_on.disconnected()
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC106 — Disconnected")
+                window.title("cartreaderPC PC108 — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")
@@ -1950,30 +2009,8 @@ def gui(args):
                 for code in (0x11, 0x12, 0x5B, 0x5C)):
             return None
         key = event.keysym.lower()
-        keypad = {f"kp_{n}": str(n) for n in range(10)}
-        keypad.update({
-            "kp_insert": "0", "kp_end": "1", "kp_down": "2",
-            "kp_next": "3", "kp_left": "4", "kp_begin": "5",
-            "kp_right": "6", "kp_home": "7", "kp_up": "8",
-            "kp_prior": "9",
-        })
-        fullwidth_digits = "０１２３４５６７８９"
-        # On Windows/Tk the numeric keypad sometimes reports an empty char and
-        # a locale-dependent keysym. Virtual-key codes 96..105 are stable.
-        if os.name == "nt" and 96 <= event.keycode <= 105:
-            typed_digit = str(event.keycode - 96)
-        elif os.name == "nt" and 48 <= event.keycode <= 57:
-            typed_digit = str(event.keycode - 48)
-        elif event.char and event.char in "0123456789":
-            typed_digit = event.char
-        elif event.char and event.char in fullwidth_digits:
-            typed_digit = str(fullwidth_digits.index(event.char))
-        elif key and key in "0123456789":
-            # Japanese IME and some focused Tk widgets report an empty char
-            # while keeping the top-row digit in keysym.
-            typed_digit = key
-        else:
-            typed_digit = keypad.get(key, "")
+        typed_digit = normalize_digit(
+            key, event.char, event.keycode, windows=(os.name == "nt"))
         if input_mode.get() == "nes-mapper":
             # The mapper combobox receives digits, Backspace and Enter itself.
             return None
@@ -2046,72 +2083,120 @@ def gui(args):
             if key in ("u", "d", "l"):
                 send_key(key)
                 return "break"
-        if input_mode.get() == "menu" and menu_navigation["items"]:
-            consumed, auto_entry = auto_shortcut.key_down(
-                typed_digit, menu_navigation.get("auto_entries", ()))
-            if consumed:
-                if auto_entry is not None:
-                    activate = menu_navigation.get("activate_auto")
-                    if activate is not None:
-                        activate(auto_entry)
-                return "break"
+        if (input_mode.get() == "menu" and menu_navigation["items"]
+                and is_widget_within(event.widget, menu_items)):
+            root_menu = menu_navigation.get("root_menu", False)
+            if root_menu:
+                consumed, auto_entry = auto_shortcut.key_down(
+                    typed_digit, menu_navigation.get("auto_entries", ()))
+                if consumed:
+                    if auto_entry is not None:
+                        navigator = menu_navigation["navigator"]
+                        selected = navigator.select_auto_shortcut(auto_entry[0])
+                        if selected is not None:
+                            paint = menu_navigation.get("paint_selection")
+                            if paint:
+                                paint()
+                            activate = menu_navigation.get("activate_auto")
+                            if activate:
+                                activate(auto_entry)
+                    return "break"
+
+                navigator = menu_navigation["navigator"]
+                if key in ("up", "down"):
+                    navigator.move_vertical(-1 if key == "up" else 1)
+                    menu_navigation["selected"] = navigator.row
+                    menu_navigation["selected_auto"] = navigator.auto_index
+                    paint = menu_navigation.get("paint_selection")
+                    if paint:
+                        paint()
+                    return "break"
+                if key in ("left", "right"):
+                    page_action = navigator.move_horizontal(-1 if key == "left" else 1)
+                    menu_navigation["selected"] = navigator.row
+                    menu_navigation["selected_auto"] = navigator.auto_index
+                    paint = menu_navigation.get("paint_selection")
+                    if paint:
+                        paint()
+                    if page_action == "previous-page":
+                        send_menu_key("[")
+                    elif page_action == "next-page":
+                        send_menu_key("]")
+                    return "break"
+                if key in ("prior", "page_up"):
+                    send_menu_key("[")
+                    return "break"
+                if key in ("next", "page_down"):
+                    send_menu_key("]")
+                    return "break"
+                if key in ("return", "space", "kp_enter"):
+                    action = navigator.current_action()
+                    if action and action[0] == "reader":
+                        send_menu_key(action[1])
+                    elif action and action[0] == "auto":
+                        entry = action[1]
+                        start_batch(entry[1], entry[2])
+                    return "break"
+                if typed_digit:
+                    reader_key = resolve_menu_number(
+                        menu_navigation["title"], menu_navigation["options"],
+                        typed_digit, menu_navigation.get("paged", False))
+                    if reader_key is not None:
+                        if reader_key in ("[", "]"):
+                            send_menu_key(reader_key)
+                        else:
+                            target_row = next(
+                                (i for i, row_data in enumerate(menu_navigation["rows"])
+                                 if row_data["reader_number"] == reader_key),
+                                None,
+                            )
+                            if target_row is not None:
+                                navigator.select_row(target_row)
+                                menu_navigation["selected"] = target_row
+                                menu_navigation["selected_auto"] = None
+                                paint = menu_navigation.get("paint_selection")
+                                if paint:
+                                    paint()
+                            send_menu_key(reader_key)
+                    return "break"
+                if key == "tab":
+                    # Let Tk's focus traversal move from the single menu group
+                    # to the next external control (Shift+Tab works natively).
+                    return None
+                return None
+
+            # Submenus keep their existing reader numbering and page behavior.
             if menu_navigation.get("paged") and typed_digit in ("7", "8"):
-                select_row = menu_navigation.get("select_row")
-                if select_row:
-                    select_row(menu_navigation["selected"])
                 send_menu_key("[" if typed_digit == "7" else "]")
                 return "break"
             if key in ("prior", "page_up"):
-                select_row = menu_navigation.get("select_row")
-                if select_row:
-                    select_row(menu_navigation["selected"])
                 send_menu_key("[")
                 return "break"
             if key in ("next", "page_down"):
-                select_row = menu_navigation.get("select_row")
-                if select_row:
-                    select_row(menu_navigation["selected"])
                 send_menu_key("]")
                 return "break"
             if key in ("up", "down"):
                 delta = -1 if key == "up" else 1
                 selected = (menu_navigation["selected"] + delta) % len(menu_navigation["items"])
-                select_row = menu_navigation.get("select_row")
-                if select_row:
-                    select_row(selected)
-                else:
-                    menu_navigation["selected"] = selected
+                menu_navigation["selected"] = selected
+                paint = menu_navigation.get("paint_selection")
+                if paint:
+                    paint()
                 return "break"
             if key == "left":
-                select_row = menu_navigation.get("select_row")
-                if select_row:
-                    select_row(menu_navigation["selected"])
                 send_menu_key("[")
                 return "break"
             if key == "right":
-                select_row = menu_navigation.get("select_row")
-                if select_row:
-                    select_row(menu_navigation["selected"])
                 send_menu_key("]")
                 return "break"
             if key in ("return", "space", "kp_enter"):
-                select_row = menu_navigation.get("select_row")
-                if select_row:
-                    select_row(menu_navigation["selected"])
                 send_menu_key(menu_navigation["options"][menu_navigation["selected"]][0])
                 return "break"
+            if typed_digit and typed_digit in "0123456789ud":
+                send_menu_key(typed_digit)
+                return "break"
+            return None
         value = typed_digit or (key if key in "ud" else event.char.lower())
-        if input_mode.get() == "menu" and value and value in "0123456789ud":
-            select_row = menu_navigation.get("select_row")
-            if select_row:
-                matching = next(
-                    (index for index, option in enumerate(menu_navigation["options"])
-                     if str(option[0]) == value),
-                    menu_navigation["selected"],
-                )
-                select_row(matching)
-            send_menu_key(value)
-            return "break"
     # Bind the disabled console directly as well: Tk's Text class can consume
     # key events before the application-wide binding gets them.
     capture_tag = "ReaderKeyboardCapture"
