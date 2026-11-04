@@ -46,6 +46,7 @@ struct FakeDisplay:FakeOut {
 static void println_Msg(const __FlashStringHelper*){}
 static void display_Update(){}
 static void rgbLed(uint8_t){}
+#include "../../Cart_Reader/BootDumpCursor.h"
 #include "../../Cart_Reader/ZZ_StandaloneAuto.ino"
 extern "C" {volatile uint16_t test_result=0;volatile uint16_t failed_at=0;volatile uint16_t test_count=0;}
 #define CHECK(x) do {test_count++; if(!(x)){failed_at=test_count;test_result=0xDEAD;while(1){asm volatile("nop");}}}while(0)
@@ -112,5 +113,25 @@ int main(){
  standaloneSuppressNextBoot();standaloneBootCapture();standaloneBootReady();CHECK(!standaloneStage && standalonePreset==2);
  resetRun();standaloneBootCapture();standaloneBootReady();CHECK(standaloneStage==1 && standalonePreset==2);
  CHECK(standaloneResetMarker==0);
+
+ resetRun();standalonePreset=0;standaloneSetPreset(2);
+ CHECK(standaloneHeaderSelectable(F("OPEN SOURCE CART READER")));
+ CHECK(standaloneHeaderSelectable(F("Select Game Boy")));
+ CHECK(!standaloneHeaderSelectable(F("GBA Cart Reader")));
+ CHECK(bootDumpCursorAction(false,2,0,7,true,false)==BD_HEADER);
+ CHECK(bootDumpCursorAction(false,1,6,7,true,true)==BD_HEADER);
+ CHECK(bootDumpCursorAction(false,1,6,7,true,false)==BD_NORMAL);
+ CHECK(bootDumpCursorAction(false,2,2,7,true,true)==BD_NORMAL);
+ CHECK(bootDumpCursorAction(true,1,0,7,true,true)==BD_FIRST);
+ CHECK(bootDumpCursorAction(true,2,0,7,true,true)==BD_LAST);
+ CHECK(bootDumpCursorAction(true,2,0,7,false,true)==BD_PREVIOUS_PAGE);
+ CHECK(bootDumpCursorAction(true,3,0,7,true,true)==BD_DISABLE);
+ CHECK(bootDumpCursorAction(true,0,0,7,true,true)==BD_NORMAL);
+ CHECK(bootDumpCursorAction(true,4,0,7,true,true)==BD_NORMAL);
+ standaloneDisablePreset();CHECK(!standalonePreset);
+ CHECK(!standaloneHeaderSelectable(F("OPEN SOURCE CART READER")));
+ writes=EEPROM.writes;standaloneDisablePreset();CHECK(EEPROM.writes==writes);
+ CHECK(!hold(2,3500,changed));CHECK(standalonePreset==2);
+ CHECK(!hold(2,3500,changed));CHECK(!standalonePreset);
  test_result=0x600D;while(1){asm volatile("nop");}
 }

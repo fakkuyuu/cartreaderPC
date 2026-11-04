@@ -69,7 +69,7 @@ ID    Status   Prio Categories                    Title
 044   OPEN     P2   enhancement/logging           Timestamps for shared log milestones and ROM companion TXT
 045   VERIFY   P2   enhancement/automation        Standalone SD automatic dump and power-on start
 046   VERIFY   P2   bug/verification/ui           Empty PCE slot produces all-FF dump and green success
-047   OPEN     P2   enhancement/ui                Small persistent reader-display host connection marker
+047   VERIFY   P2   enhancement/ui                Small persistent reader-display host connection marker
 
 [DETAILS]
 PC100 build report (2026-11-03 20:42:14 JST): Built GitHub1de58ba with local PC100 branding. All 67 tests and independent integration checks pass: MD internal checksum error stops before save with solid red; valid ROM followed by save error alternates at 1-second intervals. EXE self-test PASS/exit0. Preserve results during USB loss and reset on reconnect. No firmware changes/upload. Hardware confirmation pending; retain VERIFY.
@@ -876,6 +876,9 @@ Checks: actual AVR control-code mocked-I/O checks:91 each button/rotary PASS, in
 Hardware pending. Verify menu Reset does not redump, next power cycle does, held-button startup renders menu/discards release, and header is clean. Initial upload failed before writing because COM5 was absent; retry after user confirmed power-on and idle. GBA FASTCRC unchanged.
 PC105 upload complete (2026-11-04 18:48:57 JST): COM5 retry succeeded, avrdude exit0/221178 bytes written. Post-upload verification skipped with -V. Functional hardware checks pending.
 PC105 hardware result/new proposal (2026-11-04 19:25:34 JST): User reports having tried the functions and they work; per-console/condition details unspecified, not proof of all targets or V5 hardware. Proposal: make the active BootDump: <target> header cursor-selectable; HW3 right short press / V5 knob press disables it. Keep a quick disable alternative to holding. Design cursor/header restoration after disabling and prevent the same press from selecting an ordinary console. Recorded only; no source changes.
+PC106 implementation authorized (2026-11-04 20:04:06 JST): User requested the PC connection marker and cursor-selectable BootDump header disable. Retain the per-console 3-second hold disable. Use the supplied PC glyph with existing display updates.
+PC106 implementation (2026-11-04 20:11:41 JST): Added a virtual cursor-selectable active BootDump header. Previous from the first item selects it; right short press/V5 knob press disables and restores ordinary heading/first-item cursor, without selecting that item on the same event. Separate boolean, never an answers-array index; preserve numbered input/page boundaries. Retain per-target 3-second disable/move. Return ready notifications for PC physical-control gestures. 111 mocked AVR checks each button/rotary PASS. Hardware pending.
+PC106 upload complete (2026-11-04 20:12:54 JST): COM5,222024 bytes written,avrdude exit0. Post-upload verification skipped with -V per preference. Keep PC105 tool. Functional hardware checks pending.
 
 
 #046 Empty PCE slot produces all-FF dump and green success
@@ -894,9 +897,12 @@ User confirmation (2026-11-04 16:27:55 JST): User replied OK after PC103 deliver
 #047 Persistent small host-connection marker on reader display
 Added: 2026-11-04 19:47:08 JST
 Last updated: 2026-11-04 19:47:08 JST
-Status: OPEN / P2 / enhancement, ui
+Status: VERIFY / P2 / enhancement, ui
 Request: Show a persistent unobtrusive indicator on the physical reader display while connected to the PC tool.
 Proposal (not agreed yet): A steady 2-3px square at the top-right, visible only with an established tool connection. USB power alone is not a connection. Independent of PC/SD destination: remain visible in connected SD mode.
 Design: Avoid normal menus, hold previews, progress and information/error screens; preserve the marker across redraws on HW3 OLED/V5 LCD and remove it on disconnect. Minimize RAM overhead.
 Implementation: Request recorded only. Shape/placement tentative; no source/build/upload changes.
 Design decision (2026-11-04 19:57:30 JST): User requested a PC-letter marker rather than a plain square and supplied download.png as the preferred design. Saved reference: work/ui-previews/pc-connected-user-reference.png. Place top-right; when overlapping the heading, clear the marker area and draw the marker last with priority. Use the user image for frame/glyph design, not the earlier assistant 11x7 proposal. Show only with a tool connection, including connected SD mode; not USB power alone. Design recorded only; no implementation.
+PC106 implementation authorized (2026-11-04 20:04:06 JST): User requested the PC connection marker and cursor-selectable BootDump header disable. Retain the per-console 3-second hold disable. Use the supplied PC glyph with existing display updates.
+PC106 implementation (2026-11-04 20:11:41 JST): ConnectedReaderDisplay overlays the supplied 7x5 PC glyph in a priority 9x7 top-right region only during existing updateDisplay/sendBuffer panel transfers. Save/restore nine original framebuffer bytes on stack to prevent stale marks. Uses established host connection independently of storage mode; no blink timer or extra periodic updates. One refresh on clean disconnect. 4160 AVR checks PASS for R0/R2 mapping, single transfer, draw color and buffer restoration; glyph exactly matches user image. HW3/HW5 builds PASS; static RAM +12B each versus PC105, nine-byte temporary backup during drawing. Hardware timing/RAM/location pending.
+PC106 upload complete (2026-11-04 20:12:54 JST): COM5,222024 bytes written,avrdude exit0. Post-upload verification skipped with -V per preference. Keep PC105 tool. Functional hardware checks pending.

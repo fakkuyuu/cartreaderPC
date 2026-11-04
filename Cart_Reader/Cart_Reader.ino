@@ -59,6 +59,8 @@
 
 #include "OSCR.h"
 #include "StandaloneAuto.h"
+#include "ConnectedReaderDisplay.h"
+#include "BootDumpCursor.h"
 
 void pcVerificationResult(uint8_t code);
 
@@ -86,7 +88,7 @@ template<class T> int EEPROM_readAnything(int ee, T& value);
 // Graphic SPI LCD
 #ifdef ENABLE_LCD
 #include <U8g2lib.h>
-U8G2_ST7567_OS12864_F_4W_HW_SPI display(U8G2_R2, /* cs=*/12, /* dc=*/11, /* reset=*/10);
+ConnectedReaderDisplay<U8G2_ST7567_OS12864_F_4W_HW_SPI, true> display(U8G2_R2, /* cs=*/12, /* dc=*/11, /* reset=*/10);
 #endif
 
 // Rotary Encoder
@@ -123,7 +125,7 @@ typedef enum COLOR_T {
 // Graphic I2C OLED
 #ifdef ENABLE_OLED
 #include <U8g2lib.h>
-U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
+ConnectedReaderDisplay<U8G2_SSD1306_128X64_NONAME_F_HW_I2C, false> display(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
 #endif
 
 extern bool errorLvl;
@@ -2978,6 +2980,12 @@ void println_Msg(long unsigned int message) {
 #endif
 }
 
+void readerConnectionDisplayRefresh() {
+#if defined(ENABLE_LCD) || defined(ENABLE_OLED)
+  display.updateDisplay();
+#endif
+}
+
 void display_Update() {
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.updateDisplay();
@@ -3216,6 +3224,8 @@ redraw:
 
   unsigned long idleTime = millis();
   byte currentColor = 0;
+  bool bootHeaderSelected = false;
+  bool bootHeaderAvailable = standaloneHeaderSelectable(question);
   uint8_t pcButtonEvent = 0;
   int8_t automaticChoice = standaloneMenu(question, answers, num_answers);
   if (automaticChoice == -2) return 0;
@@ -3329,6 +3339,7 @@ redraw:
       else if (incomingByte == ' ') pcButtonEvent = 3;
       else if (incomingByte == 'l' || incomingByte == 'L') pcButtonEvent = 4;
       if (incomingByte >= '0' && incomingByte < ('0' + num_answers)) {
+        bootHeaderSelected=false;
         choice = incomingByte - '0';
         PcConsole.print(F("[Menu] accepted choice="));
         PcConsole.println(choice);
@@ -3339,7 +3350,7 @@ redraw:
 #endif
     // Standalone right/knob holds commit only after release. PC controls
     // retain their existing paths and never race the firmware automator.
-    if (!PcLink::connected() && !standaloneInputBlocked()) {
+    if (!bootHeaderSelected && !PcLink::connected() && !standaloneInputBlocked()) {
       uint8_t resolved = standaloneTarget(question, answers[choice], true);
       if (resolved && standaloneRightDown()) {
         bool changed = false;
@@ -3379,6 +3390,35 @@ redraw:
     } else
 #endif
       b = checkButton();
+
+    if (bootHeaderAvailable) {
+      BootDumpCursorAction headerAction = bootDumpCursorAction(
+          bootHeaderSelected, b, choice, num_answers, currPage<=1, currPage>=numPages);
+      if (headerAction == BD_DISABLE) {
+        standaloneDisablePreset();
+        default_choice=0;
+        goto redraw;
+      }
+      if (headerAction != BD_NORMAL) {
+        display.setDrawColor(0);
+        display.drawBox(1, bootHeaderSelected ? 3 : 8*choice+11, 3, 3);
+        display.setDrawColor(1);
+        if (headerAction == BD_PREVIOUS_PAGE) {
+          lastPage=currPage; currPage--; break;
+        }
+        bootHeaderSelected = headerAction == BD_HEADER;
+        if (headerAction == BD_FIRST) choice=0;
+        if (headerAction == BD_LAST) choice=num_answers-1;
+        display.drawBox(1, bootHeaderSelected ? 3 : 8*choice+11, 3, 3);
+        display.updateDisplay();
+        idleTime=millis();
+#ifdef PC_MENU
+        PcLink::menuReady();
+#endif
+        checkUpdater();
+        continue;
+      }
+    }
 
     // if button is pressed twice or rotary encoder turned left/counter clockwise
     if (b == 2) {

@@ -249,6 +249,7 @@ void standaloneTitle(const __FlashStringHelper* title) {
 #if defined(ENABLE_LCD) || defined(ENABLE_OLED)
   if(standalonePreset && (standaloneIs(title,F("OPEN SOURCE CART READER"))
       || standaloneIs(title,F("Select Game Boy")) || standaloneIs(title,F("Select device")))) {
+    display.setCursor(6,8);
     display.print(F("BootDump: ")); display.println(standaloneDisplayName(standalonePreset));
   } else display.println(title);
 #endif
@@ -256,3 +257,12 @@ void standaloneTitle(const __FlashStringHelper* title) {
 
 
 bool standaloneFileTracking() { return standaloneStage==2 || standaloneStage==3; }
+
+bool standaloneHeaderSelectable(const __FlashStringHelper* title) {
+  return standalonePreset && (
+      standaloneIs(title,F("OPEN SOURCE CART READER"))
+      || standaloneIs(title,F("Select Game Boy")) || standaloneIs(title,F("Select device")));
+}
+void standaloneDisablePreset() {
+  if(standalonePreset) standaloneSetPreset(standalonePreset);
+}

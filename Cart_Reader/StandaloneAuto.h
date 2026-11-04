@@ -17,3 +17,5 @@ void standaloneSuppressNextBoot();
 bool standaloneRightDown();
 void standaloneTitle(const __FlashStringHelper* title);
 bool standaloneFileTracking();
+bool standaloneHeaderSelectable(const __FlashStringHelper* title);
+void standaloneDisablePreset();

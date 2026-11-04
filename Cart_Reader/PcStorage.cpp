@@ -1,3 +1,4 @@
+#include "ConnectedReaderDisplay.h"
 #include "StandaloneAuto.h"
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "PcStorage.h"
@@ -155,6 +156,7 @@ bool detachToPhysical() {
   Serial.flush();
   Serial.end();
   activeBaud=safeBaud=dumpBaud=250000UL;
+  readerConnectionDisplayRefresh();
   return ready;
 }
 static uint8_t receive() {
