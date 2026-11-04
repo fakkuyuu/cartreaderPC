@@ -9,6 +9,7 @@ from auto_menu import (
     build_menu_rows,
     display_auto_reason,
     is_widget_within,
+    move_focus_from_group,
     normalize_digit,
     resolve_menu_number,
 )
@@ -26,6 +27,29 @@ class FakeLanguage:
 class FakeWidget:
     def __init__(self, master=None):
         self.master = master
+
+
+class FakeFocusTarget:
+    def __init__(self):
+        self.focused = False
+
+    def focus_set(self):
+        self.focused = True
+
+
+class FakeFocusGroup:
+    def __init__(self):
+        self.next_target = FakeFocusTarget()
+        self.previous_target = FakeFocusTarget()
+        self.requested = None
+
+    def tk_focusNext(self):
+        self.requested = "next"
+        return self.next_target
+
+    def tk_focusPrev(self):
+        self.requested = "previous"
+        return self.previous_target
 
 
 ROOT_OPTIONS = (
@@ -215,6 +239,18 @@ class AutoMenuTests(unittest.TestCase):
         self.assertEqual(chord.key_down("0", ()), (False, None))
         self.assertFalse(chord.zero_pressed)
 
+    def test_tab_and_shift_tab_move_to_next_and_previous_external_controls(self):
+        group = FakeFocusGroup()
+        next_target = move_focus_from_group(group, backwards=False)
+        self.assertIs(next_target, group.next_target)
+        self.assertEqual(group.requested, "next")
+        self.assertTrue(next_target.focused)
+
+        previous_target = move_focus_from_group(group, backwards=True)
+        self.assertIs(previous_target, group.previous_target)
+        self.assertEqual(group.requested, "previous")
+        self.assertTrue(previous_target.focused)
+
     def test_arrow_key_focus_scope_is_limited_to_operation_menu_group(self):
         menu = FakeWidget()
         row = FakeWidget(menu)
@@ -231,8 +267,7 @@ class AutoMenuTests(unittest.TestCase):
         self.assertIn("is_widget_within(event.widget, menu_items)", gui)
         self.assertIn("takefocus=0", gui)
         self.assertIn('if key in ("tab", "iso_left_tab"):', gui)
-        self.assertIn("menu_items.tk_focusNext()", gui)
-        self.assertIn("menu_items.tk_focusPrev()", gui)
+        self.assertIn("move_focus_from_group(menu_items, backwards)", gui)
 
     def test_gui_keeps_one_click_auto_buttons_inline_and_single_highlight(self):
         gui = (Path(__file__).with_name("cartreader_pc.py")
