@@ -6,6 +6,15 @@ from auto_menu import (
     build_auto_entries,
     display_auto_reason,
 )
+from i18n import UiTranslator
+
+
+class FakeLanguage:
+    def __init__(self, value):
+        self.value = value
+
+    def get(self):
+        return self.value
 
 
 ROOT_OPTIONS = (
@@ -86,6 +95,27 @@ class AutoMenuTests(unittest.TestCase):
         chord = ZeroChord()
         chord.key_down("0", self.entries)
         self.assertEqual(chord.key_down("9", self.entries), (True, None))
+
+
+    def test_auto_hint_and_user_logs_translate_to_english(self):
+        translator = UiTranslator(None, FakeLanguage("English"))
+        self.assertEqual(
+            translator.translate("自動吸出し（0を押しながら1〜8）"),
+            "Auto dump (hold 0 + 1–8)",
+        )
+        self.assertEqual(
+            translator.translate("[自動吸出し] GB 自動吸出しを開始"),
+            "[Auto dump] GB Auto dump started",
+        )
+        self.assertEqual(
+            translator.translate("自動吸出し完了: Game (DB照合なし)"),
+            "Auto dump complete: Game (no database match)",
+        )
+
+    def test_auto_hint_and_user_logs_remain_japanese_in_japanese_mode(self):
+        translator = UiTranslator(None, FakeLanguage("Japanese"))
+        value = "自動吸出し（0を押しながら1〜8）"
+        self.assertEqual(translator.translate(value), value)
 
     def test_display_copy_uses_auto_wording_without_mutating_internal_reason(self):
         internal = "一括吸出し完了: Game (DB照合なし)"
