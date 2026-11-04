@@ -97,11 +97,13 @@ class MenuNavigator:
         self.paged = bool(paged)
         self.row = 0
         self.auto_index = None
+        self.preferred_auto_index = None
 
     def select_row(self, row_index):
         if self.rows:
             self.row = max(0, min(int(row_index), len(self.rows) - 1))
         self.auto_index = None
+        self.preferred_auto_index = None
 
     def select_auto(self, row_index, auto_index):
         if not self.rows:
@@ -112,6 +114,7 @@ class MenuNavigator:
             return False
         self.row = row_index
         self.auto_index = max(0, min(int(auto_index), len(entries) - 1))
+        self.preferred_auto_index = self.auto_index
         return True
 
     def select_auto_shortcut(self, shortcut):
@@ -138,8 +141,12 @@ class MenuNavigator:
             return
         self.row = (self.row + (1 if delta > 0 else -1)) % len(self.rows)
         if self.auto_index is not None:
+            self.preferred_auto_index = self.auto_index
+        if self.preferred_auto_index is not None:
             entries = self.rows[self.row]["auto_entries"]
-            self.auto_index = min(self.auto_index, len(entries) - 1) if entries else None
+            self.auto_index = (
+                min(self.preferred_auto_index, len(entries) - 1) if entries else None
+            )
 
     def move_horizontal(self, delta):
         if not self.rows:
@@ -151,6 +158,7 @@ class MenuNavigator:
                     self.auto_index -= 1
                 else:
                     self.auto_index = None
+                    self.preferred_auto_index = None
             elif self.row == 0 and self.paged:
                 return "previous-page"
             return None
@@ -164,6 +172,7 @@ class MenuNavigator:
 
         if self.auto_index < len(row_entries) - 1:
             self.auto_index += 1
+            self.preferred_auto_index = self.auto_index
         elif self.row == len(self.rows) - 1 and self.paged:
             return "next-page"
         return None
