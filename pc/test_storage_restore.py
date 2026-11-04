@@ -3,6 +3,7 @@ import ast
 from pathlib import Path
 import queue
 import unittest
+from power_on_dump import PowerOnDump
 
 
 class Value:
@@ -22,6 +23,9 @@ class RestoreTests(unittest.TestCase):
     def setUp(self):
         self.sent = []
         self.ns = {
+            "power_on": PowerOnDump({}),
+            "power_on_guard": {"reset": False, "benchmark": False},
+            "benchmark": {"index": None}, "menu_navigation": {},
             "storage_current": {"mode": "PC", "pending": None, "desired": "PC"},
             "storage_mode": Value(""), "transfer_speed": Value("転送: 待機"),
             "input_ready": Value(False), "input_mode": Value("menu"),

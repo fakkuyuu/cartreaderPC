@@ -15,6 +15,7 @@ import time
 from protocol import ProtocolError, encode, receive
 from storage import Storage
 from batch_dump import BatchDump
+from power_on_dump import PowerOnDump, TARGETS as POWER_ON_TARGETS
 from dump_result import DumpResult
 from connection_status import ConnectionFeedback
 from i18n import UiTranslator
@@ -481,10 +482,14 @@ def gui(args):
     from serial.tools import list_ports
     window = tk.Tk()
     ui_settings = load_ui_settings()
+    power_on = PowerOnDump(ui_settings)
+    power_on_guard = {"reset": False, "benchmark": False}
+    power_on_enabled = tk.BooleanVar(value=power_on.enabled)
+    power_on_target = tk.StringVar(value=dict(POWER_ON_TARGETS)[power_on.target])
     _saved_lang = ui_settings.get("language", "English")
     language = tk.StringVar(value="Japanese" if _saved_lang in ("日本語", "JAPANESE") else _saved_lang)
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC101 — Disconnected")
+    window.title("cartreaderPC PC102 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -568,6 +573,24 @@ def gui(args):
     copy_cancel = threading.Event()
     worker = None
     host_state = {}
+    def remember_power_on(event=None):
+        labels = {label: target for target, label in POWER_ON_TARGETS}
+        power_on.configure(power_on_enabled.get(), labels.get(power_on_target.get(), "GB"))
+        ui_settings.update(power_on.settings())
+        try:
+            save_ui_settings(ui_settings)
+        except OSError as exc:
+            inbox.put(f"[Settings] {exc}\n")
+    power_on_row = ttk.Frame(menu_panel)
+    power_on_row.pack(fill="x", pady=(0, 6))
+    ttk.Checkbutton(power_on_row, text="起動時自動吸出し", variable=power_on_enabled,
+                    command=remember_power_on).pack(side="left")
+    power_on_picker = ttk.Combobox(
+        power_on_row, textvariable=power_on_target,
+        values=tuple(label for target, label in POWER_ON_TARGETS),
+        state="readonly", width=43)
+    power_on_picker.pack(side="left", padx=(8, 0))
+    power_on_picker.bind("<<ComboboxSelected>>", remember_power_on)
     menu_title = tk.StringVar(value="接続すると、ここに選択肢が表示されます")
     ttk.Label(menu_panel, textvariable=menu_title).pack(anchor="w")
     menu_items = ttk.Frame(menu_panel)
@@ -721,6 +744,25 @@ def gui(args):
                 and input_ready.get() and not sd_browser["busy"]):
             batch_pending["key"] = None
             send_menu_key(value, "一括吸出し中...", automated=True)
+    def power_on_poll():
+        if (not power_on.pending or not worker or not worker.is_alive()
+                or not input_ready.get() or input_mode.get() != "menu"
+                or batch.active or sd_browser["busy"]
+                or benchmark["index"] is not None or storage_current["pending"]):
+            return
+        action = power_on.menu_action(menu_navigation.get("title", ""),
+            menu_navigation["options"], menu_navigation.get("paged", False),
+            storage_current["mode"])
+        if not action:
+            return
+        if action[0] == "start":
+            inbox.put("[Auto start] 起動時自動吸出しを開始します。\n")
+            start_batch(action[1], action[2])
+        elif action[0] == "page":
+            send_menu_key(action[1], automated=True)
+        else:
+            inbox.put(f"[Auto start] {action[1]}\n")
+
     def start_batch(target, selected_number):
         if (not worker or not worker.is_alive() or not input_ready.get()
                 or input_mode.get() != "menu" or sd_browser["busy"]
@@ -729,6 +771,7 @@ def gui(args):
             inbox.put("[Batch] 一括吸出しはPC保存・接続済みの機種選択メニューから開始してください\n")
             return
         reset_dump_result()
+        power_on.cancel()
         dump_result.begin_batch()
         paint_dump_result()
         batch.begin(target)
@@ -760,6 +803,7 @@ def gui(args):
                 send_menu_key(" ")
             return False
         sd_browser["deferred"] = None
+        power_on.cancel()
         reset_dump_result()
         input_ready.set(False)
         sd_browser["busy"] = True
@@ -808,6 +852,8 @@ def gui(args):
             browser_command("C", path)
 
     def send_key(value, automated=False):
+        if not automated and value not in ("I", "J"):
+            power_on.cancel()
         if batch.active and not automated:
             batch_stop("手動操作に切り替えました")
         if worker and worker.is_alive() and input_ready.get():
@@ -817,6 +863,7 @@ def gui(args):
             keys.put(ord(value))
 
     def send_bytes(values):
+        power_on.cancel()
         if worker and worker.is_alive() and input_ready.get():
             reset_dump_result()
             input_ready.set(False)
@@ -865,6 +912,9 @@ def gui(args):
                        side="left", expand=True, fill="x", padx=2)
 
     def render_menu(title, options, paged):
+        menu_navigation["title"] = title
+        if title == "OPEN SOURCE CART READER" and benchmark["index"] is None:
+            power_on_guard["benchmark"] = False
         input_mode.set("menu")
         menu_title.set(title or "選択してください")
         for child in menu_items.winfo_children():
@@ -920,6 +970,7 @@ def gui(args):
             action = batch.on_menu(title, options)
             batch_report(was_active)
             batch_schedule(action)
+        power_on_poll()
 
     def render_press_button():
         input_mode.set("press")
@@ -1180,6 +1231,9 @@ def gui(args):
         parser_buffer += chunk.replace("\r", "")
         while "\n" in parser_buffer:
             line, parser_buffer = parser_buffer.split("\n", 1)
+            if line == "[+] Reset":
+                power_on_guard["reset"] = True
+                power_on.cancel()
             dump_result.feed(line)
             paint_dump_result()
             was_active = batch.active
@@ -1217,6 +1271,10 @@ def gui(args):
                 checkpoint_label.set(f"確認間隔：{checkpoint_match.group(1)} KiB")
             if line.startswith("[Connected:"):
                 reset_dump_result()
+                power_on.reader_started(suppressed=(power_on_guard["reset"]
+                    or power_on_guard["benchmark"] or benchmark["index"] is not None))
+                power_on_guard["reset"] = False
+                menu_navigation["title"] = ""
                 reset_capability["nes"] = False
                 if connection_state.get() != "接続済み":
                     notice = ("本体との接続が復旧しました。" if connection_session["ever_connected"]
@@ -1231,7 +1289,7 @@ def gui(args):
                 set_storage_state("PC", desired if desired != "PC" else None)
             if version_match:
                 window.title(
-                    f"cartreaderPC PC101 — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC102 — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1304,9 +1362,10 @@ def gui(args):
                 # failure before announcing a wait or actionable error.
                 set_connection_state("未接続")
             if line.startswith(("[Disconnected", "[RECONNECT]")):
+                power_on.disconnected()
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC101 — Disconnected")
+                window.title("cartreaderPC PC102 — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")
@@ -1336,6 +1395,7 @@ def gui(args):
                     send_key(code)
                 browser_start_next()
                 batch_poll()
+                power_on_poll()
             elif line == "[Reader] press button ready":
                 input_ready.set(True)
                 render_press_button()
@@ -1604,6 +1664,7 @@ def gui(args):
         worker = threading.Thread(target=run, args=(port.get(), output.get()), daemon=True)
         worker.start()
     def disconnect():
+        power_on.disconnected()
         reset_dump_result()
         if batch.active:
             batch_stop("切断によって一括操作を終了しました")
@@ -1622,6 +1683,8 @@ def gui(args):
     set_connection_state(connection_state.get())
     ttk.Button(row, text="切断", command=disconnect).pack(side="left")
     def request_benchmark():
+        power_on.cancel()
+        power_on_guard["benchmark"] = True
         inbox.put("[Benchmark] requested\n")
         if benchmark["index"] is not None:
             return
@@ -1790,6 +1853,7 @@ def gui(args):
         dialog.after(100, refresh_browser)
     ttk.Button(row, text="本体SDブラウザ", command=open_sd_browser).pack(side="left", padx=(0, 8))
     def choose_storage(code):
+        power_on.cancel()
         requested = "PC" if code == "J" else "SD"
         storage_current["desired"] = requested
         if input_ready.get() and input_mode.get() == "menu":
@@ -2031,7 +2095,7 @@ def gui(args):
                                                 "[SD Progress]", "[Disconnected.]")))
                 # Translate presentation text; parse the original protocol below.
                 shown = "".join(
-                    translator.translate(line) if line.startswith(("[Batch] ", "[Connection] "))
+                    translator.translate(line) if line.startswith(("[Batch] ", "[Connection] ", "[Auto start] "))
                     else line for line in shown.splitlines(keepends=True))
                 text.insert("end", shown)
                 displayed_chunks.append(shown)

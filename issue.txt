@@ -58,7 +58,7 @@ ID    Status   Prio Categories                    Title
 033   CLOSED   P2   bug/ui/storage                Clear stale queued-storage notice after reconnection
 034   CLOSED   P2   enhancement/logging           Rename PC shared log to OSCR_LOGPC.txt
 035   CLOSED   P2   bug/verification/gba          Restore GBA header checksum validation for PC storage
-036   IDEA     P2   enhancement/automation        Launch a preset console's batch on power-on
+036   VERIFY   P2   enhancement/automation        Launch a preset console's batch on power-on
 037   VERIFY   P2   bug/ui/i18n                   Untranslated controls and messages in English mode
 038   CLOSED   P2   bug/ui/menu                   Out-of-range menu page leaves GUI stuck in "processing"
 039   VERIFY   P2   bug/ui/connection             Consistent connection-wait state and user-facing disconnect messages
@@ -657,7 +657,7 @@ Completion review (2026-11-02 14:46:29 JST): User said Codex had marked #035 com
 #036 Automatically start one-click dumping for a preset console when the reader powers on
 Added: 2026-11-02 22:01:51 JST
 Last updated: 2026-11-02 22:01:51 JST
-Status: IDEA / P2 / enhancement, automation
+Status: VERIFY / P2 / enhancement, automation
 Source: User's feature idea, not permission to implement.
 Request: Allow a console to be configured ahead of time and automatically start that console's one-click dump when the reader is powered on.
 Possible usage: The PC tool is running and waiting for connection; power on reader -> confirm connection and input readiness -> start #029 batch for the preset console. This is an illustrative design, not final; whether standalone SD startup is included remains undecided.
@@ -665,6 +665,9 @@ Related: Proposal to reuse #029 behavior: ROM first, read save when applicable, 
 Considerations: Persisting mode/console configuration, handling initial startup versus reconnection, avoiding duplicate starts on one reader boot, and allowing user cancellation. Clarify how to distinguish connection-loss retries from a real power cycle.
 Completion: Configured mode starts one batch on reader startup, regular manual mode remains available, and start conditions, target storage backend and reconnection rules are documented/tested.
 Version/commit: Not implemented; issue registration only, awaiting explicit user authorization.
+Implementation authorized (2026-11-04 11:46:50 JST): PC-connected feature: left-aligned checkbox and target dropdown at the top of the Actions frame. Japanese 起動時自動吸出し / English Auto dump on power-on. Use existing menu names; separate GB/GBA and PCE swapped/not-swapped targets. Persist enabled/target in ui_settings.json; keep checkbox enabled and run once per subsequent reader startup, never immediately on enabling/target changes or menu return. Reuse #029 for PC storage only; guard SD selection, errors, user intervention and benchmarks. #042 control/key redesign is outside scope.
+PC102 implementation (2026-11-04 11:54 JST): Added a left-aligned Auto dump on power-on checkbox and target selector above Actions. Defaults: disabled/GB; persisted in ui_settings.json. Starts existing #029 once per observed reader startup, not when enabling/changing the setting or returning to the menu. Targets: GB, GBA, NES, SNES, N64, MD, PCE swapped/not swapped. Manual input cancels this startup only; the checkbox stays enabled. PC storage only; SD preference is preserved and prevents starting. Explicit Reset and benchmark are excluded. Firmware unchanged. HELLO identifies startup, so a connection-induced reader reboot also qualifies; physical power-on is not independently detected. Passed 87 tests, actual hidden Tk integration checks, and EXE self-test. Hardware confirmation pending: VERIFY. #042 unchanged.
+
 
 #037 Some buttons, menus and messages remain Japanese in English mode
 Added: 2026-11-02 22:23:29 JST
