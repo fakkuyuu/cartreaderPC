@@ -140,8 +140,6 @@ class MenuNavigator:
         if not self.rows:
             return
         self.row = (self.row + (1 if delta > 0 else -1)) % len(self.rows)
-        if self.auto_index is not None:
-            self.preferred_auto_index = self.auto_index
         if self.preferred_auto_index is not None:
             entries = self.rows[self.row]["auto_entries"]
             self.auto_index = (
@@ -193,7 +191,7 @@ def normalize_digit(keysym, char="", keycode=None, windows=False):
         return str(int(keycode) - 96)
     if windows and keycode is not None and 48 <= int(keycode) <= 57:
         return str(int(keycode) - 48)
-    if char in "0123456789":
+    if char and char in "0123456789":
         return char
     fullwidth = "０１２３４５６７８９"
     if char and char in fullwidth:
