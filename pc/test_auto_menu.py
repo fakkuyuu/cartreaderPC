@@ -180,6 +180,20 @@ class AutoMenuTests(unittest.TestCase):
                 self.assertEqual(navigator.current_action()[0], "auto")
                 self.assertEqual(navigator.move_horizontal(1), "next-page")
 
+    def test_right_from_intermediate_auto_free_sms_row_moves_to_next_page(self):
+        options = ROOT_OPTIONS[:3] + (("sms", "SMS"),) + ROOT_OPTIONS[3:]
+        rows = build_menu_rows(ROOT_MENU_TITLE, options, paged=True)
+        sms_index = next(
+            index for index, row in enumerate(rows) if row["label"] == "SMS"
+        )
+        self.assertLess(sms_index, len(rows) - 1)
+        self.assertEqual(rows[sms_index]["auto_entries"], ())
+
+        navigator = MenuNavigator(rows, paged=True)
+        navigator.select_row(sms_index)
+        self.assertEqual(navigator.current_action()[0], "reader")
+        self.assertEqual(navigator.move_horizontal(1), "next-page")
+
     def test_left_from_normal_row_on_any_row_moves_to_previous_page(self):
         for row_index in range(len(self.rows)):
             with self.subTest(row=row_index, label=self.rows[row_index]["label"]):
