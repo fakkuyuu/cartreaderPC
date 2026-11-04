@@ -22,11 +22,15 @@ def is_main_menu(title):
     return title == ROOT_MENU_TITLE
 
 
-def build_menu_rows(title, options):
+def build_menu_rows(title, options, paged=False):
     """Build UI rows without changing the reader's original option numbers."""
     root_menu = is_main_menu(title)
     rows = []
     next_shortcut = 1
+    display_digits = [
+        str(number) for number in range(1, 10)
+        if not (paged and number in (7, 8))
+    ]
     for position, (reader_number, label) in enumerate(options):
         auto_entries = []
         if root_menu:
@@ -40,18 +44,21 @@ def build_menu_rows(title, options):
                     next_shortcut += 1
         rows.append({
             "reader_number": str(reader_number),
-            "display_number": str(position + 1) if root_menu else str(reader_number),
+            "display_number": (
+                display_digits[position] if root_menu and position < len(display_digits)
+                else ("" if root_menu else str(reader_number))
+            ),
             "label": str(label),
             "auto_entries": tuple(auto_entries),
         })
     return tuple(rows)
 
 
-def build_auto_entries(title, options):
+def build_auto_entries(title, options, paged=False):
     """Return Auto shortcuts in visible row order for the existing 0+digit chord."""
     return tuple(
         entry
-        for row in build_menu_rows(title, options)
+        for row in build_menu_rows(title, options, paged)
         for entry in row["auto_entries"]
     )
 
@@ -68,9 +75,10 @@ def resolve_menu_number(title, options, digit, paged=False):
             return "["
         if paged and digit == "8":
             return "]"
-        index = int(digit) - 1
-        if 0 <= index < len(options):
-            return str(options[index][0])
+        rows = build_menu_rows(title, options, paged)
+        for row in rows:
+            if row["display_number"] == digit:
+                return row["reader_number"]
         return None
     if paged and digit == "7":
         return "["
@@ -159,6 +167,31 @@ class MenuNavigator:
         elif self.row == len(self.rows) - 1 and self.paged:
             return "next-page"
         return None
+
+
+def normalize_digit(keysym, char="", keycode=None, windows=False):
+    """Normalize top-row, full-width and numeric-keypad digits to one string."""
+    key = str(keysym or "").lower()
+    char = str(char or "")
+    keypad = {f"kp_{number}": str(number) for number in range(10)}
+    keypad.update({
+        "kp_insert": "0", "kp_end": "1", "kp_down": "2",
+        "kp_next": "3", "kp_left": "4", "kp_begin": "5",
+        "kp_right": "6", "kp_home": "7", "kp_up": "8",
+        "kp_prior": "9",
+    })
+    if windows and keycode is not None and 96 <= int(keycode) <= 105:
+        return str(int(keycode) - 96)
+    if windows and keycode is not None and 48 <= int(keycode) <= 57:
+        return str(int(keycode) - 48)
+    if char in "0123456789":
+        return char
+    fullwidth = "０１２３４５６７８９"
+    if char and char in fullwidth:
+        return str(fullwidth.index(char))
+    if key and key in "0123456789":
+        return key
+    return keypad.get(key, "")
 
 
 def is_widget_within(widget, ancestor):
