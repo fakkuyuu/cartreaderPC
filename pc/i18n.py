@@ -116,6 +116,8 @@ WORDS.update({
     "NESが自動認識できません。安全なResetを要求します": "NES could not be auto-identified. Requesting a safe reset",
     "（DB照合なし）": " (no database match)",
     "DB照合なし": "no database match",
+    "◀ 前のページ": "◀ Previous page",
+    "次のページ ▶": "Next page ▶",
     "◀ 前のページ (←)": "◀ Previous page (←)",
     "次のページ (→) ▶": "Next page (→) ▶",
     "診断": "Diagnostics",
