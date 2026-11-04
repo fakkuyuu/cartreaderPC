@@ -56,7 +56,7 @@ class ZeroChord:
             self.zero_pressed = True
             return True, None
         if self.zero_pressed:
-            if digit not in "123456789":
+            if not digit or digit not in "123456789":
                 # Non-numeric navigation keys remain ordinary operations and
                 # must not cancel a held modifier.
                 return False, None
