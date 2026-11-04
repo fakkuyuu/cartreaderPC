@@ -842,6 +842,7 @@ Design questions: Reader menu/button controls, enabling/disabling and target sel
 Proposed guards: Stop on unknown identification, required manual selection or ROM failure; do not proceed to save after a failed ROM. Preserve existing standalone manual and PC-connected operation.
 Implementation: Registration only. UI and persistence undecided; no implementation, build or upload authorization and no source changes.
 Control proposal (2026-11-04 16:35:31 JST): On the root menu, holding the right button could preview Auto: <target> at 1 to under 3 seconds, then POA: <target> at 3+ seconds; commit only on release. User specified steady Auto preview, blinking POA preview only. Also requested a star on the target console row and a precise POA target label distinguishing PCE swapped/not swapped. Timing/button assignment remains a proposal, not implemented. Resolve short-press conflicts, GB/GBA target selection, disabling POA and V5 controls. Reuse display buffer and measure RAM impact.
+Target-selection clarification (2026-11-04 16:38:39 JST): Disable hold-to-Auto/power-on preset assignment on the root Game Boy row because GB versus GBA is unresolved. Enter its submenu normally and accept the hold operation on Game Boy (Color) or GB Advance (3V). Proposed preview: steady Auto text, blinking star plus target for the power-on preset, favoring the star over the POA abbreviation. Recorded only.
 
 
 #046 Empty PCE slot produces all-FF dump and green success
