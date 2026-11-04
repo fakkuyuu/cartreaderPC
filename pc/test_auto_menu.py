@@ -63,6 +63,14 @@ class AutoMenuTests(unittest.TestCase):
         self.assertEqual(chord.key_down("0", ()), (False, None))
         self.assertFalse(chord.zero_pressed)
 
+    def test_non_numeric_key_does_not_cancel_held_zero_modifier(self):
+        chord = ZeroChord()
+        self.assertEqual(chord.key_down("0", self.entries), (True, None))
+        self.assertEqual(chord.key_down("", self.entries), (False, None))
+        self.assertTrue(chord.zero_pressed)
+        self.assertEqual(chord.key_down("4", self.entries), (True, self.entries[3]))
+        self.assertFalse(chord.zero_pressed)
+
     def test_zero_chord_selects_auto_without_changing_normal_numbers(self):
         chord = ZeroChord()
         consumed, selected = chord.key_down("0", self.entries)
