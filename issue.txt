@@ -67,6 +67,7 @@ ID    Status   Prio Categories                    Title
 042   OPEN     P2   enhancement/ui          Compact automatic-dump controls and unambiguous focus/hover feedback
 043   VERIFY     P2   bug/storage/reset       Reset after SD dump unexpectedly switches storage to PC
 044   OPEN     P2   enhancement/logging           Timestamps for shared log milestones and ROM companion TXT
+045   IDEA     P2   enhancement/automation        Standalone SD automatic dump and power-on start
 
 [DETAILS]
 PC100 build report (2026-11-03 20:42:14 JST): Built GitHub1de58ba with local PC100 branding. All 67 tests and independent integration checks pass: MD internal checksum error stops before save with solid red; valid ROM followed by save error alternates at 1-second intervals. EXE self-test PASS/exit0. Preserve results during USB loss and reset on reconnect. No firmware changes/upload. Hardware confirmation pending; retain VERIFY.
@@ -829,3 +830,13 @@ ROM companion TXT: Include start/completion timestamps for that ROM only, withou
 Scope: PC-side logging. Standalone firmware SD OSCR_LOG.txt is outside this request.
 Open details: Explicit timezone and event labels for SD copy/abnormal termination; preserve existing extraction and English/Japanese behavior.
 Implementation: Registration only; no source, EXE or firmware changes.
+
+#045 Standalone SD automatic dumping and power-on automatic start
+Added: 2026-11-04 15:56:06 JST
+Last updated: 2026-11-04 15:56:06 JST
+Status: IDEA / P2 / enhancement, automation
+User request: Both features are wanted without a PC: (1) start an automatic ROM-then-save dump from reader controls; (2) persist an enabled flag and preset target, then start the same process once per power-on without clearing the flag afterwards.
+Related: #029 batch flow and #036 PC-connected startup mode. Standalone execution requires firmware implementation rather than PC-side automation.
+Design questions: Reader menu/button controls, enabling/disabling and target selection, bypass to ordinary startup, persistence/EEPROM wear, RAM/Flash impact. Distinguish modes such as GB/GBA and PCE swapped/not swapped.
+Proposed guards: Stop on unknown identification, required manual selection or ROM failure; do not proceed to save after a failed ROM. Preserve existing standalone manual and PC-connected operation.
+Implementation: Registration only. UI and persistence undecided; no implementation, build or upload authorization and no source changes.
