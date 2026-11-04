@@ -1,6 +1,6 @@
 cartreaderPC Issues
-Last updated: 2026-11-04 22:50:37 JST
-Applies to: PC tool PC106 / firmware PC107 / HW3 (PC based on GitHub 1975283)
+Last updated: 2026-11-04 23:05:00 JST
+Applies to: PC tool PC108 / firmware PC107 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
 "変更履歴.txt" records what changed; this file records what remains outstanding.
@@ -64,7 +64,7 @@ ID    Status   Prio Categories                    Title
 039   VERIFY   P2   bug/ui/connection             Consistent connection-wait state and user-facing disconnect messages
 040   VERIFY     P2   enhancement/ui          Persistent result colors integrated with #029 batch ROM/save
 041   IDEA     P2   enhancement/detection   Identify cartridge console by sequential read-only probing
-042   VERIFY   P2   enhancement/ui          Compact automatic-dump controls and unambiguous focus/hover feedback
+042   OPEN     P2   enhancement/ui          Compact automatic-dump controls and unambiguous focus/hover feedback
 043   VERIFY     P2   bug/storage/reset       Reset after SD dump unexpectedly switches storage to PC
 044   OPEN     P2   enhancement/logging           Timestamps for shared log milestones and ROM companion TXT
 045   VERIFY   P2   enhancement/automation        Standalone SD automatic dump and power-on start
@@ -792,8 +792,8 @@ Implementation: Issue registration only; implementation not started.
 
 #042 Compact automatic-dump controls and unambiguous focus/hover feedback
 Added: 2026-11-03 22:06:08 JST
-Last updated: 2026-11-04 22:50:37 JST
-Status: VERIFY / P2 / enhancement, ui
+Last updated: 2026-11-04 23:05:00 JST
+Status: OPEN / P2 / enhancement, ui
 User report: NES row and Batch GB button simultaneously appear blue. Independent mouse hover, keyboard selection and button focus make the active action unclear. Per-console batch buttons consume excessive horizontal space.
 Request: Clarify selection/hover/focus without removing keyboard operation, avoid ambiguous multiple highlights, and compact automatic-dump controls. Consider Auto dump naming because Batch dump can suggest multiple cartridges.
 Initially undecided: Layout, click count, console selection and GB/GBA/PCE-swapped choices. The later specification updates below resolve these choices.
@@ -810,6 +810,17 @@ PC106 implementation (2026-11-04 22:30:00 JST):
 - Added pc/auto_menu.py and pc/test_auto_menu.py for target mapping, 0-chord routing, page-key priority, modifier release, display-copy wording and localized Auto text. Actual Windows UI, keyboard and EXE verification have not yet been performed.
 - Bumped the PC tool display version from PC105 to PC106. PC-side only; no Arduino firmware, EEPROM or upload behavior was changed.
 Verification: GitHub Actions PC Python regression results pending. Keep VERIFY until the Windows EXE and real UI are checked.
+
+
+Additional specification and implementation request (2026-11-04 23:05 JST; user instruction):
+1. Only the main console-selection menu uses 1-based displayed numbers. Preserve each original reader command number through an explicit display-to-reader mapping. Displayed 0 is omitted. Reserve 7/8 for page navigation so a normal item cannot collide with page keys. Do not renumber or change submenu numbering.
+2. Place each Auto action immediately beside its corresponding ordinary menu row. Where a row has multiple Auto actions, navigate them in order (GB/GBA and PCE swapped/not swapped). Arrow keys alone move between the ordinary row and its Auto actions; Enter executes the selected Auto. Right from the rightmost Auto goes to the next page; Left from the left edge of the ordinary menu goes to the previous page. Up/down changes rows while retaining the same action column where possible.
+3. Treat the entire operation menu as one Tab stop; individual ordinary rows and Auto buttons are not separate Tab stops. Use arrows to choose within the menu and Enter to execute. Arrow navigation must not move focus outside the menu. Tab/Shift+Tab must still reach controls outside the menu.
+4. Never show the ordinary row and an Auto action highlighted blue simultaneously. Remove the " (←)" and " (→)" annotations from the previous/next page labels.
+5. Test displayed-to-reader number mapping, ordinary numeric keys, numpad digits, arrows+Enter, Tab/Shift+Tab, existing 0+digit Auto shortcuts, one-click mouse execution, and Japanese/English switching. Preserve the existing Auto chord, one-click mouse action, and language switching.
+Versioning: PC105 is already used for the prior PC tool; PC106/PC107 are recorded as existing firmware versions. Use unused PC108 for this PC-tool revision.
+No firmware changes.
+Status: Specification recorded only. The newly identified implementation gaps remain OPEN pending correction.
 
 #043 Reset after SD dump unexpectedly switches storage to PC
 Added: 2026-11-03 22:50:26 JST
