@@ -591,13 +591,13 @@ class BatchDumpTests(unittest.TestCase):
         self.assertFalse(run.active)
         self.assertIn("セーブサイズ不一致", run.reason)
 
-    def test_gui_uses_compact_auto_panel_with_one_click_actions(self):
+    def test_gui_n64_auto_button_is_inline_and_one_click(self):
         gui = Path(__file__).with_name("cartreader_pc.py").read_text(encoding="utf-8")
-        self.assertIn("auto_entries = build_auto_entries(title, options)", gui)
-        self.assertIn('text=button_label', gui)
-        self.assertIn("command=lambda t=target, n=number: start_batch(t, n)", gui)
-        self.assertIn('text="自動吸出し（0を押しながら1〜8）"', gui)
-        self.assertNotIn('"Nintendo 64 (3V)": (("一括吸出し", "N64"),)', gui)
+        self.assertIn('row_frame, text=f"0+{shortcut}  {button_label}"', gui)
+        self.assertIn("command=lambda e=entry, r=position, a=auto_index:", gui)
+        self.assertIn('start_batch(entry[1], entry[2])', gui)
+        self.assertIn('"Nintendo 64 (3V)"', Path(__file__).with_name("auto_menu.py").read_text(encoding="utf-8"))
+        self.assertNotIn("auto_panel = ttk.LabelFrame", gui)
 
     def test_pce_variants_never_read_ram(self):
         for target, expected in (("PCE_SWAP", "0"), ("PCE_RAW", "1")):
