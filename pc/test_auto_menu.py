@@ -237,7 +237,7 @@ class AutoMenuTests(unittest.TestCase):
         self.assertIn('button = tk.Button(\n                    row_frame, text=f"0+{shortcut}  {button_label}"', gui)
         self.assertIn("command=lambda e=entry, r=position, a=auto_index:", gui)
         self.assertIn("if auto_index is None:", gui)
-        self.assertIn("elif root_menu and navigator is not None:", gui)
+        self.assertIn("if root_menu and navigator is not None:", gui)
         self.assertNotIn("auto_panel = ttk.LabelFrame", gui)
 
     def test_page_buttons_drop_left_right_parenthetical_hints(self):
