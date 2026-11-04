@@ -1,5 +1,5 @@
 cartreaderPC Issues
-Last updated: 2026-11-04 22:30:00 JST
+Last updated: 2026-11-04 22:48:10 JST
 Applies to: PC tool PC106 / firmware PC107 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
@@ -792,7 +792,7 @@ Implementation: Issue registration only; implementation not started.
 
 #042 Compact automatic-dump controls and unambiguous focus/hover feedback
 Added: 2026-11-03 22:06:08 JST
-Last updated: 2026-11-04 22:30:00 JST
+Last updated: 2026-11-04 22:48:10 JST
 Status: VERIFY / P2 / enhancement, ui
 User report: NES row and Batch GB button simultaneously appear blue. Independent mouse hover, keyboard selection and button focus make the active action unclear. Per-console batch buttons consume excessive horizontal space.
 Request: Clarify selection/hover/focus without removing keyboard operation, avoid ambiguous multiple highlights, and compact automatic-dump controls. Consider Auto dump naming because Batch dump can suggest multiple cartridges.
