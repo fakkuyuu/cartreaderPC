@@ -155,7 +155,8 @@ class AutoMenuTests(unittest.TestCase):
         navigator = MenuNavigator(self.rows, paged=True)
         self.assertTrue(navigator.select_auto(0, 1))
         navigator.move_vertical(1)
-        self.assertEqual(navigator.current_action(), ("reader", "1"))
+        self.assertEqual(navigator.current_action()[0], "auto")
+        self.assertEqual(navigator.current_action()[1][1], "NES")
         navigator.move_vertical(1)
         navigator.move_vertical(1)
         navigator.move_vertical(1)
@@ -229,7 +230,9 @@ class AutoMenuTests(unittest.TestCase):
         self.assertIn("menu_items.configure(takefocus=1)", gui)
         self.assertIn("is_widget_within(event.widget, menu_items)", gui)
         self.assertIn("takefocus=0", gui)
-        self.assertIn('if key == "tab":', gui)
+        self.assertIn('if key in ("tab", "iso_left_tab"):', gui)
+        self.assertIn("menu_items.tk_focusNext()", gui)
+        self.assertIn("menu_items.tk_focusPrev()", gui)
 
     def test_gui_keeps_one_click_auto_buttons_inline_and_single_highlight(self):
         gui = (Path(__file__).with_name("cartreader_pc.py")
