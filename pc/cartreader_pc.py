@@ -980,7 +980,7 @@ def gui(args):
         if auto_entries:
             auto_panel = ttk.LabelFrame(
                 menu_items,
-                text=translator.translate("自動吸出し（0を押しながら1〜8）"),
+                text="自動吸出し（0を押しながら1〜8）",
                 padding=(5, 4),
             )
             auto_panel.pack(fill="x", pady=(6, 2))
