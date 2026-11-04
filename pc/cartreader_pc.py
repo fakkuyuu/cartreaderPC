@@ -21,6 +21,7 @@ from connection_status import ConnectionFeedback
 from i18n import UiTranslator
 from ram_status import ram_labels
 from browser_request import make_request
+from auto_menu import ZeroChord, build_auto_entries, display_auto_reason
 
 BASE = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent.parent
 PROFILE_FILE = BASE / "baud_profiles.json"
@@ -693,6 +694,7 @@ def gui(args):
     input_ready = tk.BooleanVar(value=False)
     input_mode = tk.StringVar(value="menu")
     batch = BatchDump()
+    auto_shortcut = ZeroChord()
     dump_result = DumpResult()
     dump_result_blink = {"after": None}
     def paint_dump_result():
@@ -729,7 +731,7 @@ def gui(args):
             paint_dump_result()
             if dump_result.blinking:
                 schedule_dump_result_blink()
-            inbox.put(f"[Batch] {batch.reason}\n")
+            inbox.put(f"[自動吸出し] {display_auto_reason(batch.reason)}\n")
     def batch_stop(reason):
         active = batch.active
         batch.stop(reason)
@@ -743,7 +745,7 @@ def gui(args):
         if (value is not None and batch.active and worker and worker.is_alive()
                 and input_ready.get() and not sd_browser["busy"]):
             batch_pending["key"] = None
-            send_menu_key(value, "一括吸出し中...", automated=True)
+            send_menu_key(value, "自動吸出し中...", automated=True)
     def power_on_poll():
         if (not power_on.pending or not worker or not worker.is_alive()
                 or not input_ready.get() or input_mode.get() != "menu"
@@ -768,16 +770,19 @@ def gui(args):
                 or input_mode.get() != "menu" or sd_browser["busy"]
                 or storage_current["mode"] != "PC" or storage_current["pending"]
                 or benchmark["index"] is not None):
-            inbox.put("[Batch] 一括吸出しはPC保存・接続済みの機種選択メニューから開始してください\n")
+            inbox.put("[自動吸出し] 自動吸出しはPC保存・接続済みの機種選択メニューから開始してください\n")
             return
         reset_dump_result()
         power_on.cancel()
         dump_result.begin_batch()
         paint_dump_result()
         batch.begin(target)
-        inbox.put(f"[Batch] {target} 一括吸出しを開始\n")
+        inbox.put(f"[自動吸出し] {target} 自動吸出しを開始\n")
         batch_schedule(selected_number)
-    menu_navigation = {"items": [], "options": [], "selected": 0}
+    menu_navigation = {
+        "items": [], "options": [], "selected": 0,
+        "auto_entries": (), "activate_auto": None,
+    }
     sd_browser = {"window": None, "tree": None, "path": "/", "pending": [],
                   "busy": False, "progress": None, "progress_text": None,
                   "status": None, "resort": None, "action": None,
@@ -912,6 +917,7 @@ def gui(args):
                        side="left", expand=True, fill="x", padx=2)
 
     def render_menu(title, options, paged):
+        auto_shortcut.reset()
         menu_navigation["title"] = title
         if title == "OPEN SOURCE CART READER" and benchmark["index"] is None:
             power_on_guard["benchmark"] = False
@@ -920,24 +926,47 @@ def gui(args):
         for child in menu_items.winfo_children():
             child.destroy()
         rendered = []
+        auto_buttons = {}
+
+        def clear_auto_highlights():
+            for button in auto_buttons.values():
+                button.configure(background="white", foreground="black",
+                                 highlightbackground="white", highlightthickness=0,
+                                 relief="raised")
+
         def select_row(index):
             if not rendered:
                 return
+            clear_auto_highlights()
             menu_navigation["selected"] = index % len(rendered)
             for position, widget in enumerate(rendered):
                 active = position == menu_navigation["selected"]
                 widget.configure(background="#dbeafe" if active else "white",
                                  highlightbackground="#2563eb" if active else "white",
                                  highlightthickness=2 if active else 0)
-        batch_targets = {
-            "Game Boy": (("一括GB", "GB"), ("一括GBA", "GBA")),
-            "NES/Famicom": (("一括吸出し", "NES"),),
-            "Super Nintendo/SFC": (("一括吸出し", "SNES"),),
-            "Nintendo 64 (3V)": (("一括吸出し", "N64"),),
-            "Mega Drive/Genesis": (("一括吸出し", "MD"),),
-            "PC Engine/TG16": (("一括(swapped)", "PCE_SWAP"),
-                                ("一括(not swapped)", "PCE_RAW")),
-        }
+
+        def select_auto(button):
+            # Hovering an Auto control supersedes, but does not erase, the
+            # keyboard row index. Returning to a row restores row highlighting.
+            for widget in rendered:
+                widget.configure(background="white", highlightbackground="white",
+                                 highlightthickness=0)
+            for candidate in auto_buttons.values():
+                active = candidate is button
+                candidate.configure(
+                    background="#dbeafe" if active else "white",
+                    foreground="#1d4ed8" if active else "black",
+                    highlightbackground="#2563eb" if active else "white",
+                    highlightthickness=2 if active else 0,
+                    relief="solid" if active else "raised",
+                )
+
+        def clear_auto_button(button):
+            button.configure(background="white", foreground="black",
+                             highlightbackground="white", highlightthickness=0,
+                             relief="raised")
+
+        auto_entries = build_auto_entries(title, options)
         for position, (number, label) in enumerate(options):
             row_frame = ttk.Frame(menu_items)
             row_frame.pack(fill="x", pady=2)
@@ -948,15 +977,45 @@ def gui(args):
             rendered.append(item)
             item.bind("<Enter>", lambda event, i=position: select_row(i))
             item.bind("<Button-1>", lambda event, n=number: send_menu_key(n))
-            if title == "OPEN SOURCE CART READER":
-                for button_label, target in batch_targets.get(label, ()):
-                    ttk.Button(row_frame, text=button_label,
-                               command=lambda t=target, n=number: start_batch(t, n)).pack(
-                                   side="left", padx=(4, 0))
+        if auto_entries:
+            auto_panel = ttk.LabelFrame(
+                menu_items,
+                text=translator.translate("自動吸出し（0を押しながら1〜8）"),
+                padding=(5, 4),
+            )
+            auto_panel.pack(fill="x", pady=(6, 2))
+            for column in range(2):
+                auto_panel.columnconfigure(column, weight=1)
+            for index, entry in enumerate(auto_entries):
+                shortcut, target, number, button_label = entry
+                cell = ttk.Frame(auto_panel)
+                cell.grid(row=index // 2, column=index % 2,
+                          sticky="ew", padx=3, pady=2)
+                ttk.Label(cell, text=f"0+{shortcut}", width=4).pack(side="left")
+                button = tk.Button(
+                    cell, text=button_label,
+                    command=lambda t=target, n=number: start_batch(t, n),
+                    padx=5, pady=2, bd=1, relief="raised",
+                    background="white", activebackground="#dbeafe",
+                    highlightthickness=0, cursor="hand2", takefocus=0,
+                )
+                button.pack(side="left", fill="x", expand=True)
+                auto_buttons[shortcut] = button
+                button.bind("<Enter>", lambda event, w=button: select_auto(w))
+                button.bind("<Leave>", lambda event, w=button: clear_auto_button(w))
+
+        def activate_auto(entry):
+            button = auto_buttons.get(entry[0])
+            if button is not None:
+                select_auto(button)
+            start_batch(entry[1], entry[2])
+
         menu_navigation["items"] = rendered
         menu_navigation["options"] = list(options)
         menu_navigation["paged"] = paged
         menu_navigation["selected"] = 0
+        menu_navigation["auto_entries"] = auto_entries
+        menu_navigation["activate_auto"] = activate_auto if auto_entries else None
         if rendered:
             select_row(0)
             window.focus_set()
@@ -973,6 +1032,7 @@ def gui(args):
         power_on_poll()
 
     def render_press_button():
+        auto_shortcut.reset()
         input_mode.set("press")
         menu_title.set("Press Button...")
         for child in menu_items.winfo_children():
@@ -1008,6 +1068,7 @@ def gui(args):
             simple_controls["buttons"].append(button)
         select_simple(0)
     def render_candidate_controls():
+        auto_shortcut.reset()
         input_mode.set("candidate")
         menu_title.set("カセット候補を選択")
         for child in menu_items.winfo_children():
@@ -1025,6 +1086,7 @@ def gui(args):
             batch_schedule(action)
 
     def render_physical_fallback():
+        auto_shortcut.reset()
         input_mode.set("physical")
         menu_title.set("本体画面の操作待ち")
         for child in menu_items.winfo_children():
@@ -1197,7 +1259,7 @@ def gui(args):
                 if reset_capability["nes"]:
                     batch.phase = "nes_reset_wait"
                     batch_pending["key"] = "!"
-                    inbox.put("[Batch] NESが自動認識できません。安全なResetを要求します\n")
+                    inbox.put("[自動吸出し] NESが自動認識できません。安全なResetを要求します\n")
                 else:
                     batch_stop("NES認識失敗。専用Reset未対応の旧ファームです。手動で復帰してください")
             else:
@@ -1984,6 +2046,14 @@ def gui(args):
                 send_key(key)
                 return "break"
         if input_mode.get() == "menu" and menu_navigation["items"]:
+            consumed, auto_entry = auto_shortcut.key_down(
+                typed_digit, menu_navigation.get("auto_entries", ()))
+            if consumed:
+                if auto_entry is not None:
+                    activate = menu_navigation.get("activate_auto")
+                    if activate is not None:
+                        activate(auto_entry)
+                return "break"
             if menu_navigation.get("paged") and typed_digit in ("7", "8"):
                 send_menu_key("[" if typed_digit == "7" else "]")
                 return "break"
@@ -2019,7 +2089,15 @@ def gui(args):
     # Bind the disabled console directly as well: Tk's Text class can consume
     # key events before the application-wide binding gets them.
     capture_tag = "ReaderKeyboardCapture"
+    def global_key_release(event):
+        key = event.keysym.lower()
+        if key in ("0", "kp_0", "kp_insert") or (
+                os.name == "nt" and event.keycode in (48, 96)):
+            auto_shortcut.key_up("0")
+
     window.bind_class(capture_tag, "<KeyPress>", global_key)
+    window.bind_class(capture_tag, "<KeyRelease>", global_key_release)
+    window.bind_all("<FocusOut>", lambda _event: auto_shortcut.reset(), add="+")
     def install_capture(widget):
         if widget.winfo_toplevel() is not window:
             return
@@ -2095,7 +2173,7 @@ def gui(args):
                                                 "[SD Progress]", "[Disconnected.]")))
                 # Translate presentation text; parse the original protocol below.
                 shown = "".join(
-                    translator.translate(line) if line.startswith(("[Batch] ", "[Connection] ", "[Auto start] "))
+                    translator.translate(line) if line.startswith(("[自動吸出し] ", "[Connection] ", "[Auto start] "))
                     else line for line in shown.splitlines(keepends=True))
                 text.insert("end", shown)
                 displayed_chunks.append(shown)
