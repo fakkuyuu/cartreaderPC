@@ -115,6 +115,7 @@ WORDS.update({
     "切断によって自動吸出しを終了しました": "Auto dump stopped: disconnected",
     "NESが自動認識できません。安全なResetを要求します": "NES could not be auto-identified. Requesting a safe reset",
     "（DB照合なし）": " (no database match)",
+    "DB照合なし": "no database match",
     "◀ 前のページ (←)": "◀ Previous page (←)",
     "次のページ (→) ▶": "Next page (→) ▶",
     "診断": "Diagnostics",
