@@ -490,7 +490,7 @@ def gui(args):
     _saved_lang = ui_settings.get("language", "English")
     language = tk.StringVar(value="Japanese" if _saved_lang in ("日本語", "JAPANESE") else _saved_lang)
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC105 — Disconnected")
+    window.title("cartreaderPC PC106 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -1016,6 +1016,7 @@ def gui(args):
         menu_navigation["selected"] = 0
         menu_navigation["auto_entries"] = auto_entries
         menu_navigation["activate_auto"] = activate_auto if auto_entries else None
+        menu_navigation["select_row"] = select_row if rendered else None
         if rendered:
             select_row(0)
             window.focus_set()
@@ -1351,7 +1352,7 @@ def gui(args):
                 set_storage_state("PC", desired if desired != "PC" else None)
             if version_match:
                 window.title(
-                    f"cartreaderPC PC105 — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC106 — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1427,7 +1428,7 @@ def gui(args):
                 power_on.disconnected()
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC105 — Disconnected")
+                window.title("cartreaderPC PC106 — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")
@@ -2055,35 +2056,60 @@ def gui(args):
                         activate(auto_entry)
                 return "break"
             if menu_navigation.get("paged") and typed_digit in ("7", "8"):
+                select_row = menu_navigation.get("select_row")
+                if select_row:
+                    select_row(menu_navigation["selected"])
                 send_menu_key("[" if typed_digit == "7" else "]")
                 return "break"
             if key in ("prior", "page_up"):
+                select_row = menu_navigation.get("select_row")
+                if select_row:
+                    select_row(menu_navigation["selected"])
                 send_menu_key("[")
                 return "break"
             if key in ("next", "page_down"):
+                select_row = menu_navigation.get("select_row")
+                if select_row:
+                    select_row(menu_navigation["selected"])
                 send_menu_key("]")
                 return "break"
             if key in ("up", "down"):
                 delta = -1 if key == "up" else 1
                 selected = (menu_navigation["selected"] + delta) % len(menu_navigation["items"])
-                menu_navigation["selected"] = selected
-                for position, item in enumerate(menu_navigation["items"]):
-                    active = position == selected
-                    item.configure(background="#dbeafe" if active else "white",
-                                   highlightbackground="#2563eb" if active else "white",
-                                   highlightthickness=2 if active else 0)
+                select_row = menu_navigation.get("select_row")
+                if select_row:
+                    select_row(selected)
+                else:
+                    menu_navigation["selected"] = selected
                 return "break"
             if key == "left":
+                select_row = menu_navigation.get("select_row")
+                if select_row:
+                    select_row(menu_navigation["selected"])
                 send_menu_key("[")
                 return "break"
             if key == "right":
+                select_row = menu_navigation.get("select_row")
+                if select_row:
+                    select_row(menu_navigation["selected"])
                 send_menu_key("]")
                 return "break"
             if key in ("return", "space", "kp_enter"):
+                select_row = menu_navigation.get("select_row")
+                if select_row:
+                    select_row(menu_navigation["selected"])
                 send_menu_key(menu_navigation["options"][menu_navigation["selected"]][0])
                 return "break"
         value = typed_digit or (key if key in "ud" else event.char.lower())
         if input_mode.get() == "menu" and value and value in "0123456789ud":
+            select_row = menu_navigation.get("select_row")
+            if select_row:
+                matching = next(
+                    (index for index, option in enumerate(menu_navigation["options"])
+                     if str(option[0]) == value),
+                    menu_navigation["selected"],
+                )
+                select_row(matching)
             send_menu_key(value)
             return "break"
     # Bind the disabled console directly as well: Tk's Text class can consume
