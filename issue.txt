@@ -1,5 +1,5 @@
 cartreaderPC Issues
-Last updated: 2026-11-04 23:41 JST
+Last updated: 2026-11-05 07:17 JST
 Applies to: PC tool PC108 / firmware PC107 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
@@ -844,6 +844,16 @@ PC108 page-boundary correction (2026-11-04 23:41 JST):
 - Updated pc/test_auto_menu.py with regression coverage for the right edge of every Auto row, the left edge of every normal row, and the two-step transition from first Auto to normal row to previous page.
 Version remains PC108. No firmware changes.
 Verification: Source and tests committed to GitHub; the Actions result for this update has not been confirmed. Windows EXE rebuild, actual GUI and hardware checks are also outstanding, so status remains VERIFY.
+
+Additional report (2026-11-04 23:49 JST):
+User confirmed the previous correction and reported 120 passing tests. One related restriction remained: on rows without Auto actions (such as SMS), Right did not advance to the next page unless the row was the bottom row. Right from the last Auto on Auto-enabled rows and Left from ordinary rows to the previous page were working. EXE creation has not been done.
+
+PC108 Auto-free-row page-navigation correction (2026-11-05 07:17 JST):
+- Removed the bottom-row condition from the Right-key branch for ordinary rows with no Auto actions. On a paged menu, Right from an Auto-free row now requests the next page regardless of row position.
+- Rows with Auto actions retain the existing sequence: ordinary row → first Auto → next-page from the rightmost Auto. Left from an ordinary row to the previous page is also unchanged.
+- Added a regression test in pc/test_auto_menu.py for moving right to the next page from an intermediate Auto-free row named SMS.
+- Version remains PC108. No firmware changes.
+Verification: The 120 passing tests were reported before this additional correction. The result for a run including the newly added regression test has not been confirmed. Windows EXE rebuild and actual GUI/hardware checks remain outstanding; keep VERIFY.
 #043 Reset after SD dump unexpectedly switches storage to PC
 Added: 2026-11-03 22:50:26 JST
 Last updated: 2026-11-03 22:54:12 JST
