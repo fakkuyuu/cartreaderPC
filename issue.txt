@@ -834,7 +834,7 @@ Implementation: Registration only; no source, EXE or firmware changes.
 
 #045 Standalone SD automatic dumping and power-on automatic start
 Added: 2026-11-04 15:56:06 JST
-Last updated: 2026-11-04 15:56:06 JST
+Last updated: 2026-11-04 16:54:17 JST
 Status: IDEA / P2 / enhancement, automation
 User request: Both features are wanted without a PC: (1) start an automatic ROM-then-save dump from reader controls; (2) persist an enabled flag and preset target, then start the same process once per power-on without clearing the flag afterwards.
 Related: #029 batch flow and #036 PC-connected startup mode. Standalone execution requires firmware implementation rather than PC-side automation.
@@ -843,6 +843,18 @@ Proposed guards: Stop on unknown identification, required manual selection or RO
 Implementation: Registration only. UI and persistence undecided; no implementation, build or upload authorization and no source changes.
 Control proposal (2026-11-04 16:35:31 JST): On the root menu, holding the right button could preview Auto: <target> at 1 to under 3 seconds, then POA: <target> at 3+ seconds; commit only on release. User specified steady Auto preview, blinking POA preview only. Also requested a star on the target console row and a precise POA target label distinguishing PCE swapped/not swapped. Timing/button assignment remains a proposal, not implemented. Resolve short-press conflicts, GB/GBA target selection, disabling POA and V5 controls. Reuse display buffer and measure RAM impact.
 Target-selection clarification (2026-11-04 16:38:39 JST): Disable hold-to-Auto/power-on preset assignment on the root Game Boy row because GB versus GBA is unresolved. Enter its submenu normally and accept the hold operation on Game Boy (Color) or GB Advance (3V). Proposed preview: steady Auto text, blinking star plus target for the power-on preset, favoring the star over the POA abbreviation. Recorded only.
+Consolidated decisions (2026-11-04 16:54:17 JST): These decisions supersede conflicting tentative notes above.
+- In eligible menus, hold the HW3 right button / V5 knob for 1 to under 3 seconds to preview steady Auto: <target>; at 3+ seconds preview a blinking star and target. Commit only on release, never during the hold. Preserve normal short-press selection and controls outside eligible menus; prevent the existing 2/5-second handlers from firing as well.
+- Auto immediately reads ROM then applicable save. Star presets power-on automatic dumping for subsequent boots. Holding the same preset target disables it; holding another resolved target moves the single preset to that target.
+- The root Game Boy entry cannot start Auto or assign a preset because GB/GBA is unresolved. It may disable an existing GB/GBA preset, but must not replace another console preset with an assumed GB target. Choose GB/GBA and PCE swapped/not-swapped in their submenus. Show a star on the corresponding root console plus a precise preset label.
+- Show the enabled target with a star and provide an exact target indicator even on other pages. Draw a small marker if the font lacks a star glyph.
+- Persist in an unused EEPROM region, default disabled, updating only on changed settings/disable rather than every boot or dump. Avoid existing folder-number/settings regions.
+- Hold HW3 right / V5 knob during startup to skip the preset for that boot only, retaining the saved preset. Suppress normal click/hold handling until release. User observed HW3 left held through startup acts as ordinary selection.
+- No SD: retain the existing SD initialization error path; startup-button bypass does not bypass missing SD.
+- When the PC tool is connected, suppress the reader preset without erasing it. Tool preset enabled: use tool automation; tool preset disabled: stay manual. USB power alone remains standalone. Resolve connection before starting standalone automation and prevent duplicate execution.
+- Stop automatic flow on errors/unknown interaction; never read save after failed ROM. No automatic retry or repeated automatic run in the same boot; preserve existing read/verification behavior.
+- Implementation checks: RAM/Flash, EEPROM layout, host-connection/startup races, release handling/menu restoration, all target read paths. V5 has no available hardware; separate source/compile validation from hardware results.
+Scope of this update: specification record only; firmware Auto/star implementation, builds and uploads have not started.
 
 
 #046 Empty PCE slot produces all-FF dump and green success
