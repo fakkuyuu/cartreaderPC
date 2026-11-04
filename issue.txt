@@ -69,6 +69,7 @@ ID    Status   Prio Categories                    Title
 044   OPEN     P2   enhancement/logging           Timestamps for shared log milestones and ROM companion TXT
 045   VERIFY   P2   enhancement/automation        Standalone SD automatic dump and power-on start
 046   VERIFY   P2   bug/verification/ui           Empty PCE slot produces all-FF dump and green success
+047   OPEN     P2   enhancement/ui                Small persistent reader-display host connection marker
 
 [DETAILS]
 PC100 build report (2026-11-03 20:42:14 JST): Built GitHub1de58ba with local PC100 branding. All 67 tests and independent integration checks pass: MD internal checksum error stops before save with solid red; valid ROM followed by save error alternates at 1-second intervals. EXE self-test PASS/exit0. Preserve results during USB loss and reset on reconnect. No firmware changes/upload. Hardware confirmation pending; retain VERIFY.
@@ -889,3 +890,12 @@ Additional hardware result (2026-11-04 16:21:56 JST): User deliberately introduc
 Implementation authorized (2026-11-04 16:23:48 JST): Implement PCE DB hit=green / miss=red first. An unregistered PCE ROM is also red (not verified); other consoles remain unchanged.
 PC103 implementation (2026-11-04 16:25:19 JST): Per user decision, supersedes the earlier no-red-on-DB-miss proposal for PCE only. Storage.verify_rom emits PCE-CHECK=OK for a .pce DB hit or PCE-CHECK=MISMATCH for a miss. Existing result/Auto error handling makes it red/stops Auto. Unknown legitimate PCE or missing DB is also red (unverified, not proven corrupt). Keep saved ROM, CRC/SHA, renaming and companion TXT. Other consoles unchanged. 92 tests and EXE self-test PASS; hardware pending. No firmware changes.
 User confirmation (2026-11-04 16:27:55 JST): User replied OK after PC103 delivery. Individual empty-slot/bad-contact/DB-hit test details were not specified.
+
+#047 Persistent small host-connection marker on reader display
+Added: 2026-11-04 19:47:08 JST
+Last updated: 2026-11-04 19:47:08 JST
+Status: OPEN / P2 / enhancement, ui
+Request: Show a persistent unobtrusive indicator on the physical reader display while connected to the PC tool.
+Proposal (not agreed yet): A steady 2-3px square at the top-right, visible only with an established tool connection. USB power alone is not a connection. Independent of PC/SD destination: remain visible in connected SD mode.
+Design: Avoid normal menus, hold previews, progress and information/error screens; preserve the marker across redraws on HW3 OLED/V5 LCD and remove it on disconnect. Minimize RAM overhead.
+Implementation: Request recorded only. Shape/placement tentative; no source/build/upload changes.
