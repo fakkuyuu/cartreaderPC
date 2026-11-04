@@ -22,7 +22,7 @@ from i18n import UiTranslator
 from ram_status import ram_labels
 from browser_request import make_request
 from auto_menu import (
-    ZeroChord, build_menu_rows, build_auto_entries, resolve_menu_number,
+    ZeroChord, build_menu_rows, resolve_menu_number,
     MenuNavigator, is_main_menu, is_widget_within, normalize_digit,
     display_auto_reason,
 )
@@ -2161,10 +2161,17 @@ def gui(args):
                                     paint()
                             send_menu_key(reader_key)
                     return "break"
-                if key == "tab":
-                    # Let Tk's focus traversal move from the single menu group
-                    # to the next external control (Shift+Tab works natively).
-                    return None
+                if key in ("tab", "iso_left_tab"):
+                    # The operation menu is one tab stop. Skip its rows,
+                    # inline Auto buttons and page controls as individual stops.
+                    backwards = bool(event.state & 0x0001) or key == "iso_left_tab"
+                    target = (
+                        menu_items.tk_focusPrev() if backwards
+                        else menu_items.tk_focusNext()
+                    )
+                    if target is not None:
+                        target.focus_set()
+                    return "break"
                 return None
 
             # Submenus keep their existing reader numbering and page behavior.
@@ -2198,7 +2205,6 @@ def gui(args):
                 send_menu_key(typed_digit)
                 return "break"
             return None
-        value = typed_digit or (key if key in "ud" else event.char.lower())
     # Bind the disabled console directly as well: Tk's Text class can consume
     # key events before the application-wide binding gets them.
     capture_tag = "ReaderKeyboardCapture"
