@@ -205,6 +205,9 @@ class Storage:
                 checksum_ok = calculated == stored
                 state = "OK" if calculated == stored else f"MISMATCH header={stored:04X}"
                 result += f"  SNES-CHECKSUM={calculated:04X} {state}"
+        if suffix == ".pce":
+            checksum_ok = bool(match)
+            result += "  PCE-CHECK=OK" if match else "  PCE-CHECK=MISMATCH"
         result += f"  DB={match}" if match else "  DB=no match"
         if match:
             safe_name = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", Path(match).name).rstrip(". ")

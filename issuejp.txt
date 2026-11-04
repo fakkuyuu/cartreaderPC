@@ -68,7 +68,7 @@ ID    状態       優先   分類                            件名
 043   VERIFY     P2   bug/storage/reset       SD保存後にResetするとPC保存へ勝手に切り替わる
 044   OPEN     P2   enhancement/logging           共通ログとROM付属TXTに節目の日時を記録
 045   IDEA     P2   enhancement/automation        単体SDの自動吸出しと電源投入時自動開始
-046   OPEN     P2   bug/verification/ui           PCE未挿入の全FFダンプを緑の成功表示にする
+046   VERIFY   P2   bug/verification/ui           PCE未挿入の全FFダンプを緑の成功表示にする
 
 【詳細】
 
@@ -879,12 +879,14 @@ ROM付属TXT: そのROMの吸出し開始・完了日時も残す。他ROMや接
 #046 PCE未挿入でも全FFダンプを成功の緑表示にする
 追加日時: 2026-11-04 16:17:12 JST
 最終更新日時: 2026-11-04 16:17:12 JST
-状態: OPEN / P2 / bug, verification, ui
+状態: VERIFY / P2 / bug, verification, ui
 実機報告: カセット未挿入でHuCARD(swapped)→Read ROM。16KBと検出、178/179の2回とも保存し緑表示。CRC32=690B37D3、DB=no match、SHA256=0fbba07a833d4dcfc7024eaf313661a0ba8f80a05c6d29b8801c612e10e60dee。
 確認事実: 16384バイト全FFの計算値が提示SHA256/CRC32と完全一致。実ファイルは未検査。DumpResultは非ゼロサイズ保存/VERIFY後、明示エラーなしでPress Buttonに到達すると成功にする。DB未一致だけでは失敗にしない。
 課題: 転送成功を有効ROMの読出し成功と混同する。未挿入/接触不良に相当する全FF/全00等の異常候補を検出し、正常ROMや未知DBを誤って失敗にしない条件を検討。DB=no matchだけを赤にする修正はしない。
 対応: 報告と原因候補を記録。修正・ビルド・書込み未実施。使用版は今回ログに明記なし。関連#040。
 追加実機結果 (2026-11-04 16:21:56 JST): ユーザーが故意に接触不良にしてHuCARD(swapped)を読出し、再び緑表示。180/PCEROM.pce、16KB、CRC32=5EC9EF40、SHA256=9e945ff6e382ac530727e485b9d1932303cc18a7c528a6eedc881b1b49362071、DB=no match。前回の全FFとは異なり、全FF/全00判定だけでは接触不良全般を保証できない。ファイル内容未確認。再読一致も正しさの保証にはならない。追加検出は誤検知を含め検討し、DB未一致を正常ROMの証明として扱わない。
+実装指示 (2026-11-04 16:23:48 JST): ユーザーがPCEのDB一致=緑/未一致=赤を先行実装するよう明示。未登録も赤（正常確認できず）に含める方針を採用。他機種のDB未一致判定は変更しない。
+PC103実装 (2026-11-04 16:25:19 JST): ユーザー指定により従来の「DB未一致だけを赤にしない」案をPCEでは撤回。Storage.verify_romの.pceのみDB一致でPCE-CHECK=OK、未一致でPCE-CHECK=MISMATCHを出す。既存の異常判定でコンソール赤・Auto停止へ連動。未知の正常PCE/DB不足も赤になる（破損確定ではなく正常確認できず）。ROMファイル自体は保存し、CRC/SHA・リネーム・TXT生成を維持。他機種未変更。92件テスト/EXE自己確認PASS。実機未確認。ファーム変更なし。
 
 【次の運用】
 ・変更案・不具合・要望はまずissue登録のみ。ユーザーが実装開始を明示するまでコード変更・ビルド・書き込みを始めない。
