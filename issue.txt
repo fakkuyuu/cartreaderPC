@@ -67,7 +67,7 @@ ID    Status   Prio Categories                    Title
 042   OPEN     P2   enhancement/ui          Compact automatic-dump controls and unambiguous focus/hover feedback
 043   VERIFY     P2   bug/storage/reset       Reset after SD dump unexpectedly switches storage to PC
 044   OPEN     P2   enhancement/logging           Timestamps for shared log milestones and ROM companion TXT
-045   IDEA     P2   enhancement/automation        Standalone SD automatic dump and power-on start
+045   VERIFY   P2   enhancement/automation        Standalone SD automatic dump and power-on start
 046   VERIFY   P2   bug/verification/ui           Empty PCE slot produces all-FF dump and green success
 
 [DETAILS]
@@ -834,8 +834,8 @@ Implementation: Registration only; no source, EXE or firmware changes.
 
 #045 Standalone SD automatic dumping and power-on automatic start
 Added: 2026-11-04 15:56:06 JST
-Last updated: 2026-11-04 16:54:17 JST
-Status: IDEA / P2 / enhancement, automation
+Last updated: 2026-11-04 17:13 JST
+Status: VERIFY / P2 / enhancement, automation
 User request: Both features are wanted without a PC: (1) start an automatic ROM-then-save dump from reader controls; (2) persist an enabled flag and preset target, then start the same process once per power-on without clearing the flag afterwards.
 Related: #029 batch flow and #036 PC-connected startup mode. Standalone execution requires firmware implementation rather than PC-side automation.
 Design questions: Reader menu/button controls, enabling/disabling and target selection, bypass to ordinary startup, persistence/EEPROM wear, RAM/Flash impact. Distinguish modes such as GB/GBA and PCE swapped/not swapped.
@@ -855,6 +855,12 @@ Consolidated decisions (2026-11-04 16:54:17 JST): These decisions supersede conf
 - Stop automatic flow on errors/unknown interaction; never read save after failed ROM. No automatic retry or repeated automatic run in the same boot; preserve existing read/verification behavior.
 - Implementation checks: RAM/Flash, EEPROM layout, host-connection/startup races, release handling/menu restoration, all target read paths. V5 has no available hardware; separate source/compile validation from hardware results.
 Scope of this update: specification record only; firmware Auto/star implementation, builds and uploads have not started.
+Implementation started (2026-11-04 17:02 JST): User explicitly requested continuation into implementation. Plan PC104 firmware Auto/star implementation and builds; confirm no active dump/copy before uploading.
+PC104 implementation/upload (2026-11-04 17:13 JST): Added StandaloneAuto.h/ZZ_StandaloneAuto.ino state/control logic using existing read-only menu routes, dumps, saving and DB verification. Automatically proceeds ROM then applicable save; stops on unknown/manual interactions, explicit errors, DB miss or missing file/verification confirmation. No automatic write actions. Added right/knob 1s Auto and 3s blinking-star previews committed on release, preset move/disable, root GB/PCE disable-only handling, startup hold bypass, and suppression while host-connected. Star uses the existing framebuffer; root heading identifies the exact preset. EEPROM4092-4095 is updated only on setting changes with invalidation/value/complement/schema/magic commit ordering.
+Software results: GCC16.1.0 with IDE1.8.19 environment. HW3 flash221196B/static RAM6682B (+6B versus PC94;1510B remaining). HW5 flash219950B/static RAM6708B. Compiled the actual control code to AVR and executed 81 mocked-I/O checks for each button/rotary configuration using avr8js: PASS. Real cartridge/SD/display/voltage behavior is not simulated. PC tool remains PC103 unchanged.
+Upload: HW3 PC104 to COM5, avrdude exit0/221196 bytes written; -V skips post-upload verification per user preference. User confirmed no active dump/copy before upload.
+Hardware: Pending. Test short/1s/3s holds and release, persistence/move/disable, held-button startup, PC priority and successful/error ROM/save flow. V5 hardware unavailable. Status VERIFY.
+Artifacts: outputs3/cartreader-v15.5-pc104/Cart_Reader and hex/Cart_Reader.ino.hex. Base work/pc94; tests work/pc104-tests. Preserve local HW3 Config.h and published upstream V15.5 configuration.
 
 
 #046 Empty PCE slot produces all-FF dump and green success

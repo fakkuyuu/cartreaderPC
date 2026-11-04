@@ -1,3 +1,4 @@
+#include "StandaloneAuto.h"
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "PcStorage.h"
 #undef FsFile
@@ -852,7 +853,16 @@ bool HybridFsFile::openNext(HybridFsFile* dir,uint8_t flags) {
   close(); pc=PcLink::usingPcStorage();
   return pc ? remote.openNext(&dir->remote,flags) : local.openNext(&dir->local,flags);
 }
-void HybridFsFile::close() { if(pc) remote.close(); else local.close(); }
+void HybridFsFile::close() {
+  if(pc) remote.close();
+  else {
+    if(standaloneFileTracking() && local.isOpen() && local.isWritable()) {
+      if(!local.sync() || local.getWriteError()) standaloneError();
+      else standaloneFileClosed(local.fileSize());
+    }
+    local.close();
+  }
+}
 void HybridFsFile::flush() { if(pc) remote.flush(); else local.flush(); }
 bool HybridFsFile::sync() { return pc ? remote.sync() : local.sync(); }
 HybridFsFile::operator bool() const { return pc ? (bool)remote : (bool)local; }

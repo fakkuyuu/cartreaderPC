@@ -785,6 +785,7 @@ uint32_t oldcrc32 = 0xFFFFFFFF;
 uint32_t oldcrc32MMC3 = 0xFFFFFFFF;
 
 void getMapping() {
+  standaloneCandidateAllowed(false);
   FsFile database;
   char crcStr[9];
 
@@ -813,6 +814,7 @@ void getMapping() {
     display_Update();
     delay(500);
     setDefaultRomName();
+    standaloneError();
     browseDatabase = selectMapping(database);
   } else {
     char crcStrAlt[9];
@@ -842,6 +844,7 @@ void getMapping() {
     }
     if (database.available()) {
       browseDatabase = true;
+      standaloneCandidateAllowed(true);
     } else {
       // File searched until end but nothing found
       println_Msg(FS(FSTRING_EMPTY));
@@ -855,7 +858,8 @@ void getMapping() {
 
       // Change ROM name to CART
       setDefaultRomName();
-      browseDatabase = selectMapping(database);
+      standaloneError();
+    browseDatabase = selectMapping(database);
     }
   }
   if (browseDatabase) {

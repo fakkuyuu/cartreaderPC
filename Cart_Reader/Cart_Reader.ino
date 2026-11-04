@@ -58,6 +58,7 @@
 **********************************************************************************/
 
 #include "OSCR.h"
+#include "StandaloneAuto.h"
 
 void pcVerificationResult(uint8_t code);
 
@@ -666,6 +667,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
         } else {
           println_Msg(FS(FSTRING_OK));
         }
+        standaloneVerified();
         return 1;
         break;
       }
@@ -900,7 +902,7 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
       }
 #endif
       // Check button input
-      b = checkButton();
+      b = standaloneCandidate(3) ? 3 : checkButton();
 
       // Next
       if (b == 1) {
@@ -962,6 +964,7 @@ void pcPhysicalControlsReady() {
 }
 
 void pcAlphabetReady(byte index, const char* databaseName) {
+  standaloneError();
 #ifdef PC_MENU
   // Capability marker: older firmware must not receive the '!' escape.
   if (mode == CORE_NES)
@@ -1002,6 +1005,7 @@ void printInstructions() {
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 int navigateMenu(int min, int max, void (*printSelection)(int)) {
+  standaloneError();
   uint8_t b = 0;
   int i = min;
 
@@ -2367,6 +2371,8 @@ void setup() {
   #endif /* HW5 */
 #endif /* ENABLE_VSELECT */
 
+  standaloneBootCapture();
+
   // Set power to low to protect carts
   setVoltage(VOLTS_SET_3V3);
 
@@ -2527,6 +2533,7 @@ void setup() {
   setClockScale(CLKSCALE_8MHZ);  // Set clock back to low after setup
 #endif                           /* ENABLE_3V3FIX */
 
+  standaloneBootReady();
   // Start menu system
   mainMenu();
 }
@@ -2625,6 +2632,7 @@ void convertPgm(const char* const pgmOptions[], byte numArrays) {
 }
 
 void _print_Error(void) {
+  standaloneError();
   errorLvl = 1;
   rgbLed(red_color);
   display_Update();
@@ -2664,6 +2672,7 @@ void print_FatalError(byte errorMessage) {
 }
 
 void wait() {
+  if (standaloneWait()) return;
   // Switch status LED off
   statusLED(false);
 #if defined(ENABLE_LCD)
@@ -3170,6 +3179,7 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
   }
   PcConsole.println(F("Select on reader or PC: _"));
 #endif
+redraw:
   //clear the screen
   display.clearDisplay();
   display.updateDisplay();
@@ -3180,7 +3190,7 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
   rgbLed(default_choice);
 
   // print menu
-  display.println(question);
+  standaloneTitle(question);
   display.setCursor(0, display.ty + 8);
   for (unsigned char i = 0; i < num_answers; i++) {
     // Add space for the selection dot
@@ -3189,6 +3199,9 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
     display.println(answers[i]);
     display.setCursor(0, display.ty + 8);
   }
+  display.updateDisplay();
+
+  standaloneMenuMarks(question, answers, num_answers);
   display.updateDisplay();
 
   // start with the default choice
@@ -3201,6 +3214,10 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
   unsigned long idleTime = millis();
   byte currentColor = 0;
   uint8_t pcButtonEvent = 0;
+  int8_t automaticChoice = standaloneMenu(question, answers, num_answers);
+  if (automaticChoice == -2) return 0;
+  if (automaticChoice >= 0) { choice = automaticChoice; numPages = 0; goto selected; }
+
 
   // wait until user makes his choice
 #ifdef PC_MENU
@@ -3315,6 +3332,20 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
       }
     }
 #endif
+    // Standalone right/knob holds commit only after release. PC controls
+    // retain their existing paths and never race the firmware automator.
+    if (!PcLink::connected()) {
+      uint8_t resolved = standaloneTarget(question, answers[choice], true);
+      if (resolved && standaloneRightDown()) {
+        bool changed = false;
+        bool canAuto = standaloneTarget(question, answers[choice], false) != 0;
+        bool selectedNow = standaloneHold(resolved, changed, canAuto);
+        if (selectedNow) { numPages=0; goto selected; }
+        // Redraw the same page after a preset toggle or cancelled preview.
+        default_choice=choice; goto redraw;
+      }
+    }
+
     // Attract Mode
     if (millis() - idleTime > 300000) {
       if ((millis() - idleTime) % 4000 == 0) {
@@ -3429,6 +3460,7 @@ unsigned char questionBox_Display(const __FlashStringHelper* question, char answ
     checkUpdater();
   }
 
+selected:
   // pass on user choice
   rgbLed(black_color);
   PcConsole.print(F("[Menu] returning choice="));
