@@ -1,5 +1,5 @@
 cartreaderPC Issues
-Last updated: 2026-11-04 22:48:10 JST
+Last updated: 2026-11-04 22:50:37 JST
 Applies to: PC tool PC106 / firmware PC107 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
@@ -792,7 +792,7 @@ Implementation: Issue registration only; implementation not started.
 
 #042 Compact automatic-dump controls and unambiguous focus/hover feedback
 Added: 2026-11-03 22:06:08 JST
-Last updated: 2026-11-04 22:48:10 JST
+Last updated: 2026-11-04 22:50:37 JST
 Status: VERIFY / P2 / enhancement, ui
 User report: NES row and Batch GB button simultaneously appear blue. Independent mouse hover, keyboard selection and button focus make the active action unclear. Per-console batch buttons consume excessive horizontal space.
 Request: Clarify selection/hover/focus without removing keyboard operation, avoid ambiguous multiple highlights, and compact automatic-dump controls. Consider Auto dump naming because Batch dump can suggest multiple cartridges.
@@ -804,7 +804,7 @@ Naming clarification (2026-11-04 15:44:10 JST): Use Auto: <console name> for per
 
 PC106 implementation (2026-11-04 22:30:00 JST):
 - Moved the per-console Auto buttons from the right side of each menu row into a compact two-column group below the menu. Each remains a one-click action and is labeled "Auto: <existing reader menu name>". GB and GBA have separate entries ("Game Boy (Color)" and "GB Advance (3V)"); PCE swapped/not-swapped are separate. Only targets visible on the current menu page are offered.
-- Show the shortcut beside each button. On the main console-selection menu only, hold 0 and press 1–8 to invoke the corresponding visible Auto action. A lone 0 no longer selects ordinary menu item 0 on that screen; releasing 0 cancels an incomplete chord. Normal 1–9, mouse, arrows and Enter remain available. A lone 7/8 retains its page-navigation meaning; 0+7/8 takes Auto-shortcut precedence. Other submenus retain their normal 0 selection.
+- Show the shortcut beside each button. On the main console-selection menu only, hold 0 and press 1–8 to invoke the corresponding visible Auto action. A lone 0 no longer selects ordinary menu item 0 on that screen; releasing 0 cancels an incomplete chord; non-numeric navigation keys pass through without cancelling the held modifier. Normal 1–9, mouse and Enter remain available. A lone 7/8 retains its page-navigation meaning; 0+7/8 takes Auto-shortcut precedence. Other submenus retain their normal 0 selection.
 - Hovering an Auto button clears the ordinary row highlight and emphasizes only that button. Keyboard up/down, direct numeric selection, Enter and page navigation clear the Auto highlight and update/retain the row selection index, so the two focus styles do not compete.
 - User-facing log prefixes/messages now use Japanese "自動吸出し" / English "Auto dump". Internal BatchDump class, reason strings and completion-state checks remain unchanged; only the displayed copy is renamed. BootDump remains a separate power-on feature.
 - Added pc/auto_menu.py and pc/test_auto_menu.py for target mapping, 0-chord routing, page-key priority, modifier release, display-copy wording and localized Auto text. Actual Windows UI, keyboard and EXE verification have not yet been performed.
