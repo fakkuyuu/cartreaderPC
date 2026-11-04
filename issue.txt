@@ -792,8 +792,8 @@ Implementation: Issue registration only; implementation not started.
 
 #042 Compact automatic-dump controls and unambiguous focus/hover feedback
 Added: 2026-11-03 22:06:08 JST
-Last updated: 2026-11-04 23:12:00 JST
-Status: VERIFY / P2 / enhancement, ui
+Last updated: 2026-11-04 23:41 JST
+Status: OPEN / P2 / enhancement, ui
 User report: NES row and Batch GB button simultaneously appear blue. Independent mouse hover, keyboard selection and button focus make the active action unclear. Per-console batch buttons consume excessive horizontal space.
 Request: Clarify selection/hover/focus without removing keyboard operation, avoid ambiguous multiple highlights, and compact automatic-dump controls. Consider Auto dump naming because Batch dump can suggest multiple cartridges.
 Initially undecided: Layout, click count, console selection and GB/GBA/PCE-swapped choices. The later specification updates below resolve these choices.
@@ -833,6 +833,17 @@ PC108 implementation (2026-11-04 23:12 JST):
 - Added/updated the number mapping, navigation, focus and translation helpers in pc/auto_menu.py; expanded pc/test_auto_menu.py; updated the legacy batch GUI regression to check the inline row-based Auto controls.
 Verification: GitHub Actions run 41845113521 succeeded; all 118 PC Python regression tests passed. Coverage includes ordinary digits and numpad, display-to-reader mapping, arrows+Enter, Auto shortcuts, page-edge navigation, Tab/Shift+Tab traversal, Japanese/English presentation and existing regressions. A Windows EXE rebuild and actual Windows GUI/keyboard check were not performed in this environment. Keep VERIFY pending visual/focus confirmation on Windows. Arduino firmware unchanged.
 
+
+Additional report (2026-11-04 23:17 JST):
+User reproduced the issue by invoking the actual navigation handler. Left from a normal row changed pages only on the first row; Right from the last Auto changed pages only on the last row. Intermediate rows such as NES did not change pages. Display numbering, 0+digit shortcuts, arrow navigation to Auto, Tab grouping and PC108 naming were already present. Actual GUI/hardware/EXE checks remain outstanding.
+
+PC108 page-boundary correction (2026-11-04 23:41 JST):
+- Corrected the row-index guards in MenuNavigator.move_horizontal(). On a paged menu, Left from a normal row now requests the previous page regardless of row position.
+- Right from the last Auto action in any row now requests the next page regardless of row position. On a row with multiple Auto actions, Left from the first Auto returns to the normal row; another Left requests the previous page.
+- Preserved the existing Right behavior for the final row when it has no Auto actions.
+- Updated pc/test_auto_menu.py with regression coverage for the right edge of every Auto row, the left edge of every normal row, and the two-step transition from first Auto to normal row to previous page.
+Version remains PC108. No firmware changes.
+Verification: Source and tests committed to GitHub; the Actions result for this update has not been confirmed. Windows EXE rebuild, actual GUI and hardware checks are also outstanding, so status remains OPEN.
 #043 Reset after SD dump unexpectedly switches storage to PC
 Added: 2026-11-03 22:50:26 JST
 Last updated: 2026-11-03 22:54:12 JST
