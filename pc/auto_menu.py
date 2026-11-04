@@ -166,7 +166,7 @@ class MenuNavigator:
             if row_entries:
                 self.auto_index = 0
                 self.preferred_auto_index = 0
-            elif self.row == len(self.rows) - 1 and self.paged:
+            elif self.paged:
                 return "next-page"
             return None
 
