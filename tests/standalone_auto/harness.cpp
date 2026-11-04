@@ -49,7 +49,7 @@ static void rgbLed(uint8_t){}
 #include "../../Cart_Reader/ZZ_StandaloneAuto.ino"
 extern "C" {volatile uint16_t test_result=0;volatile uint16_t failed_at=0;volatile uint16_t test_count=0;}
 #define CHECK(x) do {test_count++; if(!(x)){failed_at=test_count;test_result=0xDEAD;while(1){asm volatile("nop");}}}while(0)
-static void resetRun(){standaloneRun=0;standaloneStage=0;standaloneFlags=0;host=false;errorLvl=false;standaloneNesCandidate=false;mockPG=4;releaseAt=0;}
+static void resetRun(){standaloneRun=0;standaloneStage=0;standaloneFlags=0;host=false;errorLvl=false;standaloneNesCandidate=false;mockPG=4;releaseAt=0;standaloneStartupHeld=false;standaloneResetMarker=0;}
 static bool hold(uint8_t t,uint16_t ms,bool& changed,bool allow=true){nowMs=0;mockPG=0;releaseAt=ms;return standaloneHold(t,changed,allow);}
 int main(){
  standaloneBootCapture();CHECK(standalonePreset==0);CHECK(EEPROM.writes==0);
@@ -61,7 +61,11 @@ int main(){
  CHECK(!hold(4,3500,changed));CHECK(standalonePreset==0);
  standaloneSetPreset(2);uint16_t writes=EEPROM.writes;standalonePreset=0;standaloneBootCapture();CHECK(standalonePreset==2 && EEPROM.writes==writes);
  standaloneBootReady();CHECK(standaloneRun==2 && standaloneStage==1);
- resetRun();mockPG=0;standaloneBootCapture();releaseAt=nowMs+20;standaloneBootReady();CHECK(!standaloneStage && standalonePreset==2 && mockPG==4);
+ resetRun();mockPG=0;standaloneBootCapture();releaseAt=nowMs+20;
+ uint32_t beforeReady=nowMs;standaloneBootReady();
+ CHECK(nowMs==beforeReady && !standaloneStage && standalonePreset==2 && mockPG==0);
+ CHECK(standaloneInputBlocked());delay(25);CHECK(standaloneInputBlocked());CHECK(!standaloneInputBlocked());
+ CHECK(!standaloneStage && standalonePreset==2);
  resetRun();standaloneBootCapture();host=true;standaloneBootReady();CHECK(!standaloneStage && standalonePreset==2);
  resetRun();CHECK(standaloneTarget(F("OPEN SOURCE CART READER"),"Game Boy",false)==0);
  CHECK(standaloneTarget(F("OPEN SOURCE CART READER"),"Game Boy",true)==2);
@@ -100,5 +104,13 @@ int main(){
  resetRun();standaloneRun=6;standaloneStage=1;CHECK(standaloneMenu(F("Select MD device"),cart,2)==0);
  resetRun();standaloneRun=8;standaloneStage=1;char pce[7][20]={"HuCARD(swapped)","HuCARD(not swapped)"};CHECK(standaloneMenu(F("Select device"),pce,2)==1);
  standaloneSetPreset(2);standalonePreset=0;EEPROM.b[2]^=1;standaloneBootCapture();CHECK(!standalonePreset);
+
+ resetRun();standaloneSetPreset(2);writes=EEPROM.writes;
+ standaloneSuppressNextBoot();standaloneBootCapture();standaloneBootReady();
+ CHECK(standaloneSkip && !standaloneStage && standalonePreset==2);
+ CHECK(!standaloneStartupHeld && !standaloneInputBlocked());CHECK(EEPROM.writes==writes);
+ standaloneSuppressNextBoot();standaloneBootCapture();standaloneBootReady();CHECK(!standaloneStage && standalonePreset==2);
+ resetRun();standaloneBootCapture();standaloneBootReady();CHECK(standaloneStage==1 && standalonePreset==2);
+ CHECK(standaloneResetMarker==0);
  test_result=0x600D;while(1){asm volatile("nop");}
 }

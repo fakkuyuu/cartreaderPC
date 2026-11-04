@@ -489,7 +489,7 @@ def gui(args):
     _saved_lang = ui_settings.get("language", "English")
     language = tk.StringVar(value="Japanese" if _saved_lang in ("日本語", "JAPANESE") else _saved_lang)
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC103 — Disconnected")
+    window.title("cartreaderPC PC105 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -583,7 +583,7 @@ def gui(args):
             inbox.put(f"[Settings] {exc}\n")
     power_on_row = ttk.Frame(menu_panel)
     power_on_row.pack(fill="x", pady=(0, 6))
-    ttk.Checkbutton(power_on_row, text="起動時自動吸出し", variable=power_on_enabled,
+    ttk.Checkbutton(power_on_row, text="BootDump", variable=power_on_enabled,
                     command=remember_power_on).pack(side="left")
     power_on_picker = ttk.Combobox(
         power_on_row, textvariable=power_on_target,
@@ -756,7 +756,7 @@ def gui(args):
         if not action:
             return
         if action[0] == "start":
-            inbox.put("[Auto start] 起動時自動吸出しを開始します。\n")
+            inbox.put("[Auto start] BootDumpを開始します。\n")
             start_batch(action[1], action[2])
         elif action[0] == "page":
             send_menu_key(action[1], automated=True)
@@ -1289,7 +1289,7 @@ def gui(args):
                 set_storage_state("PC", desired if desired != "PC" else None)
             if version_match:
                 window.title(
-                    f"cartreaderPC PC103 — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC105 — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1365,7 +1365,7 @@ def gui(args):
                 power_on.disconnected()
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC103 — Disconnected")
+                window.title("cartreaderPC PC105 — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")

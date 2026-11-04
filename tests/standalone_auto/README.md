@@ -11,6 +11,6 @@ avr-objcopy -O binary test.elf test.bin
 node tests/standalone_auto/run.js test.bin test.elf
 ```
 
-Repeat compilation with `-DTEST_ROTARY` to exercise the rotary button path. Each variant should report `PASS checks=81 failed_at=0`. Set `AVR_NM` to the full avr-nm executable path if it is not on PATH. The harness uses ATmega328P emulation for portable control-code testing; the full firmware must separately compile for ATmega2560/HW3 and HW5.
+Repeat compilation with `-DTEST_ROTARY` to exercise the rotary button path. Each variant should report `PASS checks=91 failed_at=0`. Set `AVR_NM` to the full avr-nm executable path if it is not on PATH. The harness uses ATmega328P emulation for portable control-code testing; the full firmware must separately compile for ATmega2560/HW3 and HW5.
 
 EEPROM tests use four fake bytes and count updates. The production firmware reserves EEPROM4092-4095 on ATmega2560. Do not commit node_modules, generated ELF/BIN or installed package files.

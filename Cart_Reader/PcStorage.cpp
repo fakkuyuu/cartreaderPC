@@ -139,6 +139,7 @@ void resetAfterHostLoss() {
   started=false;
   skipPcBoot=SKIP_PC_BOOT_MAGIC;
   Serial.flush();
+  standaloneSuppressNextBoot();
   wdt_enable(WDTO_15MS);
   for (;;) {}
 }

@@ -6,6 +6,9 @@ static uint8_t standaloneRun = 0;
 static uint8_t standaloneStage = 0; // 0 idle, 1 entry, 2 ROM, 3 save, 4 save menu
 static uint8_t standaloneFlags = 0;
 static bool standaloneSkip = false;
+static bool standaloneStartupHeld = false;
+static uint32_t standaloneResetMarker __attribute__((section(".noinit")));
+static const uint32_t SA_RESET_MARKER = 0xB005D105UL;
 static bool standaloneNesCandidate = false;
 static const uint8_t SA_FILE = 1, SA_VERIFIED = 2;
 static const int SA_EEPROM = E2END - 3;
@@ -47,13 +50,14 @@ static void standaloneRelease() {
 #endif
 }
 void standaloneBootCapture() {
-  standaloneSkip=standaloneRightDown();
+  standaloneStartupHeld=standaloneRightDown();
+  standaloneSkip=standaloneStartupHeld || standaloneResetMarker==SA_RESET_MARKER;
+  standaloneResetMarker=0;
   uint8_t target=EEPROM.read(SA_EEPROM+1);
   if(EEPROM.read(SA_EEPROM)==0xA7 && EEPROM.read(SA_EEPROM+3)==1
       && target<=8 && EEPROM.read(SA_EEPROM+2)==uint8_t(target^0x5A)) standalonePreset=target;
 }
 void standaloneBootReady() {
-  if(standaloneSkip) standaloneRelease();
   if(!standaloneSkip && standalonePreset && !PcLink::connected()) {
     standaloneRun=standalonePreset; standaloneStage=1; standaloneFlags=0;
   }
@@ -191,16 +195,23 @@ int8_t standaloneMenu(const __FlashStringHelper* title, char answers[7][20], uin
   }
   standaloneError();return -1;
 }
-void standaloneMenuMarks(const __FlashStringHelper* title, char answers[7][20], uint8_t count) {
-#if defined(ENABLE_LCD) || defined(ENABLE_OLED)
-  if(!standalonePreset) return;
-  for(uint8_t i=0;i<count;i++) if(standaloneTarget(title,answers[i],true)==standalonePreset) {
-    // A small five-point marker; no font expansion or extra bitmap buffer.
-    uint8_t y=8*i+12;
-    display.drawPixel(6,y-2);display.drawHLine(4,y,5);display.drawHLine(5,y-1,3);
-    display.drawPixel(5,y+1);display.drawPixel(7,y+1);
+// A previous startup hold must never turn into an ordinary click or Auto.
+// This is polled after drawing the menu, rather than blocking setup().
+bool standaloneInputBlocked() {
+  if(!standaloneStartupHeld) return false;
+  if(standaloneRightDown()) return true;
+  standaloneStartupHeld=false;
+  standaloneRelease();
+  return true; // Discard the release edge as well.
+}
+void standaloneSuppressNextBoot() { standaloneResetMarker=SA_RESET_MARKER; }
+static const __FlashStringHelper* standaloneDisplayName(uint8_t target) {
+  switch(target) {
+    case 4: return F("SNES/SFC");
+    case 5: return F("N64 (3V)");
+    case 6: return F("MD/Genesis");
+    default: return standaloneName(target);
   }
-#endif
 }
 bool standaloneHold(uint8_t target, bool& presetChanged, bool allowAuto) {
   presetChanged=false;
@@ -213,9 +224,12 @@ bool standaloneHold(uint8_t target, bool& presetChanged, bool allowAuto) {
     if(state!=shown && elapsed>=1000) {
       display.setDrawColor(0);display.drawBox(0,0,128,9);display.setDrawColor(1);
       display.setCursor(0,8);
-      if(state==1) display.print(allowAuto ? F("Auto: ") : F("Hold: * OFF "));
-      else if(state==2) display.print(target==standalonePreset ? F("* OFF: ") : F("* "));
-      if(state==1 || state==2) display.print(standaloneName(target));
+      if(state==1 && allowAuto) {
+        display.print(F("Auto: ")); display.print(standaloneDisplayName(target));
+      } else if(state==1 || state==2) {
+        display.print(F("BootDump: "));
+        display.print(target==standalonePreset ? F("OFF") : standaloneDisplayName(target));
+      }
       display.updateDisplay();
     }
 #endif
@@ -233,8 +247,9 @@ bool standaloneHold(uint8_t target, bool& presetChanged, bool allowAuto) {
 
 void standaloneTitle(const __FlashStringHelper* title) {
 #if defined(ENABLE_LCD) || defined(ENABLE_OLED)
-  if(standalonePreset && standaloneIs(title,F("OPEN SOURCE CART READER"))) {
-    display.print(F("* ")); display.println(standaloneName(standalonePreset));
+  if(standalonePreset && (standaloneIs(title,F("OPEN SOURCE CART READER"))
+      || standaloneIs(title,F("Select Game Boy")) || standaloneIs(title,F("Select device")))) {
+    display.print(F("BootDump: ")); display.println(standaloneDisplayName(standalonePreset));
   } else display.println(title);
 #endif
 }

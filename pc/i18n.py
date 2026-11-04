@@ -237,8 +237,8 @@ class UiTranslator:
         self.menu_labels = {key: data for key, data in self.menu_labels.items() if key[0].winfo_exists()}
 
 WORDS.update({
-    "起動時自動吸出し": "Auto dump on power-on",
-    "起動時自動吸出しを開始します。": "Starting the power-on auto dump.",
-    "起動時自動吸出しにはPC保存を選択してください。": "Power-on auto dump requires Save to PC.",
+    "BootDump": "BootDump",
+    "BootDumpを開始します。": "Starting BootDump.",
+    "BootDumpにはPC保存を選択してください。": "BootDump requires Save to PC.",
     "指定機種が本体メニューに見つかりません。": "The selected console was not found in the reader menu.",
 })

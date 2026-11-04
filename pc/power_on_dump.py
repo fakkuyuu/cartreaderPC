@@ -46,7 +46,7 @@ class PowerOnDump:
             return None
         if storage != "PC":
             self.cancel()
-            return ("stop", "起動時自動吸出しにはPC保存を選択してください。")
+            return ("stop", "BootDumpにはPC保存を選択してください。")
         signature = tuple(options)
         if signature in self.seen_pages:
             self.cancel()

@@ -352,7 +352,12 @@ byte sdBuffer[512];
 
 // soft reset Arduino: jumps to 0
 // using the watchdog timer would be more elegant but some Mega2560 bootloaders are buggy with it
-void (*resetArduino)(void) __attribute__((noreturn)) = 0;
+void resetArduino(void) __attribute__((noreturn));
+void resetArduino(void) {
+  standaloneSuppressNextBoot();
+  asm volatile("jmp 0");
+  __builtin_unreachable();
+}
 
 // Progressbar
 void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
@@ -3201,8 +3206,6 @@ redraw:
   }
   display.updateDisplay();
 
-  standaloneMenuMarks(question, answers, num_answers);
-  display.updateDisplay();
 
   // start with the default choice
   choice = default_choice;
@@ -3283,6 +3286,7 @@ redraw:
         }
         PcConsole.println(testedBaud);
         delay(300);
+        standaloneSuppressNextBoot();
         wdt_enable(WDTO_15MS);
         while (1) {}
       }
@@ -3292,6 +3296,7 @@ redraw:
         PcConsole.print(F("[Benchmark] stable baud="));
         PcConsole.println(selectedBaud);
         delay(750);
+        standaloneSuppressNextBoot();
         wdt_enable(WDTO_15MS);
         while (1) {}
       }
@@ -3334,7 +3339,7 @@ redraw:
 #endif
     // Standalone right/knob holds commit only after release. PC controls
     // retain their existing paths and never race the firmware automator.
-    if (!PcLink::connected()) {
+    if (!PcLink::connected() && !standaloneInputBlocked()) {
       uint8_t resolved = standaloneTarget(question, answers[choice], true);
       if (resolved && standaloneRightDown()) {
         bool changed = false;
@@ -3661,6 +3666,7 @@ uint8_t checkButton1() {
 
 // Read button 2
 uint8_t checkButton2() {
+  if (standaloneInputBlocked()) return 0;
   uint8_t event = 0;
 
   // Read the state of the button (PG2)
@@ -3767,7 +3773,7 @@ uint8_t checkButton() {
   encoder.tick();
   int newPos = encoder.getPosition();
   // Read button
-  boolean reading = (PING & (1 << PING2)) >> PING2;
+  boolean reading = standaloneInputBlocked() ? HIGH : ((PING & (1 << PING2)) >> PING2);
 
   // Check if rotary encoder has changed
   if (rotaryPos != newPos) {
