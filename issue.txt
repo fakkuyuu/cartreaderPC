@@ -782,11 +782,12 @@ Implementation: Issue registration only; implementation not started.
 
 #042 Compact automatic-dump controls and unambiguous focus/hover feedback
 Added: 2026-11-03 22:06:08 JST
-Last updated: 2026-11-03 22:06:08 JST
+Last updated: 2026-11-04 11:32:00 JST
 Status: OPEN / P2 / enhancement, ui
 User report: NES row and Batch GB button simultaneously appear blue. Independent mouse hover, keyboard selection and button focus make the active action unclear. Per-console batch buttons consume excessive horizontal space.
 Request: Clarify selection/hover/focus without removing keyboard operation, avoid ambiguous multiple highlights, and compact automatic-dump controls. Consider Auto dump naming because Batch dump can suggest multiple cartridges.
 Undecided: Layout, click count, console selection and GB/GBA/PCE-swapped choices. Agree the design before implementation. Issue registration only.
+Input/hover clarification (2026-11-04 11:32:00 JST): User explicitly reports the previous ordinary menu row stays blue when hovering an Auto button. Clear that row highlight on Auto hover and emphasize only the current interaction target, while preserving coherent keyboard selection rather than discarding its navigation index. Retain one-click per-console Auto buttons; a single Auto button plus separate target selection was rejected. Keep existing reader menu names and align Auto/power-on target labels with them. For numpad-only input, user proposes reserving 0 and holding 0 with digits 1–9 for Auto actions. Resolve ordinary numbering, page-key 7/8 conflicts and GB/GBA/PCE variants before implementation. F-key and +/- modifier proposals are not adopted. Record only.
 
 #043 Reset after SD dump unexpectedly switches storage to PC
 Added: 2026-11-03 22:50:26 JST
