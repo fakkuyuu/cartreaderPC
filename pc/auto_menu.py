@@ -203,6 +203,17 @@ def normalize_digit(keysym, char="", keycode=None, windows=False):
     return keypad.get(key, "")
 
 
+def move_focus_from_group(group_widget, backwards=False):
+    """Move Tab focus to the next/previous widget outside a grouped menu."""
+    target = (
+        group_widget.tk_focusPrev() if backwards
+        else group_widget.tk_focusNext()
+    )
+    if target is not None:
+        target.focus_set()
+    return target
+
+
 def is_widget_within(widget, ancestor):
     """Return whether a Tk widget is the group itself or one of its descendants."""
     current = widget
