@@ -874,6 +874,7 @@ Startup hold: removed blocking BootReady release wait; draw the menu, suppress r
 Checks: actual AVR control-code mocked-I/O checks:91 each button/rotary PASS, including Reset suppression/consumption, persistence and nonblocking release. HW3 flash221178B/static RAM6685B (+3 versus PC104,1507B remaining); HW5 flash220356B/static RAM6711B. GCC16.1.0/user IDE environment. 92 PC tests, actual hidden Tk and EXE self-test PASS.
 Hardware pending. Verify menu Reset does not redump, next power cycle does, held-button startup renders menu/discards release, and header is clean. Initial upload failed before writing because COM5 was absent; retry after user confirmed power-on and idle. GBA FASTCRC unchanged.
 PC105 upload complete (2026-11-04 18:48:57 JST): COM5 retry succeeded, avrdude exit0/221178 bytes written. Post-upload verification skipped with -V. Functional hardware checks pending.
+PC105 hardware result/new proposal (2026-11-04 19:25:34 JST): User reports having tried the functions and they work; per-console/condition details unspecified, not proof of all targets or V5 hardware. Proposal: make the active BootDump: <target> header cursor-selectable; HW3 right short press / V5 knob press disables it. Keep a quick disable alternative to holding. Design cursor/header restoration after disabling and prevent the same press from selecting an ordinary console. Recorded only; no source changes.
 
 
 #046 Empty PCE slot produces all-FF dump and green success
