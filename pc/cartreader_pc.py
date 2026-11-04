@@ -24,6 +24,7 @@ from browser_request import make_request
 from auto_menu import (
     ZeroChord, build_menu_rows, resolve_menu_number,
     MenuNavigator, is_main_menu, is_widget_within, normalize_digit,
+    move_focus_from_group,
     display_auto_reason,
 )
 
@@ -2105,6 +2106,9 @@ def gui(args):
                     return "break"
 
                 navigator = menu_navigation["navigator"]
+                if key in ("u", "d"):
+                    send_menu_key(key)
+                    return "break"
                 if key in ("up", "down"):
                     navigator.move_vertical(-1 if key == "up" else 1)
                     menu_navigation["selected"] = navigator.row
@@ -2165,16 +2169,14 @@ def gui(args):
                     # The operation menu is one tab stop. Skip its rows,
                     # inline Auto buttons and page controls as individual stops.
                     backwards = bool(event.state & 0x0001) or key == "iso_left_tab"
-                    target = (
-                        menu_items.tk_focusPrev() if backwards
-                        else menu_items.tk_focusNext()
-                    )
-                    if target is not None:
-                        target.focus_set()
+                    move_focus_from_group(menu_items, backwards)
                     return "break"
                 return None
 
             # Submenus keep their existing reader numbering and page behavior.
+            if key in ("u", "d"):
+                send_menu_key(key)
+                return "break"
             if menu_navigation.get("paged") and typed_digit in ("7", "8"):
                 send_menu_key("[" if typed_digit == "7" else "]")
                 return "break"
