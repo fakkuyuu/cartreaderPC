@@ -1051,14 +1051,16 @@ def gui(args):
         menu_navigation["navigator"] = navigator
         menu_navigation["auto_entries"] = auto_entries
         menu_navigation["auto_buttons"] = auto_buttons
+        def activate_auto_shortcut(entry):
+            for row_index, row_data in enumerate(rows):
+                for auto_index, candidate in enumerate(row_data["auto_entries"]):
+                    if candidate[0] == entry[0]:
+                        activate_auto(candidate, row_index, auto_index)
+                        return
+
         menu_navigation["activate_auto"] = (
-            lambda entry: activate_auto(entry,
-                next((i for i, row_data in enumerate(rows)
-                      for a, candidate in enumerate(row_data["auto_entries"])
-                      if candidate[0] == entry[0]), 0),
-                next((a for row_data in rows for a, candidate in enumerate(row_data["auto_entries"])
-                      if candidate[0] == entry[0]), 0))
-        ) if root_menu and auto_entries else None
+            activate_auto_shortcut if root_menu and auto_entries else None
+        )
         menu_navigation["select_row"] = select_row if rendered else None
         menu_navigation["paint_selection"] = paint_selection
         menu_items.configure(takefocus=1)
