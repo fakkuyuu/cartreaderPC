@@ -673,7 +673,7 @@ Hardware result (2026-11-04 11:56 JST): User confirmed PC102 power-on auto dump 
 
 #037 Some buttons, menus and messages remain Japanese in English mode
 Added: 2026-11-02 22:23:29 JST
-Last updated: 2026-11-02 23:07:16 JST
+Last updated: 2026-11-04 15:44:10 JST
 Status: VERIFY / P2 / bug, ui, i18n
 Source: User reported that some buttons do not switch to English. Investigated PC91 source and actual translation implementation.
 Scope: work/pc91/pc/cartreader_pc.py, i18n.py and batch_dump.py. This was a source review, not comprehensive actual GUI testing.
@@ -793,6 +793,8 @@ User report: NES row and Batch GB button simultaneously appear blue. Independent
 Request: Clarify selection/hover/focus without removing keyboard operation, avoid ambiguous multiple highlights, and compact automatic-dump controls. Consider Auto dump naming because Batch dump can suggest multiple cartridges.
 Undecided: Layout, click count, console selection and GB/GBA/PCE-swapped choices. Agree the design before implementation. Issue registration only.
 Input/hover clarification (2026-11-04 11:32:00 JST): User explicitly reports the previous ordinary menu row stays blue when hovering an Auto button. Clear that row highlight on Auto hover and emphasize only the current interaction target, while preserving coherent keyboard selection rather than discarding its navigation index. Retain one-click per-console Auto buttons; a single Auto button plus separate target selection was rejected. Keep existing reader menu names and align Auto/power-on target labels with them. For numpad-only input, user proposes reserving 0 and holding 0 with digits 1–9 for Auto actions. Resolve ordinary numbering, page-key 7/8 conflicts and GB/GBA/PCE variants before implementation. F-key and +/- modifier proposals are not adopted. Record only.
+Naming clarification (2026-11-04 15:44:10 JST): Use Auto: <console name> for per-console buttons, matching existing menu names and distinguishing PCE swapped/not swapped. User reported remaining Batch dump wording in logs and approved aligning user-facing logs to Auto dump (English) / 自動吸出し (Japanese). Internal class/function renaming is unnecessary. Recorded only; not implemented.
+
 
 #043 Reset after SD dump unexpectedly switches storage to PC
 Added: 2026-11-03 22:50:26 JST
