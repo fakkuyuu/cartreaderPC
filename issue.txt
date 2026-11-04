@@ -1,5 +1,5 @@
 cartreaderPC Issues
-Last updated: 2026-11-03 20:37:37 JST
+Last updated: 2026-11-04 15:42:21 JST
 Applies to: PC tool PC91 / firmware PC89 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
@@ -66,6 +66,7 @@ ID    Status   Prio Categories                    Title
 041   IDEA     P2   enhancement/detection   Identify cartridge console by sequential read-only probing
 042   OPEN     P2   enhancement/ui          Compact automatic-dump controls and unambiguous focus/hover feedback
 043   VERIFY     P2   bug/storage/reset       Reset after SD dump unexpectedly switches storage to PC
+044   OPEN     P2   enhancement/logging           Timestamps for shared log milestones and ROM companion TXT
 
 [DETAILS]
 PC100 build report (2026-11-03 20:42:14 JST): Built GitHub1de58ba with local PC100 branding. All 67 tests and independent integration checks pass: MD internal checksum error stops before save with solid red; valid ROM followed by save error alternates at 1-second intervals. EXE self-test PASS/exit0. Preserve results during USB loss and reset on reconnect. No firmware changes/upload. Hardware confirmation pending; retain VERIFY.
@@ -814,3 +815,15 @@ Reproduction clarification (2026-11-03 23:06:02 JST): User retested PC100 and co
 - When implementation starts, record versions/commits and tests. Distinguish code completion from physical hardware verification.
 - When moving items to GitHub Issues, preserve the mapping between these IDs and GitHub numbers. Check for personal information before publishing.
 - Creating this issue.txt alone does not mean folder cleanup or Git migration is complete.
+
+#044 Add milestone timestamps to the shared log and ROM companion TXT
+Added: 2026-11-04 15:42:21 JST
+Last updated: 2026-11-04 15:42:21 JST
+Status: OPEN / P2 / enhancement, logging
+Source: User requested issue registration after reviewing a sample. No implementation authorization.
+Request: Add standalone timestamp lines before milestones in OSCR_LOGPC.txt: connection/disconnection, ROM/save dump start/completion and errors. Preserve ordinary log contents; do not timestamp every line.
+Example: [2026-11-04 14:30:18] ROM dump started
+ROM companion TXT: Include start/completion timestamps for that ROM only, without previous ROM or connection history.
+Scope: PC-side logging. Standalone firmware SD OSCR_LOG.txt is outside this request.
+Open details: Explicit timezone and event labels for SD copy/abnormal termination; preserve existing extraction and English/Japanese behavior.
+Implementation: Registration only; no source, EXE or firmware changes.
