@@ -56,11 +56,14 @@ class ZeroChord:
             self.zero_pressed = True
             return True, None
         if self.zero_pressed:
+            if digit not in "123456789":
+                # Non-numeric navigation keys remain ordinary operations and
+                # must not cancel a held modifier.
+                return False, None
             self.zero_pressed = False
-            if digit in "123456789":
-                for entry in entries:
-                    if entry[0] == digit:
-                        return True, entry
+            for entry in entries:
+                if entry[0] == digit:
+                    return True, entry
             # A chord with an unassigned digit is consumed, not sent as a
             # normal reader menu number.
             return True, None
