@@ -68,6 +68,7 @@ ID    Status   Prio Categories                    Title
 043   VERIFY     P2   bug/storage/reset       Reset after SD dump unexpectedly switches storage to PC
 044   OPEN     P2   enhancement/logging           Timestamps for shared log milestones and ROM companion TXT
 045   IDEA     P2   enhancement/automation        Standalone SD automatic dump and power-on start
+046   OPEN     P2   bug/verification/ui           Empty PCE slot produces all-FF dump and green success
 
 [DETAILS]
 PC100 build report (2026-11-03 20:42:14 JST): Built GitHub1de58ba with local PC100 branding. All 67 tests and independent integration checks pass: MD internal checksum error stops before save with solid red; valid ROM followed by save error alternates at 1-second intervals. EXE self-test PASS/exit0. Preserve results during USB loss and reset on reconnect. No firmware changes/upload. Hardware confirmation pending; retain VERIFY.
@@ -840,3 +841,12 @@ Related: #029 batch flow and #036 PC-connected startup mode. Standalone executio
 Design questions: Reader menu/button controls, enabling/disabling and target selection, bypass to ordinary startup, persistence/EEPROM wear, RAM/Flash impact. Distinguish modes such as GB/GBA and PCE swapped/not swapped.
 Proposed guards: Stop on unknown identification, required manual selection or ROM failure; do not proceed to save after a failed ROM. Preserve existing standalone manual and PC-connected operation.
 Implementation: Registration only. UI and persistence undecided; no implementation, build or upload authorization and no source changes.
+
+#046 Empty PCE slot produces all-FF dump and green success
+Added: 2026-11-04 16:17:12 JST
+Last updated: 2026-11-04 16:17:12 JST
+Status: OPEN / P2 / bug, verification, ui
+Hardware report: No cartridge inserted; HuCARD(swapped) -> Read ROM detects/saves 16KB twice (178/179) and shows green. CRC32=690B37D3, DB=no match; SHA256=0fbba07a833d4dcfc7024eaf313661a0ba8f80a05c6d29b8801c612e10e60dee.
+Verified: Calculated hashes for 16384 FF bytes match the report exactly; actual files not inspected. DumpResult currently accepts nonempty save/VERIFY followed by Press Button without an explicit error. DB miss alone is not failure.
+Problem: Transfer completion is presented as valid-ROM success. Investigate all-FF/all-00 or other absent/bad-contact detection without rejecting legitimate ROMs or unknown databases. Do not treat every DB miss as failure.
+Implementation: Report recorded only; no code/build/upload changes. Version not explicitly stated in this report. Related #040.
