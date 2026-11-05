@@ -786,6 +786,11 @@ Additional specification (2026-11-05 18:56 JST):
 - Distinguish this from PC-side manual input and automatic menu transitions. Apply it to both success and failure result screens. If partial-success green/red blinking is active, cancel its timer and return to white as part of this physical-screen transition.
 - Preserve the existing white reset on USB reconnection and retention through ordinary automatic transitions.
 Open implementation question: identify a reliable PC-visible notification/protocol path for a physical reader-button transition specifically from the result screen to the next screen. Do not mistake PC-sent keys or unrelated physical-button events for this transition. Registration only; no source, EXE or firmware changes. Awaiting explicit implementation authorization.
+
+Correction (2026-11-05 JST; user rechecked):
+Retract the immediately preceding requirement to detect a physical reader-button transition from the result screen to the next screen. The user confirmed that pressing a reader button and moving to the next screen already returns the PC console background to white.
+The color remains only when the USB/PC connection is disconnected while the background is green/red, or when the reader is powered off while still connected. The previous color remains during the disconnected/powered-off interval; reconnecting or powering the reader on again returns the background to white.
+Therefore, no new physical-button transition detection is needed. Withdraw the implementation question added in the previous note. Record the disconnect/power-off retention and reconnect/restart white reset as the user's clarified hardware observation. No source, EXE or firmware changes in this update.
 #041 Identify cartridge console by sequential read-only probing
 Added: 2026-11-03 17:25:44 JST
 Last updated: 2026-11-03 17:25:44 JST
