@@ -763,7 +763,7 @@ USB-unplug-during-dump test (2026-11-03 13:38:22 JST): User log shows GBA ROCKMA
 
 #040 Persistent red/green console backgrounds for dump outcomes
 Added: 2026-11-03 17:02:32 JST
-Last updated: 2026-11-03 20:37:37 JST
+Last updated: 2026-11-05 18:56 JST
 Status: VERIFY / P2 / enhancement, ui
 Specification: Console only: success #86EFAC, failure #FCA5A5, black text. Retain through automatic transitions and batch input; reset to white on the next user action. Batch success requires the entire ROM/save operation to finish. No additional status colors. User authorized implementation.
 PC98 implementation (2026-11-03 17:05:19 JST): Black console text; success #86EFAC / failure #FCA5A5. Individual dump completion waits for save/verification evidence and Press Button; batch green waits for the full ROM/save operation. Preserve through automatic menus/input; reset on PC manual input, new batch, connect/disconnect or browser requests. A DB miss alone is not a confirmed read failure: green means completion without detected errors, not guaranteed ROM authenticity. SD success requires recognized OK/CRC output. 55 software tests, syntax and EXE self-test PASS. Hardware color confirmation pending; firmware unchanged. Clearing from reader physical-button-only input is not supported because manual/automated input is distinguished at the PC send path.
