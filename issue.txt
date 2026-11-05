@@ -1,5 +1,5 @@
 cartreaderPC Issues
-Last updated: 2026-11-05 07:17 JST
+Last updated: 2026-11-05 18:56 JST
 Applies to: PC tool PC108 / firmware PC107 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
@@ -779,6 +779,13 @@ Independent Codex review (2026-11-03 20:11:05 JST, ac135cd): 60 existing tests P
 Hardware confirmation (2026-11-03 21:51:39 JST): User confirms N64 green/red alternation for ROM success followed by save failure. MD internal-checksum failure stopping remains separately software-tested, not hardware-confirmed.
 
 
+
+Additional specification (2026-11-05 18:56 JST):
+- For manual reader dumps, match the PC tool console background to the reader's success/failure result: green (#86EFAC) for success and red (#FCA5A5) for failure, consistent with the existing #040 behavior.
+- Keep the color while the reader's success/failure result screen remains visible. When the user presses a physical button on the reader and the reader actually transitions from that result screen to the next screen, reset the PC console background to white.
+- Distinguish this from PC-side manual input and automatic menu transitions. Apply it to both success and failure result screens. If partial-success green/red blinking is active, cancel its timer and return to white as part of this physical-screen transition.
+- Preserve the existing white reset on USB reconnection and retention through ordinary automatic transitions.
+Open implementation question: identify a reliable PC-visible notification/protocol path for a physical reader-button transition specifically from the result screen to the next screen. Do not mistake PC-sent keys or unrelated physical-button events for this transition. Registration only; no source, EXE or firmware changes. Awaiting explicit implementation authorization.
 #041 Identify cartridge console by sequential read-only probing
 Added: 2026-11-03 17:25:44 JST
 Last updated: 2026-11-03 17:25:44 JST
