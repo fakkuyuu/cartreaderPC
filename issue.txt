@@ -975,3 +975,10 @@ PC107 placement correction authorized (2026-11-04 21:34:30 JST): Move PC glyph t
 PC107 implementation (2026-11-04 21:37:51 JST): Move badge bottom-right: clear x119..127/y57..63, glyph x121..127/y59..63, two black pixels above/left and no right/bottom padding. Update R0/R2 buffer backup offsets and tests.4160 AVR overlay checks PASS. HW3 flash222040B/static RAM6697B;HW5 flash221130B/static RAM6723B(no RAM increase). PC tool/connection logic/BootDump disable unchanged. Hardware pending.
 PC107 upload complete (2026-11-04 21:38:13 JST): COM5,avrdude exit0,222040 bytes written;post-upload verification skipped(-V). Hardware display confirmation pending.
 PC107 hardware display confirmation (2026-11-04 21:40:20 JST): User approved the bottom-right PC marker with two-pixel top/left padding. This does not establish per-screen/disconnect/SD-mode/performance/RAM verification.
+
+
+Correction (2026-11-05; user reconfirmed):
+- When USB/PC disconnection, a PC-side disconnect action, reader power-off, or another connection-loss condition is detected, immediately return a green/red console background to white.
+- Keep it white after reconnection/reader restart. Preserve result colors through ordinary automatic menu transitions.
+- Withdraw the previous correction stating that the color should remain during disconnection/power-off; that statement was incorrect.
+- On implementation, reset the result state and blink timer after the disconnect/transport-loss event, and ensure batch shutdown cannot repaint the console red after the reset.
