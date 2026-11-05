@@ -96,7 +96,7 @@ class ResultTests(unittest.TestCase):
         )
         self.assertEqual(self.r.state, "success")
 
-    def test_usb_loss_does_not_clear_completed_partial_success_blink(self):
+    def test_usb_loss_clears_completed_partial_success_blink(self):
         self.r.begin_batch()
         self.feed(
             "[+] Read ROM",
@@ -106,9 +106,53 @@ class ResultTests(unittest.TestCase):
         )
         self.r.finish_batch(False, save_failure_after_rom=True)
         self.assertEqual(self.r.state, "save_failure_green")
-        self.feed("[Disconnected: COM5]", "[RECONNECT] WAIT")
-        self.assertEqual(self.r.state, "save_failure_green")
-        self.assertTrue(self.r.blinking)
+        self.feed("[Disconnected: COM5]")
+        self.assertEqual(self.r.state, "idle")
+        self.assertFalse(self.r.blinking)
+
+    def test_reconnect_wait_also_clears_completed_result_without_active_dump(self):
+        for state in ("success", "failure", "save_failure_red"):
+            with self.subTest(state=state):
+                self.r.reset()
+                self.r.state = state
+                self.r.active = False
+                self.r.batch = False
+                self.feed("[RECONNECT] WAIT")
+                self.assertEqual(self.r.state, "idle")
+                self.assertFalse(self.r.blinking)
+
+    def test_connection_loss_clears_an_active_batch_result(self):
+        self.r.begin_batch()
+        self.r.state = "failure"
+        self.r.rom_failed = True
+        self.feed("[Disconnected: COM5]")
+        self.assertEqual(self.r.state, "idle")
+        self.assertFalse(self.r.batch)
+        self.assertFalse(self.r.rom_failed)
+
+    def test_gui_transport_loss_resets_after_batch_report(self):
+        from pathlib import Path
+        source = (Path(__file__).with_name("cartreader_pc.py")
+                  .read_text(encoding="utf-8"))
+        batch_report = source.index("            batch_report(was_active)")
+        disconnect = source.index(
+            '            if line.startswith(("[Disconnected", "[RECONNECT]")):',
+            batch_report)
+        reset = source.index("                reset_dump_result()", disconnect)
+        power = source.index("                power_on.disconnected()", disconnect)
+        self.assertLess(batch_report, disconnect)
+        self.assertLess(disconnect, reset)
+        self.assertLess(reset, power)
+
+    def test_gui_manual_disconnect_resets_after_batch_stop(self):
+        from pathlib import Path
+        source = (Path(__file__).with_name("cartreader_pc.py")
+                  .read_text(encoding="utf-8"))
+        body = source.split("    def disconnect():", 1)[1].split(
+            "    connect_button =", 1)[0]
+        stop = body.index('batch_stop("切断によって一括操作を終了しました")')
+        reset = body.index("reset_dump_result()")
+        self.assertLess(stop, reset)
 
     def test_new_connection_clears_partial_success_blink(self):
         from pathlib import Path

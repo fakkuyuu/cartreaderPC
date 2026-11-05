@@ -57,10 +57,14 @@ class DumpResult:
                 self.rom_stage = line in ("[+] Read ROM", "[+] Read iNES Rom", "[+] Read Cart")
             self.active = True
             self.saved = False
+        # A lost connection invalidates any displayed result, including a
+        # completed dump whose active flag has already been cleared.
+        if line.startswith(("[Disconnected", "[RECONNECT]")):
+            self.reset()
+            return
         if not (self.active or self.batch):
             return
-        if (line.startswith(("[CANCELLED]", "[Disconnected", "[RECONNECT]"))
-                or line == "[SD Browser] copy cancelled"):
+        if line.startswith("[CANCELLED]") or line == "[SD Browser] copy cancelled":
             if self.batch:
                 self.failed = True
                 self.state = "failure"

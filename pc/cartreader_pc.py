@@ -1487,6 +1487,9 @@ def gui(args):
                 # failure before announcing a wait or actionable error.
                 set_connection_state("未接続")
             if line.startswith(("[Disconnected", "[RECONNECT]")):
+                # batch_report() above can mark an interrupted batch red.
+                # Connection loss is the final event for result-color display.
+                reset_dump_result()
                 power_on.disconnected()
                 set_led_activity(False)
                 set_led_state("unknown")
@@ -1790,9 +1793,10 @@ def gui(args):
         worker.start()
     def disconnect():
         power_on.disconnected()
-        reset_dump_result()
         if batch.active:
             batch_stop("切断によって一括操作を終了しました")
+        # Clear after batch_stop(), which may otherwise repaint a failure red.
+        reset_dump_result()
         if worker and worker.is_alive():
             detach_ack.clear()
             keys.put(0x04)
