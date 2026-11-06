@@ -923,6 +923,13 @@ Autoボタンの見た目復元 (2026-11-06 08:58 JST):
 ・pc/cartreader_pc.pyとpc/test_auto_menu.pyを更新。ソース: 8f116ea61c40cdc342ed4991c57f83a52e38abcb、テスト: fd3c558fcbdc58c6586271c403be000d0edece31。
 ・版番号PC108のまま。PC側UIのみでファームウェア変更なし。Actions結果待ち。Windows EXE再ビルドと実画面確認は未実施のためVERIFY継続。
 
+
+N64 Autoテストの旧レイアウト参照を修正 (2026-11-06 09:00 JST):
+・ユーザー報告: 125件中1件失敗。N64 Autoの実動作ではなく、GUI配置テストが旧構造の文字列 `row_frame, text=...` を探していた。
+・pc/test_batch_dump.pyのtest_gui_n64_auto_button_is_inline_and_one_clickを、現行の `button_frame` 内に配置する標準 `ttk.Button` と `button.pack()` を確認する内容へ更新。Auto起動コールバックとN64対象の存在確認は維持。
+・N64処理コードは変更なし。修正コミット: 431b4c0f687473dd1150442275be20f6598c4458。
+・修正後の全125件の再実行結果は未確認。Windows EXE/実GUI確認も未実施。VERIFY継続。
+
 #043 SD保存後にResetするとPC保存へ勝手に切り替わる
 追加日時: 2026-11-03 22:50:26 JST
 最終更新日時: 2026-11-03 22:54:12 JST
