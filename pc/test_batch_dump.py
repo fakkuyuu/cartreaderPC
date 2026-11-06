@@ -593,7 +593,9 @@ class BatchDumpTests(unittest.TestCase):
 
     def test_gui_n64_auto_button_is_inline_and_one_click(self):
         gui = Path(__file__).with_name("cartreader_pc.py").read_text(encoding="utf-8")
-        self.assertIn('row_frame, text=f"0+{shortcut}  {button_label}"', gui)
+        self.assertIn('button_frame, text=f"0+{shortcut}  {button_label}"', gui)
+        self.assertIn("button = ttk.Button(", gui)
+        self.assertIn("button.pack()", gui)
         self.assertIn("command=lambda e=entry, r=position, a=auto_index:", gui)
         self.assertIn('start_batch(entry[1], entry[2])', gui)
         self.assertIn('"Nintendo 64 (3V)"', Path(__file__).with_name("auto_menu.py").read_text(encoding="utf-8"))
