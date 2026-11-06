@@ -27,7 +27,8 @@ static bool sdCopyProgressDue(uint32_t done, uint32_t total) {
 }
 
 namespace PcLink {
-uint8_t data[528];
+static constexpr uint16_t dataCapacity = 528;
+static uint8_t* data = nullptr;
 static bool started = false;
 static bool ramTelemetry = false; // Negotiated; old hosts never receive op 26.
 static int16_t ramMinimum = INT16_MAX;
@@ -170,7 +171,7 @@ uint32_t get32(const uint8_t* p) {
 }
 uint16_t call(uint8_t op, uint16_t n) {
   sampleRam(RAM_PROTOCOL);
-  if(n>sizeof(data)) stop();
+  if(n>dataCapacity) stop();
   uint16_t seq=++sequence;
   uint8_t h[]={1,op,(uint8_t)seq,(uint8_t)(seq>>8),(uint8_t)n,(uint8_t)(n>>8)};
   uint16_t c=0xffff;
@@ -185,7 +186,7 @@ uint16_t call(uint8_t op, uint16_t n) {
   for(uint8_t i=0;i<6;i++) { r[i]=receive(); c=crc(c,r[i]); }
   if(r[0]!=1 || r[1]!=(op|0x80) || r[2]!=h[2] || r[3]!=h[3]) stop();
   n=r[4]|((uint16_t)r[5]<<8);
-  if(n<1 || n>sizeof(data)) stop();
+  if(n<1 || n>dataCapacity) stop();
   for(uint16_t i=0;i<n;i++) {data[i]=receive(); c=crc(c,data[i]);}
   uint16_t got=receive(); got|=(uint16_t)receive()<<8;
   if(c!=got) stop();
@@ -193,7 +194,7 @@ uint16_t call(uint8_t op, uint16_t n) {
 }
 static void notifyPayload(uint8_t op, const uint8_t* payload, uint16_t n) {
   if(!started) return;
-  if(n>sizeof(data)) return;
+  if(n>dataCapacity) return;
   uint16_t seq=++sequence;
   uint8_t h[]={1,op,(uint8_t)seq,(uint8_t)(seq>>8),(uint8_t)n,(uint8_t)(n>>8)};
   uint16_t c=0xffff;
@@ -414,17 +415,25 @@ bool tryStart(uint16_t timeoutMs) {
   c=0xffff; uint8_t r[6];
   for(uint8_t i=0;i<6;i++) { if(!receiveTimed(r[i],deadline)) goto no_host; c=crc(c,r[i]); }
   { uint16_t helloLength=r[4]|((uint16_t)r[5]<<8);
-    if(r[0]!=1 || r[1]!=(op|0x80) || r[2]!=(uint8_t)seq || r[3]!=(uint8_t)(seq>>8) || helloLength<1 || helloLength>sizeof(data)) goto no_host;
-    for(uint16_t i=0;i<helloLength;i++) { if(!receiveTimed(data[i],deadline)) goto no_host; c=crc(c,data[i]); }
+    if(r[0]!=1 || r[1]!=(op|0x80) || r[2]!=(uint8_t)seq || r[3]!=(uint8_t)(seq>>8) || helloLength<1 || helloLength>dataCapacity) goto no_host;
+    uint8_t hello[13];
+    for(uint16_t i=0;i<helloLength;i++) {
+      if(!receiveTimed(b,deadline)) goto no_host;
+      if(i<sizeof(hello)) hello[i]=b;
+      c=crc(c,b);
+    }
     uint8_t lo,hi;
-    if(!receiveTimed(lo,deadline) || !receiveTimed(hi,deadline) || c!=(uint16_t)(lo|((uint16_t)hi<<8)) || data[0]) goto no_host;
+    if(!receiveTimed(lo,deadline) || !receiveTimed(hi,deadline) || c!=(uint16_t)(lo|((uint16_t)hi<<8)) || hello[0]) goto no_host;
+    // A cold standalone boot needs only the small handshake header.
+    if(!data) data=(uint8_t*)malloc(dataCapacity);
+    if(!data) goto no_host;
     started=true; pcStorage=true;
-    ramTelemetry=helloLength>=13 && (data[12]&1);
+    ramTelemetry=helloLength>=13 && (hello[12]&1);
   if(helloLength>=5) {
-    uint32_t preferred=get32(data+1);
-    uint32_t preferredDump=helloLength>=9 ? get32(data+5) : preferred;
-    uint8_t negotiatedBlocks=(helloLength>=10 && data[9]>=8 && data[9]<=64) ? data[9] : 8;
-    uint16_t negotiatedSize=helloLength>=12 ? (uint16_t)(data[10]|((uint16_t)data[11]<<8)) : 512;
+    uint32_t preferred=get32(hello+1);
+    uint32_t preferredDump=helloLength>=9 ? get32(hello+5) : preferred;
+    uint8_t negotiatedBlocks=(helloLength>=10 && hello[9]>=8 && hello[9]<=64) ? hello[9] : 8;
+    uint16_t negotiatedSize=helloLength>=12 ? (uint16_t)(hello[10]|((uint16_t)hello[11]<<8)) : 512;
     if(negotiatedSize!=1024) negotiatedSize=512;
     if(preferred!=250000UL) {
       put32(data,preferred);
@@ -725,7 +734,7 @@ bool PcFsFile::findRecord(uint8_t field,const char* key1,const char* key2) {
   if(!handle || isDir() || !key1) return false;
   if(dirty) flush();
   size_t a=strlen(key1), b=key2?strlen(key2):0;
-  if(a+b+4>sizeof(PcLink::data)) PcLink::stop();
+  if(a+b+4>PcLink::dataCapacity) PcLink::stop();
   PcLink::data[0]=handle; PcLink::data[1]=field;
   memcpy(PcLink::data+2,key1,a); PcLink::data[2+a]=0;
   uint16_t n=3+a;
@@ -816,6 +825,31 @@ static bool physicalPath(char* out, size_t capacity, const char* path) {
   return true;
 }
 
+static bool openPhysicalFile(::FsFile& file, const char* path, uint8_t flags) {
+  bool opened = file.open(physicalVolume, path, flags);
+  if(!opened && PcLink::connected()) {
+    PcConsole.print(F("[SD] open failed path=")); PcConsole.print(path);
+    PcConsole.print(F(" flags=")); PcConsole.print(flags);
+    PcConsole.print(F(" code=")); PcConsole.print(physicalVolume->sdErrorCode(),HEX);
+    PcConsole.print(F(" data=")); PcConsole.println(physicalVolume->sdErrorData(),HEX);
+  }
+  return opened;
+}
+
+// Keep the path buffer out of the absolute-path call frame used by fileBrowser.
+static bool __attribute__((noinline)) openPhysicalRelative(::FsFile& file, const char* path, uint8_t flags) {
+  char absolute[260];
+  return physicalPath(absolute, sizeof(absolute), path) && openPhysicalFile(file, absolute, flags);
+}
+
+static bool __attribute__((noinline)) openRemoteDatabase(PcFsFile& file, const char* path, size_t length, uint8_t flags) {
+  char absolute[64];
+  if(length + 2 > sizeof(absolute)) return false;
+  absolute[0] = '/';
+  memcpy(absolute + 1, path, length + 1);
+  return file.open(absolute, flags);
+}
+
 HybridFsFile::HybridFsFile(HybridFsFile&& other) { *this=static_cast<HybridFsFile&&>(other); }
 HybridFsFile& HybridFsFile::operator=(HybridFsFile&& other) {
   if(this==&other) return *this;
@@ -833,24 +867,13 @@ bool HybridFsFile::open(const char* path,uint8_t flags) {
                   !strcasecmp(path + length - 4, ".txt");
   pc = PcLink::usingPcStorage() || (PcLink::connected() && database);
   if(pc) {
-    if(database) {
-      char absolute[64];
-      if(length + 2 > sizeof(absolute)) return false;
-      absolute[0]='/'; memcpy(absolute+1,path,length+1);
-      return remote.open(absolute,flags);
-    }
+    if(database) return openRemoteDatabase(remote, path, length, flags);
     return remote.open(path,flags);
   }
-  char absolute[260];
-  if(!physicalVolume || !physicalPath(absolute,sizeof(absolute),path)) return false;
-  bool opened=local.open(physicalVolume,absolute,flags);
-  if(!opened && PcLink::connected()) {
-    PcConsole.print(F("[SD] open failed path=")); PcConsole.print(absolute);
-    PcConsole.print(F(" flags=")); PcConsole.print(flags);
-    PcConsole.print(F(" code=")); PcConsole.print(physicalVolume->sdErrorCode(),HEX);
-    PcConsole.print(F(" data=")); PcConsole.println(physicalVolume->sdErrorData(),HEX);
-  }
-  return opened;
+  if(!physicalVolume) return false;
+  if(!path || !*path) path = "/";
+  if(path[0] == '/') return length < 260 && openPhysicalFile(local, path, flags);
+  return openPhysicalRelative(local, path, flags);
 }
 bool HybridFsFile::openNext(HybridFsFile* dir,uint8_t flags) {
   close(); pc=PcLink::usingPcStorage();

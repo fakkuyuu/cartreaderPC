@@ -13,7 +13,6 @@ enum RamStage : uint8_t { RAM_MENU, RAM_PROTOCOL, RAM_LIST_OPEN, RAM_LIST_ENTRY,
   RAM_PRESS_BUTTON, RAM_IDLE };
 int16_t sampleRam(uint8_t stage);
 void reportRam(uint8_t stage);
-extern uint8_t data[528];
 bool prepareFileCache();
 uint16_t call(uint8_t op, uint16_t count);
 void start();
