@@ -306,11 +306,20 @@ class AutoMenuTests(unittest.TestCase):
     def test_gui_keeps_one_click_auto_buttons_inline_and_single_highlight(self):
         gui = (Path(__file__).with_name("cartreader_pc.py")
                .read_text(encoding="utf-8"))
-        self.assertIn('button = tk.Button(\n                    row_frame, text=f"0+{shortcut}  {button_label}"', gui)
+        self.assertIn('button_frame = tk.Frame(\n                    row_frame, borderwidth=0, highlightthickness=0,', gui)
+        self.assertIn('button = ttk.Button(\n                    button_frame, text=f"0+{shortcut}  {button_label}"', gui)
+        self.assertIn("auto_button_frames[(position, auto_index)] = button_frame", gui)
         self.assertIn("command=lambda e=entry, r=position, a=auto_index:", gui)
         self.assertIn("if auto_index is None:", gui)
         self.assertIn("if root_menu and navigator is not None:", gui)
         self.assertNotIn("auto_panel = ttk.LabelFrame", gui)
+
+        render_menu = gui.split("    def render_menu(", 1)[1].split(
+            "    def render_press_button(", 1
+        )[0]
+        self.assertIn('highlightthickness=2', render_menu)
+        self.assertNotIn('font=("TkDefaultFont", 8)', render_menu)
+        self.assertNotIn('activebackground="#dbeafe"', render_menu)
 
     def test_page_buttons_drop_left_right_parenthetical_hints(self):
         gui = (Path(__file__).with_name("cartreader_pc.py")
