@@ -937,6 +937,7 @@ def gui(args):
         navigator = MenuNavigator(rows, paged) if root_menu else None
         rendered = []
         auto_buttons = {}
+        auto_button_frames = {}
         auto_entries = tuple(
             entry for row_data in rows for entry in row_data["auto_entries"]
         )
@@ -947,12 +948,8 @@ def gui(args):
                     background="white", highlightbackground="white",
                     highlightthickness=0,
                 )
-            for button in auto_buttons.values():
-                button.configure(
-                    background="white", foreground="black",
-                    highlightbackground="white", highlightthickness=0,
-                    relief="raised",
-                )
+            for frame in auto_button_frames.values():
+                frame.configure(highlightthickness=0)
             if root_menu and navigator is not None:
                 row_index, auto_index = navigator.current()
                 if auto_index is None:
@@ -963,11 +960,11 @@ def gui(args):
                         highlightthickness=2,
                     )
                 else:
-                    button = auto_buttons[(row_index, auto_index)]
-                    button.configure(
-                        background="#dbeafe", foreground="#1d4ed8",
+                    frame = auto_button_frames[(row_index, auto_index)]
+                    frame.configure(
                         highlightbackground="#2563eb",
-                        highlightthickness=2, relief="solid",
+                        highlightcolor="#2563eb",
+                        highlightthickness=2,
                     )
                 menu_navigation["selected"] = row_index
                 menu_navigation["selected_auto"] = auto_index
@@ -1021,17 +1018,20 @@ def gui(args):
             )
             for auto_index, entry in enumerate(row_data["auto_entries"]):
                 shortcut, _target, _reader_number, button_label = entry
-                button = tk.Button(
-                    row_frame, text=f"0+{shortcut}  {button_label}",
+                button_frame = tk.Frame(
+                    row_frame, borderwidth=0, highlightthickness=0,
+                    background=window.cget("background"), takefocus=0,
+                )
+                button_frame.pack(side="left", padx=(4, 0))
+                button = ttk.Button(
+                    button_frame, text=f"0+{shortcut}  {button_label}",
                     command=lambda e=entry, r=position, a=auto_index:
                         activate_auto(e, r, a),
-                    padx=5, pady=3, bd=1, relief="raised",
-                    background="white", activebackground="#dbeafe",
-                    highlightthickness=0, cursor="hand2", takefocus=0,
-                    font=("TkDefaultFont", 8),
+                    takefocus=0,
                 )
-                button.pack(side="left", padx=(4, 0))
+                button.pack()
                 auto_buttons[(position, auto_index)] = button
+                auto_button_frames[(position, auto_index)] = button_frame
                 button.bind(
                     "<Enter>",
                     lambda event, r=position, a=auto_index: select_auto(r, a),
