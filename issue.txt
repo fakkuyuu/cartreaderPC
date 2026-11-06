@@ -887,7 +887,7 @@ N64 Auto test's stale layout assertion corrected (2026-11-06 09:00 JST):
 - User reported one failure out of 125 tests. The failing N64 Auto GUI test was checking an obsolete source string, `row_frame, text=...`, rather than indicating that N64 Auto itself was broken.
 - Updated pc/test_batch_dump.py:test_gui_n64_auto_button_is_inline_and_one_click to assert the current standard `ttk.Button` is placed inside `button_frame` and packed. The Auto activation callback and N64 target-presence assertions remain.
 - No N64 runtime code changed. Fix commit: 431b4c0f687473dd1150442275be20f6598c4458.
-- Full 125-test rerun after this correction is not yet confirmed. Windows EXE/actual GUI checks remain outstanding; keep VERIFY.
+- GitHub Actions run 42136921158 passed all 125 PC Python regression tests after this correction (Ran 125 tests / OK), including the N64 Auto GUI test. Windows EXE/actual GUI checks remain outstanding; keep VERIFY.
 
 #043 Reset after SD dump unexpectedly switches storage to PC
 Added: 2026-11-03 22:50:26 JST
