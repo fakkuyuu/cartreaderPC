@@ -812,7 +812,7 @@ Implementation: Issue registration only; implementation not started.
 
 #042 Compact automatic-dump controls and unambiguous focus/hover feedback
 Added: 2026-11-03 22:06:08 JST
-Last updated: 2026-11-04 23:41 JST
+Last updated: 2026-11-06 08:58 JST
 Status: VERIFY / P2 / enhancement, ui
 User report: NES row and Batch GB button simultaneously appear blue. Independent mouse hover, keyboard selection and button focus make the active action unclear. Per-console batch buttons consume excessive horizontal space.
 Request: Clarify selection/hover/focus without removing keyboard operation, avoid ambiguous multiple highlights, and compact automatic-dump controls. Consider Auto dump naming because Batch dump can suggest multiple cartridges.
@@ -874,6 +874,14 @@ PC108 Auto-free-row page-navigation correction (2026-11-05 07:17 JST):
 - Added a regression test in pc/test_auto_menu.py for moving right to the next page from an intermediate Auto-free row named SMS.
 - Version remains PC108. No firmware changes.
 Verification: The 120 passing tests were reported before this additional correction. The result for a run including the newly added regression test has not been confirmed. Windows EXE rebuild and actual GUI/hardware checks remain outstanding; keep VERIFY.
+
+Auto button visual restoration (2026-11-06 08:58 JST):
+- PC108 replaced the previous ttk.Button with tk.Button and explicitly forced a white background, 8pt font and reduced padding; this caused the Auto controls to look smaller and white instead of the prior gray, standard-size buttons.
+- Restored standard ttk.Button controls so the Windows native theme supplies the normal button background, font, size and padding. The selected Auto action is indicated by a blue outline around the button rather than recoloring the native button. Ordinary rows and Auto actions are still never highlighted simultaneously.
+- Preserved inline row placement, one-click activation, arrows+Enter, Tab/Shift+Tab, 0+digit shortcuts, page navigation and single-selection behavior.
+- Updated pc/cartreader_pc.py and pc/test_auto_menu.py. Source: 8f116ea61c40cdc342ed4991c57f83a52e38abcb; tests: fd3c558fcbdc58c6586271c403be000d0edece31.
+- Keep PC tool version PC108. PC UI only; no firmware changes. Actions result pending. Windows EXE rebuild and actual UI verification have not been performed; status remains VERIFY.
+
 #043 Reset after SD dump unexpectedly switches storage to PC
 Added: 2026-11-03 22:50:26 JST
 Last updated: 2026-11-03 22:54:12 JST
