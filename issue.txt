@@ -882,6 +882,13 @@ Auto button visual restoration (2026-11-06 08:58 JST):
 - Updated pc/cartreader_pc.py and pc/test_auto_menu.py. Source: 8f116ea61c40cdc342ed4991c57f83a52e38abcb; tests: fd3c558fcbdc58c6586271c403be000d0edece31.
 - Keep PC tool version PC108. PC UI only; no firmware changes. Actions result pending. Windows EXE rebuild and actual UI verification have not been performed; status remains VERIFY.
 
+
+N64 Auto test's stale layout assertion corrected (2026-11-06 09:00 JST):
+- User reported one failure out of 125 tests. The failing N64 Auto GUI test was checking an obsolete source string, `row_frame, text=...`, rather than indicating that N64 Auto itself was broken.
+- Updated pc/test_batch_dump.py:test_gui_n64_auto_button_is_inline_and_one_click to assert the current standard `ttk.Button` is placed inside `button_frame` and packed. The Auto activation callback and N64 target-presence assertions remain.
+- No N64 runtime code changed. Fix commit: 431b4c0f687473dd1150442275be20f6598c4458.
+- Full 125-test rerun after this correction is not yet confirmed. Windows EXE/actual GUI checks remain outstanding; keep VERIFY.
+
 #043 Reset after SD dump unexpectedly switches storage to PC
 Added: 2026-11-03 22:50:26 JST
 Last updated: 2026-11-03 22:54:12 JST
