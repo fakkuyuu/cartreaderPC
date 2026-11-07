@@ -50,7 +50,6 @@ ID    Status   Prio Categories                    Title
 025   CLOSED   --   performance                   Adopted and rejected performance changes
 026   CLOSED   --   scope/md                      No Turrican-specific modification
 027   VERIFY   P2   enhancement/ui/i18n           Default first launch to English; label Japanese as Japanese
-028   VERIFY   P2   bug/gb/mbc1                   GB MBC1 special-bank fix and MBC1M compatibility
 029   VERIFY   P2   enhancement/ui/automation     One-click ROM/save dumping (see #040 for result colors)
 030   CLOSED   P2   enhancement/ui/files          Open the output folder in Windows Explorer
 031   CLOSED   P2   enhancement/logging           Save the PC console to OSCR_LOG.txt
@@ -70,6 +69,119 @@ ID    Status   Prio Categories                    Title
 045   VERIFY   P2   enhancement/automation        Standalone SD automatic dump and power-on start
 046   VERIFY   P2   bug/verification/ui           Empty PCE slot produces all-FF dump and green success
 047   VERIFY   P2   enhancement/ui                Small persistent reader-display host connection marker
+048   OPEN     P2   bug/ws/save                   WonderSwan Write Save selection triggers a reset
+
+[UPSTREAM FIX INDEX]
+ID    Status   Prio Categories                    Title
+UPSTREAM-001   VERIFY   P2   bug/gb/mbc1                   GB MBC1 special-bank fix and MBC1M compatibility
+
+[UPSTREAM FIX DETAILS]
+
+#UPSTREAM-001 Integrate the GB MBC1 special-bank fix, verify compatibility and handle MBC1M
+Former ID: #028 (historical records and commit references). Reclassified: 2026-11-07 19:25 JST.
+Added: 2026-11-01 21:41:54 JST
+Last updated: 2026-11-02 18:52:19 JST
+Status: VERIFY (fix committed to GitHub master; post-change build and hardware re-verification pending at time of this status) / P2 / bug, gb, mbc1, test, docs
+Source: The user shared a fix/verification request from another GPT chat. The initial information below was reported by that chat, not independently established in this conversation.
+Original affected games: Chinese Fighter and Bomberman Quest failing MBC1 dumps.
+Initial scope: GB.ino from the old Sanni CartReader ("gb.ino" in the request); porting to the new OSCR is separate.
+
+Shared explanation of the defect:
+- Some ordinary MBC1 1MB ROM dumps did not match reference CRCs.
+- The old register sequence was reportedly as follows; selecting a bank whose low five bits are zero directly in the upper ROM window maps it to another bank:
+  writeByte_GB(0x6000, 0);
+  writeByte_GB(0x4000, currBank >> 5);
+  writeByte_GB(0x2000, currBank & 0x1F);
+- Example: requesting bank 0x20 yields 0x21. Check the actual current code and applicability before generalizing.
+
+Shared successful fix approach:
+- Ordinary banks: mode 0, read from 0x4000-0x7FFF.
+- Special banks 0x20/0x40/0x60: switch to mode 1, choose the high bank and read from 0x0000-0x3FFF.
+- Preserve ROM bank order in the output. Do not conceal mismatches by filling unreadable regions with FF.
+- Ordinary MBC1 and MBC1M were said to map upper register bits differently (ordinary bits 5-6, MBC1M bits 4-5); compare this claim against the specification and code.
+
+Shared hardware results and unknowns:
+- Ordinary MBC1 1MB: The revised build reportedly dumped successfully with matching CRC; not proof of compatibility with every MBC1.
+- MBC1M Bomberman Collection: Revised build reportedly dumped successfully and the user confirmed CRC equality with the reference ROM (added 2026-11-01 21:50:52 JST). This corrects an earlier note saying CRC verification was pending. It does not prove compatibility across all MBC1M titles.
+- Reportedly this was not a new dedicated MBC1M mapping implementation. The reason for success and actual bank ordering/content remain uninvestigated.
+- Momotaro Collection is a possible test title; do not mark it verified.
+- Specific CRC/SHA values, original/full modified files and exact build versions were not supplied. Snippets of the changed code and existing MBC1M branch were subsequently shared (below). There is no documented result mapping for each of the two initially affected titles.
+- No definite evidence that Retro Freak cannot dump these cartridges; do not conflate its behavior with CartReader.
+
+Work originally proposed after approval (historical plan; do not treat as current pending authorization):
+1. Compare actual source files and full diff; preserve the already successful fix.
+2. Trace MBC1 bank register settings, reading windows, ROM output order and write operations.
+3. Preserve ordinary MBC1 at <=512KB; inspect special banks on >=1MB titles.
+4. Report read behavior at boundary banks 0x00/0x01/0x1F/0x20/0x21/0x3F/0x40/0x60.
+5. Compare MBC1M wiring/bank order and modified behavior; investigate Bomberman Collection success.
+6. Add a dedicated MBC1M path only if necessary; when headers cannot reliably identify it, choose an approach that does not break valid ROMs.
+7. Do not alter MBC2/MBC3/MBC5 or perform unrelated refactoring.
+8. Check compilation and boundary cases, distinguishing software verification from hardware results.
+Deliverable: Corrected GB.ino plus concise account of affected functions, implications for MBC1 variants, boundary-bank method, MBC1M support, build results and hardware test candidates.
+Completion: Preserve proven successes and document evidence-backed coverage for ordinary MBC1 and MBC1M; never label untested configurations as passing.
+Version/commit at initial issue registration: Not addressed. Only the shared report had been recorded; source acquisition, investigation, implementation, compilation and flashing had not started.
+References:
+  Old project: https://github.com/sanni/cartreader
+  New project (not this port's target): https://github.com/oscartreader/oscr-firmware
+  Specification: https://gbdev.io/pandocs/MBC1.html
+
+Addendum/correction of earlier explanation (2026-11-01 21:58:29 JST):
+- Another GPT reportedly compared original and patched gb.ino, finding only one ordinary-MBC1 bank-selection change near line 1269.
+- The earlier claim that original code lacked MBC1M-specific handling was corrected: both original and patched versions reportedly contain an unchanged branch for romType == 0x101 || romType == 0x103.
+- Do not assume MBC1M is unimplemented and add a duplicate. First check the actual source, romType recognition and reachability of the existing branch.
+- If Bomberman Collection follows that branch, this ordinary-MBC1 fix does not affect its read path. Retain the reported CRC match while treating the recognition path as unverified.
+- The following are supplied excerpts, not full source. This chat did not independently verify that there was only one change.
+
+Shared pre-fix diff excerpt (ordinary MBC1 else):
+  writeByte_GB(0x6000, 0);
+  writeByte_GB(0x4000, currBank >> 5);
+  writeByte_GB(0x2000, currBank & 0x1F);
+Shared post-fix excerpt (ordinary MBC1 else):
+  if (currBank == 0x20 || currBank == 0x40 || currBank == 0x60) {
+    writeByte_GB(0x6000, 1);
+    writeByte_GB(0x4000, (currBank >> 5) & 0x03);
+    writeByte_GB(0x2000, 0);
+    romAddress = 0x0000;
+    endAddress = 0x3FFF;
+  } else {
+    writeByte_GB(0x6000, 0);
+    writeByte_GB(0x4000, (currBank >> 5) & 0x03);
+    writeByte_GB(0x2000, currBank & 0x1F);
+    romAddress = (currBank == 1) ? 0x0000 : 0x4000;
+    endAddress = 0x7FFF;
+  }
+Shared existing MBC1M handling (unchanged by the fix):
+  else if (romType == 0x101 || romType == 0x103) {
+    if (currBank < 10) {
+      writeByte_GB(0x4000, currBank >> 4);
+      writeByte_GB(0x2000, (currBank & 0x1f));
+    } else {
+      writeByte_GB(0x4000, currBank >> 4);
+      writeByte_GB(0x2000, 0x10 | (currBank & 0x1f));
+    }
+  }
+Future comparison points: The existing currBank==1 loop reading 0x0000-0x7FFF, restoration of the ordinary window after special banks, endAddress termination semantics and MBC1M detection.
+Preserve currBank < 10 exactly as shared; do not guess alternative values or behavior.
+Policy: Preserve the successful fix, and do not change ordinary banks, existing MBC1M or other MBC types without demonstrated need.
+Status at this historical addendum: Issue update only; awaiting implementation authorization.
+
+Implementation record (2026-11-02; direct GitHub edit by ChatGPT GPT-6):
+- Owner: ChatGPT (GPT-6) in this conversation, following the user's explicit instruction, edited master via the GitHub connector.
+- Scope: Cart_Reader/GB.ino in fakkuyuu/cartreaderPC, only the ordinary MBC1 branch of readROM_GB() near line 1269.
+- Fix: For currBank 0x20/0x40/0x60, set mode 1, select the high bank and read 0x0000-0x3FFF. For all other banks, use mode 0 and return to the original reading window.
+- Source confirmed existing MBC1M detection (BOMCOL/MOMOCOL, etc.) and the dedicated romType==0x101/0x103 branch, unchanged in this commit. Other MBC paths also unchanged.
+- Commit: f85877af147c9528fe8d899baee3894a0b879bf1
+  https://github.com/fakkuyuu/cartreaderPC/commit/f85877af147c9528fe8d899baee3894a0b879bf1
+- GitHub commit diff re-fetched and checked: only GB.ino changed (14 additions, 3 deletions); new contents checked.
+- Previous user hardware results: Ordinary 1MB MBC1 CRC match and Bomberman Collection (MBC1M) CRC match against reference ROM; neither is a re-test after this GitHub commit.
+- Not done at that point: Compile/flash this GitHub revision, verify CRC on hardware again, or comprehensively test other MBC1/MBC1M titles.
+- Status changed from TRIAGE to VERIFY because implementation was present; historical "not started" notes remain as dated records.
+
+User hardware test report (2026-11-02, after the GitHub fix):
+- User confirmed successful ROM dumps and matching CRCs on GB, GBA, SNES and Mega Drive (MD).
+- No titles, CRCs, or specific MBC1/MBC1M categories were given. These four success reports do not specifically verify 0x20/0x40/0x60 special banks or prove general MBC1M compatibility.
+- Since #UPSTREAM-001 concerns GB MBC1, record results for the other three platforms as post-fix regression evidence. Remain in VERIFY.
+Codex build/flash record (2026-11-02 18:52:19 JST): Built PC89 firmware including the MBC1 special-bank fix from GitHub f85877a with GCC 16.1; flashing to COM5 succeeded. A software model checked aggregate window sizes for ordinary MBC1 at 256KiB/512KiB/1MiB/2MiB (not hardware signal testing). Actual hardware CRC re-comparison after the fix was not performed; remain in VERIFY.
 
 [DETAILS]
 PC100 build report (2026-11-03 20:42:14 JST): Built GitHub1de58ba with local PC100 branding. All 67 tests and independent integration checks pass: MD internal checksum error stops before save with solid red; valid ROM followed by save error alternates at 1-second intervals. EXE self-test PASS/exit0. Preserve results during USB loss and reset on reconnect. No firmware changes/upload. Hardware confirmation pending; retain VERIFY.
@@ -331,111 +443,6 @@ Version/commit: Not addressed. Only source search was performed; no code, EXE or
 PC96 build (2026-11-03 13:47:19 JST): Built #027 from GitHub95829d1. Missing preference defaults to English; legacy Japanese preference migrates to JAPANESE; existing English/JAPANESE retained. Four migration cases, syntax and 42 existing tests passed. EXE self-test PASS/exit0. No firmware changes/upload. Inherited PC95 settings mean an existing Japanese preference still starts in Japanese; English default applies only without a saved language. GUI confirmation pending.
 Label adjustment (2026-11-03 13:48:51 JST): User now requests Japanese instead of uppercase JAPANESE. Migrate saved 日本語/JAPANESE values to Japanese; preserve first-launch English and existing English. Source-only update, syntax checked. No EXE rebuild; PC96 retains its earlier label.
 
-#028 Integrate the GB MBC1 special-bank fix, verify compatibility and handle MBC1M
-Added: 2026-11-01 21:41:54 JST
-Last updated: 2026-11-02 18:52:19 JST
-Status: VERIFY (fix committed to GitHub master; post-change build and hardware re-verification pending at time of this status) / P2 / bug, gb, mbc1, test, docs
-Source: The user shared a fix/verification request from another GPT chat. The initial information below was reported by that chat, not independently established in this conversation.
-Original affected games: Chinese Fighter and Bomberman Quest failing MBC1 dumps.
-Initial scope: GB.ino from the old Sanni CartReader ("gb.ino" in the request); porting to the new OSCR is separate.
-
-Shared explanation of the defect:
-- Some ordinary MBC1 1MB ROM dumps did not match reference CRCs.
-- The old register sequence was reportedly as follows; selecting a bank whose low five bits are zero directly in the upper ROM window maps it to another bank:
-  writeByte_GB(0x6000, 0);
-  writeByte_GB(0x4000, currBank >> 5);
-  writeByte_GB(0x2000, currBank & 0x1F);
-- Example: requesting bank 0x20 yields 0x21. Check the actual current code and applicability before generalizing.
-
-Shared successful fix approach:
-- Ordinary banks: mode 0, read from 0x4000-0x7FFF.
-- Special banks 0x20/0x40/0x60: switch to mode 1, choose the high bank and read from 0x0000-0x3FFF.
-- Preserve ROM bank order in the output. Do not conceal mismatches by filling unreadable regions with FF.
-- Ordinary MBC1 and MBC1M were said to map upper register bits differently (ordinary bits 5-6, MBC1M bits 4-5); compare this claim against the specification and code.
-
-Shared hardware results and unknowns:
-- Ordinary MBC1 1MB: The revised build reportedly dumped successfully with matching CRC; not proof of compatibility with every MBC1.
-- MBC1M Bomberman Collection: Revised build reportedly dumped successfully and the user confirmed CRC equality with the reference ROM (added 2026-11-01 21:50:52 JST). This corrects an earlier note saying CRC verification was pending. It does not prove compatibility across all MBC1M titles.
-- Reportedly this was not a new dedicated MBC1M mapping implementation. The reason for success and actual bank ordering/content remain uninvestigated.
-- Momotaro Collection is a possible test title; do not mark it verified.
-- Specific CRC/SHA values, original/full modified files and exact build versions were not supplied. Snippets of the changed code and existing MBC1M branch were subsequently shared (below). There is no documented result mapping for each of the two initially affected titles.
-- No definite evidence that Retro Freak cannot dump these cartridges; do not conflate its behavior with CartReader.
-
-Work originally proposed after approval (historical plan; do not treat as current pending authorization):
-1. Compare actual source files and full diff; preserve the already successful fix.
-2. Trace MBC1 bank register settings, reading windows, ROM output order and write operations.
-3. Preserve ordinary MBC1 at <=512KB; inspect special banks on >=1MB titles.
-4. Report read behavior at boundary banks 0x00/0x01/0x1F/0x20/0x21/0x3F/0x40/0x60.
-5. Compare MBC1M wiring/bank order and modified behavior; investigate Bomberman Collection success.
-6. Add a dedicated MBC1M path only if necessary; when headers cannot reliably identify it, choose an approach that does not break valid ROMs.
-7. Do not alter MBC2/MBC3/MBC5 or perform unrelated refactoring.
-8. Check compilation and boundary cases, distinguishing software verification from hardware results.
-Deliverable: Corrected GB.ino plus concise account of affected functions, implications for MBC1 variants, boundary-bank method, MBC1M support, build results and hardware test candidates.
-Completion: Preserve proven successes and document evidence-backed coverage for ordinary MBC1 and MBC1M; never label untested configurations as passing.
-Version/commit at initial issue registration: Not addressed. Only the shared report had been recorded; source acquisition, investigation, implementation, compilation and flashing had not started.
-References:
-  Old project: https://github.com/sanni/cartreader
-  New project (not this port's target): https://github.com/oscartreader/oscr-firmware
-  Specification: https://gbdev.io/pandocs/MBC1.html
-
-Addendum/correction of earlier explanation (2026-11-01 21:58:29 JST):
-- Another GPT reportedly compared original and patched gb.ino, finding only one ordinary-MBC1 bank-selection change near line 1269.
-- The earlier claim that original code lacked MBC1M-specific handling was corrected: both original and patched versions reportedly contain an unchanged branch for romType == 0x101 || romType == 0x103.
-- Do not assume MBC1M is unimplemented and add a duplicate. First check the actual source, romType recognition and reachability of the existing branch.
-- If Bomberman Collection follows that branch, this ordinary-MBC1 fix does not affect its read path. Retain the reported CRC match while treating the recognition path as unverified.
-- The following are supplied excerpts, not full source. This chat did not independently verify that there was only one change.
-
-Shared pre-fix diff excerpt (ordinary MBC1 else):
-  writeByte_GB(0x6000, 0);
-  writeByte_GB(0x4000, currBank >> 5);
-  writeByte_GB(0x2000, currBank & 0x1F);
-Shared post-fix excerpt (ordinary MBC1 else):
-  if (currBank == 0x20 || currBank == 0x40 || currBank == 0x60) {
-    writeByte_GB(0x6000, 1);
-    writeByte_GB(0x4000, (currBank >> 5) & 0x03);
-    writeByte_GB(0x2000, 0);
-    romAddress = 0x0000;
-    endAddress = 0x3FFF;
-  } else {
-    writeByte_GB(0x6000, 0);
-    writeByte_GB(0x4000, (currBank >> 5) & 0x03);
-    writeByte_GB(0x2000, currBank & 0x1F);
-    romAddress = (currBank == 1) ? 0x0000 : 0x4000;
-    endAddress = 0x7FFF;
-  }
-Shared existing MBC1M handling (unchanged by the fix):
-  else if (romType == 0x101 || romType == 0x103) {
-    if (currBank < 10) {
-      writeByte_GB(0x4000, currBank >> 4);
-      writeByte_GB(0x2000, (currBank & 0x1f));
-    } else {
-      writeByte_GB(0x4000, currBank >> 4);
-      writeByte_GB(0x2000, 0x10 | (currBank & 0x1f));
-    }
-  }
-Future comparison points: The existing currBank==1 loop reading 0x0000-0x7FFF, restoration of the ordinary window after special banks, endAddress termination semantics and MBC1M detection.
-Preserve currBank < 10 exactly as shared; do not guess alternative values or behavior.
-Policy: Preserve the successful fix, and do not change ordinary banks, existing MBC1M or other MBC types without demonstrated need.
-Status at this historical addendum: Issue update only; awaiting implementation authorization.
-
-Implementation record (2026-11-02; direct GitHub edit by ChatGPT GPT-6):
-- Owner: ChatGPT (GPT-6) in this conversation, following the user's explicit instruction, edited master via the GitHub connector.
-- Scope: Cart_Reader/GB.ino in fakkuyuu/cartreaderPC, only the ordinary MBC1 branch of readROM_GB() near line 1269.
-- Fix: For currBank 0x20/0x40/0x60, set mode 1, select the high bank and read 0x0000-0x3FFF. For all other banks, use mode 0 and return to the original reading window.
-- Source confirmed existing MBC1M detection (BOMCOL/MOMOCOL, etc.) and the dedicated romType==0x101/0x103 branch, unchanged in this commit. Other MBC paths also unchanged.
-- Commit: f85877af147c9528fe8d899baee3894a0b879bf1
-  https://github.com/fakkuyuu/cartreaderPC/commit/f85877af147c9528fe8d899baee3894a0b879bf1
-- GitHub commit diff re-fetched and checked: only GB.ino changed (14 additions, 3 deletions); new contents checked.
-- Previous user hardware results: Ordinary 1MB MBC1 CRC match and Bomberman Collection (MBC1M) CRC match against reference ROM; neither is a re-test after this GitHub commit.
-- Not done at that point: Compile/flash this GitHub revision, verify CRC on hardware again, or comprehensively test other MBC1/MBC1M titles.
-- Status changed from TRIAGE to VERIFY because implementation was present; historical "not started" notes remain as dated records.
-
-User hardware test report (2026-11-02, after the GitHub fix):
-- User confirmed successful ROM dumps and matching CRCs on GB, GBA, SNES and Mega Drive (MD).
-- No titles, CRCs, or specific MBC1/MBC1M categories were given. These four success reports do not specifically verify 0x20/0x40/0x60 special banks or prove general MBC1M compatibility.
-- Since #028 concerns GB MBC1, record results for the other three platforms as post-fix regression evidence. Remain in VERIFY.
-Codex build/flash record (2026-11-02 18:52:19 JST): Built PC89 firmware including the MBC1 special-bank fix from GitHub f85877a with GCC 16.1; flashing to COM5 succeeded. A software model checked aggregate window sizes for ordinary MBC1 at 256KiB/512KiB/1MiB/2MiB (not hardware signal testing). Actual hardware CRC re-comparison after the fix was not performed; remain in VERIFY.
-
 #029 One-click dumping mode (automate button presses and menu selections)
 Added: 2026-11-01 22:02:12 JST
 Last updated: 2026-11-03 20:37:37 JST
@@ -499,7 +506,7 @@ Backward-compatibility safeguard addendum (2026-11-02 18:12:20 JST): PC GUI send
 
 Bugs fixed after Codex review (2026-11-02 18:37:20 JST): Codex said nine new tests passed but two real-screen paths were wrong. (1) SNES batch save selection looked for "Read SRAM" although firmware uses FSTRING_READ_SAVE = "Read Save", causing a stop; corrected the search label (e7b0a0d). (2) The GBA gba.txt DB candidate uses printInstructions() to emit "[Control] physical-buttons" and wait for confirmation, but GUI render_physical_fallback() had not been connected to the batch state machine; added a call to batch.on_physical() (b7e0cba). BatchDump sends Space exactly once after observing a GBA Save Lib candidate in rom_menu, but stops on other physical-buttons screens, unidentified state, "CARTRIDGE ERROR" or "Checksum Error". An unexpected Press Button before GBA candidate confirmation also stops. Added regression tests for SNES Read Save completion, GBA DB candidate -> physical confirmation -> ROM -> SAVE, rejection of unknown physical screens, and AST inspection of GUI callback wiring, totaling 13 tests (1d80e3c, cf1582d). At that historical point ChatGPT itself had not executed tests, built EXE/firmware, flashed or performed hardware checks. Codex integration/build/flash were also still pending per user report. Remain VERIFY.
 
-User hardware confirmation (2026-11-02 19:10:01 JST, #029): User explicitly reported successful one-click dumping on GB, GBA, SNES and MD. This verifies four normal hardware paths on PC89 and is recorded under #029. The same platforms' ROM dumps with matching CRCs were recorded under #028 but #028 is the MBC1 issue and must not be conflated with batch UI behavior. This report did not specify save presence, whether ROM+save were both saved, individual titles/CRCs, NES/PCE batch (both PCE variants), NES recognition-failure Reset or error stops. Leave all such branches unverified. Codex had already completed PC89 EXE build/13 tests and HW3 firmware build/COM5 flash at 18:52:19 JST; prior "build/flash pending" notes were superseded. #029 remains VERIFY due to limited coverage. Manual console selection, exclusion of MSX and two PCE batch buttons remain unchanged.
+User hardware confirmation (2026-11-02 19:10:01 JST, #029): User explicitly reported successful one-click dumping on GB, GBA, SNES and MD. This verifies four normal hardware paths on PC89 and is recorded under #029. The same platforms' ROM dumps with matching CRCs were recorded under #UPSTREAM-001 but #UPSTREAM-001 is the MBC1 issue and must not be conflated with batch UI behavior. This report did not specify save presence, whether ROM+save were both saved, individual titles/CRCs, NES/PCE batch (both PCE variants), NES recognition-failure Reset or error stops. Leave all such branches unverified. Codex had already completed PC89 EXE build/13 tests and HW3 firmware build/COM5 flash at 18:52:19 JST; prior "build/flash pending" notes were superseded. #029 remains VERIFY due to limited coverage. Manual console selection, exclusion of MSX and two PCE batch buttons remain unchanged.
 
 N64 one-click support (2026-11-02 19:26:36 JST; user instruction): User said N64 should stop immediately on database misses, as NES does. Added a dedicated "One-click Dump" button to the right of the ordinary "Nintendo 64 (3V)" button (pc/cartreader_pc.py, cae56ff). Added N64 to BatchDump (pc/batch_dump.py, 8d72972). Automatically choose "Select N64 device" -> "Game Cartridge". Only after n64.txt CRC1 lookup succeeds and the displayed ROM Size, Save Type and CRC1 fields are all verified does the first automatic Press Button lead to "N64 Cart Reader" -> "Read ROM". Stop on "GAMEPAK ERROR" or "Cartridge unknown" (DB miss), incomplete DB fields, unknown ROM size or unsupported save type. Do not trust N64.ino's provisional cartSize=2MB on unknown cartridges. Compare saved ROM length to database-derived ROM Size. After valid "[VERIFY]", read the save for SRAM (32768B), SRAM 768 (98304B), FLASH (131072B), 4K EEPROM (512B) or 16K EEPROM (2048B); on DB None/Unknown(0), finish after ROM only. Compare saved save-file size against the per-type expected size and stop on mismatch. Never choose write/erase, Force Savetype, Force ROM size or ControllerPak operations. PC-side CRC32 DB no match after dumping is distinct from CRC1 lookup failure before dumping, so retain the existing batch policy if transfer/format data are valid. Seven tests added covering DB hits/misses, ROM-only, five save types, ROM/save size mismatch and button placement, bringing total to 20 (3144a8a). Only the PC tool changed, not Arduino FW. At that time N64 code tests, EXE rebuild and actual hardware tests (normal, DB miss and save branches) were still pending. PC89 EXE lacked the button and required rebuilding from master. Stay VERIFY.
 
@@ -1005,3 +1012,37 @@ Correction (2026-11-05; user reconfirmed):
 - Keep it white after reconnection/reader restart. Preserve result colors through ordinary automatic menu transitions.
 - Withdraw the previous correction stating that the color should remain during disconnection/power-off; that statement was incorrect.
 - On implementation, reset the result state and blink timer after the disconnect/transport-loss event, and ensure batch shutdown cannot repaint the console red after the reset.
+
+#048 WonderSwan Write Save selection triggers a reset
+2026-11-06 17:54 JST / OPEN / P2 / bug, ws, save
+User reports a reset when selecting Write Save while testing a WS EEPROM readback. Whether the file chooser appeared, the SD/USB mode and the exact reset trigger are unconfirmed. In the PC107 reference, the SD file browser precedes EEPROM writes. No changes requested.
+2026-11-06 17:55 JST: User reports a brief message resembling Sorting... before reset in both connected and standalone modes. The PC107 reference emits Sorting... before the on-device SD file list, before choosing a save. Cause pending.
+2026-11-06 17:57 JST: User confirms reproduction with PC storage selected. PC107 routes the shared file browser through the PC when PC storage is active, so the failure cannot be attributed solely to the physical SD.
+2026-11-06 18:00 JST: PC109W4 log refinement: Sorting... completes far enough to emit Select eep file and seven entries. Disconnect follows the selection prompt before any logged file selection; reconnect shows a fresh firmware banner and top menu, then connection wait recurs. EEPROM writes are not observed. Exact reset cause unconfirmed.
+2026-11-06 18:10 JST: User comparison: stock firmware does not reset when entering Write Save. Stack pressure is a hypothesis, not confirmed. Exact stock version and PC109W4 build memory measurements were not provided.
+2026-11-06 18:20 JST: File-picker design requirement: do not resolve a write source by row number and truncated display name alone. Preserve per-row identity, verify the selected entry again on both SD and PC backends before writing, and redisplay the list if identity cannot be confirmed.
+2026-11-07 JST: W4 uses 6743/8192 B static SRAM (1449 B before stack/heap); the compiled fileBrowser local frame is 1053 B. Stock V15.5 HW3 with WS enabled uses 5254 B static SRAM (2938 B left), with a different module configuration. User reproduced the reset on standalone SD with USB unplugged, and on GB after Sorting... with brief display corruption, before file selection.
+W5: Fork-side PcStorage.cpp split absolute SD paths from the relative-path and PC DB helpers. AVR disassembly confirms HybridFsFile::open local allocation fell from 260 B to 0 B, excluding saved registers and callees. Static SRAM unchanged. User still reported a reset.
+W6: Move the 528 B PC protocol buffer from static storage to allocation after a valid handshake. Static SRAM 6217 B, leaving 1975 B before stack/heap (+526 B vs W5). Buffer remains allocated after connection until reboot. Shared upstream file-browser source unchanged. User confirms GB and WS lists open in standalone SD. A WS test with PC connected reached file selection, write and verify without reset. Verify still failed with 2038 byte mismatches, tracked separately from the list reset. Exact reset mechanism and runtime stack minimum remain unmeasured.
+2026-11-07 09:59 JST: Separate WS EEPROM symptom: user confirmed verification of the test data also failed on stock firmware. Cause (shared firmware or hardware) unconfirmed.
+2026-11-07 10:13 JST: WS EEPROM verification still failed when the user maintained pressure from before power-on through Write Save. No electrical measurement of contact or CLK was reported.
+2026-11-07 12:45 JST: Separate WS EEPROM investigation: upstream pulseCLK_WS changes an input-only count and uses a non-early-clobber scratch output. Existing PC87 WS ELF assigns both to r18, producing only one rising edge per nonzero request. This is a confirmed compiler-constraint defect in that binary; current tested binaries and hardware pulses have not been checked. Investigate with read-only comparison before any further write tests.
+2026-11-07 12:57 JST: COM5 flash readback identified PC109W6. Disassembly at 0x1ef1c confirms pulse count and delay share r18; callers pass 20, 36, and 128, yet each nonzero call exits after one rising edge. This confirms the clock defect in the installed W6 binary; no firmware was written.
+2026-11-07 13:08 JST: PC109W7 separates the WS pulse count and delay registers. Disassembly confirms r24/r25 separation. COM5 flash completed (-V). Hardware save read/write testing pending.
+2026-11-07 13:10 JST: On PC109W7 the user observed several seconds of WS save writing before the verify message. The previous firmware reported a verify error almost immediately. Exact verify result and readback match are pending.
+2026-11-07 13:22 JST: The WS EEPROM readback supplied during W7 testing (00C17/286) contains 680 nonzero bytes out of 2048. Original-save match and in-game validity remain unverified.
+2026-11-07 13:34 JST: The post-fix WS readback and comparison .eeprom match in length (2048 B) and SHA-256. The user subsequently reported trouble writing saves. Failure stage, message, and cause remain unconfirmed.
+2026-11-07 13:37 JST: The user reported successful WS save writing on PC109W7 after avoiding Japanese filenames and power-cycling the reader. Both conditions changed together, so the earlier failure was not isolated.
+2026-11-07 13:38 JST: During WS Write Save, the user enabled the on-screen reader buttons and pressed one to navigate to the parent folder. The specific button and any effect on writing are unconfirmed.
+2026-11-07 13:39 JST: A 42-byte UTF-8 Japanese .eep filename was not visible in the WS Write Save picker. A shorter Japanese filename had appeared garbled. W7 copies labels to a 20-byte buffer including NUL, so truncation is expected. The reason the entry was not visible remains unconfirmed.
+2026-11-07 14:09 JST: The WS picker showed only 00C1 for the test filename beginning with five Japanese characters followed by 00C17.eep. The Japanese prefix takes 15 UTF-8 bytes and 00C1 takes the remaining four bytes of the 19-byte label. The user chose to hold the adapter contacts firmly from before initialization.
+2026-11-07 14:20 JST: WS readback 287 matched all 2048 bytes of input A. The user reported that writing B failed once and passed verification on retry. Readback 288 differed from B by 437 bytes and from readback 287 by 598 bytes. Cause unconfirmed.
+2026-11-07 14:23 JST: WS rereads 289 and 290 were both 2048 bytes, differing from B by 6 and 579 bytes respectively and from one another by 578 bytes. Readback is not reproducible.
+2026-11-07 14:25 JST: WS rereads 291 and 292 were both 2048 bytes. Differences from B: 9 and 417 bytes respectively. Differences between rereads: 418 bytes.
+2026-11-07 14:29 JST: After rewriting A, compared two WS readbacks against A (xxx00C17.eep). 293: 2048 B, diff=38 / 294: 2048 B, diff=233.
+2026-11-07 14:34 JST: WS readback 295 was 2048 bytes and differed from input A by 0 bytes. Power-cycle status unconfirmed.
+2026-11-07 14:35 JST: Compared WS readbacks 296/297 with input A. 296: 2048 B, diff=0 / 297: 2048 B, diff=0.
+2026-11-07 14:37 JST: Two WS Read Save results after one Write Save. Byte mismatches against A/B: 298: 2048 B, A=0, B=252 / 299: 2048 B, A=0, B=252.
+2026-11-07 14:39 JST: Compared two WS readbacks after the B write trial. 300: 2048 B, A diff=252, B diff=0 / 301: 2048 B, A diff=252, B diff=0.
+2026-11-07 16:03 JST: Follow-up request for the press-contact WS adapter: after initial cartridge detection, allow releasing pressure while selecting a file, then hold contact from the start of EEPROM access through completion. Consider a confirmation step and cartridge recheck before Read Save and after Write Save file selection. Resend write enable immediately before programming and abort if the cartridge cannot be confirmed. Preserve the W7 clock fix and use the GitHub baseline without the multicart experiments. Implementation pending.
+Classification (2026-11-07 JST): The upstream-derived bug fix is limited to the pulseCLK_WS register constraints in WS.ino. The PC109W5/W6 PcStorage memory changes are cartreaderPC-specific. Reinitialization and write-enable replay for press-contact adapters are separate deferred compatibility improvements.
