@@ -75,6 +75,8 @@ ID    Status   Prio Categories                    Title
 ID    Status   Prio Categories                    Title
 UPSTREAM-001   VERIFY   P2   bug/gb/mbc1                   GB MBC1 special-bank fix and MBC1M compatibility
 
+UPSTREAM-002   VERIFY   P2   bug/upstream/ws/eeprom        WonderSwan EEPROM clock pulse count is incorrect
+
 [UPSTREAM FIX DETAILS]
 
 #UPSTREAM-001 Integrate the GB MBC1 special-bank fix, verify compatibility and handle MBC1M
@@ -182,6 +184,26 @@ User hardware test report (2026-11-02, after the GitHub fix):
 - No titles, CRCs, or specific MBC1/MBC1M categories were given. These four success reports do not specifically verify 0x20/0x40/0x60 special banks or prove general MBC1M compatibility.
 - Since #UPSTREAM-001 concerns GB MBC1, record results for the other three platforms as post-fix regression evidence. Remain in VERIFY.
 Codex build/flash record (2026-11-02 18:52:19 JST): Built PC89 firmware including the MBC1 special-bank fix from GitHub f85877a with GCC 16.1; flashing to COM5 succeeded. A software model checked aggregate window sizes for ordinary MBC1 at 256KiB/512KiB/1MiB/2MiB (not hardware signal testing). Actual hardware CRC re-comparison after the fix was not performed; remain in VERIFY.
+
+#UPSTREAM-002 WonderSwan EEPROM clock pulse count is incorrect
+Status: VERIFY / P2 / bug, upstream, ws, eeprom. Applies to inherited WS.ino. On PC109W7 and HW3, Turntablist - DJ Battle was changed from A to B and readbacks 300/301 both matched all 2,048 bytes of B. Some earlier reads varied. Contact as the cause, the upstream release binary, and integration into a regular release remain unverified.
+2026-11-07 09:59 JST: Separate WS EEPROM symptom: user confirmed verification of the test data also failed on stock firmware. Cause (shared firmware or hardware) unconfirmed.
+2026-11-07 10:13 JST: WS EEPROM verification still failed when the user maintained pressure from before power-on through Write Save. No electrical measurement of contact or CLK was reported.
+2026-11-07 12:45 JST: Separate WS EEPROM investigation: upstream pulseCLK_WS changes an input-only count and uses a non-early-clobber scratch output. Existing PC87 WS ELF assigns both to r18, producing only one rising edge per nonzero request. This is a confirmed compiler-constraint defect in that binary; current tested binaries and hardware pulses have not been checked. Investigate with read-only comparison before any further write tests.
+2026-11-07 12:57 JST: COM5 flash readback identified PC109W6. Disassembly at 0x1ef1c confirms pulse count and delay share r18; callers pass 20, 36, and 128, yet each nonzero call exits after one rising edge. This confirms the clock defect in the installed W6 binary; no firmware was written.
+2026-11-07 13:08 JST: PC109W7 separates the WS pulse count and delay registers. Disassembly confirms r24/r25 separation. COM5 flash completed (-V). Hardware save read/write testing pending.
+2026-11-07 13:10 JST: On PC109W7 the user observed several seconds of WS save writing before the verify message. The previous firmware reported a verify error almost immediately. Exact verify result and readback match are pending.
+2026-11-07 13:22 JST: The WS EEPROM readback supplied during W7 testing (00C17/286) contains 680 nonzero bytes out of 2048. Original-save match and in-game validity remain unverified.
+2026-11-07 13:34 JST: The post-fix WS readback and comparison .eeprom match in length (2048 B) and SHA-256. The user subsequently reported trouble writing saves. Failure stage, message, and cause remain unconfirmed.
+2026-11-07 13:37 JST: The user reported successful WS save writing on PC109W7 after avoiding Japanese filenames and power-cycling the reader. Both conditions changed together, so the earlier failure was not isolated.
+2026-11-07 14:20 JST: WS readback 287 matched all 2048 bytes of input A. The user reported that writing B failed once and passed verification on retry. Readback 288 differed from B by 437 bytes and from readback 287 by 598 bytes. Cause unconfirmed.
+2026-11-07 14:23 JST: WS rereads 289 and 290 were both 2048 bytes, differing from B by 6 and 579 bytes respectively and from one another by 578 bytes. Readback is not reproducible.
+2026-11-07 14:25 JST: WS rereads 291 and 292 were both 2048 bytes. Differences from B: 9 and 417 bytes respectively. Differences between rereads: 418 bytes.
+2026-11-07 14:29 JST: After rewriting A, compared two WS readbacks against A (xxx00C17.eep). 293: 2048 B, diff=38 / 294: 2048 B, diff=233.
+2026-11-07 14:34 JST: WS readback 295 was 2048 bytes and differed from input A by 0 bytes. Power-cycle status unconfirmed.
+2026-11-07 14:35 JST: Compared WS readbacks 296/297 with input A. 296: 2048 B, diff=0 / 297: 2048 B, diff=0.
+2026-11-07 14:37 JST: Two WS Read Save results after one Write Save. Byte mismatches against A/B: 298: 2048 B, A=0, B=252 / 299: 2048 B, A=0, B=252.
+2026-11-07 14:39 JST: Compared two WS readbacks after the B write trial. 300: 2048 B, A diff=252, B diff=0 / 301: 2048 B, A diff=252, B diff=0.
 
 [DETAILS]
 PC100 build report (2026-11-03 20:42:14 JST): Built GitHub1de58ba with local PC100 branding. All 67 tests and independent integration checks pass: MD internal checksum error stops before save with solid red; valid ROM followed by save error alternates at 1-second intervals. EXE self-test PASS/exit0. Preserve results during USB loss and reset on reconnect. No firmware changes/upload. Hardware confirmation pending; retain VERIFY.
@@ -1024,25 +1046,8 @@ User reports a reset when selecting Write Save while testing a WS EEPROM readbac
 2026-11-07 JST: W4 uses 6743/8192 B static SRAM (1449 B before stack/heap); the compiled fileBrowser local frame is 1053 B. Stock V15.5 HW3 with WS enabled uses 5254 B static SRAM (2938 B left), with a different module configuration. User reproduced the reset on standalone SD with USB unplugged, and on GB after Sorting... with brief display corruption, before file selection.
 W5: Fork-side PcStorage.cpp split absolute SD paths from the relative-path and PC DB helpers. AVR disassembly confirms HybridFsFile::open local allocation fell from 260 B to 0 B, excluding saved registers and callees. Static SRAM unchanged. User still reported a reset.
 W6: Move the 528 B PC protocol buffer from static storage to allocation after a valid handshake. Static SRAM 6217 B, leaving 1975 B before stack/heap (+526 B vs W5). Buffer remains allocated after connection until reboot. Shared upstream file-browser source unchanged. User confirms GB and WS lists open in standalone SD. A WS test with PC connected reached file selection, write and verify without reset. Verify still failed with 2038 byte mismatches, tracked separately from the list reset. Exact reset mechanism and runtime stack minimum remain unmeasured.
-2026-11-07 09:59 JST: Separate WS EEPROM symptom: user confirmed verification of the test data also failed on stock firmware. Cause (shared firmware or hardware) unconfirmed.
-2026-11-07 10:13 JST: WS EEPROM verification still failed when the user maintained pressure from before power-on through Write Save. No electrical measurement of contact or CLK was reported.
-2026-11-07 12:45 JST: Separate WS EEPROM investigation: upstream pulseCLK_WS changes an input-only count and uses a non-early-clobber scratch output. Existing PC87 WS ELF assigns both to r18, producing only one rising edge per nonzero request. This is a confirmed compiler-constraint defect in that binary; current tested binaries and hardware pulses have not been checked. Investigate with read-only comparison before any further write tests.
-2026-11-07 12:57 JST: COM5 flash readback identified PC109W6. Disassembly at 0x1ef1c confirms pulse count and delay share r18; callers pass 20, 36, and 128, yet each nonzero call exits after one rising edge. This confirms the clock defect in the installed W6 binary; no firmware was written.
-2026-11-07 13:08 JST: PC109W7 separates the WS pulse count and delay registers. Disassembly confirms r24/r25 separation. COM5 flash completed (-V). Hardware save read/write testing pending.
-2026-11-07 13:10 JST: On PC109W7 the user observed several seconds of WS save writing before the verify message. The previous firmware reported a verify error almost immediately. Exact verify result and readback match are pending.
-2026-11-07 13:22 JST: The WS EEPROM readback supplied during W7 testing (00C17/286) contains 680 nonzero bytes out of 2048. Original-save match and in-game validity remain unverified.
-2026-11-07 13:34 JST: The post-fix WS readback and comparison .eeprom match in length (2048 B) and SHA-256. The user subsequently reported trouble writing saves. Failure stage, message, and cause remain unconfirmed.
-2026-11-07 13:37 JST: The user reported successful WS save writing on PC109W7 after avoiding Japanese filenames and power-cycling the reader. Both conditions changed together, so the earlier failure was not isolated.
 2026-11-07 13:38 JST: During WS Write Save, the user enabled the on-screen reader buttons and pressed one to navigate to the parent folder. The specific button and any effect on writing are unconfirmed.
 2026-11-07 13:39 JST: A 42-byte UTF-8 Japanese .eep filename was not visible in the WS Write Save picker. A shorter Japanese filename had appeared garbled. W7 copies labels to a 20-byte buffer including NUL, so truncation is expected. The reason the entry was not visible remains unconfirmed.
 2026-11-07 14:09 JST: The WS picker showed only 00C1 for the test filename beginning with five Japanese characters followed by 00C17.eep. The Japanese prefix takes 15 UTF-8 bytes and 00C1 takes the remaining four bytes of the 19-byte label. The user chose to hold the adapter contacts firmly from before initialization.
-2026-11-07 14:20 JST: WS readback 287 matched all 2048 bytes of input A. The user reported that writing B failed once and passed verification on retry. Readback 288 differed from B by 437 bytes and from readback 287 by 598 bytes. Cause unconfirmed.
-2026-11-07 14:23 JST: WS rereads 289 and 290 were both 2048 bytes, differing from B by 6 and 579 bytes respectively and from one another by 578 bytes. Readback is not reproducible.
-2026-11-07 14:25 JST: WS rereads 291 and 292 were both 2048 bytes. Differences from B: 9 and 417 bytes respectively. Differences between rereads: 418 bytes.
-2026-11-07 14:29 JST: After rewriting A, compared two WS readbacks against A (xxx00C17.eep). 293: 2048 B, diff=38 / 294: 2048 B, diff=233.
-2026-11-07 14:34 JST: WS readback 295 was 2048 bytes and differed from input A by 0 bytes. Power-cycle status unconfirmed.
-2026-11-07 14:35 JST: Compared WS readbacks 296/297 with input A. 296: 2048 B, diff=0 / 297: 2048 B, diff=0.
-2026-11-07 14:37 JST: Two WS Read Save results after one Write Save. Byte mismatches against A/B: 298: 2048 B, A=0, B=252 / 299: 2048 B, A=0, B=252.
-2026-11-07 14:39 JST: Compared two WS readbacks after the B write trial. 300: 2048 B, A diff=252, B diff=0 / 301: 2048 B, A diff=252, B diff=0.
 2026-11-07 16:03 JST: Follow-up request for the press-contact WS adapter: after initial cartridge detection, allow releasing pressure while selecting a file, then hold contact from the start of EEPROM access through completion. Consider a confirmation step and cartridge recheck before Read Save and after Write Save file selection. Resend write enable immediately before programming and abort if the cartridge cannot be confirmed. Preserve the W7 clock fix and use the GitHub baseline without the multicart experiments. Implementation pending.
-Classification (2026-11-07 JST): The upstream-derived bug fix is limited to the pulseCLK_WS register constraints in WS.ino. The PC109W5/W6 PcStorage memory changes are cartreaderPC-specific. Reinitialization and write-enable replay for press-contact adapters are separate deferred compatibility improvements.
+Related: EEPROM clock fix and hardware results are in #UPSTREAM-002. This issue tracks the file-picker reset and PcStorage memory fixes. Reinitialization and write-enable replay for press-contact adapters remain a deferred compatibility proposal.
