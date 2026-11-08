@@ -70,6 +70,7 @@ ID    Status   Prio Categories                    Title
 046   VERIFY   P2   bug/verification/ui           Empty PCE slot produces all-FF dump and green success
 047   VERIFY   P2   enhancement/ui                Small persistent reader-display host connection marker
 048   VERIFY     P2   bug/ws/save                   WonderSwan Write Save selection triggers a reset
+051   TRIAGE   P2   bug/snes/reset                SNES SA-1 save restore shows the main menu twice
 
 [UPSTREAM FIX INDEX]
 ID    Status   Prio Categories                    Title
@@ -1051,3 +1052,9 @@ W6: Move the 528 B PC protocol buffer from static storage to allocation after a 
 2026-11-07 14:09 JST: The WS picker showed only 00C1 for the test filename beginning with five Japanese characters followed by 00C17.eep. The Japanese prefix takes 15 UTF-8 bytes and 00C1 takes the remaining four bytes of the 19-byte label. The user chose to hold the adapter contacts firmly from before initialization.
 2026-11-07 16:03 JST: Follow-up request for the press-contact WS adapter: after initial cartridge detection, allow releasing pressure while selecting a file, then hold contact from the start of EEPROM access through completion. Consider a confirmation step and cartridge recheck before Read Save and after Write Save file selection. Resend write enable immediately before programming and abort if the cartridge cannot be confirmed. Preserve the W7 clock fix and use the GitHub baseline without the multicart experiments. Implementation pending.
 Related: EEPROM clock fix and hardware results are in #UPSTREAM-002. This issue tracks the file-picker reset and PcStorage memory fixes. Reinitialization and write-enable replay for press-contact adapters remain a deferred compatibility proposal.
+
+#051 SNES SA-1 save restore shows the main menu twice
+Added: 2026-11-08 14:13 JST
+Status: TRIAGE / P2 / bug, snes, reset
+On PC113, Super Mario RPG SRAM restore logged Verified OK. The user saw the main menu twice after acknowledging the result. The PC log contains one startup banner.
+The SA-1 verify path stops clocks and resets CIC/cartridge, then restarts the reader. The PC reopened the COM port after Resetting...; an extra DTR reset is a hypothesis. Investigate the PC reconnect separately from the SA-1 cleanup.
