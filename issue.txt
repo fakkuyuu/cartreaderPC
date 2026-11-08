@@ -80,6 +80,8 @@ UPSTREAM-002   VERIFY   P2   bug/upstream/ws/eeprom        WonderSwan EEPROM clo
 
 UPSTREAM-003   VERIFY   P2   upstream/enhancement/nes     Organize NES save dumps by game and add CRC32 reports
 
+UPSTREAM-004   VERIFY   P2   upstream/enhancement/save    Match GBA and SNES save filenames to DB titles and report save CRC32
+
 [UPSTREAM FIX DETAILS]
 
 #UPSTREAM-001 Integrate the GB MBC1 special-bank fix, verify compatibility and handle MBC1M
@@ -214,6 +216,11 @@ Status: VERIFY / P2 / upstream, enhancement, nes, save
 Related: #013. Save NES data to a numbered per-game directory and write a same-name TXT with the save CRC32. No preceding ROM dump required.
 Submitted at https://github.com/oscrusergroup/firmware/pull/3 . HW3 and HW5 builds passed; standalone SD hardware verification of the submission is pending.
 The PC Auto handling of TXT notifications is fork-specific and remains in the related #013 record.
+
+#UPSTREAM-004 Match GBA and SNES save filenames to DB titles and report save CRC32
+Added: 2026-11-08 17:31 JST
+Status: VERIFY (PC114 naming) / IDEA (parent folder and TXT)
+Upstream-derived enhancement tracked locally as #050. PC114 uses the pre-dump DB match for GBA/SNES save naming. Restoring the original parent directory name and writing a same-name save CRC32 report are pending. Not submitted upstream.
 
 [DETAILS]
 PC100 build report (2026-11-03 20:42:14 JST): Built GitHub1de58ba with local PC100 branding. All 67 tests and independent integration checks pass: MD internal checksum error stops before save with solid red; valid ROM followed by save error alternates at 1-second intervals. EXE self-test PASS/exit0. Preserve results during USB loss and reset on reconnect. No firmware changes/upload. Hardware confirmation pending; retain VERIFY.

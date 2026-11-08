@@ -80,6 +80,8 @@ UPSTREAM-002   VERIFY   P2   bug/upstream/ws/eeprom        WS EEPROMのクロッ
 
 UPSTREAM-003   VERIFY   P2   upstream/enhancement/nes     NESセーブをゲーム別・連番フォルダに保存し、CRC32入りTXTを作る
 
+UPSTREAM-004   VERIFY   P2   upstream/enhancement/save    GBA・SNESのセーブ名をDB名にそろえ、CRC32入りTXTを付ける
+
 【本家修正の詳細】
 
 #UPSTREAM-001 GB MBC1特殊バンク修正の取り込み・互換性検証とMBC1Mの扱い
@@ -216,6 +218,11 @@ Codexビルド/書込結果（2026-11-02 18:52:19 JST）: GitHub f85877aのMBC1�
 関連: #013。ゲームごとに本体共通の連番フォルダを作り、同名のセーブとCRC32入りTXTを保存する。ROMの先行吸出しは不要。
 提出先: https://github.com/oscrusergroup/firmware/pull/3 。提出版はHW3・HW5でビルド成功、単体SD実機は未確認。
 PC側AutoのTXT通知除外はcartreaderPC固有のため、#013の関連記録に残す。
+
+#UPSTREAM-004 GBA・SNESのセーブ名をDB名にそろえ、CRC32入りTXTを付ける
+追加日時: 2026-11-08 17:31 JST
+状態: VERIFY（PC114の命名） / IDEA（親フォルダ名とTXT）
+ローカル #050 の本家由来の改善。PC114でGBA/SNESの事前DB照合を使った保存名を実装。親フォルダを従来の内部名に戻す変更と同名TXTへのセーブCRC32記録は未実装。本家への提出は未実施。
 
 【詳細】
 
