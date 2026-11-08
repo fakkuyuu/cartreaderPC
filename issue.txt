@@ -341,6 +341,7 @@ Already corrected: New PC87/88 packaging excludes sketch-local build directories
 Outstanding: Decide which previously published artifacts and ZIPs need correction.
 Completion: Audit published artifacts; record matching Config, source, compiler and HEX hashes. Do not silently overwrite old test releases. Also check that reduced IDE packages start, extract and compile correctly.
 Implementation scope: Package PC114 firmware and PC115 tool from their matching sources, using the upstream V15.5 Portable IDE and a manual Actions draft release.
+2026-11-08 21:22 JST Rebuild the PC115 ZIP using the original upstream directory layout and complete IDE. Replace the sketch, then verify the extracted IDE GUI before publishing.
 
 #012 Synchronize published source and documentation with current builds
 Added: 2026-11-01 21:13:34 JST
