@@ -310,6 +310,9 @@ boolean ignoreError = 0;
 
 char fileName[FILENAME_LENGTH];
 char filePath[FILEPATH_LENGTH];
+#if defined(ENABLE_NES) || defined(ENABLE_GBX) || defined(ENABLE_SNES)
+static char dbSaveTitle[FILENAME_LENGTH - 4];
+#endif
 byte currPage;
 byte lastPage;
 byte numPages;
@@ -492,8 +495,8 @@ uint32_t calculateCRC(char* fileName, char* folder, unsigned long offset) {
  *****************************************/
 #if (defined(ENABLE_ODY2) || defined(ENABLE_ARC) || defined(ENABLE_FAIRCHILD) || defined(ENABLE_MSX) || defined(ENABLE_POKE) || defined(ENABLE_2600) || defined(ENABLE_7800) || defined(ENABLE_C64) || defined(ENABLE_VECTREX) || defined(ENABLE_NES) || defined(ENABLE_LYNX) || defined(ENABLE_ATARI8) || defined(ENABLE_BALLY) || defined(ENABLE_LEAP) || defined(ENABLE_LJ) || defined(ENABLE_LJPRO) || defined(ENABLE_PV1000) || defined(ENABLE_PYUUTA) || defined(ENABLE_RCA) || defined(ENABLE_TI99) || defined(ENABLE_TRS80) || defined(ENABLE_VIC20) || defined(ENABLE_VSMILE) || defined(ENABLE_CPS3))
 
-void printCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset) {
-  uint32_t crc = calculateCRC(checkFile, folder, offset);
+void printCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset, char* directory = folder) {
+  uint32_t crc = calculateCRC(checkFile, directory, offset);
   char tempCRC[9];
 
   if (crcCopy != NULL) {
@@ -704,6 +707,56 @@ int int_pow(int base, int exp) {  // Power for int
     base *= base;
   }
   return result;
+}
+#endif
+
+#if defined(ENABLE_NES) || defined(ENABLE_GBX) || defined(ENABLE_SNES)
+void setDbSaveTitle(const char* input) {
+  size_t length = strlen(input);
+  if (length >= 4 && (!strcasecmp(input + length - 4, ".nes") || !strcasecmp(input + length - 4, ".gba") || !strcasecmp(input + length - 4, ".sfc") || !strcasecmp(input + length - 4, ".smc")))
+    length -= 4;
+  if (length >= sizeof(dbSaveTitle)) {
+    length = sizeof(dbSaveTitle) - 1;
+    while ((static_cast<uint8_t>(input[length]) & 0xC0) == 0x80)
+      --length;
+  }
+  for (size_t i = 0; i < length; ++i) {
+    char c = input[i];
+    dbSaveTitle[i] = (static_cast<uint8_t>(c) < 32 || strchr("\\/:*?\"<>|", c)) ? '_' : c;
+  }
+  while (length && (dbSaveTitle[length - 1] == ' ' || dbSaveTitle[length - 1] == '.'))
+    --length;
+  dbSaveTitle[length] = '\0';
+}
+#endif
+
+#if defined(ENABLE_GBX) || defined(ENABLE_SNES)
+void createDbSaveFolder(const char* system, const char* suffix) {
+  const char* title = *dbSaveTitle ? dbSaveTitle : romName;
+  snprintf(fileName, FILENAME_LENGTH, "%s.%s", title, suffix);
+  sd.chdir("/");
+  EEPROM_readAnything(0, foldern);
+  if (foldern < 0)
+    foldern = 0;
+  for (uint8_t attempt = 0; attempt < 100; ++attempt) {
+    snprintf(filePath, FILEPATH_LENGTH, "%s/SAVE/%s/%d", system, title, foldern);
+    if (!sd.exists(filePath)) {
+      if (!sd.mkdir(filePath, true) || !sd.chdir(filePath))
+        break;
+      foldern = (foldern == 32767) ? 0 : foldern + 1;
+      EEPROM_writeAnything(0, foldern);
+      return;
+    }
+    foldern = (foldern == 32767) ? 0 : foldern + 1;
+  }
+  print_FatalError(sd_error_STR);
+}
+
+void showDbSaveFolder(const __FlashStringHelper* label) {
+  print_Msg(label);
+  print_Msg(filePath);
+  println_Msg(F("/..."));
+  display_Update();
 }
 #endif
 
@@ -1503,7 +1556,7 @@ void mainMenu() {
     case SYSTEM_MENU_WS:
       display_Clear();
       display_Update();
-      setup_WS();
+      if (!setup_WS()) return;
       mode = CORE_WS;
       return wsMenu();
 #endif

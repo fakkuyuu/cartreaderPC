@@ -77,7 +77,8 @@ class DumpResult:
         status_text = line
         if line.startswith("[VERIFY]"):
             status_text = re.split(r"\s+DB=", line, maxsplit=1, flags=re.IGNORECASE)[0]
-        if (line.startswith(("[ERROR", "Error:", "Fatal error", "SD Error", "Cartridge Error", "GAMEPAK ERROR", "HEADER CHECKSUM ERROR"))
+        db_miss = line.startswith("[VERIFY] CRC32=") and line.endswith(" DB=no match")
+        if (db_miss or line.startswith(("[ERROR", "Error:", "Fatal error", "SD Error", "Cartridge Error", "GAMEPAK ERROR", "HEADER CHECKSUM ERROR"))
                 or (line.startswith(("[VERIFY]", "Checksum:", "Internal checksum", "Checksum", "CRC32"))
                     and re.search(r"MISMATCH|\bError\b|\bERROR\b|\bFAIL(?:ED)?\b", status_text))):
             self.failed = True

@@ -74,7 +74,8 @@ class BatchDumpTests(unittest.TestCase):
         self.assertEqual(run.on_press(), " ")
         self.assertEqual(run.on_menu("MEGA DRIVE Reader", menu), "1")
         run.on_line("[SAVED] MD/SAVE/Test/1/Test.srm (32768 bytes) SHA256=abcd")
-        self.assertIsNone(run.on_menu("MEGA DRIVE Reader", menu))
+        self.assertTrue(run.active)
+        self.assertIsNone(run.on_press())
         self.assertFalse(run.active)
         self.assertFalse(run.save_failure_after_rom)
         self.assertEqual(run.reason, "一括吸出し完了: ROM + SAVE")
@@ -111,7 +112,7 @@ class BatchDumpTests(unittest.TestCase):
         self.assertEqual(run.on_press(), " ")
         self.assertEqual(run.on_menu("GB Cart Reader", GB_MENU), "0")
         run.on_line("[SAVED] GB/ROM/Example/1/Test.gb (32768 bytes) SHA256=abcd")
-        run.on_line("[VERIFY] CRC32=12345678  DB=no match")
+        run.on_line("[VERIFY] CRC32=12345678  DB=Example.rom")
         self.assertEqual(run.on_press(), " ")
         self.assertEqual(run.on_menu("GB Cart Reader", GB_MENU), "1")
         run.on_line("[SAVED] GB/SAVE/Example/2/Test.sav (8192 bytes) SHA256=abcd")
@@ -129,9 +130,8 @@ class BatchDumpTests(unittest.TestCase):
         self.assertEqual(run.on_press(), " ")
         self.assertEqual(run.on_menu("GBA Cart Reader", GBA_MENU), "0")
         run.on_line("[SAVED] GBA/ROM/Test/1/Test.gba (1024 bytes) SHA256=abcd")
-        run.on_line("[VERIFY] CRC32=12345678 DB=no match")
-        self.assertEqual(run.on_press(), " ")
-        self.assertIsNone(run.on_menu("GBA Cart Reader", GBA_MENU))
+        run.on_line("[VERIFY] CRC32=12345678 DB=Example.rom")
+        self.assertIsNone(run.on_press())
         self.assertFalse(run.active)
         self.assertIn("セーブ有無が不明", run.reason)
 
@@ -147,8 +147,7 @@ class BatchDumpTests(unittest.TestCase):
         self.assertEqual(run.on_menu("GBA Cart Reader", GBA_MENU), "0")
         run.on_line("[SAVED] GBA/ROM/Test/1/Test.gba (1048576 bytes) SHA256=abcd")
         run.on_line("[VERIFY] CRC32=12345678 DB=Known Test")
-        self.assertEqual(run.on_press(), " ")
-        self.assertIsNone(run.on_menu("GBA Cart Reader", GBA_MENU))
+        self.assertIsNone(run.on_press())
         self.assertEqual(run.reason, "一括吸出し完了: ROM")
 
     def test_nes_database_nvram(self):
@@ -183,8 +182,7 @@ class BatchDumpTests(unittest.TestCase):
         self.assertEqual(run.on_menu("NES CART READER", menu), "0")
         run.on_line("[SAVED] NES/ROM/Known Game/1/Known Game.nes (32784 bytes) SHA256=abcd")
         run.on_line("[VERIFY] CRC32=12345678 DB=Known NES Game")
-        self.assertEqual(run.on_press(), " ")
-        self.assertIsNone(run.on_menu("NES CART READER", menu))
+        self.assertIsNone(run.on_press())
         self.assertFalse(run.active)
         self.assertEqual(run.reason, "一括吸出し完了: ROM")
 
@@ -354,10 +352,10 @@ class BatchDumpTests(unittest.TestCase):
         self.assertEqual(run.on_menu("SNES Cart Reader",
                                     (("0", "Read ROM"), ("1", "Read Save"))), "0")
         run.on_line("[SAVED] SNES/ROM/Test/1/Test.sfc (1024 bytes) SHA256=abcd")
-        run.on_line("[VERIFY] CRC32=12345678 SNES-CHECKSUM=ABCD OK DB=no match")
+        run.on_line("[VERIFY] CRC32=12345678 SNES-CHECKSUM=ABCD OK DB=Example.rom")
         self.assertIsNone(run.on_menu("SNES Cart Reader",
                                       (("0", "Read ROM"), ("1", "Read Save"))))
-        self.assertEqual(run.reason, "一括吸出し完了: ROM（DB照合なし）")
+        self.assertEqual(run.reason, "一括吸出し完了: ROM")
 
     def test_n64_database_hit_rom_then_eeprom(self):
         # Exact N64.ino flow: Select N64 device -> Game Cartridge ->
@@ -503,10 +501,9 @@ class BatchDumpTests(unittest.TestCase):
         menu = (("0", "Read ROM"), ("1", "Read Save"), ("2", "Write Save"))
         self.assertEqual(run.on_menu("N64 Cart Reader", menu), "0")
         run.on_line("[SAVED] N64/ROM/TEST/1/TEST.z64 (4194304 bytes) SHA256=abcd")
-        run.on_line("[VERIFY] CRC32=12345678 DB=no match")
-        self.assertEqual(run.on_press(), " ")
-        self.assertIsNone(run.on_menu("N64 Cart Reader", menu))
-        self.assertEqual(run.reason, "一括吸出し完了: ROM（DB照合なし）")
+        run.on_line("[VERIFY] CRC32=12345678 DB=Example.rom")
+        self.assertIsNone(run.on_press())
+        self.assertEqual(run.reason, "一括吸出し完了: ROM")
 
     def test_n64_database_miss_stops_before_fallback_dump(self):
         # N64.ino shows GAMEPAK ERROR and waits, then sets cartSize=2.
@@ -609,9 +606,8 @@ class BatchDumpTests(unittest.TestCase):
                 self.assertEqual(run.on_menu("Select device", PCE_CHOICES), expected)
                 self.assertEqual(run.on_menu("PCE HuCARD menu", PCE_MENU), "0")
                 run.on_line("[SAVED] PCE/ROM/PCEROM/1/PCEROM.pce (262144 bytes) SHA256=abcd")
-                run.on_line("[VERIFY] CRC32=12345678  DB=no match")
-                self.assertEqual(run.on_press(), " ")
-                self.assertIsNone(run.on_menu("PCE HuCARD menu", PCE_MENU))
+                run.on_line("[VERIFY] CRC32=12345678  DB=Example.rom")
+                self.assertIsNone(run.on_press())
                 self.assertFalse(run.active)
                 self.assertIn("一括吸出し完了", run.reason)
 
@@ -636,11 +632,12 @@ class BatchDumpTests(unittest.TestCase):
     def test_no_auto_writing(self):
         run = BatchDump()
         run.begin("NES")
+        run.on_line("RAM SIZE: 8K")
         self.assertEqual(run.on_menu("NES CART READER",
                          (("0", "Read iNES Rom"), ("3", "Write Save"),
                           ("5", "Flash Repro"), ("6", "Reset"))), "0")
         run.on_line("[SAVED] NES/ROM/Test/1/Test.nes (32784 bytes) SHA256=abcd")
-        run.on_line("[VERIFY] CRC32=12345678 DB=no match")
+        run.on_line("[VERIFY] CRC32=12345678 DB=Example.rom")
         self.assertEqual(run.on_press(), " ")
         self.assertIsNone(run.on_menu("NES CART READER",
                           (("0", "Read iNES Rom"), ("3", "Write Save"),

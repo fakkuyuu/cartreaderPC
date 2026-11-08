@@ -8,6 +8,7 @@ AUTO_TARGETS_BY_MENU = {
         ("GBA", "GB Advance (3V)"),
     ),
     "NES/Famicom": (("NES", "NES/Famicom"),),
+    "WonderSwan (3V)": (("WS", "WonderSwan (3V)"),),
     "Super Nintendo/SFC": (("SNES", "Super Nintendo/SFC"),),
     "Nintendo 64 (3V)": (("N64", "Nintendo 64 (3V)"),),
     "Mega Drive/Genesis": (("MD", "Mega Drive/Genesis"),),

@@ -673,6 +673,7 @@ byte checksumHeader_GBA(const byte* header) {
 
 // Read info out of rom header
 void getCartInfo_GBA() {
+  dbSaveTitle[0] = '\0';
   char saveTypeStr[14];
 
   // Read Header into array
@@ -821,6 +822,8 @@ void getCartInfo_GBA() {
                 // closing the file.  Closing here only exited the innermost
                 // button loop; the PC-backed FsFile could then be queried
                 // again with an invalid handle and leave the display blank.
+                if (strcmp(tempStr, cartID) == 0)
+                  setDbSaveTitle(gamename);
                 entrySelected = true;
                 break;
               }
@@ -1115,8 +1118,8 @@ boolean compare_checksum_GBA() {
 void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
     // Get name, add extension and convert to char array for sd lib
-    createFolder("GBA", "SAVE", romName, "srm");
-    printAndIncrementFolder();
+    createDbSaveFolder("GBA", "srm");
+    showDbSaveFolder(F("Saving to "));
   }
 
   //open file on sd card
@@ -1241,7 +1244,11 @@ void readFRAM_GBA(unsigned long framSize) {
   PORTH &= ~((1 << 0) | (1 << 6));
 
   // Get name, add extension and convert to char array for sd lib
-  createFolderAndOpenFile("GBA", "SAVE", romName, "srm");
+  createDbSaveFolder("GBA", "srm");
+  display_Clear();
+  showDbSaveFolder(F("Saving to "));
+  if (!myFile.open(fileName, O_RDWR | O_CREAT))
+    print_FatalError(sd_error_STR);
 
   for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
     for (int c = 0; c < 512; c++) {
@@ -1625,9 +1632,8 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos) {
 
   if (browseFile) {
     // Get name, add extension and convert to char array for sd lib
-    createFolder("GBA", "SAVE", romName, "fla");
-
-    printAndIncrementFolder();
+    createDbSaveFolder("GBA", "fla");
+    showDbSaveFolder(F("Saving to "));
   }
 
   //open file on sd card
@@ -1853,9 +1859,8 @@ void writeEeprom_GBA(word eepSize) {
 // Read eeprom to file
 void readEeprom_GBA(word eepSize) {
   // Get name, add extension and convert to char array for sd lib
-  createFolder("GBA", "SAVE", romName, "eep");
-
-  printAndIncrementFolder();
+  createDbSaveFolder("GBA", "eep");
+  showDbSaveFolder(F("Saving to "));
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {

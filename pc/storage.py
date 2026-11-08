@@ -231,7 +231,7 @@ class Storage:
         self.last_verification = result
         self.last_rom_path = path
         self.log(result + "\n")
-        return 1 if match and checksum_ok else (3 if not checksum_ok else 2)
+        return 1 if match and checksum_ok else 3
 
     def verify_msx(self, path):
         """Name an MSX dump from its selected database title and record CRC32."""

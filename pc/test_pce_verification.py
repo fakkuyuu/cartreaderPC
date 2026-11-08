@@ -38,8 +38,8 @@ class PceVerificationTests(unittest.TestCase):
         self.assertIn("PCE-CHECK=OK", log)
         self.assertEqual((code, state), (1, "success"))
 
-    def test_other_console_db_miss_unchanged(self):
-        self.assertEqual(self.check_rom(".gb", bytes(range(256)) * 64)[::2], (2, "success"))
+    def test_other_console_db_miss_is_failure(self):
+        self.assertEqual(self.check_rom(".gb", bytes(range(256)) * 64)[::2], (3, "failure"))
 
     def test_batch_stops_on_pce_miss(self):
         batch = BatchDump()

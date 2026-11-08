@@ -35,6 +35,7 @@ static const __FlashStringHelper* standaloneName(uint8_t target) {
     case 6: return F("Mega Drive/Genesis");
     case 7: return F("PCE swapped");
     case 8: return F("PCE not swapped");
+    case 9: return F("WonderSwan (3V)");
     default: return F("OFF");
   }
 }
@@ -55,7 +56,7 @@ void standaloneBootCapture() {
   standaloneResetMarker=0;
   uint8_t target=EEPROM.read(SA_EEPROM+1);
   if(EEPROM.read(SA_EEPROM)==0xA7 && EEPROM.read(SA_EEPROM+3)==1
-      && target<=8 && EEPROM.read(SA_EEPROM+2)==uint8_t(target^0x5A)) standalonePreset=target;
+      && target<=9 && EEPROM.read(SA_EEPROM+2)==uint8_t(target^0x5A)) standalonePreset=target;
 }
 void standaloneBootReady() {
   if(!standaloneSkip && standalonePreset && !PcLink::connected()) {
@@ -82,7 +83,13 @@ void standaloneError() {
 void standaloneVerified() { if(standaloneStage==2) standaloneFlags|=SA_VERIFIED; }
 void standaloneFileClosed(uint32_t size) {
   if(standaloneStage==2 || standaloneStage==3) {
-    if(size) standaloneFlags|=SA_FILE; else standaloneError();
+    if (standaloneStage == 3 && standaloneRun == 9 && size != (uint32_t(sramSize) << 7)) {
+      print_Error(F("Save size mismatch"));
+    } else if (size) {
+      standaloneFlags |= SA_FILE;
+    } else {
+      standaloneError();
+    }
   }
 }
 void standaloneCandidateAllowed(bool allowed) { standaloneNesCandidate=allowed; }
@@ -109,6 +116,9 @@ static int8_t standaloneHasSave() {
     case 6: return saveType==0 ? 0 : (saveType<=4 ? 1 : -1);
 #endif
     case 7: case 8: return 0;
+#ifdef ENABLE_WS
+    case 9: return saveType == 0 ? 0 : ((saveType == 1 || saveType == 2) ? 1 : -1);
+#endif
   }
   return -1;
 }
@@ -140,8 +150,10 @@ uint8_t standaloneTarget(const __FlashStringHelper* title, const char* answer, b
     if(!strcmp_P(answer,PSTR("Super Nintendo/SFC"))) return 4;
     if(!strcmp_P(answer,PSTR("Nintendo 64 (3V)"))) return 5;
     if(!strcmp_P(answer,PSTR("Mega Drive/Genesis"))) return 6;
-    if(!strcmp_P(answer,PSTR("PC Engine/TG16"))) return resolving && standalonePreset>=7 ? standalonePreset : 0;
+    if(!strcmp_P(answer,PSTR("PC Engine/TG16"))) return resolving && (standalonePreset==7 || standalonePreset==8) ? standalonePreset : 0;
   }
+  if(standaloneIs(title,F("OPEN SOURCE CART READER")) &&
+      !strcmp_P(answer,PSTR("WonderSwan (3V)"))) return 9;
   if(standaloneIs(title,F("Select Game Boy"))) {
     if(!strcmp_P(answer,PSTR("Game Boy (Color)"))) return 1;
     if(!strcmp_P(answer,PSTR("GB Advance (3V)"))) return 2;
@@ -161,6 +173,7 @@ static bool standaloneReadMenu(const __FlashStringHelper* title) {
     case 5:return standaloneIs(title,F("N64 Cart Reader"));
     case 6:return standaloneIs(title,F("MEGA DRIVE Reader"));
     case 7:case 8:return standaloneIs(title,F("PCE HuCARD menu"));
+    case 9:return standaloneIs(title,F("WS Menu"));
   }
   return false;
 }
@@ -180,7 +193,7 @@ int8_t standaloneMenu(const __FlashStringHelper* title, char answers[7][20], uin
     uint8_t target=standaloneTarget(title,answers[i],false);
     if(standaloneIs(title,F("OPEN SOURCE CART READER"))) {
       if((standaloneRun<=2 && !strcmp_P(answers[i],PSTR("Game Boy")))
-         || (standaloneRun>=7 && !strcmp_P(answers[i],PSTR("PC Engine/TG16")))
+         || ((standaloneRun==7 || standaloneRun==8) && !strcmp_P(answers[i],PSTR("PC Engine/TG16")))
          || target==standaloneRun) return i;
     } else if(target==standaloneRun) return i;
     if((standaloneRun==6 && standaloneIs(title,F("Select MD device")))
@@ -210,6 +223,7 @@ static const __FlashStringHelper* standaloneDisplayName(uint8_t target) {
     case 4: return F("SNES/SFC");
     case 5: return F("N64 (3V)");
     case 6: return F("MD/Genesis");
+    case 9: return F("WS (3V)");
     default: return standaloneName(target);
   }
 }

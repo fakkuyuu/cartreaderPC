@@ -7,6 +7,7 @@ TARGETS = (
     ("NES", "NES/Famicom"),
     ("SNES", "Super Nintendo/SFC"),
     ("N64", "Nintendo 64 (3V)"),
+    ("WS", "WonderSwan (3V)"),
     ("MD", "Mega Drive/Genesis"),
     ("PCE_SWAP", "PC Engine/TG16 - HuCARD(swapped)"),
     ("PCE_RAW", "PC Engine/TG16 - HuCARD(not swapped)"),

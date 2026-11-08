@@ -1048,6 +1048,33 @@ void getCartInfo_SNES() {
   }
 }
 
+static bool snesSaveTitleIsUnique(const char* headerCrc) {
+  char key[16];
+  snprintf(key, sizeof(key), ",%s,%s,", checksumStr, headerCrc);
+  uint8_t line = 0;
+  uint8_t column = 0;
+  bool match = true;
+  while (myFile.available()) {
+    const int count = myFile.read(sdBuffer, sizeof(sdBuffer));
+    if (count <= 0)
+      return false;
+    for (int i = 0; i < count; ++i) {
+      const byte c = sdBuffer[i];
+      if (c == '\n') {
+        line = (line + 1) % 3;
+        column = 0;
+        match = true;
+      } else if (line == 1 && column < 23) {
+        if (column >= 8 && c != key[column - 8])
+          match = false;
+        if (++column == 23 && match)
+          return false;
+      }
+    }
+  }
+  return true;
+}
+
 void checkAltConf(char crcStr[9]) {
   char tempStr2[5];
   char tempStr3[9];
@@ -1066,6 +1093,7 @@ void checkAltConf(char crcStr[9]) {
       myFile.findRecord(255, pcQuery);
     }
     while (myFile.available()) {
+      const uint32_t titlePosition = myFile.curPosition();
       // Skip first line with name
       skip_line(&myFile);
 
@@ -1112,6 +1140,10 @@ void checkAltConf(char crcStr[9]) {
 
         // Some games have the same checksum, so compare CRC32 of header area with database too
         if (strcmp(tempStr3, crcStr) == 0) {
+          if (snesSaveTitleIsUnique(crcStr) && myFile.seekSet(titlePosition)) {
+            get_line(fileName, &myFile, FILENAME_LENGTH);
+            setDbSaveTitle(fileName);
+          }
           println_Msg(F("Found"));
           display_Update();
           // Game found, check if ROM sizes differ but only change ROM size if non- standard size found in database, else trust the header to be right and the database to be wrong
@@ -1150,6 +1182,7 @@ void checkAltConf(char crcStr[9]) {
 
 // Read header
 boolean checkcart_SNES() {
+  dbSaveTitle[0] = '\0';
   // set control to read
   dataIn();
 
@@ -1830,11 +1863,7 @@ void readSRAM() {
   controlIn_SNES();
 
   // Get name, add extension and convert to char array for sd lib
-  createFolder("SNES", "SAVE", romName, "srm");
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  createDbSaveFolder("SNES", "srm");
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -1946,10 +1975,7 @@ void readSRAM() {
 
   // Signal end of process
   display_Clear();
-  print_Msg(F("Saved to "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
+  showDbSaveFolder(F("Saved to "));
 }
 
 // Check if the SRAM was written without any error

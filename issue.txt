@@ -334,21 +334,23 @@ Completion: Clearly identify a unique current source of truth and executable, wi
 
 #011 Remove old build debris from distribution ZIPs
 Added: 2026-11-01 21:13:34 JST
-Last updated: 2026-11-01 21:16:55 JST
+Last updated: 2026-11-08 19:47:54 JST
 Status: OPEN / P1 / bug, release
 Observed: Some earlier PC86-family ZIPs contained old build/HEX files compiled by GCC 7.3, conflicting with the correct HEX.
 Already corrected: New PC87/88 packaging excludes sketch-local build directories and checks source/HEX correspondence.
 Outstanding: Decide which previously published artifacts and ZIPs need correction.
 Completion: Audit published artifacts; record matching Config, source, compiler and HEX hashes. Do not silently overwrite old test releases. Also check that reduced IDE packages start, extract and compile correctly.
+Implementation scope: Package PC114 firmware and PC115 tool from their matching sources, using the upstream V15.5 Portable IDE and a manual Actions draft release.
 
 #012 Synchronize published source and documentation with current builds
 Added: 2026-11-01 21:13:34 JST
-Last updated: 2026-11-01 21:16:55 JST
+Last updated: 2026-11-08 19:47:54 JST
 Status: OPEN / P2 / docs, release
 Source: User requests concerning GitHub publication, Japanese/English explanations and release procedure.
 Current state: The local PC88-family source has not been confirmed identical to the earlier GitHub source/releases.
 Plan: Following #009, package builds from specific commits and maintain bilingual README, build instructions, database placement, verified/unverified hardware and known issues. Confirm whether databases should be bundled or downloaded. Automated EXE builds with GitHub Actions are only a proposal.
 Completion: A release tag resolves to its source and the documented build/startup instructions work.
+Implementation scope: Package PC114 firmware and PC115 tool from their matching sources, using the upstream V15.5 Portable IDE and a manual Actions draft release.
 
 #013 NES save filenames and overwrite prevention
 Upstream submission: #UPSTREAM-003.

@@ -41,7 +41,7 @@ static uint16_t wsGameChecksum = 0;
 static uint8_t wsEepromShiftReg[2];
 static boolean wsWitch = false;
 
-void setup_WS() {
+bool setup_WS() {
   // Request 3.3V
   setVoltage(VOLTS_SET_3V3);
 
@@ -82,13 +82,22 @@ void setup_WS() {
   println_Msg(F("Initializing..."));
   display_Update();
 
+  const bool bounded = standaloneCandidate(9) || PcLink::connected();
+  const unsigned long started = millis();
   do {
     unlockMMC2003_WS();
-  } while (!headerCheck());
+    if (headerCheck())
+      break;
+    if (bounded && millis() - started >= 2000) {
+      print_Error(F("Cartridge Error: WS header unreadable"));
+      return false;
+    }
+  } while (true);
 
   getCartInfo_WS();
 
   showCartInfo_WS();
+  return true;
 }
 
 static boolean headerCheck() {
@@ -1165,7 +1174,7 @@ static boolean unlockMMC2003_WS() {
 
 // doing a L->H on CLK pin
 static void pulseCLK_WS(uint8_t count) {
-  register uint8_t tic;
+  uint8_t tic;
 
   // about 384KHz, 50% duty cycle
   asm volatile("L0_%=:\n\t"
@@ -1184,8 +1193,9 @@ static void pulseCLK_WS(uint8_t count) {
                "brne L2_%=\n\t"
                "rjmp L0_%=\n\t"
                "L3_%=:\n\t"
-               : [tic] "=a"(tic)
-               : [count] "a"(count), [porte] "I"(_SFR_IO_ADDR(PORTE)), [ws_clk_bit] "I"(WS_CLK_BIT));
+               : [tic] "=&d"(tic), [count] "+d"(count)
+               : [porte] "I"(_SFR_IO_ADDR(PORTE)), [ws_clk_bit] "I"(WS_CLK_BIT)
+               : "cc");
 }
 
 static void dataIn_WS() {

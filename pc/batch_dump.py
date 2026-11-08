@@ -15,6 +15,7 @@ class BatchDump:
         "SNES": (".sfc", ".smc"), "MD": (".md", ".bin", ".gen"),
         "N64": (".z64", ".n64", ".v64"), "NES": (".nes",),
         "PCE_SWAP": (".pce",), "PCE_RAW": (".pce",),
+        "WS": (".ws", ".wsc"),
     }
     ROOT_NAMES = {
         "GB": "Game Boy", "GBA": "Game Boy",
@@ -22,6 +23,7 @@ class BatchDump:
         "N64": "Nintendo 64 (3V)", "NES": "NES/Famicom",
         "PCE_SWAP": "PC Engine/TG16",
         "PCE_RAW": "PC Engine/TG16",
+        "WS": "WonderSwan (3V)",
     }
     READ_MENUS = {
         "GB": "GB Cart Reader",
@@ -32,6 +34,7 @@ class BatchDump:
         "NES": "NES CART READER",
         "PCE_SWAP": "PCE HuCARD menu",
         "PCE_RAW": "PCE HuCARD menu",
+        "WS": "WS Menu",
     }
 
     def __init__(self):
@@ -53,6 +56,7 @@ class BatchDump:
         self.n64_rom_bytes = None
         self.n64_save_type_seen = False
         self.n64_crc1_seen = False
+        self.ws_checksum_matches = False
         self.reason = ""
         self.db_match = None
         self.save_failure_after_rom = False
@@ -78,6 +82,7 @@ class BatchDump:
         self.n64_rom_bytes = None
         self.n64_save_type_seen = False
         self.n64_crc1_seen = False
+        self.ws_checksum_matches = False
         self.reason = ""
         self.db_match = None
         self.save_failure_after_rom = False
@@ -128,6 +133,10 @@ class BatchDump:
                 and self._is_md_internal_checksum_error(line)):
             return self._stop_for_read_error(
                 f"MD ROM内部チェックサム異常のため一括停止: {line[:100]}")
+        if self.target == "WS" and self.phase == "rom_read":
+            result = re.fullmatch(r"Result: ([0-9A-F]{4})\(([0-9A-F]{4})\) matches\.", line, re.I)
+            if result:
+                self.ws_checksum_matches = result.group(1).upper() == result.group(2).upper()
         if line.startswith(("[Disconnected", "[RECONNECT]", "[CANCELLED]")):
             return self.stop("通信切断・キャンセルのため一括停止")
         if (line.startswith(("Error:", "[ERROR", "HEADER CHECKSUM ERROR",
@@ -164,6 +173,14 @@ class BatchDump:
                 elif line.startswith("CRC1:"):
                     self.n64_crc1_seen = bool(re.fullmatch(
                         r"[0-9a-fA-F]{8}", line.partition(":")[2].strip()))
+            if self.target == "WS" and line.startswith("Save:"):
+                value = line.partition(":")[2].strip()
+                amount = re.fullmatch(r"(?:Sram|Eeprom) (\d+) Kb", value, re.I)
+                self.save = False if value.casefold() == "none" else None
+                self.save_expected_bytes = None
+                if amount and int(amount.group(1)) > 0:
+                    self.save = True
+                    self.save_expected_bytes = int(amount.group(1)) * 128
             if line.startswith("Save Size:"):
                 value = line.partition(":")[2].strip().lower()
                 if value == "none" or value.startswith("0 kb"):
@@ -248,12 +265,14 @@ class BatchDump:
                     return self.stop("N64 ROMサイズ不一致。自動操作を停止")
             elif line.startswith("[VERIFY] CRC32="):
                 self.rom_verified = True
-                if "DB=no match" in line or "DB=not installed" in line:
+                if line.endswith(" DB=no match"):
+                    return self._stop_for_read_error("ROMのCRCがDBに一致しないため自動吸出しを停止")
+                if "DB=not installed" in line:
                     self.db_match = False
                 elif "DB=" in line:
                     self.db_match = True
         elif self.phase == "save_read":
-            if line.startswith("[SAVED] ") and "/SAVE/" in line.upper():
+            if line.startswith("[SAVED] ") and "/SAVE/" in line.upper() and not re.search(r"\.txt \(\d+ bytes\)", line, re.IGNORECASE):
                 size = re.search(r"\((\d+) bytes\)", line)
                 if size:
                     actual = int(size.group(1))
@@ -311,8 +330,6 @@ class BatchDump:
             if not self.save_saved:
                 return self.stop("セーブファイル保存を確認できません")
             return self.complete()
-        if self.phase == "final_menu":
-            return self.complete()
         return None
 
     def _choice_or_stop(self, options, name):
@@ -323,6 +340,8 @@ class BatchDump:
         return value
 
     def _after_rom(self, options):
+        if self.target == "WS" and not self.ws_checksum_matches:
+            return self.stop("WS ROMの内部チェックサム一致を確認できません")
         if self.target.startswith("PCE_"):
             self.save = False
         if self.save is None:
@@ -381,11 +400,16 @@ class BatchDump:
         if self.phase == "rom_read":
             if not (self.rom_saved and self.rom_verified):
                 return self.stop("ROMの保存・検証が未完了です。自動で先へ進めません")
+            if self.target == "WS" and not self.ws_checksum_matches:
+                return self.stop("WS ROMの内部チェックサム一致を確認できません")
+            if self.target.startswith("PCE_") or self.save is False:
+                return self.complete()
+            if self.save is None:
+                return self.stop("ROM保存完了。セーブ有無が不明なため以降は手動操作")
             self.phase = "save_menu"
             return " "
         if self.phase == "save_read":
             if not self.save_saved:
                 return self.stop("セーブ保存を確認できません")
-            self.phase = "final_menu"
-            return " "
+            return self.complete()
         return None
