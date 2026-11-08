@@ -1057,6 +1057,7 @@ Related: EEPROM clock fix and hardware results are in #UPSTREAM-002. This issue 
 Added: 2026-11-08 09:24 JST
 Last updated: 2026-11-08 09:24 JST
 Status: IDEA / P2 / enhancement, standalone-tool, save, emulator
+GitHub individual issue: Not created. Issues are disabled for this repository; the create-issue API returned HTTP 410.
 Source: Repository file "セーブ管理ツール案.txt" and the user's explanations and design discussion in this chat.
 Purpose: Eliminate the manual steps required to use a dumped save in an emulator: renaming/moving the save already in the emulator's save folder, copying another save into that folder, and repeating those operations whenever the user switches saves. This is a standalone utility for managing save files and exchanging them with emulators, not a CartReader PC feature. Saves are not required to originate from CartReader.
 Initial scope: Primarily simple cartridge save files used around the 16-bit era (for example, .sav / .srm) that can be copied directly into an emulator's normal save location. PS1-style memory cards, emulator state saves, and save-format conversion are out of scope for the initial version. Start with simple file-level exchange.
