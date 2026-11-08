@@ -78,6 +78,8 @@ UPSTREAM-001   VERIFY   P2   bug/gb/mbc1                   GB MBC1特殊バン�
 
 UPSTREAM-002   VERIFY   P2   bug/upstream/ws/eeprom        WS EEPROMのクロックパルス数が崩れる
 
+UPSTREAM-003   VERIFY   P2   upstream/enhancement/nes     NESセーブをゲーム別・連番フォルダに保存し、CRC32入りTXTを作る
+
 【本家修正の詳細】
 
 #UPSTREAM-001 GB MBC1特殊バンク修正の取り込み・互換性検証とMBC1Mの扱い
@@ -207,6 +209,13 @@ Codexビルド/書込結果（2026-11-02 18:52:19 JST）: GitHub f85877aのMBC1�
 2026-11-07 14:35 JST: WS読戻し296/297をAと比較。296: 2048 B, diff=0 / 297: 2048 B, diff=0。
 2026-11-07 14:37 JST: WS Write Save 1回後のRead Save 2回。A/Bとの不一致バイト数は 298: 2048 B, A=0, B=252 / 299: 2048 B, A=0, B=252。
 2026-11-07 14:39 JST: WSでBを書き込む試験後の読出し2回を比較。300: 2048 B, A diff=252, B diff=0 / 301: 2048 B, A diff=252, B diff=0。
+
+#UPSTREAM-003 NESセーブをゲーム別・連番フォルダに保存し、CRC32入りTXTを作る
+追加日時: 2026-11-08 17:29 JST
+状態: VERIFY / P2 / upstream, enhancement, nes, save
+関連: #013。ゲームごとに本体共通の連番フォルダを作り、同名のセーブとCRC32入りTXTを保存する。ROMの先行吸出しは不要。
+提出先: https://github.com/oscrusergroup/firmware/pull/3 。提出版はHW3・HW5でビルド成功、単体SD実機は未確認。
+PC側AutoのTXT通知除外はcartreaderPC固有のため、#013の関連記録に残す。
 
 【詳細】
 
@@ -354,6 +363,7 @@ PC94取り込み (2026-11-03 08:23:12 JST): MMC1 CHR修正8e804d83、VSMILE単�
 完了条件: 配布タグから対応ソースを取得でき、説明と同じ手順でビルド/起動できる。
 
 #013 NESセーブのゲーム名と上書き防止
+本家提出分: #UPSTREAM-003。
 追加日時: 2026-11-01 21:13:34 JST
 最終更新日時: 2026-11-01 21:16:55 JST
 状態: TRIAGE / P2 / enhancement, nes, save
