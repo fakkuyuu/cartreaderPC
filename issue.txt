@@ -69,7 +69,7 @@ ID    Status   Prio Categories                    Title
 045   VERIFY   P2   enhancement/automation        Standalone SD automatic dump and power-on start
 046   VERIFY   P2   bug/verification/ui           Empty PCE slot produces all-FF dump and green success
 047   VERIFY   P2   enhancement/ui                Small persistent reader-display host connection marker
-048   OPEN     P2   bug/ws/save                   WonderSwan Write Save selection triggers a reset
+048   VERIFY     P2   bug/ws/save                   WonderSwan Write Save selection triggers a reset
 
 [UPSTREAM FIX INDEX]
 ID    Status   Prio Categories                    Title
@@ -1036,7 +1036,7 @@ Correction (2026-11-05; user reconfirmed):
 - On implementation, reset the result state and blink timer after the disconnect/transport-loss event, and ensure batch shutdown cannot repaint the console red after the reset.
 
 #048 WonderSwan Write Save selection triggers a reset
-2026-11-06 17:54 JST / OPEN / P2 / bug, ws, save
+2026-11-06 17:54 JST / VERIFY / P2 / bug, ws, save
 User reports a reset when selecting Write Save while testing a WS EEPROM readback. Whether the file chooser appeared, the SD/USB mode and the exact reset trigger are unconfirmed. In the PC107 reference, the SD file browser precedes EEPROM writes. No changes requested.
 2026-11-06 17:55 JST: User reports a brief message resembling Sorting... before reset in both connected and standalone modes. The PC107 reference emits Sorting... before the on-device SD file list, before choosing a save. Cause pending.
 2026-11-06 17:57 JST: User confirms reproduction with PC storage selected. PC107 routes the shared file browser through the PC when PC storage is active, so the failure cannot be attributed solely to the physical SD.

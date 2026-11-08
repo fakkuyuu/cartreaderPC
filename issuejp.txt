@@ -69,7 +69,7 @@ ID    状態       優先   分類                            件名
 045   VERIFY   P2   enhancement/automation        単体SDの自動吸出しと電源投入時自動開始
 046   VERIFY   P2   bug/verification/ui           PCE未挿入の全FFダンプを緑の成功表示にする
 047   VERIFY   P2   enhancement/ui                本体液晶にPCツール接続中の小さな常時目印
-048   OPEN     P2   bug/ws/save                   WSでWrite Saveを選ぶとリセットがかかる
+048   VERIFY     P2   bug/ws/save                   WSでWrite Saveを選ぶとリセットがかかる
 
 【本家修正一覧】
 ID    状態       優先   分類                            件名
@@ -1079,7 +1079,7 @@ PC107実機表示確認 (2026-11-04 21:40:20 JST): ユーザーが右下PCマー
 ・実装上は、切断通知/通信喪失通知を受けた後に結果色と点滅タイマーをリセットする。バッチ終了処理が切断後に赤を再設定しないよう順序も確認する。
 
 #048 WSでWrite Saveを選ぶとリセットがかかる
-2026-11-06 17:54 JST / OPEN / P2 / bug, ws, save
+2026-11-06 17:54 JST / VERIFY / P2 / bug, ws, save
 ユーザー実機報告。WSのEEPROM書き戻し確認中にWrite Saveを選んだところリセット。ファイル選択画面の有無、SD/USB状態、原因は未確認。参考PC107はEEPROM書込みより先にSD上のファイル選択を開く。
 2026-11-06 17:55 JST: ユーザー補足。リセット前にSorting...らしき表示が出る。ツール接続・単体の両方で再現。参考PC107のSorting...は本体SDのファイル一覧準備中で、セーブ選択より前。原因未確定。
 2026-11-06 17:57 JST: ユーザー確認。PC保存を選んだ状態でも再現。参考PC107ではPC保存中に共通ファイル選択がPC側を参照するため、本体SDだけが原因とは絞れない。
