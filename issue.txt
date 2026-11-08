@@ -1,5 +1,5 @@
 cartreaderPC Issues
-Last updated: 2026-11-08 09:24 JST
+Last updated: 2026-11-05 19:44 JST
 Applies to: PC tool PC108 / firmware PC107 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
@@ -70,7 +70,6 @@ ID    Status   Prio Categories                    Title
 046   VERIFY   P2   bug/verification/ui           Empty PCE slot produces all-FF dump and green success
 047   VERIFY   P2   enhancement/ui                Small persistent reader-display host connection marker
 048   OPEN     P2   bug/ws/save                   WonderSwan Write Save selection triggers a reset
-049   IDEA     P2   enhancement/standalone-tool/save/emulator   Emulator save management and exchange tool
 
 [UPSTREAM FIX INDEX]
 ID    Status   Prio Categories                    Title
@@ -1052,54 +1051,3 @@ W6: Move the 528 B PC protocol buffer from static storage to allocation after a 
 2026-11-07 14:09 JST: The WS picker showed only 00C1 for the test filename beginning with five Japanese characters followed by 00C17.eep. The Japanese prefix takes 15 UTF-8 bytes and 00C1 takes the remaining four bytes of the 19-byte label. The user chose to hold the adapter contacts firmly from before initialization.
 2026-11-07 16:03 JST: Follow-up request for the press-contact WS adapter: after initial cartridge detection, allow releasing pressure while selecting a file, then hold contact from the start of EEPROM access through completion. Consider a confirmation step and cartridge recheck before Read Save and after Write Save file selection. Resend write enable immediately before programming and abort if the cartridge cannot be confirmed. Preserve the W7 clock fix and use the GitHub baseline without the multicart experiments. Implementation pending.
 Related: EEPROM clock fix and hardware results are in #UPSTREAM-002. This issue tracks the file-picker reset and PcStorage memory fixes. Reinitialization and write-enable replay for press-contact adapters remain a deferred compatibility proposal.
-
-#049 Emulator save management and exchange tool (independent of CartReader)
-Added: 2026-11-08 09:24 JST
-Last updated: 2026-11-08 09:24 JST
-Status: IDEA / P2 / enhancement, standalone-tool, save, emulator
-GitHub individual issue: Not created. Issues are disabled for this repository; the create-issue API returned HTTP 410.
-Source: Repository file "セーブ管理ツール案.txt" and the user's explanations and design discussion in this chat.
-Purpose: Eliminate the manual steps required to use a dumped save in an emulator: renaming/moving the save already in the emulator's save folder, copying another save into that folder, and repeating those operations whenever the user switches saves. This is a standalone utility for managing save files and exchanging them with emulators, not a CartReader PC feature. Saves are not required to originate from CartReader.
-Initial scope: Primarily simple cartridge save files used around the 16-bit era (for example, .sav / .srm) that can be copied directly into an emulator's normal save location. PS1-style memory cards, emulator state saves, and save-format conversion are out of scope for the initial version. Start with simple file-level exchange.
-Basic structure:
-- Maintain multiple save files per game in a repository/archive. Never overwrite or delete imported originals or previous versions.
-- Maintain an emulator profile containing the normal save folder and the exact filename and extension expected by that emulator.
-- Support both manual folder selection and reading the emulator's configuration file to determine the save location. Configuration formats and path rules differ by emulator, so use per-emulator adapters. If the path cannot be established reliably, do not guess; ask the user to confirm or select it manually.
-- Maintain a virtual slot for each game/emulator-profile combination. A virtual slot is only a concept in the management tool; the emulator continues to read and write an ordinary save file.
-- Copy the selected archived save into the configured emulator folder using the filename and extension expected by that emulator. Keep the archived original unchanged.
-Switching workflow:
-1. Perform exchanges only after the emulator has exited. Do not replace a save while the emulator is running.
-2. Before switching, inspect the current file in the target save folder and determine whether it needs to be imported safely into the archive.
-3. If the current file is identical to the content last placed by the tool, treat it as unchanged and do not create a duplicate.
-4. If it has changed, import the current content as a new version without overwriting the previous version.
-5. Then copy the selected archived save into the target folder and verify the copied content using CRC32 or equivalent checks.
-6. If any step fails, abort the switch without losing the existing save. The archive originals must remain intact.
-Change detection and CRC32:
-- Record the CRC32 at the time a save is placed in the emulator folder as its "baseline CRC". Also record the target path, filename, size, archived save ID and timestamp.
-- Before the next switch, recalculate the CRC32 of the file at the same target path and compare it with the baseline. A match means unchanged; a mismatch means the contents changed.
-- If gameplay updates a save while retaining the same filename, its CRC32 will change. Import the changed content as a new version; do not overwrite the prior version.
-- Keep CRC32 separate from the display name and filename. Display names may be edited later without changing the data identity.
-Detecting manual replacement:
-- Detect a save manually replaced in the emulator folder without using the management tool by comparing its CRC32 at the next inspection.
-- If the current CRC32 matches an existing archived save, recognize that existing entry and do not import a duplicate.
-- If it matches neither the baseline nor an archived entry, treat it as an "external change / unregistered data" and preserve its contents in the archive.
-- A CRC32 change alone cannot determine whether the active save was updated through gameplay or a different save was manually copied into the same path. After safely preserving the unknown content as a new entry, let the user classify it as either an updated version of the active save or an independent save. Do not assert a version relationship without evidence.
-- If the target file is missing, report it as missing; do not silently replace it with another file.
-List and metadata:
-- Show a user-editable display name, game, CRC32, file size, registration/update date, and whether the entry is currently in use.
-- On initial import, provide a provisional name based on the original filename or import timestamp; allow the user to edit the name and notes later.
-- Avoid duplicate entries for identical contents. Record file size alongside CRC32 and compare actual contents when needed.
-Proposed completion criteria:
-1. Store multiple saves per game while preserving originals.
-2. Allow manual save-folder selection and, for supported emulators, configuration-file-based path retrieval.
-3. Place saves using each emulator's expected filename and extension.
-4. Detect changes to the current save before switching and import updated content as a new version.
-5. Use the placement-time CRC32 baseline to distinguish unchanged from changed contents.
-6. Detect manual replacements made outside the tool and distinguish known entries from unknown data.
-7. Preserve and classify unknown data without incorrectly claiming it is an update of the active save or losing data.
-8. Prevent replacement while the emulator is running.
-Open questions: Which emulators to support first; which configuration files and precedence rules to parse; how to detect whether an emulator is running; how to handle saves split across multiple files; and the UI for classifying an unknown CRC. These require further research and specification.
-Implementation status: Concept/specification only. No code changes, builds, or emulator/hardware verification have been performed.
-Related: #013 concerns NES save filenames and overwrite prevention within CartReader; it is separate. This issue concerns a standalone save-management and emulator-integration utility and must not be merged into #013.
-Reference: セーブ管理ツール案.txt
-
