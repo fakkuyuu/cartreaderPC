@@ -240,7 +240,7 @@ class BatchDump:
             elif line.startswith("RAM SIZE:") and self.target == "NES":
                 # NES database-derived iNES 2.0 PRG nonvolatile RAM size.
                 value = line.partition(":")[2].strip().lower()
-                size = re.match(r"(\d+)\s*k", value)
+                size = re.fullmatch(r"(\d+)\s*[bk]", value)
                 if size:
                     self.save = int(size.group(1)) > 0
         if self.phase == "rom_read":

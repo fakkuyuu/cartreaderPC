@@ -163,6 +163,24 @@ class BatchDumpTests(unittest.TestCase):
         self.assertEqual(run.on_menu("NES CART READER",
                          (("0", "Read iNES Rom"), ("2", "Read Save"))), "2")
 
+    def test_nes_byte_save_sizes(self):
+        menu = (("0", "Read iNES Rom"), ("2", "Read Save"))
+        for size, has_save in (("0B", False), ("128B", True), ("256B", True)):
+            with self.subTest(size=size):
+                run = BatchDump()
+                run.begin("NES")
+                run.on_line(f"RAM SIZE: {size}")
+                self.assertIs(run.save, has_save)
+                self.assertEqual(run.on_menu("NES CART READER", menu), "0")
+                run.on_line("[SAVED] NES/ROM/Test/1/Test.nes (32784 bytes) SHA256=abcd")
+                run.on_line("[VERIFY] CRC32=12345678 DB=Known Test")
+                if has_save:
+                    self.assertEqual(run.on_press(), " ")
+                    self.assertEqual(run.on_menu("NES CART READER", menu), "2")
+                else:
+                    self.assertIsNone(run.on_press())
+                    self.assertEqual(run.reason, "一括吸出し完了: ROM")
+
     def test_nes_db_hit_candidate_confirmation_then_rom(self):
         # NES.ino getMapping: CRC matches nes.txt, checkCartSelection prints
         # "Select your cartridge", then [Control] cartridge-select.
