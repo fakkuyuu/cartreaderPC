@@ -739,7 +739,7 @@ void createDbSaveFolder(const char* system, const char* suffix) {
   if (foldern < 0)
     foldern = 0;
   for (uint8_t attempt = 0; attempt < 100; ++attempt) {
-    snprintf(filePath, FILEPATH_LENGTH, "%s/SAVE/%s/%d", system, title, foldern);
+    snprintf(filePath, FILEPATH_LENGTH, "%s/SAVE/%s/%d", system, romName, foldern);
     if (!sd.exists(filePath)) {
       if (!sd.mkdir(filePath, true) || !sd.chdir(filePath))
         break;
@@ -750,6 +750,62 @@ void createDbSaveFolder(const char* system, const char* suffix) {
     foldern = (foldern == 32767) ? 0 : foldern + 1;
   }
   print_FatalError(sd_error_STR);
+}
+
+static void __attribute__((noinline)) finishDbSaveLog(uint32_t startedAt) {
+  if (!myFile.open(fileName, O_READ)) {
+    print_Error(F("Cannot read saved file for CRC32"));
+    return;
+  }
+  const uint32_t size = myFile.fileSize();
+  uint32_t remaining = size;
+  uint32_t crc = 0xFFFFFFFF;
+  while (remaining) {
+    const size_t wanted = remaining > sizeof(sdBuffer) ? sizeof(sdBuffer) : remaining;
+    const int count = myFile.read(sdBuffer, wanted);
+    if (count <= 0) {
+      myFile.close();
+      print_Error(F("Cannot read saved file for CRC32"));
+      return;
+    }
+    crc = updateCRC(sdBuffer, count, crc);
+    remaining -= count;
+  }
+  myFile.close();
+  if (!size) {
+    print_Error(F("Empty save file"));
+    return;
+  }
+  char crcText[9];
+  snprintf_P(crcText, sizeof(crcText), PSTR("%08lX"), ~crc);
+  print_Msg(F("Save CRC32: "));
+  println_Msg(crcText);
+  display_Update();
+
+  char* extension = strrchr(fileName, '.');
+  if (!extension)
+    return;
+  strcpy(extension, ".txt");
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_Error(F("Cannot create save TXT"));
+    return;
+  }
+  myFile.print(F("Save size: "));
+  myFile.print(size);
+  myFile.println(F(" bytes"));
+  myFile.print(F("Save CRC32: "));
+  myFile.println(crcText);
+  const uint32_t finishedAt = PcLink::hostTime();
+  PcLink::writeDumpTimestamp(myFile, F("Dump started: "), startedAt);
+  PcLink::writeDumpTimestamp(myFile, F("Dump finished: "), finishedAt);
+#ifdef ENABLE_GLOBAL_LOG
+  if (loggingEnabled && !PcLink::usingPcStorage() && myLog) {
+    PcLink::writeDumpTimestamp(myLog, F("Save dump started: "), startedAt);
+    PcLink::writeDumpTimestamp(myLog, F("Save dump finished: "), finishedAt);
+    myLog.flush();
+  }
+#endif
+  myFile.close();
 }
 
 void showDbSaveFolder(const __FlashStringHelper* label) {
@@ -770,6 +826,10 @@ void createFolder(const char* system, const char* subfolder, const char* gameNam
   } else {
     sprintf(folder, "%s/%s/%s/%d", system, subfolder, gameName, foldern);
   }
+#ifdef ENABLE_GLOBAL_LOG
+  if (subfolder && !strcmp(subfolder, "ROM") && loggingEnabled && !PcLink::usingPcStorage() && myLog)
+    PcLink::writeDumpTimestamp(myLog, F("Dump started: "), PcLink::hostTime());
+#endif
   sd.mkdir(folder, true);
   sd.chdir(folder);
 }
@@ -1994,23 +2054,29 @@ void aboutScreen() {
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
-  pcPhysicalControlsReady();
+#ifdef PC_MENU
+  PcConsole.println(F("[Control] about"));
+  PcLink::menuReady();
+#endif
 
   while (1) {
 
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
-    // get input button
-    uint8_t b = checkButton();
-
-    // if the cart readers input button is pressed shortly
-    if (b == 1) {
-      resetArduino();
-    }
-
-    // if the cart readers input button is pressed long
-    if (b == 3) {
-      resetArduino();
-    }
+    uint8_t b;
+#ifdef PC_MENU
+    if (PcConsole.available()) {
+      int key = PcConsole.read();
+      if (key == 'l' || key == 'L')
+        b = 4;
+      else if (key == ' ' || key == 'd')
+        b = 3;
+      else {
+        PcLink::menuReady();
+        continue;
+      }
+    } else
+#endif
+      b = checkButton();
 
     // if the button is pressed super long
     if (b == 4) {
@@ -2020,6 +2086,14 @@ void aboutScreen() {
       delay(2000);
       foldern = 0;
       EEPROM_writeAnything(0, foldern);
+    }
+    if (b == 1 || b == 3 || b == 4) {
+#ifdef PC_MENU
+      if (PcLink::connected()) {
+        PcConsole.println(F("[+] Reset"));
+        delay(150);
+      }
+#endif
       resetArduino();
     }
 #elif defined(ENABLE_SERIAL)
@@ -2747,7 +2821,9 @@ void wait() {
 #ifdef ENABLE_GLOBAL_LOG
 // Copies the last part of the current log file to the dump folder
 void save_log() {
-  if (PcLink::usingPcStorage()) return;
+  if (PcLink::usingPcStorage() || !loggingEnabled || !myLog) return;
+  PcLink::writeDumpTimestamp(myLog, F("Dump finished: "), PcLink::hostTime());
+  myLog.flush();
   // Last found position
   uint64_t lastPosition = 0;
 
@@ -2793,7 +2869,7 @@ void save_log() {
     }
   }
   // Go to position of last log entry
-  myLog.seek(lastPosition - 16);
+  myLog.seek(lastPosition >= 16 ? lastPosition - 16 : 0);
 
   // Copy log from there to dump dir
   sd.chdir(folder);
@@ -2805,13 +2881,12 @@ void save_log() {
 
   while (myLog.available()) {
     if (myLog.available() >= 512) {
-      for (word i = 0; i < 512; i++) {
-        sdBuffer[i] = myLog.read();
+      for (word i = 0; i < 512; i++) {        sdBuffer[i] = myLog.read();
       }
       myFile.write(sdBuffer, 512);
     } else {
       int i = 0;
-      for (; i < myLog.available(); i++) {
+      for (; i < 512 && myLog.available(); i++) {
         sdBuffer[i] = myLog.read();
       }
       myFile.write(sdBuffer, i);
@@ -3230,6 +3305,7 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
 // Display a question box with selectable answers. Make sure default choice is in (0, num_answers]
 unsigned char questionBox_Display(const __FlashStringHelper* question, char answers[7][20], uint8_t num_answers, uint8_t default_choice) {
+  const uint8_t displayedPage = currPage;
 #ifdef PC_MENU
   // Mirror the same menu to the PC. Input remains active on both the HW3
   // button and the PC keyboard/clickable menu.
@@ -3279,6 +3355,14 @@ redraw:
   byte currentColor = 0;
   bool bootHeaderSelected = false;
   bool bootHeaderAvailable = standaloneHeaderSelectable(question);
+#ifdef PC_MENU
+  const auto reportCursor = [&]() {
+    if (PcLink::connected()) {
+      PcConsole.print(F("[Control] menu-cursor "));
+      PcConsole.println(bootHeaderSelected ? -1 : static_cast<int>(choice));
+    }
+  };
+#endif
   uint8_t pcButtonEvent = 0;
   int8_t automaticChoice = standaloneMenu(question, answers, num_answers);
   if (automaticChoice == -2) return 0;
@@ -3287,6 +3371,7 @@ redraw:
 
   // wait until user makes his choice
 #ifdef PC_MENU
+  reportCursor();
   PcLink::menuReady();
 #endif
   while (1) {
@@ -3328,8 +3413,21 @@ redraw:
         continue;
       }
       if (incomingByte == 'I') {
-        if (sd.selectPhysical(SS)) PcConsole.println(F("[Storage Mode] SD"));
-        else PcConsole.println(F("[Storage Mode] SD init failed; PC retained"));
+        if (sd.selectPhysical(SS)) {
+#ifdef ENABLE_GLOBAL_LOG
+          if (loggingEnabled && !myLog) {
+            if (myLog.open("/OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
+              myLog.print(F("OSCR ")); myLog.println(FS(FSTRING_VERSION));
+              myLog.flush();
+            } else {
+              PcConsole.println(F("[SD] Cannot open OSCR_LOG.txt"));
+            }
+          }
+#endif
+          PcConsole.println(F("[Storage Mode] SD"));
+        } else {
+          PcConsole.println(F("[Storage Mode] SD init failed; PC retained"));
+        }
         PcLink::menuReady();
         continue;
       }
@@ -3466,6 +3564,7 @@ redraw:
         display.updateDisplay();
         idleTime=millis();
 #ifdef PC_MENU
+        reportCursor();
         PcLink::menuReady();
 #endif
         checkUpdater();
@@ -3552,6 +3651,7 @@ redraw:
 #ifdef PC_MENU
     // Cursor-only PC gestures do not redraw the menu, so explicitly release
     // the next input after the acknowledgement consumed this one.
+    if (b == 1 || b == 2) reportCursor();
     if (b == 1 || b == 2 || b == 4) PcLink::menuReady();
 #endif
 
@@ -3561,6 +3661,9 @@ redraw:
 selected:
   // pass on user choice
   rgbLed(black_color);
+  if (currPage != displayedPage)
+    return choice;  // The caller will render the next page without executing this row.
+
   PcConsole.print(F("[Menu] returning choice="));
   PcConsole.println(choice);
 
@@ -3960,8 +4063,33 @@ void wait_encoder() {
 /******************************************
   Filebrowser Module
 *****************************************/
+static uint32_t browserNameId(const char* name, bool directory) {
+  uint32_t id = 2166136261UL ^ directory;
+  while (*name)
+    id = (id ^ static_cast<uint8_t>(*name++)) * 16777619UL;
+  return id;
+}
+
+static bool browserVisibleEntry() {
+  return !myFile.isHidden() && (myFile.isDir() || myFile.isFile());
+}
+
+// The same ordinal is used in both sort orders. Keep the name identity
+// separately so a changed directory cannot select a different visible row.
+static bool browserOpenEntry(FsFile& dir, int16_t ordinal) {
+  dir.rewind();
+  while (myFile.openNext(&dir, O_READ)) {
+    if (browserVisibleEntry() && ordinal-- == 0)
+      return true;
+    myFile.close();
+  }
+  return false;
+}
+
 void fileBrowser(const __FlashStringHelper* browserTitle) {
-  char fileNames[7][FILENAME_LENGTH];
+  int16_t ordinals[7];
+  uint32_t nameIds[7];
+  char* name = reinterpret_cast<char*>(sdBuffer);
   int currFile;
   FsFile myDir;
   div_t page_layout;
@@ -3971,9 +4099,6 @@ void fileBrowser(const __FlashStringHelper* browserTitle) {
   // Root
   filePath[0] = '/';
   filePath[1] = '\0';
-
-  // Temporary char array for filename
-  char nameStr[FILENAME_LENGTH];
 
 browserstart:
   // Set currFile back to 0
@@ -3989,7 +4114,7 @@ browserstart:
 
   // Count files in directory
   while (myFile.openNext(&myDir, O_READ)) {
-    if (!myFile.isHidden() && (myFile.isDir() || myFile.isFile())) {
+    if (browserVisibleEntry()) {
       currFile++;
     }
     myFile.close();
@@ -4001,6 +4126,13 @@ browserstart:
 
   // Fill the array "answers" with 7 options to choose from in the file browser
   char answers[7][20];
+  auto setRow = [&](byte row, int16_t ordinal, bool directory) {
+    name[0] = '\0';
+    myFile.getName(name, sizeof(sdBuffer));
+    ordinals[row] = ordinal;
+    nameIds[row] = browserNameId(name, directory);
+    snprintf(answers[row], FILEOPTS_LENGTH, directory ? "/%s" : "%s", name);
+  };
 
 page:
 #ifdef ENABLE_GLOBAL_LOG
@@ -4017,6 +4149,7 @@ page:
 
   // If there are less than 7 entries, set count to that number so no empty options appear
   byte count = (currPage < numPages || page_layout.rem == 0) ? 7 : page_layout.rem;
+  byte filled = 0;
 
   // Open filepath directory
   if (!myDir.open(filePath)) {
@@ -4025,60 +4158,33 @@ page:
   }
 
 #if defined(OPTION_REVERSE_SORT)
-  uint16_t startIndex = currFile - ((currPage - 1) * 7) - 1;
-  byte remaining = 0;
+  int16_t startIndex = currFile - ((currPage - 1) * 7) - 1;
 
   // Run twice: first for directories, then for files
   for (byte pass = 0; pass < 2; pass++) {
-    for (int16_t index = startIndex; index >= 0 && remaining < count; index--) {
-      myDir.rewind();
-      int16_t found = 0;
-
-      while (myFile.openNext(&myDir, O_READ)) {
-        if (!myFile.isHidden() && (myFile.isDir() || myFile.isFile())) {
-          if (found == index) {
-            bool isDir = myFile.isDir();
-            if ((!pass && isDir) || (pass && !isDir)) {
-              myFile.getName(nameStr, FILENAME_LENGTH);
-              if (isDir) {
-                snprintf(fileNames[remaining], FILENAME_LENGTH, "/%s", nameStr);
-              } else {
-                snprintf(fileNames[remaining], FILENAME_LENGTH, "%s", nameStr);
-              }
-              remaining++;
-            }
-            myFile.close();
-            break;
-          }
-          found++;
-        }
+    for (int16_t index = startIndex; index >= 0 && filled < count; index--) {
+      if (browserOpenEntry(myDir, index)) {
+        bool isDir = myFile.isDir();
+        if ((!pass && isDir) || (pass && !isDir))
+          setRow(filled++, index, isDir);
         myFile.close();
       }
     }
   }
 #else
   int countFile = 0;
-  byte i = 0;
   // Run twice: first for directories, then for files
   for (byte pass = 0; pass < 2; pass++) {
     myDir.rewind();
+    int16_t ordinal = 0;
 
-    while ((myFile.openNext(&myDir, O_READ)) && (i < 7)) {
-      myFile.getName(nameStr, FILENAME_LENGTH);
-
-      if (!myFile.isHidden()) {
+    while (filled < count && myFile.openNext(&myDir, O_READ)) {
+      if (browserVisibleEntry()) {
         bool isDir = myFile.isDir();
-        if ((!pass && isDir) || (pass && myFile.isFile())) {
-          if (countFile == ((currPage - 1) * 7 + i)) {
-            if (isDir) {
-              snprintf(fileNames[i], FILENAME_LENGTH, "/%s", nameStr);
-            } else {
-              snprintf(fileNames[i], FILENAME_LENGTH, "%s", nameStr);
-            }
-            i++;
-          }
-          countFile++;
-        }
+        if (((!pass && isDir) || (pass && !isDir)) &&
+            countFile++ >= (currPage - 1) * 7)
+          setRow(filled++, ordinal, isDir);
+        ordinal++;
       }
       myFile.close();
     }
@@ -4086,16 +4192,12 @@ page:
 #endif
   myDir.close();
 
-  if (currFile == 0) {
+  if (filled == 0) {
     // Prevent SD error on empty folder
     count = 1;
     snprintf(answers[0], FILEOPTS_LENGTH, "%s", "Empty folder");
-  } else {
-    // Copy short string into fileOptions
-    for (byte i = 0; i < count; i++) {
-      snprintf(answers[i], FILEOPTS_LENGTH, "%s", fileNames[i]);
-    }
-  }
+  } else
+    count = filled;
 
   // Create menu with title and 1-7 options to choose from
   unsigned char answer = question_box(browserTitle, answers, count, 0);
@@ -4107,7 +4209,7 @@ page:
   }
 
   // Setting root after question_box still allows to escape empty folder by scrolling left
-  if (strcmp(answers[0], "Empty folder") == 0) {
+  if (filled == 0) {
     root = 1;
   }
 
@@ -4122,26 +4224,33 @@ page:
     goto browserstart;
   }
 
-  // wait for user choice to come back from the question box menu
-  strncpy(fileName, fileNames[answer], FILENAME_LENGTH - 1);
-
-  // Add directory to our filepath if we just entered a new directory
-  if (fileName[0] == '/') {
-    // Prevent double backslash
-    if (filePath[1] == '\0')
-      filePath[0] = '\0';
-    // add dirname to path
-    strcat(filePath, fileName);
-    // Remove / from dir name
-    char* dirName = fileName + 1;
-    // Change working dir
-    sd.chdir(dirName);
-    // Start browser in new directory again
+  if (answer >= filled || !myDir.open(filePath) || !browserOpenEntry(myDir, ordinals[answer])) {
+    myDir.close();
     goto browserstart;
-  } else {
-    // Afer everything is done change SD working directory back to root
-    sd.chdir("/");
   }
+  {
+    name[0] = '\0';
+    myFile.getName(name, sizeof(sdBuffer));
+    const bool directory = myFile.isDir();
+    myFile.close();
+    myDir.close();
+    if (!name[0] || browserNameId(name, directory) != nameIds[answer])
+      goto browserstart;
+
+    const size_t parent = filePath[1] ? strlen(filePath) : 0;
+    const size_t length = strlen(name);
+    if (length >= sizeof(fileName) || parent + 1 + length >= sizeof(filePath)) {
+      print_Error(F("File path too long"));
+      goto page;
+    }
+    if (directory) {
+      filePath[parent] = '/';
+      memcpy(filePath + parent + 1, name, length + 1);
+      goto browserstart;
+    }
+    memcpy(fileName, name, length + 1);
+  }
+  sd.chdir("/");
   filebrowse = 0;
 }
 

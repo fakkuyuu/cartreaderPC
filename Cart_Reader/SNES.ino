@@ -1087,10 +1087,12 @@ void checkAltConf(char crcStr[9]) {
     println_Msg(checksumStr);
     display_Update();
 
+    bool unique = true;
+    const bool hostLookup = myFile.isPc() && PcLink::hasHostSnesLookup();
     if (myFile.isPc()) {
       char pcQuery[14];
       snprintf(pcQuery, sizeof(pcQuery), "%s,%s", checksumStr, crcStr);
-      myFile.findRecord(255, pcQuery);
+      myFile.findRecord(255, pcQuery, nullptr, &unique);
     }
     while (myFile.available()) {
       const uint32_t titlePosition = myFile.curPosition();
@@ -1140,7 +1142,7 @@ void checkAltConf(char crcStr[9]) {
 
         // Some games have the same checksum, so compare CRC32 of header area with database too
         if (strcmp(tempStr3, crcStr) == 0) {
-          if (snesSaveTitleIsUnique(crcStr) && myFile.seekSet(titlePosition)) {
+          if ((hostLookup ? unique : snesSaveTitleIsUnique(crcStr)) && myFile.seekSet(titlePosition)) {
             get_line(fileName, &myFile, FILENAME_LENGTH);
             setDbSaveTitle(fileName);
           }
@@ -1297,14 +1299,9 @@ boolean checkcart_SNES() {
       }
     }
     if (myLength == 0) {
-      // Rom code unknown
-      romName[0] = 'U';
-      romName[1] = 'N';
-      romName[2] = 'K';
-      romName[3] = 'N';
-      romName[4] = 'O';
-      romName[5] = 'W';
-      romName[6] = 'N';
+      strcpy(romName, "UNKNOWN");
+    } else {
+      romName[myLength + 5] = 0;
     }
   }
 
@@ -1859,6 +1856,7 @@ void writeSRAM(boolean browseFile) {
 }
 
 void readSRAM() {
+  const uint32_t startedAt = PcLink::hostTime();
   // set control
   controlIn_SNES();
 
@@ -1976,6 +1974,7 @@ void readSRAM() {
   // Signal end of process
   display_Clear();
   showDbSaveFolder(F("Saved to "));
+  finishDbSaveLog(startedAt);
 }
 
 // Check if the SRAM was written without any error

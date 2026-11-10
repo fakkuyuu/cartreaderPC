@@ -47,12 +47,16 @@ def record_ram_diagnostic(message, port):
 
 
 def append_oscr_log(output_directory, message):
-    """Append precisely what the console displayed to the shared PC log."""
+    """Append console output, with local timestamps at operation milestones."""
     if not message:
         return
     path = Path(output_directory).expanduser() / "OSCR_LOGPC.txt"
     with path.open("a", encoding="utf-8", newline="") as target:
-        target.write(message)
+        stamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        target.write(re.sub(
+            r"(?m)^(?=\[\+\] Read (?:ROM|Cart|iNES Rom|PRG/CHR|Save|SRAM)\b|"
+            r"\[Transfer complete\]|\[VERIFY\]|\[Connection\]|\[ERROR\b|Saved to )",
+            f"[{stamp}] ", message))
 
 
 def ensure_settings():
@@ -149,7 +153,21 @@ def load_profile(identity):
         return 250000, 250000
 
 
-def save_profile(identity, baud, passed=None):
+def profile_benchmark_complete(record):
+    if isinstance(record, dict):
+        return bool(record.get("benchmark_complete", record.get("passed")))
+    return isinstance(record, int) and record in ALLOWED_BAUDS
+
+
+def has_completed_benchmark(identity):
+    try:
+        profiles = json.loads(PROFILE_FILE.read_text(encoding="utf-8"))
+        return isinstance(profiles, dict) and profile_benchmark_complete(profiles.get(identity))
+    except (OSError, ValueError):
+        return False
+
+
+def save_profile(identity, baud, passed=None, *, benchmark_complete=None):
     try:
         profiles = json.loads(PROFILE_FILE.read_text(encoding="utf-8"))
         if not isinstance(profiles, dict):
@@ -157,11 +175,14 @@ def save_profile(identity, baud, passed=None):
     except (OSError, ValueError, TypeError, json.JSONDecodeError):
         profiles = {}
     previous = profiles.get(identity, {})
+    if benchmark_complete is None:
+        benchmark_complete = profile_benchmark_complete(previous)
     if passed is None and isinstance(previous, dict):
         passed = previous.get("passed", [])
     passed = sorted({int(value) for value in (passed or []) if int(value) in ALLOWED_BAUDS})
     profiles[identity] = {
-        "safe": min(int(baud), 500000), "dump": int(baud), "passed": passed}
+        "safe": min(int(baud), 500000), "dump": int(baud), "passed": passed,
+        "benchmark_complete": benchmark_complete}
     temporary = PROFILE_FILE.with_suffix(".tmp")
     temporary.write_text(json.dumps(profiles, ensure_ascii=False, indent=2), encoding="utf-8")
     temporary.replace(PROFILE_FILE)
@@ -389,7 +410,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     passed = re.search(rb"\[Benchmark\] passed baud=(\d+)", payload)
                     if stable:
                         selected = int(stable.group(1))
-                        save_profile(identity, selected)
+                        save_profile(identity, selected, benchmark_complete=True)
                         log(f"[Baud] saved {selected} for {identity}\n")
                     elif passed:
                         selected = int(passed.group(1))
@@ -495,7 +516,7 @@ def gui(args):
     _saved_lang = ui_settings.get("language", "English")
     language = tk.StringVar(value="Japanese" if _saved_lang in ("日本語", "JAPANESE") else _saved_lang)
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC115 — Disconnected")
+    window.title("cartreaderPC PC129 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -725,7 +746,6 @@ def gui(args):
         dump_result.reset()
         paint_dump_result()
     batch_pending = {"key": None}
-    reset_capability = {"nes": False}
     def batch_report(was_active):
         if was_active and not batch.active:
             batch_pending["key"] = None
@@ -912,15 +932,69 @@ def gui(args):
                         side="left", padx=(14, 0), anchor="nw")
     if physical_visible.get():
         toggle_physical_panel()
+
+    def bind_reader_hold(button, short_key, long_key=None, extra_long_key=None):
+        press = {}
+
+        def send_held():
+            press.pop("timer", None)
+            x, y = button.winfo_pointerxy()
+            if (press.get("started") is not None and input_mode.get() == "about"
+                    and input_ready.get()
+                    and 0 <= x - button.winfo_rootx() < button.winfo_width()
+                    and 0 <= y - button.winfo_rooty() < button.winfo_height()):
+                press["sent"] = True
+                send_key(long_key)
+
+        def down(event):
+            if input_ready.get():
+                press["started"] = time.monotonic()
+                press["mode"] = input_mode.get()
+                press["sent"] = False
+                button.state(["pressed"])
+                if press["mode"] == "menu" or long_key is None:
+                    press["sent"] = True
+                    send_key(short_key)
+                elif press["mode"] == "about" and short_key == " ":
+                    press["timer"] = button.after(2000, send_held)
+                return "break"
+
+        def up(event):
+            started = press.pop("started", None)
+            if started is None:
+                return None
+            timer = press.pop("timer", None)
+            if timer is not None:
+                button.after_cancel(timer)
+            button.state(["!pressed"])
+            if (not press["sent"] and press["mode"] == input_mode.get() and input_ready.get()
+                    and 0 <= event.x < button.winfo_width()
+                    and 0 <= event.y < button.winfo_height()):
+                seconds = time.monotonic() - started
+                if extra_long_key is not None and seconds >= 5:
+                    send_key(extra_long_key)
+                else:
+                    send_key(long_key if seconds >= 2 else short_key)
+            return "break"
+
+        button.bind("<ButtonPress-1>", down)
+        button.bind("<ButtonRelease-1>", up)
+
     physical_controls = (
         ("左ボタン：次へ／変更 (d)", "d"),
         ("右ボタン：決定 (Space)", " "),
         ("左ボタン2回押し：前へ／戻る (u)", "u"),
     )
     for label, value in physical_controls:
-        ttk.Button(physical_panel, text=label,
-                   command=lambda key=value: send_key(key)).pack(
-                       side="left", expand=True, fill="x", padx=2)
+        button = ttk.Button(physical_panel, text=label,
+                            command=lambda key=value: send_key(key))
+        button.pack(side="left", expand=True, fill="x", padx=2)
+        if value == "d":
+            bind_reader_hold(button, "d", " ", "l")
+        elif value == " ":
+            bind_reader_hold(button, " ", "l")
+        else:
+            bind_reader_hold(button, value)
 
     def render_menu(title, options, paged):
         auto_shortcut.reset()
@@ -942,7 +1016,9 @@ def gui(args):
             entry for row_data in rows for entry in row_data["auto_entries"]
         )
 
-        def paint_selection():
+        def paint_selection(reader_header=False):
+            menu_title.set(f"{title} / BootDump (Reader)" if reader_header else
+                           title or "選択してください")
             for widget in rendered:
                 widget.configure(
                     background="white", highlightbackground="white",
@@ -950,6 +1026,8 @@ def gui(args):
                 )
             for frame in auto_button_frames.values():
                 frame.configure(highlightthickness=0)
+            if reader_header:
+                return
             if root_menu and navigator is not None:
                 row_index, auto_index = navigator.current()
                 if auto_index is None:
@@ -983,6 +1061,12 @@ def gui(args):
                 menu_navigation["selected"] = index % max(1, len(rendered))
             paint_selection()
 
+        def select_reader_cursor(index):
+            if index == -1:
+                paint_selection(reader_header=True)
+            elif 0 <= index < len(rendered):
+                select_row(index)
+
         def select_auto(row_index, auto_index):
             if navigator is not None and navigator.select_auto(row_index, auto_index):
                 paint_selection()
@@ -1002,20 +1086,16 @@ def gui(args):
             row_frame.pack(fill="x", pady=2)
             display_number = row_data["display_number"]
             prefix = f"{display_number}  " if display_number else "   "
-            item = tk.Label(
+            item = tk.Button(
                 row_frame, text=f"{prefix}{row_data['label']}",
                 anchor="w", padx=10, pady=5, relief="solid",
                 borderwidth=1, background="white", cursor="hand2",
-                takefocus=0,
+                takefocus=0, command=lambda i=position, n=row_data["reader_number"]:
+                    click_reader_option(i, n),
             )
             item.pack(side="left", fill="x", expand=True)
             rendered.append(item)
             item.bind("<Enter>", lambda event, i=position: select_row(i))
-            item.bind(
-                "<Button-1>",
-                lambda event, i=position, n=row_data["reader_number"]:
-                    click_reader_option(i, n),
-            )
             for auto_index, entry in enumerate(row_data["auto_entries"]):
                 shortcut, _target, _reader_number, button_label = entry
                 button_frame = tk.Frame(
@@ -1063,6 +1143,7 @@ def gui(args):
             activate_auto_shortcut if root_menu and auto_entries else None
         )
         menu_navigation["select_row"] = select_row if rendered else None
+        menu_navigation["select_reader_cursor"] = select_reader_cursor if rendered else None
         menu_navigation["paint_selection"] = paint_selection
         menu_items.configure(takefocus=1)
         paint_selection()
@@ -1100,13 +1181,13 @@ def gui(args):
         menu_title.set("Press Button...")
         for child in menu_items.winfo_children():
             child.destroy()
-        item = tk.Label(menu_items, text="0  Press Button (Enter)", anchor="center",
+        item = tk.Button(menu_items, text="0  Press Button (Enter)", anchor="center",
                         padx=10, pady=8, relief="solid", borderwidth=1,
-                        background="white", cursor="hand2")
+                        background="white", cursor="hand2",
+                        command=lambda: send_menu_key(" "))
         item.pack(fill="x", pady=2)
         item.bind("<Enter>", lambda event: item.configure(background="#dbeafe", highlightbackground="#2563eb", highlightthickness=2))
         item.bind("<Leave>", lambda event: item.configure(background="white", highlightthickness=0))
-        item.bind("<Button-1>", lambda event: send_menu_key(" "))
         if batch.active:
             was_active = batch.active
             action = batch.on_press()
@@ -1165,6 +1246,17 @@ def gui(args):
             action = batch.on_physical()
             batch_report(was_active)
             batch_schedule(action)
+
+    def render_about():
+        auto_shortcut.reset()
+        input_mode.set("about")
+        menu_title.set("About")
+        for child in menu_items.winfo_children():
+            child.destroy()
+        add_simple_controls((
+            ("メインメニューに戻る", " "),
+            ("フォルダ番号を0に戻す", "l"),
+        ))
 
     alphabet_state = {"selected": 0, "database": "", "buttons": []}
     def select_alphabet(index):
@@ -1319,12 +1411,7 @@ def gui(args):
     def render_alphabet_controls(selected_index=0, database_name=""):
         if batch.active:
             if batch.target == "NES" and database_name.lower() == "nes.txt":
-                if reset_capability["nes"]:
-                    batch.phase = "nes_reset_wait"
-                    batch_pending["key"] = "!"
-                    inbox.put("[自動吸出し] NESが自動認識できません。安全なResetを要求します\n")
-                else:
-                    batch_stop("NES認識失敗。専用Reset未対応の旧ファームです。手動で復帰してください")
+                batch_stop("NES認識失敗。先頭文字から手動で選択してください")
             else:
                 batch_stop("タイトルの手動選択が必要です")
         input_mode.set("alphabet")
@@ -1362,10 +1449,7 @@ def gui(args):
             dump_result.feed(line)
             paint_dump_result()
             was_active = batch.active
-            if line == "[+] Reset" and batch.phase == "nes_reset_wait":
-                batch.stop("NES認識失敗。Reset実行後、自動操作を終了しました")
-            else:
-                batch.on_line(line)
+            batch.on_line(line)
             batch_report(was_active)
             firmware_update = reader_firmware_status(line)
             if firmware_update is not None:
@@ -1400,7 +1484,6 @@ def gui(args):
                     or power_on_guard["benchmark"] or benchmark["index"] is not None))
                 power_on_guard["reset"] = False
                 menu_navigation["title"] = ""
-                reset_capability["nes"] = False
                 if connection_state.get() != "接続済み":
                     notice = ("本体との接続が復旧しました。" if connection_session["ever_connected"]
                               else "本体に接続しました。")
@@ -1414,7 +1497,7 @@ def gui(args):
                 set_storage_state("PC", desired if desired != "PC" else None)
             if version_match:
                 window.title(
-                    f"cartreaderPC PC115 — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC129 — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1440,6 +1523,7 @@ def gui(args):
                 _, saved_dump = load_profile(port_identity(port.get()))
                 dump_baud.set(f"通信速度（吸い出し）：{saved_dump:,} baud")
             elif stable_match:
+                refresh_benchmark_hint()
                 selected = int(stable_match.group(1))
                 normal_baud.set(f"通信速度（通常）：{min(selected, 500000):,} baud")
                 dump_baud.set(f"通信速度（吸い出し）：{selected:,} baud")
@@ -1493,7 +1577,7 @@ def gui(args):
                 power_on.disconnected()
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC115 — Disconnected")
+                window.title("cartreaderPC PC129 — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")
@@ -1512,7 +1596,7 @@ def gui(args):
                     sd_browser["status"].set("再接続後にSDを読み込みます")
             if line == "[Reader] input ready":
                 input_ready.set(True)
-                if input_mode.get() not in ("candidate", "physical", "alphabet", "database-list",
+                if input_mode.get() not in ("about", "candidate", "physical", "alphabet", "database-list",
                                              "nes-mapper", "nes-options"):
                     input_mode.set("menu")
                 if storage_current["pending"] and input_mode.get() == "menu":
@@ -1641,8 +1725,13 @@ def gui(args):
                     selected = 0
                     database_name = ""
                 render_alphabet_controls(max(0, min(27, selected)), database_name)
-            elif line == "[Control] nes-reset-supported":
-                reset_capability["nes"] = True
+            elif line.startswith("[Control] menu-cursor "):
+                cursor = re.fullmatch(r"\[Control\] menu-cursor (-1|[0-6])", line)
+                select_cursor = menu_navigation.get("select_reader_cursor")
+                if cursor and input_mode.get() == "menu" and select_cursor:
+                    select_cursor(int(cursor.group(1)))
+            elif line == "[Control] about":
+                render_about()
             elif line == "[Control] physical-buttons":
                 render_physical_fallback()
             elif line == "Set Mapper manually":
@@ -1669,7 +1758,8 @@ def gui(args):
             return
         if index >= len(benchmark_rates):
             selected = max(benchmark["passed"], default=250000)
-            save_profile(port_identity(port.get()), selected, benchmark["passed"])
+            save_profile(port_identity(port.get()), selected, benchmark["passed"],
+                         benchmark_complete=True if benchmark["passed"] else None)
             inbox.put(f"[Benchmark] stable baud={selected}\n")
             benchmark["index"] = None
             benchmark["waiting"] = False
@@ -1823,7 +1913,21 @@ def gui(args):
         benchmark["passed"] = []
         if input_ready.get():
             queue_benchmark_rate()
-    ttk.Button(row, text="速度ベンチ", command=request_benchmark).pack(side="left", padx=8)
+    benchmark_frame = ttk.Frame(row)
+    benchmark_frame.pack(side="left", padx=8)
+    ttk.Button(benchmark_frame, text="速度ベンチ", command=request_benchmark).pack(anchor="w")
+    benchmark_hint = ttk.Label(
+        benchmark_frame, foreground="#b91c1c", wraplength=220,
+        text="初めて吸い出す前に速度ベンチを実行してください。安定して使える最速の吸い出し速度を測り、自動で設定します。")
+
+    def refresh_benchmark_hint(*_):
+        if port.get() and has_completed_benchmark(port_identity(port.get())):
+            benchmark_hint.pack_forget()
+        elif not benchmark_hint.winfo_manager():
+            benchmark_hint.pack(anchor="w")
+
+    port.trace_add("write", refresh_benchmark_hint)
+    refresh_benchmark_hint()
     def request_transmit_test():
         if (not (worker and worker.is_alive()) or not input_ready.get()
                 or input_mode.get() != "menu" or sd_browser["busy"]
@@ -2074,6 +2178,19 @@ def gui(args):
         if input_mode.get() == "press" and (key in ("return", "space", "kp_enter") or typed_digit == "0"):
             send_menu_key(" ")
             return "break"
+        if input_mode.get() == "about":
+            if key in ("left", "right"):
+                select_simple(simple_controls["selected"] + (-1 if key == "left" else 1))
+                return "break"
+            if key in ("escape", "space") or typed_digit == "0":
+                simple_controls["buttons"][0].invoke()
+                return "break"
+            if key == "l" or typed_digit == "1":
+                simple_controls["buttons"][1].invoke()
+                return "break"
+            if key in ("return", "kp_enter"):
+                simple_controls["buttons"][simple_controls["selected"]].invoke()
+                return "break"
         if input_mode.get() in ("candidate", "physical"):
             if typed_digit in ("0", "1", "2"):
                 select_simple(int(typed_digit))
@@ -2374,8 +2491,8 @@ def main():
             assert receive(io.BytesIO(encode(1, 7))) == (1, 7, b"")
             with tempfile.TemporaryDirectory() as path:
                 hello = Storage(path, lambda s: None).dispatch(1, b"")
-                assert (len(hello) == 13 and hello[0] == 0 and hello[9] == 32
-                        and int.from_bytes(hello[10:12], "little") == 512 and hello[12] == 1)
+                assert (len(hello) == 17 and hello[0] == 0 and hello[9] == 32
+                        and int.from_bytes(hello[10:12], "little") == 512 and hello[12] == 7)
                 assert ram_labels("[RAM]\t800\t300\t6260\t8192\t0\t2\n")
             (BASE / "exe-selftest.txt").write_text("PASS\n", encoding="utf-8")
             return 0

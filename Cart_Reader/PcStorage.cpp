@@ -6,6 +6,7 @@
 #undef SdFile
 #undef SdFs
 #include <string.h>
+#include <time.h>
 #include <avr/wdt.h>
 extern "C" {
   extern char __heap_start;
@@ -55,6 +56,27 @@ static uint32_t safeBaud = 250000UL;
 static uint32_t dumpBaud = 250000UL;
 static bool cancelRequested = false;
 static uint8_t checkpointBlocks = 8;
+static bool hostSnesLookup = false;
+static uint32_t hostEpoch = 0, hostSyncMillis = 0;
+uint32_t hostTime() {
+  return started && hostEpoch ? hostEpoch + (millis() - hostSyncMillis) / 1000UL : 0;
+}
+void writeDumpTimestamp(Print& target, const __FlashStringHelper* label, uint32_t stamp) {
+  if (!stamp)
+    return;
+  time_t seconds = stamp;
+  struct tm calendar;
+  gmtime_r(&seconds, &calendar);
+  char value[20];
+  snprintf_P(value, sizeof(value), PSTR("%04u-%02u-%02u %02u:%02u:%02u"),
+             (unsigned)(calendar.tm_year + 1900), (unsigned)(calendar.tm_mon + 1),
+             (unsigned)calendar.tm_mday, (unsigned)calendar.tm_hour,
+             (unsigned)calendar.tm_min, (unsigned)calendar.tm_sec);
+  target.print(label);
+  target.println(value);
+}
+
+bool hasHostSnesLookup() { return hostSnesLookup; }
 static uint16_t transferBlockSize = 512;
 static bool ledActivity = false;
 static void (*prefetchReader)(uint8_t*) = nullptr;
@@ -416,7 +438,7 @@ bool tryStart(uint16_t timeoutMs) {
   for(uint8_t i=0;i<6;i++) { if(!receiveTimed(r[i],deadline)) goto no_host; c=crc(c,r[i]); }
   { uint16_t helloLength=r[4]|((uint16_t)r[5]<<8);
     if(r[0]!=1 || r[1]!=(op|0x80) || r[2]!=(uint8_t)seq || r[3]!=(uint8_t)(seq>>8) || helloLength<1 || helloLength>dataCapacity) goto no_host;
-    uint8_t hello[13];
+    uint8_t hello[17];
     for(uint16_t i=0;i<helloLength;i++) {
       if(!receiveTimed(b,deadline)) goto no_host;
       if(i<sizeof(hello)) hello[i]=b;
@@ -429,6 +451,9 @@ bool tryStart(uint16_t timeoutMs) {
     if(!data) goto no_host;
     started=true; pcStorage=true;
     ramTelemetry=helloLength>=13 && (hello[12]&1);
+    hostSnesLookup=helloLength>=13 && (hello[12]&2);
+    hostEpoch=helloLength>=17 && (hello[12]&4) ? get32(hello+13) : 0;
+    hostSyncMillis=millis();
   if(helloLength>=5) {
     uint32_t preferred=get32(hello+1);
     uint32_t preferredDump=helloLength>=9 ? get32(hello+5) : preferred;
@@ -454,12 +479,6 @@ bool tryStart(uint16_t timeoutMs) {
     transferBlockSize=negotiatedSize;
   }
   }
-  // Allocate at shallow boot depth, before browsing/SD copy grows the stack.
-  if(!prepareFileCache()) {
-    PcConsole.println(F("[Memory] PC file cache allocation failed (512 bytes)"));
-    stop();
-  }
-  PcConsole.println(F("[Cache] ready 512 bytes"));
   PcConsole.println(F("[Browser protocol] 1"));
   PcConsole.print(F("[Transfer block active] "));
   PcConsole.print(transferBlockSize);
@@ -577,13 +596,10 @@ static bool path(uint8_t op, const char* p) {
 PcSerial PcConsole;
 static uint8_t* sharedFileCache = nullptr;
 static PcFsFile* sharedFileOwner = nullptr;
-bool PcLink::prepareFileCache() {
-  if(!sharedFileCache) sharedFileCache=(uint8_t*)malloc(512);
-  sampleRam(RAM_CACHE);
-  return sharedFileCache!=nullptr;
-}
 void PcFsFile::claimCache() {
-  if(!PcLink::prepareFileCache()) {
+  if(!sharedFileCache) sharedFileCache=(uint8_t*)malloc(512);
+  PcLink::sampleRam(PcLink::RAM_CACHE);
+  if(!sharedFileCache) {
     PcConsole.println(F("[Memory] PC file cache allocation failed (512 bytes)"));
     PcLink::stop();
   }
@@ -682,7 +698,11 @@ void PcFsFile::close() {
   if(PcLink::data[0]) PcLink::stop();
   if(got > 1 && PcLink::data[1]) pcVerificationResult(PcLink::data[1]);
   handle=0; writable=false; pendingBlocks=0;
-  if(sharedFileOwner==this) { sharedFileOwner=nullptr; used=0; dirty=false; }
+  if(sharedFileOwner==this) {
+    sharedFileOwner=nullptr; used=0; dirty=false;
+    free(sharedFileCache);
+    sharedFileCache=nullptr;
+  }
 }
 int PcFsFile::read() { uint8_t b; return read(&b,1)==1 ? b : -1; }
 int PcFsFile::read(void* dst,size_t n) {
@@ -730,17 +750,19 @@ size_t PcFsFile::write(const uint8_t* src,size_t n) {
   return done;
 }
 bool PcFsFile::seekSet(uint32_t p) { if(dirty) flush(); pos=p; return handle!=0; }
-bool PcFsFile::findRecord(uint8_t field,const char* key1,const char* key2) {
+bool PcFsFile::findRecord(uint8_t field,const char* key1,const char* key2,bool* unique) {
   if(!handle || isDir() || !key1) return false;
   if(dirty) flush();
   size_t a=strlen(key1), b=key2?strlen(key2):0;
   if(a+b+4>PcLink::dataCapacity) PcLink::stop();
-  PcLink::data[0]=handle; PcLink::data[1]=field;
+  const bool checkUnique=unique && PcLink::hasHostSnesLookup();
+  PcLink::data[0]=handle; PcLink::data[1]=checkUnique ? 254 : field;
   memcpy(PcLink::data+2,key1,a); PcLink::data[2+a]=0;
   uint16_t n=3+a;
   if(key2) { memcpy(PcLink::data+n,key2,b); PcLink::data[n+b]=0; n+=b+1; }
   uint16_t got=PcLink::call(21,n);
-  if(PcLink::data[0] || got!=5) PcLink::stop();
+  if(PcLink::data[0] || got!=(checkUnique ? 6 : 5)) PcLink::stop();
+  if(checkUnique) *unique=PcLink::data[5]!=0;
   uint32_t found=PcLink::get32(PcLink::data+1);
   used=0;
   pos=(found==0xFFFFFFFFUL)?size:found;
@@ -908,8 +930,8 @@ size_t HybridFsFile::write(const uint8_t* src,size_t n) { return pc ? remote.wri
 bool HybridFsFile::seekSet(uint32_t p) { return pc ? remote.seekSet(p) : local.seekSet(p); }
 bool HybridFsFile::seek(uint32_t p) { return seekSet(p); }
 bool HybridFsFile::seekCur(int32_t p) { return pc ? remote.seekCur(p) : local.seekCur(p); }
-bool HybridFsFile::findRecord(uint8_t field,const char* key1,const char* key2) {
-  if(pc) return remote.findRecord(field,key1,key2);
+bool HybridFsFile::findRecord(uint8_t field,const char* key1,const char* key2,bool* unique) {
+  if(pc) return remote.findRecord(field,key1,key2,unique);
   (void)field; (void)key1; (void)key2; return false;
 }
 void HybridFsFile::rewind() { if(pc) remote.rewind(); else local.rewind(); }

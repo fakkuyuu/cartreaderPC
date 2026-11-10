@@ -1810,7 +1810,6 @@ void validateMPK() {
   byte writeErrors = 0;
   boolean failed = false;
   SdFile mpk_file;
-  byte buf[256];
 
   //open file on sd card
   if (!mpk_file.open(fileName, O_READ)) {
@@ -1818,17 +1817,17 @@ void validateMPK() {
   }
 
   // Read first 256 byte which contains the header including checksum and reverse checksum and three copies of it
-  mpk_file.read(buf, sizeof(buf));
+  mpk_file.read(sdBuffer, 256);
 
   //Check all four header copies
   writeErrors = 0;
-  if (!checkHeader(&buf[0x20]))
+  if (!checkHeader(&sdBuffer[0x20]))
     writeErrors++;
-  if (!checkHeader(&buf[0x60]))
+  if (!checkHeader(&sdBuffer[0x60]))
     writeErrors++;
-  if (!checkHeader(&buf[0x80]))
+  if (!checkHeader(&sdBuffer[0x80]))
     writeErrors++;
-  if (!checkHeader(&buf[0xC0]))
+  if (!checkHeader(&sdBuffer[0xC0]))
     writeErrors++;
   if (writeErrors)
     failed = true;
@@ -1846,13 +1845,13 @@ void validateMPK() {
     byte sum = 0;
 
     // Read 256 bytes into SD buffer
-    mpk_file.read(buf, sizeof(buf));
+    mpk_file.read(sdBuffer, 256);
 
     // Calculate TOC checksum
     for (byte i = 5; i < 128; i++) {
-      sum += buf[(i << 1) + 1];
+      sum += sdBuffer[(i << 1) + 1];
     }
-    if (buf[1] != sum)
+    if (sdBuffer[1] != sum)
       writeErrors++;
   }
   if (writeErrors)

@@ -1,4 +1,5 @@
 """PC-side virtual SD, confined to the user-selected output directory."""
+import calendar
 import hashlib
 import json
 import os
@@ -278,7 +279,8 @@ class Storage:
             action = line[4:].strip()
             self.companion_dump = None
             if action in ("Read ROM", "Read Cart", "Read iNES Rom", "Read PRG/CHR"):
-                self.companion_dump = {"action": line, "saving": "", "stars": 0}
+                self.companion_dump = {"action": line, "saving": "", "stars": 0,
+                                       "started": time.strftime("%Y-%m-%d %H:%M:%S")}
                 self.companion_identifying = False
             elif re.match(r"^(Read|Write|Force|Test|Refresh|Change|Select|Flash|Erase|Reset)\b", action):
                 if action in ("Refresh Cart", "Select Cart", "Reset"):
@@ -363,6 +365,9 @@ class Storage:
                 if self.companion_dump["stars"] else ""
             )
             add_group(self.companion_dump["saving"], progress)
+            if self.companion_dump.get("started"):
+                add_group("Dump started: " + self.companion_dump["started"],
+                          "Dump finished: " + time.strftime("%Y-%m-%d %H:%M:%S"))
 
         verify_lines = [line.strip() for line in verification.splitlines() if line.strip()]
         details = [line for line in verify_lines if line.startswith("Checksum:")]
@@ -540,7 +545,7 @@ class Storage:
             checkpoint_blocks = self.checkpoint_kib * 1024 // self.transfer_block
             self.log(f"[Transfer block] {self.transfer_block} bytes\n")
             return struct.pack("<IIBH", self.preferred_baud, self.dump_baud,
-                               checkpoint_blocks, self.transfer_block) + b"\x01"
+                               checkpoint_blocks, self.transfer_block) + b"\x07" + struct.pack("<I", calendar.timegm(time.localtime()) - 946684800)
         if not self.hello:
             raise ValueError("HELLO required")
         if op == 27:
@@ -635,6 +640,7 @@ class Storage:
                 raise ValueError("database search key missing")
             f.seek(0)
             found = 0xffffffff
+            unique = False
             while True:
                 record_start = f.tell()
                 name = f.readline()
@@ -642,6 +648,15 @@ class Storage:
                     break
                 data = f.readline().rstrip(b"\r\n")
                 f.readline()
+                if field == 254:
+                    if b",".join(data.split(b",")[1:3]) not in keys:
+                        continue
+                    if unique:
+                        unique = False
+                        break
+                    found = record_start
+                    unique = True
+                    continue
                 if field == 255:
                     matched = any(key in data for key in keys)
                 else:
@@ -651,7 +666,8 @@ class Storage:
                     found = record_start
                     break
             self.log(f"[PC DB] {entry['path'].name}: {'found' if found != 0xffffffff else 'not found'}\n")
-            return struct.pack("<I", found)
+            response = struct.pack("<I", found)
+            return response + bytes((unique,)) if field == 254 else response
         if op == 18:
             return p
         if op == 24:

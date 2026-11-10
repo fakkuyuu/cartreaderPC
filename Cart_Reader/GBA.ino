@@ -83,43 +83,49 @@ void gbaMenu() {
       // Read save
       display_Clear();
       sd.chdir("/");
-      switch (getSaveType()) {
-        case 1:
-          // 4K EEPROM
-          readEeprom_GBA(4);
-          break;
+      {
+        const uint32_t startedAt = PcLink::hostTime();
+        const byte detectedSaveType = getSaveType();
+        switch (detectedSaveType) {
+          case 1:
+            // 4K EEPROM
+            readEeprom_GBA(4);
+            break;
 
-        case 2:
-          // 64K EEPROM
-          readEeprom_GBA(64);
-          break;
+          case 2:
+            // 64K EEPROM
+            readEeprom_GBA(64);
+            break;
 
-        case 3:
-          // 256K SRAM/FRAM
-          readSRAM_GBA(1, 32768, 0);
-          break;
+          case 3:
+            // 256K SRAM/FRAM
+            readSRAM_GBA(1, 32768, 0);
+            break;
 
-        case 4:
-          // 512K FLASH
-          readFLASH_GBA(1, 65536, 0);
-          break;
+          case 4:
+            // 512K FLASH
+            readFLASH_GBA(1, 65536, 0, true);
+            break;
 
-        case 5:
-          // 1M FLASH (divided into two banks)
-          switchBank_GBA(0x0);
-          setROM_GBA();
-          readFLASH_GBA(1, 65536, 0);
-          switchBank_GBA(0x1);
-          setROM_GBA();
-          readFLASH_GBA(0, 65536, 65536);
-          break;
+          case 5:
+            // 1M FLASH (divided into two banks)
+            switchBank_GBA(0x0);
+            setROM_GBA();
+            readFLASH_GBA(1, 65536, 0, false);
+            switchBank_GBA(0x1);
+            setROM_GBA();
+            readFLASH_GBA(0, 65536, 65536, true);
+            break;
 
-        case 6:
-          // 512K SRAM/FRAM
-          readSRAM_GBA(1, 65536, 0);
-          break;
+          case 6:
+            // 512K SRAM/FRAM
+            readSRAM_GBA(1, 65536, 0);
+            break;
+        }
+        setROM_GBA();
+        if (detectedSaveType >= 1 && detectedSaveType <= 6)
+          finishDbSaveLog(startedAt);
       }
-      setROM_GBA();
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
@@ -1051,14 +1057,13 @@ void readROM_GBA() {
 
   // Fix unmapped ROM area of cartridges with 32 MB ROM + EEPROM save type
   if ((cartSize == 0x2000000) && ((saveType == 1) || (saveType == 2))) {
-    byte padding_byte[256];
     char tempStr[32];
     myFile.seek(0x1FFFEFF);
-    myFile.read(padding_byte, 1);
-    sprintf(tempStr, "Fixing ROM padding (0x%02X)", padding_byte[0]);
+    myFile.read(sdBuffer, 1);
+    sprintf(tempStr, "Fixing ROM padding (0x%02X)", sdBuffer[0]);
     println_Msg(tempStr);
-    memset(padding_byte + 1, padding_byte[0], 255);
-    myFile.write(padding_byte, 256);
+    memset(sdBuffer + 1, sdBuffer[0], 255);
+    myFile.write(sdBuffer, 256);
   }
 
   // Close the file:
@@ -1616,7 +1621,7 @@ void switchBank_GBA(byte bankNum) {
   PORTH |= (1 << 0);
 }
 
-void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos) {
+void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, bool closeFile) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
   PORTH |= (1 << 3) | (1 << 5);
 
@@ -1637,13 +1642,13 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos) {
   }
 
   //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!myFile && !myFile.open(fileName, O_RDWR | O_CREAT)) {
     print_FatalError(sd_error_STR);
   }
 
   // Seek to a new position in the file
   if (pos != 0)
-    myFile.seekCur(pos);
+    myFile.seekSet(pos);
 
   // Output a LOW signal on CE_FLASH(PH0)
   PORTH &= ~(1 << 0);
@@ -1659,7 +1664,8 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos) {
     // Write sdBuffer to file
     myFile.write(sdBuffer, 512);
   }
-  myFile.close();
+  if (closeFile)
+    myFile.close();
 
   // Set CS_FLASH(PH0) high
   PORTH |= (1 << 0);

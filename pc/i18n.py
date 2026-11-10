@@ -1,5 +1,8 @@
 """Presentation-only Japanese/English translation. GPL-3.0-or-later."""
 WORDS = {
+    "メインメニューに戻る": "Return to main menu",
+    "フォルダ番号を0に戻す": "Reset folder number to 0",
+    "初めて吸い出す前に速度ベンチを実行してください。安定して使える最速の吸い出し速度を測り、自動で設定します。": "Run the speed benchmark before your first dump. It measures and sets the fastest stable dump speed.",
     "保存先フォルダを指定してください。": "Please select an output folder.",
     "保存先フォルダが存在しません。": "The output folder does not exist.",
     "フォルダを開けませんでした。": "Could not open the folder.",
@@ -113,7 +116,6 @@ WORDS.update({
     "読み取り異常のため自動吸出し停止: ": "Auto dump stopped due to a read error: ",
     "MD ROM内部チェックサム異常のため自動吸出し停止: ": "Auto dump stopped due to an MD internal checksum error: ",
     "切断によって自動吸出しを終了しました": "Auto dump stopped: disconnected",
-    "NESが自動認識できません。安全なResetを要求します": "NES could not be auto-identified. Requesting a safe reset",
     "（DB照合なし）": " (no database match)",
     "DB照合なし": "no database match",
     "◀ 前のページ": "◀ Previous page",
@@ -151,7 +153,7 @@ WORDS.update({
     "Mapperの手動選択が必要です": "Manual mapper selection required",
     "サイズなどの手動選択が必要です": "Manual size selection required",
     "タイトルの手動選択が必要です": "Manual title selection required",
-    "NES認識失敗。専用Reset未対応の旧ファームです。手動で復帰してください": "NES identification failed. Firmware lacks dedicated reset support; recover manually",
+    "NES認識失敗。先頭文字から手動で選択してください": "NES identification failed. Select the first letter manually",
     "OSCR_LOGPC.txt に書き込めませんでした。": "Could not write OSCR_LOGPC.txt.",
     "保存先にDBがありません。上流のsdフォルダ内の必要なTXTを配置してください": "Database files are missing from the output folder. Copy the required TXT files from the upstream sd folder.",
     "データベース": "Database",

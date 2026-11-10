@@ -13,12 +13,14 @@ enum RamStage : uint8_t { RAM_MENU, RAM_PROTOCOL, RAM_LIST_OPEN, RAM_LIST_ENTRY,
   RAM_PRESS_BUTTON, RAM_IDLE };
 int16_t sampleRam(uint8_t stage);
 void reportRam(uint8_t stage);
-bool prepareFileCache();
 uint16_t call(uint8_t op, uint16_t count);
 void start();
 bool tryStart(uint16_t timeoutMs = 1500);
 bool connected();
 bool usingPcStorage();
+bool hasHostSnesLookup();
+uint32_t hostTime();
+void writeDumpTimestamp(Print& target, const __FlashStringHelper* label, uint32_t stamp);
 bool takeCancelRequest();
 void setPcStorage(bool enabled);
 bool enterDumpBaud();
@@ -91,7 +93,7 @@ class PcFsFile : public Stream {
   bool seekSet(uint32_t p);
   bool seek(uint32_t p) { return seekSet(p); }
   bool seekCur(int32_t p) { return seekSet(pos+p); }
-  bool findRecord(uint8_t field, const char* key1, const char* key2 = nullptr);
+  bool findRecord(uint8_t field, const char* key1, const char* key2 = nullptr, bool* unique = nullptr);
   void rewind();
   int fgets(char* dst, int n, const char* delimiters = nullptr);
   size_t getName(char* dst, size_t n);
@@ -132,7 +134,7 @@ class HybridFsFile : public Stream {
   int available() override; int read() override; int peek() override; int read(void* dst, size_t n);
   size_t write(uint8_t b) override; size_t write(const uint8_t* src, size_t n) override;
   bool seekSet(uint32_t p); bool seek(uint32_t p); bool seekCur(int32_t p);
-  bool findRecord(uint8_t field, const char* key1, const char* key2 = nullptr);
+  bool findRecord(uint8_t field, const char* key1, const char* key2 = nullptr, bool* unique = nullptr);
   void rewind(); int fgets(char* dst, int n, const char* delimiters = nullptr);
   size_t getName(char* dst, size_t n); bool rename(const char* name);
   static void dateTimeCallback(void (*callback)(uint16_t*,uint16_t*)) { FsDateTime::setCallback(callback); }

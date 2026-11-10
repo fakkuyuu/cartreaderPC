@@ -656,7 +656,6 @@ uint32_t uppow2(uint32_t n) {
 }
 
 struct database_entry {
-  char filename[128];
   char crc_str[8 + 1 + 8 + 1 + 32 + 1];
   uint32_t crc;
   char* crc512_str;
@@ -883,7 +882,8 @@ void getMapping() {
 }
 
 static void readDatabaseEntry(FsFile& database, struct database_entry* entry) {
-  get_line(entry->filename, &database, sizeof(entry->filename));
+  // Preserve the bulk line read while discarding the unused title.
+  get_line(reinterpret_cast<char*>(sdBuffer), &database, 128);
   readDataLine_NES(database, entry);
   skip_line(&database);
 }
@@ -5537,20 +5537,19 @@ void A29040B_writeFLASH() {
 
       // Step 3: Write PRG data
       uint32_t bytesProcessed = 0;
-      uint8_t buffer[512];
       myFile.seek(16);  // Skip header to start of PRG data
 
       while (bytesProcessed < prgSize) {
-        int bytesRead = myFile.read(buffer, sizeof(buffer));
+        int bytesRead = myFile.read(sdBuffer, sizeof(sdBuffer));
         if (bytesRead <= 0) break;
 
         for (int i = 0; i < bytesRead; i++) {
-          A29040B_PRG_Write(prgAddress++, buffer[i]);
+          A29040B_PRG_Write(prgAddress++, sdBuffer[i]);
           delayMicroseconds(14);  // Typical 14us
 
           uint8_t readByte = read_prg_byte(prgAddress - 1);
           delayMicroseconds(14);  // Typical 14us
-          if (readByte != buffer[i]) {
+          if (readByte != sdBuffer[i]) {
             println_Msg(F("Write Error!"));
             sprintf(data_str, "%02X", readByte);
             println_Msg(data_str);
@@ -5589,16 +5588,16 @@ void A29040B_writeFLASH() {
 
 
       while (bytesProcessed < chrSize) {
-        int bytesRead = myFile.read(buffer, sizeof(buffer));
+        int bytesRead = myFile.read(sdBuffer, sizeof(sdBuffer));
         if (bytesRead <= 0) break;
 
         for (int i = 0; i < bytesRead; i++) {
-          A29040B_CHR_Write(chrAddress++, buffer[i]);
+          A29040B_CHR_Write(chrAddress++, sdBuffer[i]);
           delayMicroseconds(14);  // Typical 14us
 
           uint8_t readByte = read_chr_byte(chrAddress - 1);
           delayMicroseconds(14);  // Typical 14us
-          if (readByte != buffer[i]) {
+          if (readByte != sdBuffer[i]) {
             println_Msg(F("Write Error!"));
             sprintf(data_str, "%02X", readByte);
             println_Msg(data_str);
