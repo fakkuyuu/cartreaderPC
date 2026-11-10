@@ -70,7 +70,7 @@ ID    Status   Prio Categories                    Title
 046   VERIFY   P2   bug/verification/ui           Empty PCE slot produces all-FF dump and green success
 047   VERIFY   P2   enhancement/ui                Small persistent reader-display host connection marker
 048   VERIFY     P2   bug/ws/save                   WonderSwan Write Save selection triggers a reset
-051   TRIAGE   P2   bug/snes/reset                SNES SA-1 save restore shows the main menu twice
+051   CLOSED   P2   bug/snes/reset                SNES SA-1 save restore shows the main menu twice
 
 [UPSTREAM FIX INDEX]
 ID    Status   Prio Categories                    Title
@@ -1075,9 +1075,10 @@ Related: EEPROM clock fix and hardware results are in #UPSTREAM-002. This issue 
 
 #051 SNES SA-1 save restore shows the main menu twice
 Added: 2026-11-08 14:13 JST
-Status: TRIAGE / P2 / bug, snes, reset
+Status: CLOSED / P2 / bug, snes, reset
 On PC113, Super Mario RPG SRAM restore logged Verified OK. The user saw the main menu twice after acknowledging the result. The PC log contains one startup banner.
 The SA-1 verify path stops clocks and resets CIC/cartridge, then restarts the reader. The PC reopened the COM port after Resetting...; an extra DTR reset is a hypothesis. Investigate the PC reconnect separately from the SA-1 cleanup.
+2026-11-10 20:09 JST: PC131 centralizes the host notice in resetArduino() and prevents duplicate numbered-menu notices. The user confirmed on hardware that the double reset after SA-1 save restore is resolved.
 
 #052 PC ROM database miss gives a yellow reader LED and green Auto result
 2026-11-08 17:51 JST / VERIFY / P2

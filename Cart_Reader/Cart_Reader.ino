@@ -359,6 +359,13 @@ byte sdBuffer[512];
 // using the watchdog timer would be more elegant but some Mega2560 bootloaders are buggy with it
 void resetArduino(void) __attribute__((noreturn));
 void resetArduino(void) {
+#ifdef PC_MENU
+  if (PcLink::connected()) {
+    // The host keeps COM open and waits for the boot-rate HELLO.
+    PcConsole.println(F("[+] Reset"));
+    delay(150);
+  }
+#endif
   standaloneSuppressNextBoot();
   asm volatile("jmp 0");
   __builtin_unreachable();
@@ -1016,8 +1023,6 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
       // Transfer and flash routines never read commands in this loop.
       if (mode == CORE_NES && PcConsole.available() && PcConsole.peek() == '!') {
         PcConsole.read();
-        PcConsole.println(F("[+] Reset"));
-        delay(150);  // Let the PC receive the reset notice before reboot.
         resetArduino();
       }
 #endif
@@ -1267,8 +1272,6 @@ byte starting_letter(const char* databaseName) {
       // One-command NES return to the system menu on manual alphabet screen.
       if (mode == CORE_NES && direct == '!') {
         PcConsole.read();
-        PcConsole.println(F("[+] Reset"));
-        delay(150);  // Let the PC receive the reset notice before reboot.
         resetArduino();
       }
       if (direct == '@') {
@@ -2088,12 +2091,6 @@ void aboutScreen() {
       EEPROM_writeAnything(0, foldern);
     }
     if (b == 1 || b == 3 || b == 4) {
-#ifdef PC_MENU
-      if (PcLink::connected()) {
-        PcConsole.println(F("[+] Reset"));
-        delay(150);
-      }
-#endif
       resetArduino();
     }
 #elif defined(ENABLE_SERIAL)
@@ -3668,9 +3665,12 @@ selected:
   PcConsole.println(choice);
 
 #ifdef ENABLE_GLOBAL_LOG
-  println_Msg(FS(FSTRING_EMPTY));
-  print_Msg(F("[+] "));
-  println_Msg(answers[choice]);
+  // Reserve the connected console reset event for the actual restart.
+  if (!PcLink::connected() || strcmp_P(answers[choice], FSTRING_RESET) != 0) {
+    println_Msg(FS(FSTRING_EMPTY));
+    print_Msg(F("[+] "));
+    println_Msg(answers[choice]);
+  }
 #endif
 
   return choice;

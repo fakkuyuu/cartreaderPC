@@ -70,7 +70,7 @@ ID    状態       優先   分類                            件名
 046   VERIFY   P2   bug/verification/ui           PCE未挿入の全FFダンプを緑の成功表示にする
 047   VERIFY   P2   enhancement/ui                本体液晶にPCツール接続中の小さな常時目印
 048   VERIFY     P2   bug/ws/save                   WSでWrite Saveを選ぶとリセットがかかる
-051   TRIAGE   P2   bug/snes/reset                SNES SA-1のセーブ書き戻し後にメインメニューが2回出る
+051   CLOSED   P2   bug/snes/reset                SNES SA-1のセーブ書き戻し後にメインメニューが2回出る
 
 【本家修正一覧】
 ID    状態       優先   分類                            件名
@@ -1118,9 +1118,10 @@ W6: PC通信バッファ528 Bを常駐配列から、正常なハンドシェイ
 
 #051 SNES SA-1のセーブ書き戻し後にメインメニューが2回出る
 追加日時: 2026-11-08 14:13 JST
-状態: TRIAGE / P2 / bug, snes, reset
+状態: CLOSED / P2 / bug, snes, reset
 PC113実機でMOTHERではなくSUPER MARIO RPGのSRAM書戻し後にVerified OK。ユーザーはボタン押下後にメインメニューが2回出たと報告。ログ上の起動バナーは1回。
 SA-1のverifySRAM()は待機後にクロック停止・CIC/カートリセットを行い、本体も再起動する。PCログはResetting...の後にポート再オープンを示しており、DTRによる追加リセットは仮説。SA-1の既存後処理とPC側再接続は分けて調査する。
+2026-11-10 20:09 JST: PC131で再起動直前のPC通知をresetArduino()に共通化。番号メニューとの通知の重複を防止。SA-1のセーブ書き戻し後に二重リセットが解消したことを実機で確認（ユーザー報告）。
 
 #052 PC保存でROMがDB不一致でも本体が黄・Autoが緑になる
 2026-11-08 17:51 JST / VERIFY / P2
