@@ -496,7 +496,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                         answer += bytes([block_size.bit_length() - 1])
                     reply = encode(op | 0x80, seq, answer)
                     if wire.write(reply) != len(reply):
-                        raise ProtocolError("GBA 2M negotiation reply was not sent")
+                        raise ProtocolError("2M retry negotiation reply was not sent")
                     wire.flush()
                     if allowed:
                         # Preserve the old-baud ACK before changing the port, as op=17 does.
