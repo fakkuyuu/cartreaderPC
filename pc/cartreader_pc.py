@@ -438,6 +438,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     md = len(payload) == 6 and payload[5] == 12
                     enabled = False
                     block_size = 512
+                    retry_console = "SNES" if snes else "MD" if md else "GBA"
                     try:
                         settings = json.loads(TRANSFER_SETTINGS_FILE.read_text(encoding="utf-8"))
                         setting_key = "snes_retry_2m" if snes else "md_retry_2m" if md else "gba_retry_2m"
@@ -447,7 +448,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                         if type(configured) is int and configured in (256, 512, 1024):
                             block_size = configured
                         else:
-                            log(f"[{'MD' if md else 'GBA'} 2M] Invalid {size_key}; using 512 B\n")
+                            log(f"[{retry_console} 2M] Invalid {size_key}; using 512 B\\n")
                     except (OSError, ValueError, AttributeError):
                         pass
                     selectable = len(payload) == 6 and payload[5] == 0
@@ -469,7 +470,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     if allowed:
                         # Preserve the old-baud ACK before changing the port, as op=17 does.
                         time.sleep(.05)
-                        label = "SNES" if snes else "MD" if md else "GBA"
+                        label = retry_console
                         log(f"[{label} 2M] Starting CRC16 transfer with selective retransmission\n")
                         log(f"[{label} 2M] Frame size {block_size} B, reply window 8192 B\n")
                         receive_dump(wire, store, handle, length, log, stop, cancel_event,
