@@ -400,27 +400,27 @@ static bool switchRuntimeBaud(uint32_t target) {
 }
 // A raw transfer negotiated at the normal CRPC baud. CRPC sequence numbers
 // are suspended until the file is complete and both ends restore safe baud.
-static uint32_t gbaPayloadUs;
-static inline void gbaWriteByte(uint8_t byte) {
+static uint32_t retryPayloadUs;
+static inline void retryWriteByte(uint8_t byte) {
   while (!(UCSR0A & _BV(UDRE0))) {}
   UDR0 = byte;
   UCSR0A = _BV(U2X0) | _BV(TXC0);
 }
 
-static inline void gbaFlushTx() {
+static inline void retryFlushTx() {
   while (!(UCSR0A & _BV(TXC0))) {}
 }
 template <uint16_t FrameSize>
-static void sendGbaRetryFrame(uint32_t block, uint8_t round, bool end,
+static void sendRetryFrame(uint32_t block, uint8_t round, bool end,
                               void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*)) {
   uint8_t header[6];
   put32(header, block);
   header[4] = round;
   header[5] = end;
   uint16_t check = 0xffff;
-  gbaWriteByte('G'); gbaWriteByte('B'); gbaWriteByte('2'); gbaWriteByte('M');
+  retryWriteByte('G'); retryWriteByte('B'); retryWriteByte('2'); retryWriteByte('M');
   for (uint8_t byte : header) {
-    gbaWriteByte(byte);
+    retryWriteByte(byte);
     check = crc(check, byte);
   }
   if (!end) {
@@ -432,18 +432,18 @@ static void sendGbaRetryFrame(uint32_t block, uint8_t round, bool end,
         uint8_t word[2];
         readWord(word);
         for (uint8_t byte : word) {
-          gbaWriteByte(byte);
+          retryWriteByte(byte);
           check = crc(check, byte);
         }
       }
     }
-    gbaPayloadUs += micros() - payloadStart;
+    retryPayloadUs += micros() - payloadStart;
   }
-  gbaWriteByte((uint8_t)check);
-  gbaWriteByte((uint8_t)(check >> 8));
+  retryWriteByte((uint8_t)check);
+  retryWriteByte((uint8_t)(check >> 8));
 }
 
-static uint32_t gbaRetryMask(uint8_t round, bool wide) {
+static uint32_t retryMask(uint8_t round, bool wide) {
   uint8_t reply[8];
   const uint8_t size = wide ? 8 : 6;
   uint8_t received = 0;
@@ -461,7 +461,7 @@ static uint32_t gbaRetryMask(uint8_t round, bool wide) {
   return mask;
 }
 
-static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
+static bool retryTransfer2M(uint8_t handle, uint32_t length,
                              void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
                              uint8_t profile, void (*roundStarted)(uint8_t)) {
   data[0] = handle;
@@ -470,8 +470,8 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
   if (call(30, 6) != 2 || data[0]) return false;
   const uint8_t frameShift = data[1];
   if (frameShift < 8 || frameShift > 10) stop();
-  const auto sendFrame = frameShift == 8 ? sendGbaRetryFrame<256> :
-                         frameShift == 9 ? sendGbaRetryFrame<512> : sendGbaRetryFrame<1024>;
+  const auto sendFrame = frameShift == 8 ? sendRetryFrame<256> :
+                         frameShift == 9 ? sendRetryFrame<512> : sendRetryFrame<1024>;
   const uint8_t window = 8192U >> frameShift;
   const bool wide = window > 16;
 
@@ -487,12 +487,12 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
   while (!Serial.available()) {
     if (millis() - readyStarted >= 3000UL) stop();
     sendFrame(0xffffffffUL, 0xff, true, beginBlock, readWord);
-    gbaFlushTx();
+    retryFlushTx();
     const uint32_t sent = millis();
     while (!Serial.available() && millis() - sent < 100UL) {}
   }
-  if (gbaRetryMask(0xff, wide) != 0) stop();
-  gbaPayloadUs = 0;
+  if (retryMask(0xff, wide) != 0) stop();
+  retryPayloadUs = 0;
   uint32_t replyUs = 0;
   const uint32_t streamStart = micros();
   const uint32_t blocks = length >> frameShift;
@@ -507,9 +507,9 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
         if (mask & (1UL << i)) sendFrame(first + i, round, false, beginBlock, readWord);
       }
       sendFrame(first, round, true, beginBlock, readWord);
-      gbaFlushTx();
+      retryFlushTx();
       const uint32_t replyStart = micros();
-      mask = gbaRetryMask(round, wide);
+      mask = retryMask(round, wide);
       replyUs += micros() - replyStart;
       if (mask & ~validMask) stop();
     }
@@ -521,7 +521,7 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
   activeBaud = safeBaud;
   delay(100);
   PcConsole.print(profile == 12 ? F("[MD 2M profile] payload_us=") : profile == 11 ? F("[SNES 2M profile] payload_us=") : F("[GBA 2M profile] payload_us="));
-  PcConsole.print(gbaPayloadUs);
+  PcConsole.print(retryPayloadUs);
   PcConsole.print(F(" reply_us="));
   PcConsole.print(replyUs);
   PcConsole.print(F(" stream_us="));
@@ -824,7 +824,7 @@ void PcFsFile::checkpointFrame(uint32_t expectedEnd) {
 bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
                            uint8_t profile, void (*roundStarted)(uint8_t)) {
   if (!writable || !handle || pos || !length || length % 512) return false;
-  if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, profile, roundStarted)) return false;
+  if (!PcLink::retryTransfer2M(handle, length, beginBlock, readWord, profile, roundStarted)) return false;
   pos = size = length;
   return true;
 }
