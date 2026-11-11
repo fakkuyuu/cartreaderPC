@@ -1589,6 +1589,38 @@ static void readSrtcRetryWord_SNES(uint8_t* output) {
   }
 }
 
+
+static void writeSnesRegister_SNES(word address, byte value) {
+  dataOut();
+  controlOut_SNES();
+  writeBank_SNES(0, address, value);
+  dataIn();
+  controlIn_SNES();
+}
+
+// S-DD1's legacy reader selects one 1 MiB ROM page in the F0-FF window
+// using SOMap ($4807), then reads all sixteen 64 KiB banks from that page.
+static uint16_t sdd1RetryAddress;
+static uint8_t sdd1RetryMap = 0xff;
+static void beginSdd1Retry_SNES(uint32_t offset) {
+  const uint8_t map = (uint8_t)(offset >> 20);
+  if (map != sdd1RetryMap) {
+    writeSnesRegister_SNES(0x4807, map);
+    sdd1RetryMap = map;
+  }
+  PORTL = (uint8_t)(0xF0U + ((offset >> 16) & 0x0fU));
+  sdd1RetryAddress = (uint16_t)offset;
+}
+static void readSdd1RetryWord_SNES(uint8_t* output) {
+  for (uint8_t i = 0; i < 2; ++i) {
+    const uint16_t address = sdd1RetryAddress++;
+    PORTF = (uint8_t)address;
+    PORTK = (uint8_t)(address >> 8);
+    NOP; NOP; NOP; NOP; NOP; NOP;
+    output[i] = PINC;
+  }
+}
+
 void readROM_SNES() {
   // Set control
   dataIn();
@@ -1737,6 +1769,25 @@ void readROM_SNES() {
       dataIn();
       controlIn_SNES();
     }
+  }
+
+  // S-DD1: restore the selected 1 MiB SOMap page whenever a retry chunk
+  // is read, so a frame does not depend on the previously selected page.
+  if (romType == HI && (romChips == 67 || romChips == 69) &&
+      (numBanks == 64 || numBanks == 96)) {
+    controlIn_SNES();
+    const byte originalSOMap = readBank_SNES(0, 0x4807);
+    sdd1RetryMap = 0xff;
+    const bool transferred = myFile.romRetry2M(
+        (uint32_t)numBanks * 65536UL,
+        beginSdd1Retry_SNES, readSdd1RetryWord_SNES, true);
+    if (transferred) {
+      writeSnesRegister_SNES(0x4807, originalSOMap);
+      sdd1RetryMap = originalSOMap;
+      myFile.close();
+      return;
+    }
+    sdd1RetryMap = originalSOMap;
   }
 
   // Dump SDD1 High-type ROM
