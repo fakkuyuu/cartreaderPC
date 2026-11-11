@@ -398,6 +398,135 @@ static bool switchRuntimeBaud(uint32_t target) {
   activeBaud=target;
   return true;
 }
+// A raw transfer negotiated at the normal CRPC baud. CRPC sequence numbers
+// are suspended until the file is complete and both ends restore safe baud.
+static uint32_t gbaPayloadUs;
+static inline void gbaWriteByte(uint8_t byte) {
+  while (!(UCSR0A & _BV(UDRE0))) {}
+  UDR0 = byte;
+  UCSR0A = _BV(U2X0) | _BV(TXC0);
+}
+
+static inline void gbaFlushTx() {
+  while (!(UCSR0A & _BV(TXC0))) {}
+}
+template <uint16_t FrameSize>
+static void sendGbaRetryFrame(uint32_t block, uint8_t round, bool end,
+                              void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*)) {
+  uint8_t header[6];
+  put32(header, block);
+  header[4] = round;
+  header[5] = end;
+  uint16_t check = 0xffff;
+  gbaWriteByte('G'); gbaWriteByte('B'); gbaWriteByte('2'); gbaWriteByte('M');
+  for (uint8_t byte : header) {
+    gbaWriteByte(byte);
+    check = crc(check, byte);
+  }
+  if (!end) {
+    const uint32_t address = block * FrameSize;
+    const uint32_t payloadStart = micros();
+    for (uint16_t offset = 0; offset < FrameSize; offset += 512) {
+      beginBlock(address + offset);
+      for (uint16_t wordIndex = 0; wordIndex < (FrameSize < 512 ? FrameSize : 512) / 2; ++wordIndex) {
+        uint8_t word[2];
+        readWord(word);
+        for (uint8_t byte : word) {
+          gbaWriteByte(byte);
+          check = crc(check, byte);
+        }
+      }
+    }
+    gbaPayloadUs += micros() - payloadStart;
+  }
+  gbaWriteByte((uint8_t)check);
+  gbaWriteByte((uint8_t)(check >> 8));
+}
+
+static uint32_t gbaRetryMask(uint8_t round, bool wide) {
+  uint8_t reply[8];
+  const uint8_t size = wide ? 8 : 6;
+  uint8_t received = 0;
+  uint32_t started = millis();
+  while (received < size && millis() - started < 3000UL) {
+    int value = Serial.read();
+    if (value >= 0) reply[received++] = (uint8_t)value;
+  }
+  if (received != size || reply[0] != 0xA7 || reply[1] != round) stop();
+  uint16_t check = 0xffff;
+  for (uint8_t i = 0; i < size - 2; ++i) check = crc(check, reply[i]);
+  if (check != (uint16_t)(reply[size - 2] | ((uint16_t)reply[size - 1] << 8))) stop();
+  uint32_t mask = reply[2] | ((uint32_t)reply[3] << 8);
+  if (wide) mask |= ((uint32_t)reply[4] << 16) | ((uint32_t)reply[5] << 24);
+  return mask;
+}
+
+static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
+                             void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes) {
+  data[0] = handle;
+  put32(data + 1, length);
+  data[5] = snes ? 11 : 0; // Distinguish LoROM from GBA negotiation.
+  if (call(30, 6) != 2 || data[0]) return false;
+  const uint8_t frameShift = data[1];
+  if (frameShift < 8 || frameShift > 10) stop();
+  const auto sendFrame = frameShift == 8 ? sendGbaRetryFrame<256> :
+                         frameShift == 9 ? sendGbaRetryFrame<512> : sendGbaRetryFrame<1024>;
+  const uint8_t window = 8192U >> frameShift;
+  const bool wide = window > 16;
+
+  Serial.flush();
+  delay(100);
+  Serial.end();
+  Serial.begin(2000000UL);
+  activeBaud = 2000000UL;
+  delay(100);
+  // Do not start reading the cartridge until the host has received a
+  // CRC-checked marker at the new baud and acknowledged it.
+  const uint32_t readyStarted = millis();
+  while (!Serial.available()) {
+    if (millis() - readyStarted >= 3000UL) stop();
+    sendFrame(0xffffffffUL, 0xff, true, beginBlock, readWord);
+    gbaFlushTx();
+    const uint32_t sent = millis();
+    while (!Serial.available() && millis() - sent < 100UL) {}
+  }
+  if (gbaRetryMask(0xff, wide) != 0) stop();
+  gbaPayloadUs = 0;
+  uint32_t replyUs = 0;
+  const uint32_t streamStart = micros();
+  const uint32_t blocks = length >> frameShift;
+  for (uint32_t first = 0; first < blocks; first += window) {
+    uint8_t count = min((uint32_t)window, blocks - first);
+    const uint32_t validMask = 0xffffffffUL >> (32 - count);
+    uint32_t mask = validMask;
+    for (uint8_t round = 0; mask; ++round) {
+      if (round >= 10) stop();
+      for (uint8_t i = 0; i < count; ++i) {
+        if (mask & (1UL << i)) sendFrame(first + i, round, false, beginBlock, readWord);
+      }
+      sendFrame(first, round, true, beginBlock, readWord);
+      gbaFlushTx();
+      const uint32_t replyStart = micros();
+      mask = gbaRetryMask(round, wide);
+      replyUs += micros() - replyStart;
+      if (mask & ~validMask) stop();
+    }
+  }
+  const uint32_t streamUs = micros() - streamStart;
+  delay(150);
+  Serial.end();
+  Serial.begin(safeBaud);
+  activeBaud = safeBaud;
+  delay(100);
+  PcConsole.print(F("[GBA 2M profile] payload_us="));
+  PcConsole.print(gbaPayloadUs);
+  PcConsole.print(F(" reply_us="));
+  PcConsole.print(replyUs);
+  PcConsole.print(F(" stream_us="));
+  PcConsole.println(streamUs);
+  return true;
+}
+
 bool enterDumpBaud() { return switchRuntimeBaud(dumpBaud); }
 bool leaveDumpBaud() { return switchRuntimeBaud(safeBaud); }
 bool connected() { return started; }
@@ -560,7 +689,7 @@ bool benchmarkOne(uint8_t index, uint32_t& candidate) {
   activeBaud = candidate;
   return true;
 }
-void transmitTest() {
+void transmitTest(bool test2M) {
   if(!connected()) return;
   PcSdFs fs;
   strcpy_P((char*)sdBuffer,PSTR("/__diagnostics__"));
@@ -577,6 +706,11 @@ void transmitTest() {
   // Reuse the cartridge block buffer; no extra SRAM and no cartridge access.
   for(uint16_t i=0;i<512;i++) sdBuffer[i]=(uint8_t)i;
   PcConsole.println(F("[TX test] starting 1048576 bytes"));
+  const uint32_t configuredDumpBaud = dumpBaud;
+  if(test2M) {
+    PcConsole.println(F("[TX test] diagnostic 2M"));
+    dumpBaud = 2000000UL;
+  }
   if(!enterDumpBaud()) stop();
   uint32_t startedUs=micros();
   for(uint16_t block=0;block<2048;block++) file.write(sdBuffer,512);
@@ -585,6 +719,7 @@ void transmitTest() {
   uint32_t transferUs=micros()-startedUs;
   // Close checks the complete pattern on the host and returns to safe baud.
   file.close();
+  dumpBaud = configuredDumpBaud;
   PcConsole.print(F("[TX test] transfer_us=")); PcConsole.println(transferUs);
   PcConsole.println(F("[TX test] complete"));
 }
@@ -684,6 +819,13 @@ void PcFsFile::checkpointFrame(uint32_t expectedEnd) {
     if(cancelled) PcLink::cancelRequested=true;
   }
 }
+bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes) {
+  if (!writable || !handle || pos || !length || length % 512) return false;
+  if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, snes)) return false;
+  pos = size = length;
+  return true;
+}
+
 void PcFsFile::close() {
   if(!handle) return;
   flush();

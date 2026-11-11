@@ -1006,10 +1006,22 @@ static void prefetchWordGBA(uint8_t* output) {
   output[0]=lower;
   output[1]=upper;
 }
+static void beginRetryBlock_GBA(uint32_t byteAddress) {
+  const uint32_t wordAddress = byteAddress >> 1;
+  prefetchLowGBA = (uint8_t)wordAddress;
+  prefetchMidGBA = (uint8_t)(wordAddress >> 8);
+  prefetchHighGBA = (uint8_t)(wordAddress >> 16);
+}
+
 // Dump ROM
 void readROM_GBA() {
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("GBA", "ROM", romName, "gba");
+  const bool needsPadding = cartSize == 0x2000000 && (saveType == 1 || saveType == 2);
+  if (!needsPadding && myFile.romRetry2M(cartSize, beginRetryBlock_GBA, prefetchWordGBA)) {
+    myFile.close();
+    return;
+  }
   PcLink::profileBegin();
 
   //Initialize progress bar

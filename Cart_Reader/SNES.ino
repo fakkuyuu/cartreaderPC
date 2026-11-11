@@ -1499,6 +1499,22 @@ boolean compare_checksum() {
 }
 
 // Read rom to SD card
+static uint16_t loRomRetryAddress;
+static void beginLoRomRetry_SNES(uint32_t offset) {
+  PORTL = (uint8_t)(offset >> 15);
+  loRomRetryAddress = 0x8000 | (offset & 0x7fff);
+}
+
+static void readLoRomRetryWord_SNES(uint8_t* output) {
+  for (uint8_t i = 0; i < 2; ++i) {
+    const uint16_t address = loRomRetryAddress++;
+    PORTF = (uint8_t)address;
+    PORTK = (uint8_t)(address >> 8);
+    NOP; NOP; NOP; NOP; NOP; NOP;
+    output[i] = PINC;
+  }
+}
+
 void readROM_SNES() {
   // Set control
   dataIn();
@@ -1506,6 +1522,14 @@ void readROM_SNES() {
 
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("SNES", "ROM", romName, "sfc");
+
+  // Ordinary LoROM only. The full existing path handles unusual bank maps.
+  if (romType == LO && romChips <= 2 && numBanks > 0 && numBanks <= 64 &&
+      myFile.romRetry2M((uint32_t)numBanks * 32768UL,
+                       beginLoRomRetry_SNES, readLoRomRetryWord_SNES, true)) {
+    myFile.close();
+    return;
+  }
 
   //Dump Derby Stallion '96 (Japan) and Sound Novel Tsukuru (Japan) - Actual Size is 24Mb
   if ((romType == LO) && (numBanks == 96) && ((strcmp("CC86", checksumStr) == 0) || (strcmp("A77B", checksumStr) == 0))) {

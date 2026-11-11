@@ -270,6 +270,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
     transfer_block = load_transfer_block()
     checkpoint_kib = load_checkpoint_kib()
     store = None
+    tx2m = None
     try:
         # A manual connection pulses DTR so a reader already in standalone
         # mode reboots into PC mode.  After a menu/benchmark reset, the reader
@@ -335,6 +336,8 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     time.sleep(.01)
                     continue
                 if not wire.in_waiting:
+                    if tx2m is not None and time.monotonic() >= tx2m["deadline"]:
+                        raise TimeoutError("no diagnostic frame received for 5 seconds")
                     if pending_baud and time.monotonic() >= pending_baud[2]:
                         failed, previous, recovery_base, switched = pending_baud
                         wire.baudrate = previous
@@ -419,7 +422,68 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                 if last_seq is not None and seq != ((last_seq + 1) & 0xffff):
                     raise ValueError("unexpected sequence/reset; reconnect reader")
                 last_seq = seq
+                if op == 13 and b"[TX test] diagnostic 2M" in payload:
+                    tx2m = {"bytes": 0, "frames": 0, "checkpoints": 0,
+                            "phase": "waiting for baud switch",
+                            "deadline": time.monotonic() + 5}
+                if tx2m is not None:
+                    tx2m["deadline"] = time.monotonic() + 5
+                    if op == 25:
+                        tx2m["phase"] = "checkpoint"
+                    elif op == 3:
+                        tx2m["phase"] = "file close / pattern verification"
+                if op == 30:
+                    from gba_retry import receive_dump
+                    snes = len(payload) == 6 and payload[5] == 11
+                    enabled = False
+                    block_size = 512
+                    try:
+                        settings = json.loads(TRANSFER_SETTINGS_FILE.read_text(encoding="utf-8"))
+                        enabled = settings.get("snes_retry_2m" if snes else "gba_retry_2m") is True
+                        configured = settings.get("gba_2m_frame_size", 512)
+                        if type(configured) is int and configured in (256, 512, 1024):
+                            block_size = configured
+                        else:
+                            log("[GBA 2M] Invalid gba_2m_frame_size; using 512 B\n")
+                    except (OSError, ValueError, AttributeError):
+                        pass
+                    selectable = len(payload) == 6 and payload[5] == 0
+                    legacy = len(payload) == 6 and payload[5] == 9
+                    if legacy or snes:
+                        block_size = 512
+                    handle = payload[0] if selectable or legacy or snes else 0
+                    length = int.from_bytes(payload[1:5], "little")
+                    entry = store.handles.get(handle)
+                    allowed = bool(enabled and entry and entry["write"]
+                                   and 0 < length <= 32 * 1024**2 and length % block_size == 0)
+                    answer = bytes([not allowed])
+                    if allowed and (selectable or snes):
+                        answer += bytes([block_size.bit_length() - 1])
+                    reply = encode(op | 0x80, seq, answer)
+                    if wire.write(reply) != len(reply):
+                        raise ProtocolError("GBA 2M negotiation reply was not sent")
+                    wire.flush()
+                    if allowed:
+                        # Preserve the old-baud ACK before changing the port, as op=17 does.
+                        time.sleep(.05)
+                        label = "SNES" if snes else "GBA"
+                        log(f"[{label} 2M] Starting CRC16 transfer with selective retransmission\n")
+                        log(f"[{label} 2M] Frame size {block_size} B, reply window 8192 B\n")
+                        receive_dump(wire, store, handle, length, log, stop, cancel_event,
+                                     block_size, 8192 // block_size, label)
+                    continue
                 response = store.dispatch(op, payload)
+                if tx2m is not None:
+                    if op in (3, 17, 25) and response[0]:
+                        raise OSError(f"diagnostic request rejected (op={op})")
+                    if op == 22 and not response[0]:
+                        tx2m["frames"] += 1
+                        tx2m["bytes"] += len(payload) - 5
+                        tx2m["phase"] = "waiting for stream or checkpoint"
+                    elif op == 25:
+                        tx2m["checkpoints"] += 1
+                    elif op == 13 and b"[TX test] complete" in payload:
+                        tx2m = None
                 if response[0] and op == 22:
                     raise OSError("streamed host file write failed; transfer stopped")
                 if pending_baud and op == 13 and b"[Benchmark] stable baud=" in payload:
@@ -458,10 +522,17 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                         log(f"[Baud] USB serial driver rejected {requested}: {exc}\n")
                     runtime_switch = len(payload) == 5 and payload[4] == 1
                     if runtime_switch:
+                        if tx2m is not None:
+                            tx2m["phase"] = f"baud switch to {requested}"
+                            if not switched:
+                                raise OSError(f"USB serial driver rejected {requested}")
+                            tx2m["phase"] = ("waiting for first stream frame" if requested == 2000000
+                                             else "waiting for completion at normal baud")
                         pending_baud = None
                         if host_state is not None:
                             host_state["runtime_baud"] = requested
-                        log(f"[Baud] runtime switched to {requested}\n")
+                        if tx2m is None:
+                            log(f"[Baud] runtime switched to {requested}\n")
                     else:
                         # Reader needs up to 2.5 seconds to time out at the rejected
                         # speed, then 300 ms to restore the previous speed.
@@ -470,6 +541,11 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     raise OSError("fatal host file error; transfer stopped")
         finally:
             wire.close()
+    except (OSError, ValueError, ProtocolError, serial.SerialException) as exc:
+        if tx2m is not None:
+            log(f"[TX test] 2M FAILED: {tx2m['phase']}; received {tx2m['bytes']} bytes "
+                f"in {tx2m['frames']} frames; {tx2m['checkpoints']} checkpoints; {exc}\n")
+        raise
     finally:
         if store is not None:
             incomplete = store.shutdown()
@@ -516,7 +592,7 @@ def gui(args):
     _saved_lang = ui_settings.get("language", "English")
     language = tk.StringVar(value="Japanese" if _saved_lang in ("日本語", "JAPANESE") else _saved_lang)
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC129 — Disconnected")
+    window.title("cartreaderPC PC133 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -1497,7 +1573,7 @@ def gui(args):
                 set_storage_state("PC", desired if desired != "PC" else None)
             if version_match:
                 window.title(
-                    f"cartreaderPC PC129 — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC133 — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1577,7 +1653,7 @@ def gui(args):
                 power_on.disconnected()
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC129 — Disconnected")
+                window.title("cartreaderPC PC133 — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")
@@ -1928,17 +2004,23 @@ def gui(args):
 
     port.trace_add("write", refresh_benchmark_hint)
     refresh_benchmark_hint()
-    def request_transmit_test():
+    def request_transmit_test(test_2m=False):
         if (not (worker and worker.is_alive()) or not input_ready.get()
                 or input_mode.get() != "menu" or sd_browser["busy"]
                 or benchmark["index"] is not None):
             inbox.put("[TX test] wait for a numbered menu before starting\n")
             return
-        inbox.put("[TX test] requested\n")
-        send_key("T")
+        firmware = re.search(r"firmware V\S+-PC(\d+)\b", window.title())
+        if test_2m and (firmware is None or int(firmware.group(1)) < 132):
+            inbox.put("[TX test] 2M requires firmware PC132 or newer\n")
+            return
+        inbox.put("[TX test] 2M requested\n" if test_2m else "[TX test] requested\n")
+        send_key("Y" if test_2m else "T")
     diagnostic_log = tk.BooleanVar(value=False)
     diagnostic_menu = tk.Menu(window, tearoff=False)
     diagnostic_menu.add_command(label="転送試験 1MiB", command=request_transmit_test)
+    diagnostic_menu.add_command(label="転送試験 1MiB (2M)",
+                                command=lambda: request_transmit_test(test_2m=True))
     diagnostic_menu.add_checkbutton(label="詳細ログを表示", variable=diagnostic_log)
     diagnostic_button = ttk.Menubutton(row, text="診断", menu=diagnostic_menu)
     diagnostic_button.pack(side="left")

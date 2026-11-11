@@ -3377,8 +3377,8 @@ redraw:
     // endings left by the PC entry box.
     if (PcConsole.available()) {
       char incomingByte = PcConsole.read();
-      if (incomingByte == 'T') {
-        PcLink::transmitTest();
+      if (incomingByte == 'T' || incomingByte == 'Y') {
+        PcLink::transmitTest(incomingByte == 'Y');
         PcLink::menuReady();
         continue;
       }
