@@ -1454,14 +1454,14 @@ static uint16_t md2mChecksum = 0;
 static uint16_t md2mBlockChecksums[16];
 static void beginMd2mBlock(uint32_t byteAddress) {
   md2mChecksumSlot = (byteAddress >> 9) & 0x0F;
-  // If this 512-byte frame is being retried, replace its prior contribution.
+  // If this 512-byte frame is retried, replace its previous checksum sum.
   md2mChecksum -= md2mBlockChecksums[md2mChecksumSlot];
   md2mBlockChecksums[md2mChecksumSlot] = 0;
   md2mWordAddress = byteAddress >> 1;
 }
 static void md2mRoundStarted(uint8_t round) {
-  // A new 16-frame window starts at round zero. Retries keep sums for
-  // already accepted frames so a retried frame can replace its own sum.
+  // A new 16-frame window starts at round zero. Keep accepted-frame sums
+  // during retries so a retransmitted frame replaces only its own sum.
   if (round == 0) memset(md2mBlockChecksums, 0, sizeof(md2mBlockChecksums));
 }
 static void readMd2mWord(uint8_t* output) {
@@ -1536,7 +1536,7 @@ void readROM_MD() {
   bool md2mTransferred = false;
 
   // Only ordinary MD ROMs use the CRC-checked 2 Mbps retry stream.
-  // Mapper/clock-sensitive cartridges keep the original read implementation.
+  // Mapper/clock-sensitive cartridges retain the original reader path.
   const bool md2mEligible = PcLink::usingPcStorage() && myFile.isPc()
                             && !is32x && !isSVP && SnKmode == 0
                             && cartSize <= 0x400000;
@@ -1812,7 +1812,7 @@ void readROM_MD() {
       draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
-  } // End of the original reader path when the MD 2 Mbps profile is not enabled.
+  } // End of the original reader path when the MD 2 Mbps profile is unavailable.
   if (md2mTransferred) {
     processedProgressBar = totalProgressBar;
     draw_progressbar(processedProgressBar, totalProgressBar);
