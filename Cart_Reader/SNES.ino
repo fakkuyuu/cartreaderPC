@@ -1740,7 +1740,7 @@ void readROM_SNES() {
 
     const bool transferred = myFile.romRetry2M(
         (uint32_t)numBanks * 32768UL,
-        beginExtendedLoRomRetry_SNES, readLoRomRetryWord_SNES, true);
+        beginExtendedLoRomRetry_SNES, readLoRomRetryWord_SNES, true, isCx4 || loRomRetryLayout != 0);
     loRomRetryLayout = 0;
 
     if (isCx4) {
@@ -1833,7 +1833,7 @@ void readROM_SNES() {
     sdd1RetryMap = 0xff;
     const bool transferred = myFile.romRetry2M(
         (uint32_t)numBanks * 65536UL,
-        beginSdd1Retry_SNES, readSdd1RetryWord_SNES, true);
+        beginSdd1Retry_SNES, readSdd1RetryWord_SNES, true, true);
     if (transferred) {
       writeSnesRegister_SNES(0x4807, originalSOMap);
       sdd1RetryMap = originalSOMap;
@@ -1888,7 +1888,7 @@ void readROM_SNES() {
 
     const bool transferred = myFile.romRetry2M(
         (uint32_t)numBanks * 65536UL,
-        beginSpc7110Retry_SNES, readSpc7110RetryWord_SNES, true);
+        beginSpc7110Retry_SNES, readSpc7110RetryWord_SNES, true, true);
     if (spc7110RetryMode != 0xff) {
       // Restore every mapping register to the value present before dumping.
       writeSnesRegister_SNES(0x4831, spc7110OriginalDMap);
@@ -1965,7 +1965,7 @@ void readROM_SNES() {
   // ExHiROM: preserve the legacy C0-FF, then 00-xx physical bank order.
   if (romType == EX && numBanks > 0 && numBanks <= 128 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
-                       beginExHiRomRetry_SNES, readExHiRomRetryWord_SNES, true)) {
+                       beginExHiRomRetry_SNES, readExHiRomRetryWord_SNES, true, true)) {
     myFile.close();
     return;
   }
@@ -1975,7 +1975,7 @@ void readROM_SNES() {
   if (romType == HI && romChips == 85) {
     const uint32_t srtcBanks = (numBanks < 64) ? 64UL : (uint32_t)numBanks;
     if (myFile.romRetry2M(srtcBanks * 65536UL,
-                          beginSrtcRetry_SNES, readSrtcRetryWord_SNES, true)) {
+                          beginSrtcRetry_SNES, readSrtcRetryWord_SNES, true, true)) {
       myFile.close();
       return;
     }

@@ -52,12 +52,15 @@ def receive_window(wire, first, count, round_number, blocks, stop, cancel, block
     return received, False
 
 
-def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512, window=16, label="GBA"):
+def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512, window=16, label="GBA", *, expected_block=None):
+    if expected_block is not None and len(expected_block) != block_size:
+        raise ValueError("benchmark pattern must match the frame size")
     previous_baud, previous_timeout = wire.baudrate, wire.timeout
     started = time.perf_counter()
     resends = 0
     first = round_number = received = committed = 0
     ended = False
+    stars = -1
     mask_format = "<BBI" if window > 16 else "<BBH"
     phase = "setting 2000000 baud"
     try:
@@ -77,6 +80,9 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
         if wire.write(ready) != len(ready):
             raise ProtocolError("GBA 2M ready acknowledgement was not sent")
         log(f"[{label} 2M] Reader confirmed at 2000000 baud\n")
+        if expected_block is None:
+            log("[")
+            stars = 0
         total = length // block_size
         for first in range(0, total, window):
             count = min(window, total - first)
@@ -92,7 +98,10 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
                 if not mask:
                     phase = "writing validated blocks"
                     for index in range(first, first + count):
-                        payload = struct.pack("<BI", handle, index * block_size) + blocks[index]
+                        block = blocks[index]
+                        if expected_block is not None and block != expected_block:
+                            raise ProtocolError(f"2M benchmark data mismatch at block {index}")
+                        payload = struct.pack("<BI", handle, index * block_size) + block
                         if store.dispatch(22, payload) != struct.pack("<BH", 0, block_size):
                             raise ProtocolError(f"GBA 2M file write failed at block {index}")
                         committed += block_size
@@ -102,12 +111,19 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
                 if wire.write(request) != len(request):
                     raise ProtocolError("GBA 2M retry request was not sent")
                 if not mask:
+                    if expected_block is None:
+                        completed_stars = committed * 19 // length
+                        if completed_stars > stars:
+                            log("*" * (completed_stars - stars))
+                            stars = completed_stars
                     break
                 resends += mask.bit_count()
         phase = "flushing the last reply"
         wire.flush()
         time.sleep(0.04)
     except Exception as exc:
+        if stars >= 0:
+            log("\n")
         log(f"[{label} 2M] Failed while {phase}: {type(exc).__name__}: {exc}; "
             f"window_start={first}, round={round_number}, received={received}, "
             f"end_marker={ended}, saved={committed}\n")
@@ -115,5 +131,9 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
     finally:
         wire.baudrate = previous_baud
         wire.timeout = previous_timeout
+    elapsed = time.perf_counter() - started
+    if expected_block is None:
+        log("]\n")
     log(f"[{label} 2M] Validated {length} bytes, retransmitted {resends} blocks, "
-        f"{time.perf_counter() - started:.3f} s\n")
+        f"{elapsed:.3f} s\n")
+    return elapsed, resends

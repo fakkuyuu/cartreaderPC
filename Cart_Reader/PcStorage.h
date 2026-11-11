@@ -42,7 +42,7 @@ void resetAfterHostLoss();
 bool detachToPhysical();
 uint32_t benchmark();
 bool benchmarkOne(uint8_t index, uint32_t& baud);
-void transmitTest(bool test2M);
+void transmitTest(bool test2M, bool compareRetry = false);
 // Used only around a full aligned ROM write. Checkpoint replies use bytes 0..5;
 // the next cartridge block occupies data[16..527] until finishPrefetch().
 void preparePrefetch(void (*readWord)(uint8_t*));
@@ -77,7 +77,8 @@ class PcFsFile : public Stream {
   void flush();
   bool sync() { flush(); return true; }
   operator bool() const { return handle != 0; }
-  bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes = false);
+  bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes = false, bool experimental = false);
+  void benchmarkRetry(void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), uint32_t& elapsed);
   bool isOpen() const { return handle != 0; }
   bool isDir() const { return kind & 1; }
   bool isFile() const { return handle && !isDir(); }
@@ -131,8 +132,8 @@ class HybridFsFile : public Stream {
   operator bool() const;
   bool isOpen() const; bool isDir() const; bool isFile() const; bool isHidden() const;
   bool isPc() const { return pc; }
-  bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes = false) {
-    return pc && remote.romRetry2M(length, beginBlock, readWord, snes);
+  bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes = false, bool experimental = false) {
+    return pc && remote.romRetry2M(length, beginBlock, readWord, snes, experimental);
   }
   uint32_t fileSize() const; uint32_t curPosition() const; uint32_t position() const;
   int available() override; int read() override; int peek() override; int read(void* dst, size_t n);

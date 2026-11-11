@@ -462,10 +462,11 @@ static uint32_t gbaRetryMask(uint8_t round, bool wide) {
 }
 
 static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
-                             void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes) {
+                             void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
+                             uint8_t mode, uint32_t* measuredUs = nullptr) {
   data[0] = handle;
   put32(data + 1, length);
-  data[5] = snes ? 11 : 0; // Distinguish LoROM from GBA negotiation.
+  data[5] = mode;
   if (call(30, 6) != 2 || data[0]) return false;
   const uint8_t frameShift = data[1];
   if (frameShift < 8 || frameShift > 10) stop();
@@ -513,6 +514,7 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
     }
   }
   const uint32_t streamUs = micros() - streamStart;
+  if (measuredUs) *measuredUs = streamUs;
   delay(150);
   Serial.end();
   Serial.begin(safeBaud);
@@ -689,7 +691,14 @@ bool benchmarkOne(uint8_t index, uint32_t& candidate) {
   activeBaud = candidate;
   return true;
 }
-void transmitTest(bool test2M) {
+static uint8_t benchmarkByte;
+static void beginBenchmarkBlock(uint32_t offset) { benchmarkByte = offset; }
+static void readBenchmarkWord(uint8_t* word) {
+  word[0] = benchmarkByte++;
+  word[1] = benchmarkByte++;
+}
+
+void transmitTest(bool test2M, bool compareRetry) {
   if(!connected()) return;
   PcSdFs fs;
   strcpy_P((char*)sdBuffer,PSTR("/__diagnostics__"));
@@ -720,6 +729,17 @@ void transmitTest(bool test2M) {
   // Close checks the complete pattern on the host and returns to safe baud.
   file.close();
   dumpBaud = configuredDumpBaud;
+  if (compareRetry) {
+    strcpy_P((char*)sdBuffer,PSTR("/__diagnostics__/tx-test.crpctest"));
+    if (!file.open((char*)sdBuffer,O_WRITE|O_CREAT|O_TRUNC)) return;
+    uint32_t retryUs = 0;
+    file.benchmarkRetry(beginBenchmarkBlock, readBenchmarkWord, retryUs);
+    file.close();
+    PcConsole.print(F("[Benchmark] retry comparison "));
+    PcConsole.print(transferUs);
+    PcConsole.print(' ');
+    PcConsole.println(retryUs);
+  }
   PcConsole.print(F("[TX test] transfer_us=")); PcConsole.println(transferUs);
   PcConsole.println(F("[TX test] complete"));
 }
@@ -819,11 +839,17 @@ void PcFsFile::checkpointFrame(uint32_t expectedEnd) {
     if(cancelled) PcLink::cancelRequested=true;
   }
 }
-bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes) {
+bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes, bool experimental) {
   if (!writable || !handle || pos || !length || length % 512) return false;
-  if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, snes)) return false;
+  if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, experimental ? 13 : snes ? 11 : 0)) return false;
   pos = size = length;
   return true;
+}
+
+void PcFsFile::benchmarkRetry(void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), uint32_t& elapsed) {
+  const uint32_t length = 1048576UL;
+  if (PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, 12, &elapsed))
+    pos = size = length;
 }
 
 void PcFsFile::close() {
