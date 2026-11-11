@@ -1019,13 +1019,15 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
     uint8_t b = 0;
     while (1) {
 #ifdef PC_MENU
+#ifdef ENABLE_NES
       // Safe NES-only escape from the database candidate browser.
       // Transfer and flash routines never read commands in this loop.
       if (mode == CORE_NES && PcConsole.available() && PcConsole.peek() == '!') {
         PcConsole.read();
         resetArduino();
       }
-#endif
+#endif  // ENABLE_NES
+#endif  // PC_MENU
       // Check button input
       b = standaloneCandidate(3) ? 3 : checkButton();
 
@@ -1091,9 +1093,11 @@ void pcPhysicalControlsReady() {
 void pcAlphabetReady(byte index, const char* databaseName) {
   standaloneError();
 #ifdef PC_MENU
+#ifdef ENABLE_NES
   // Capability marker: older firmware must not receive the '!' escape.
   if (mode == CORE_NES)
     PcConsole.println(F("[Control] nes-reset-supported"));
+#endif  // ENABLE_NES
   PcConsole.print(F("[Control] alphabet\t"));
   PcConsole.print(index);
   PcConsole.print('\t');
@@ -1269,11 +1273,13 @@ byte starting_letter(const char* databaseName) {
     // avoids the reader scanning from A to Z over the serial filesystem.
     if (PcConsole.available()) {
       char direct = PcConsole.peek();
+#ifdef ENABLE_NES
       // One-command NES return to the system menu on manual alphabet screen.
       if (mode == CORE_NES && direct == '!') {
         PcConsole.read();
         resetArduino();
       }
+#endif  // ENABLE_NES
       if (direct == '@') {
         PcConsole.read();
         char encoded[9];
