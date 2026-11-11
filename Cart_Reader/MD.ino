@@ -1479,6 +1479,11 @@ void readROM_MD() {
   if (SnKmode == 3) totalProgressBar += (uint32_t)cartSizeSonic2;
   draw_progressbar(0, totalProgressBar);
 
+  // Measure cartridge read/loop time separately from storage writes.
+  uint32_t mdReadLoopMicros = 0;
+  uint32_t mdFileWriteMicros = 0;
+  uint32_t mdSegmentStart = micros();
+
   for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
     // Blink led
     if (currBuffer % 16384 == 0)
@@ -1585,7 +1590,11 @@ void readROM_MD() {
       }
       d += 2;
       if (d == 512) {
+        mdReadLoopMicros += micros() - mdSegmentStart;
+        uint32_t mdWriteStart = micros();
         myFile.write(sdBuffer, 512);
+        mdFileWriteMicros += micros() - mdWriteStart;
+        mdSegmentStart = micros();
         d = 0;
       }
     }
@@ -1652,7 +1661,11 @@ void readROM_MD() {
         }
         d += 2;
         if (d == 512) {
-          myFile.write(sdBuffer, 512);
+          mdReadLoopMicros += micros() - mdSegmentStart;
+        uint32_t mdWriteStart = micros();
+        myFile.write(sdBuffer, 512);
+        mdFileWriteMicros += micros() - mdWriteStart;
+        mdSegmentStart = micros();
           d = 0;
         }
       }
@@ -1717,7 +1730,11 @@ void readROM_MD() {
         calcCKSSonic2 += ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
         d += 2;
         if (d == 512) {
-          myFile.write(sdBuffer, 512);
+          mdReadLoopMicros += micros() - mdSegmentStart;
+        uint32_t mdWriteStart = micros();
+        myFile.write(sdBuffer, 512);
+        mdFileWriteMicros += micros() - mdWriteStart;
+        mdSegmentStart = micros();
           d = 0;
         }
       }
@@ -1727,8 +1744,14 @@ void readROM_MD() {
       draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
+  mdReadLoopMicros += micros() - mdSegmentStart;
+
   // Close the file:
   myFile.close();
+  print_Msg(F("[MD Timing] read/loop us="));
+  println_Msg(mdReadLoopMicros);
+  print_Msg(F("[MD Timing] file-write us="));
+  println_Msg(mdFileWriteMicros);
 
   // Reset SSF2 Banks
   if (cartSize > 0x400000) {
