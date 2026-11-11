@@ -520,7 +520,7 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
   Serial.begin(safeBaud);
   activeBaud = safeBaud;
   delay(100);
-  PcConsole.print(F("[GBA 2M profile] payload_us="));
+  PcConsole.print(profile == 12 ? F("[MD 2M profile] payload_us=") : profile == 11 ? F("[SNES 2M profile] payload_us=") : F("[GBA 2M profile] payload_us="));
   PcConsole.print(gbaPayloadUs);
   PcConsole.print(F(" reply_us="));
   PcConsole.print(replyUs);
