@@ -435,29 +435,32 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                 if op == 30:
                     from gba_retry import receive_dump
                     snes = len(payload) == 6 and payload[5] == 11
+                    md = len(payload) == 6 and payload[5] == 12
                     enabled = False
                     block_size = 512
                     try:
                         settings = json.loads(TRANSFER_SETTINGS_FILE.read_text(encoding="utf-8"))
-                        enabled = settings.get("snes_retry_2m" if snes else "gba_retry_2m") is True
-                        configured = settings.get("gba_2m_frame_size", 512)
+                        setting_key = "snes_retry_2m" if snes else "md_retry_2m" if md else "gba_retry_2m"
+                        size_key = "md_2m_frame_size" if md else "gba_2m_frame_size"
+                        enabled = settings.get(setting_key) is True
+                        configured = settings.get(size_key, 512)
                         if type(configured) is int and configured in (256, 512, 1024):
                             block_size = configured
                         else:
-                            log("[GBA 2M] Invalid gba_2m_frame_size; using 512 B\n")
+                            log(f"[{'MD' if md else 'GBA'} 2M] Invalid {size_key}; using 512 B\\n")
                     except (OSError, ValueError, AttributeError):
                         pass
                     selectable = len(payload) == 6 and payload[5] == 0
                     legacy = len(payload) == 6 and payload[5] == 9
                     if legacy or snes:
                         block_size = 512
-                    handle = payload[0] if selectable or legacy or snes else 0
+                    handle = payload[0] if selectable or legacy or snes or md else 0
                     length = int.from_bytes(payload[1:5], "little")
                     entry = store.handles.get(handle)
                     allowed = bool(enabled and entry and entry["write"]
                                    and 0 < length <= 32 * 1024**2 and length % block_size == 0)
                     answer = bytes([not allowed])
-                    if allowed and (selectable or snes):
+                    if allowed and (selectable or snes or md):
                         answer += bytes([block_size.bit_length() - 1])
                     reply = encode(op | 0x80, seq, answer)
                     if wire.write(reply) != len(reply):
@@ -466,7 +469,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     if allowed:
                         # Preserve the old-baud ACK before changing the port, as op=17 does.
                         time.sleep(.05)
-                        label = "SNES" if snes else "GBA"
+                        label = "SNES" if snes else "MD" if md else "GBA"
                         log(f"[{label} 2M] Starting CRC16 transfer with selective retransmission\n")
                         log(f"[{label} 2M] Frame size {block_size} B, reply window 8192 B\n")
                         receive_dump(wire, store, handle, length, log, stop, cancel_event,
