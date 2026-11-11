@@ -1447,7 +1447,7 @@ void writeSSF2Map(unsigned long myAddress, word myData) {
 }
 
 // Read rom and save to the SD card
-// MD 16-bit reader for the CRC-checked 2 Mbps PC stream.
+// MD 16-bit reader for the benchmark-gated CRC-checked 2 Mbps PC stream.
 static uint32_t md2mWordAddress = 0;
 static uint8_t md2mChecksumSlot = 0;
 static uint16_t md2mChecksum = 0;
