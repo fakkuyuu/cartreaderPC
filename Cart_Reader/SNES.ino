@@ -1550,6 +1550,45 @@ static void beginExtendedLoRomRetry_SNES(uint32_t offset) {
   loRomRetryAddress = (uint16_t)(0x8000U | (offset & 0x7fffU));
 }
 
+
+// ExHiROM retains the legacy physical bank sequence C0-FF then 00-3F.
+// The byte cast intentionally matches PORTL's 8-bit bank output.
+static uint16_t exHiRomRetryAddress;
+static void beginExHiRomRetry_SNES(uint32_t offset) {
+  PORTL = (uint8_t)(192UL + (offset >> 16));
+  exHiRomRetryAddress = (uint16_t)offset;
+}
+static void readExHiRomRetryWord_SNES(uint8_t* output) {
+  for (uint8_t i = 0; i < 2; ++i) {
+    const uint16_t address = exHiRomRetryAddress++;
+    PORTF = (uint8_t)address;
+    PORTK = (uint8_t)(address >> 8);
+    NOP; NOP; NOP; NOP; NOP; NOP;
+    output[i] = PINC;
+  }
+}
+
+// S-RTC uses C0-FF for the first 4 MiB and 40+ for the remaining banks,
+// matching the two readHiRomBanks() calls in the legacy path.
+static uint16_t srtcRetryAddress;
+static void beginSrtcRetry_SNES(uint32_t offset) {
+  if (offset < 0x400000UL) {
+    PORTL = (uint8_t)(0xC0U + (offset >> 16));
+  } else {
+    PORTL = (uint8_t)(0x40U + ((offset - 0x400000UL) >> 16));
+  }
+  srtcRetryAddress = (uint16_t)offset;
+}
+static void readSrtcRetryWord_SNES(uint8_t* output) {
+  for (uint8_t i = 0; i < 2; ++i) {
+    const uint16_t address = srtcRetryAddress++;
+    PORTF = (uint8_t)address;
+    PORTK = (uint8_t)(address >> 8);
+    NOP; NOP; NOP; NOP; NOP; NOP;
+    output[i] = PINC;
+  }
+}
+
 void readROM_SNES() {
   // Set control
   dataIn();
@@ -1786,6 +1825,25 @@ void readROM_SNES() {
 
       dataIn();
       controlIn_SNES();
+    }
+  }
+
+  // ExHiROM: preserve the legacy C0-FF, then 00-xx physical bank order.
+  if (romType == EX && numBanks > 0 && numBanks <= 128 &&
+      myFile.romRetry2M((uint32_t)numBanks * 65536UL,
+                       beginExHiRomRetry_SNES, readExHiRomRetryWord_SNES, true)) {
+    myFile.close();
+    return;
+  }
+
+  // S-RTC has a split physical layout: C0-FF always contributes the first
+  // 4 MiB, then banks 40 onward contribute any remaining ROM banks.
+  if (romType == HI && romChips == 85) {
+    const uint32_t srtcBanks = (numBanks < 64) ? 64UL : (uint32_t)numBanks;
+    if (myFile.romRetry2M(srtcBanks * 65536UL,
+                          beginSrtcRetry_SNES, readSrtcRetryWord_SNES, true)) {
+      myFile.close();
+      return;
     }
   }
 
