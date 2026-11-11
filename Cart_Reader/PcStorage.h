@@ -131,8 +131,8 @@ class HybridFsFile : public Stream {
   operator bool() const;
   bool isOpen() const; bool isDir() const; bool isFile() const; bool isHidden() const;
   bool isPc() const { return pc; }
-  bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes = false) {
-    return pc && remote.romRetry2M(length, beginBlock, readWord, snes);
+  bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), uint8_t profile = 0, void (*roundStarted)(uint8_t) = nullptr) {
+    return pc && remote.romRetry2M(length, beginBlock, readWord, profile, roundStarted);
   }
   uint32_t fileSize() const; uint32_t curPosition() const; uint32_t position() const;
   int available() override; int read() override; int peek() override; int read(void* dst, size_t n);
