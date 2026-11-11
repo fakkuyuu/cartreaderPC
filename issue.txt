@@ -1091,3 +1091,15 @@ Observed on PC113 tool + PC114 firmware: NES Super Chinese 2 produced AFCE1EEF v
 2026-11-08 19:59 JST : Proposed NES Auto fix: parse RAM SIZE with B or K units, treat 0B and 0K as no save and complete after successful ROM verification. Interpret positive sizes with their units and leave unknown formats for manual review. Implementation pending.
 2026-11-08 20:02 JST : User saw 0K when dumping the same Dragon Ball cartridge manually. PC BootDump log for dump 341 shows Mapper 16, 0B, and matching ROM CRC 33B899C9. Manual screen and mapper value remain unconfirmed.
 2026-11-08 20:09 JST Fixed NES Auto parsing for B and K units. Simulation confirmed ROM-only completion for 0B and progression to Read Save for 128B and 256B. All 126 PC tests passed. Hardware check pending.
+
+
+#053 MD PC dump throughput: overlap cartridge reads with 1024-byte PC streaming
+Added: 2026-11-11 22:04 JST
+Last updated: 2026-11-11 22:04 JST
+Status: IMPLEMENT / P2 / performance, md, pc-storage
+Request: Improve Mega Drive ROM dump throughput without mixing MD measurements or implementation assumptions with GBA/SNES 2Mbps results.
+Clarification: The approximately 140 KB/s result discussed earlier belongs to GBA/SNES, not MD. The user states MD tool and standalone dumping have little speed difference. Keep all MD and GBA/SNES measurements separate.
+Baseline on experiment/md-speed, 512 KiB Sonic 1, PC stream block size 1024: PC save read/loop 3.045972 s, file-write 5.734824 s, close 0.246568 s, total 9.037080 s. SD save read/loop 5.254216 s, file-write 1.892464 s, close 0.002936 s, total 7.159124 s.
+Investigation: MD currently writes 512-byte chunks and performs cartridge reads serially outside PcStorage's 1024-byte stream frame. PcStorage already supports interleaving a caller-provided 16-bit read callback while a 1024-byte PC frame is transmitted. GBA uses this for PC prefetch, but MD does not.
+Implementation scope: Add a dedicated MD 16-bit read callback and use PcLink::preparePrefetch()/finishPrefetch() for ordinary MD ROMs only when PC storage and a 1024-byte stream block are active. Initially exclude 32X, SVP, Sonic & Knuckles lock-on, and SSF2 ROMs larger than 4 MiB so mapper/bank timing remains unchanged. Retain existing checksum, file format, and standalone SD path. No GBA/SNES transfer changes.
+Validation: Compare same 512 KiB ROM, same reader/PC, same block size before and after. Confirm ROM bytes/CRC and internal checksum. Confirm standalone SD dump and excluded special cases remain unchanged. Compilation and hardware verification are separate from source implementation.
