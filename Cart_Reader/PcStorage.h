@@ -77,7 +77,7 @@ class PcFsFile : public Stream {
   void flush();
   bool sync() { flush(); return true; }
   operator bool() const { return handle != 0; }
-  bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes = false);
+  bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), uint8_t profile = 0, void (*roundStarted)(uint8_t) = nullptr);
   bool isOpen() const { return handle != 0; }
   bool isDir() const { return kind & 1; }
   bool isFile() const { return handle && !isDir(); }
