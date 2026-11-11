@@ -448,7 +448,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                         if type(configured) is int and configured in (256, 512, 1024):
                             block_size = configured
                         else:
-                            log(f"[{retry_console} 2M] Invalid {size_key}; using 512 B\\n")
+                            log(f"[{retry_console} 2M] Invalid {size_key}; using 512 B\n")
                     except (OSError, ValueError, AttributeError):
                         pass
                     selectable = len(payload) == 6 and payload[5] == 0
