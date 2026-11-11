@@ -1515,18 +1515,18 @@ static void readLoRomRetryWord_SNES(uint8_t* output) {
   }
 }
 
-// SA-1 ROM is exposed through the C0-FF banks. Re-establish both the
-// bank and the 16-bit address for every retry chunk; never rely on the
-// address left by the previous sequential read.
-static uint16_t sa1RetryAddress;
-static void beginSa1Retry_SNES(uint32_t offset) {
+// SA-1 and standard HiROM both expose their linear ROM image through
+// banks C0-FF. Re-establish the bank and 16-bit address for every 512-byte
+// retry chunk, including the transition from one 64 KiB bank to the next.
+static uint16_t c0BankRetryAddress;
+static void beginC0BankRetry_SNES(uint32_t offset) {
   PORTL = (uint8_t)(0xC0U + (offset >> 16));
-  sa1RetryAddress = (uint16_t)offset;
+  c0BankRetryAddress = (uint16_t)offset;
 }
 
-static void readSa1RetryWord_SNES(uint8_t* output) {
+static void readC0BankRetryWord_SNES(uint8_t* output) {
   for (uint8_t i = 0; i < 2; ++i) {
-    const uint16_t address = sa1RetryAddress++;
+    const uint16_t address = c0BankRetryAddress++;
     PORTF = (uint8_t)address;
     PORTK = (uint8_t)(address >> 8);
     NOP; NOP; NOP; NOP; NOP; NOP;
@@ -1548,7 +1548,19 @@ void readROM_SNES() {
   if (romType == SA && (romChips == 52 || romChips == 53) &&
       numBanks > 0 && numBanks <= 64 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
-                       beginSa1Retry_SNES, readSa1RetryWord_SNES, true)) {
+                       beginC0BankRetry_SNES, readC0BankRetryWord_SNES, true)) {
+    myFile.close();
+    return;
+  }
+
+  // Standard HiROM only: retain the original C0-FF bank order and byte
+  // layout. Dedicated mappings (S-DD1, SPC7110 and S-RTC) stay on their
+  // existing register-aware paths; ExHiROM is excluded by romType == HI.
+  if (romType == HI && romChips != 67 && romChips != 69 &&
+      romChips != 85 && romChips != 245 && romChips != 249 &&
+      numBanks > 0 && numBanks <= 64 &&
+      myFile.romRetry2M((uint32_t)numBanks * 65536UL,
+                       beginC0BankRetry_SNES, readC0BankRetryWord_SNES, true)) {
     myFile.close();
     return;
   }
