@@ -457,11 +457,17 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     snes = len(payload) == 6 and payload[5] in (11, 13)
                     experimental = snes and payload[5] == 13
                     probe = len(payload) == 6 and payload[5] == 12
+                    md = len(payload) == 6 and payload[5] == 14
                     enabled = not experimental and retry_benchmark_preferred(identity)
                     block_size = 512
                     try:
                         settings = json.loads(TRANSFER_SETTINGS_FILE.read_text(encoding="utf-8"))
-                        enabled = settings.get("snes_retry_2m" if snes else "gba_retry_2m", enabled) is True
+                        if md:
+                            # An explicit boolean overrides the device-specific
+                            # retry benchmark result; otherwise follow that result.
+                            enabled = settings.get("md_retry_2m", enabled) is True
+                        else:
+                            enabled = settings.get("snes_retry_2m" if snes else "gba_retry_2m", enabled) is True
                         if experimental:
                             enabled = enabled and settings.get("snes_experimental_2m") is True
                         configured = settings.get("gba_2m_frame_size", 512)
@@ -473,9 +479,10 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                         pass
                     selectable = len(payload) == 6 and payload[5] == 0
                     legacy = len(payload) == 6 and payload[5] == 9
-                    if legacy or snes or probe:
+                    if legacy or snes or probe or md:
+                        # SNES retry and MD use the established 512-byte frame.
                         block_size = 512
-                    handle = payload[0] if selectable or legacy or snes or probe else 0
+                    handle = payload[0] if selectable or legacy or snes or probe or md else 0
                     length = int.from_bytes(payload[1:5], "little")
                     entry = store.handles.get(handle)
                     if probe:
@@ -485,7 +492,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     allowed = bool(enabled and entry and entry["write"]
                                    and 0 < length <= 32 * 1024**2 and length % block_size == 0)
                     answer = bytes([not allowed])
-                    if allowed and (selectable or snes or probe):
+                    if allowed and (selectable or snes or probe or md):
                         answer += bytes([block_size.bit_length() - 1])
                     reply = encode(op | 0x80, seq, answer)
                     if wire.write(reply) != len(reply):
@@ -494,7 +501,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     if allowed:
                         # Preserve the old-baud ACK before changing the port, as op=17 does.
                         time.sleep(.05)
-                        label = "Benchmark" if probe else "SNES" if snes else "GBA"
+                        label = "Benchmark" if probe else "MD" if md else "SNES" if snes else "GBA"
                         log(f"[{label} 2M] Starting CRC16 transfer with selective retransmission\n")
                         log(f"[{label} 2M] Frame size {block_size} B, reply window 8192 B\n")
                         receive_dump(wire, store, handle, length, log, stop, cancel_event,
@@ -2039,7 +2046,9 @@ def gui(args):
             settings = {}
         if not isinstance(settings, dict):
             settings = {}
-        enabled = [name for name, key in (("GBA", "gba_retry_2m"), ("SNES", "snes_retry_2m"))
+        enabled = [name for name, key in (("GBA", "gba_retry_2m"),
+                                           ("SNES", "snes_retry_2m"),
+                                           ("MD", "md_retry_2m"))
                    if settings.get(key, preferred) is True]
         retry_baud.set("ROM 2M (CRC16): " + (", ".join(enabled) or "—"))
         if port.get() and has_completed_benchmark(port_identity(port.get())):
