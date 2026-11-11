@@ -1534,6 +1534,22 @@ static void readC0BankRetryWord_SNES(uint8_t* output) {
   }
 }
 
+// LoROM layouts used by the legacy reader:
+// 0 = banks 00+, 1 = banks 80+ for ROMs larger than 3 MiB,
+// 2 = the 24-Mbit Derby Stallion/Sound Novel split (00-3F, 80-9F).
+static uint8_t loRomRetryLayout;
+static void beginExtendedLoRomRetry_SNES(uint32_t offset) {
+  const uint32_t bankIndex = offset >> 15;
+  uint8_t bank = (uint8_t)bankIndex;
+  if (loRomRetryLayout == 1) {
+    bank = (uint8_t)(0x80U + bankIndex);
+  } else if (loRomRetryLayout == 2 && bankIndex >= 64) {
+    bank = (uint8_t)(0x80U + bankIndex - 64U);
+  }
+  PORTL = bank;
+  loRomRetryAddress = (uint16_t)(0x8000U | (offset & 0x7fffU));
+}
+
 void readROM_SNES() {
   // Set control
   dataIn();
@@ -1563,6 +1579,58 @@ void readROM_SNES() {
                        beginC0BankRetry_SNES, readC0BankRetryWord_SNES, true)) {
     myFile.close();
     return;
+  }
+
+  // Extended/special LoROM layouts and CX4 can also use the common
+  // 512-byte CRC16 retry stream. Keep the exact bank order of the legacy
+  // readers and retain CX4's original map-register setup/restore.
+  if (romType == LO && numBanks > 0 && numBanks <= 256 &&
+      (numBanks > 64 || romChips == 243)) {
+    const bool isCx4 = (romChips == 243);
+    if (isCx4) {
+      cx4Map = readBank_SNES(0, 32594);  // $7F52
+      if ((cx4Type == 2) && (cx4Map != 0)) {
+        dataOut();
+        controlOut_SNES();
+        writeBank_SNES(0, 32594, 0);
+        dataIn();
+        controlIn_SNES();
+      } else if ((cx4Type == 3) && (cx4Map == 0)) {
+        dataOut();
+        controlOut_SNES();
+        writeBank_SNES(0, 32594, 1);
+        dataIn();
+        controlIn_SNES();
+      }
+    }
+
+    if (numBanks == 96 &&
+        ((strcmp("CC86", checksumStr) == 0) ||
+         (strcmp("A77B", checksumStr) == 0))) {
+      loRomRetryLayout = 2;
+    } else if (romSize > 24) {
+      loRomRetryLayout = 1;
+    } else {
+      loRomRetryLayout = 0;
+    }
+
+    const bool transferred = myFile.romRetry2M(
+        (uint32_t)numBanks * 32768UL,
+        beginExtendedLoRomRetry_SNES, readLoRomRetryWord_SNES, true);
+    loRomRetryLayout = 0;
+
+    if (isCx4) {
+      // Restore the mapping register exactly as the legacy CX4 path does.
+      dataOut();
+      controlOut_SNES();
+      writeBank_SNES(0, 32594, cx4Map);
+      dataIn();
+      controlIn_SNES();
+    }
+    if (transferred) {
+      myFile.close();
+      return;
+    }
   }
 
   // Ordinary LoROM only. The full existing path handles unusual bank maps.
