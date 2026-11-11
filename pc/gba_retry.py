@@ -10,13 +10,13 @@ HEADER = struct.Struct("<IBB")
 MAX_ROUNDS = 10
 
 
-def receive_window(wire, first, count, round_number, blocks, stop, cancel, block_size):
+def receive_window(wire, first, count, round_number, blocks, stop, cancel, block_size, label="GBA"):
     buffer = bytearray()
     received = 0
     deadline = time.monotonic() + 0.45
     while time.monotonic() < deadline:
         if stop.is_set() or (cancel is not None and cancel.is_set()):
-            raise ProtocolError("GBA 2M transfer cancelled")
+            raise ProtocolError(f"{label} 2M transfer cancelled")
         chunk = wire.read(wire.in_waiting or 1)
         if not chunk:
             continue
@@ -70,7 +70,7 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
         phase = "waiting for the reader's 2M ready marker"
         deadline = time.monotonic() + 2.5
         while not ended and time.monotonic() < deadline:
-            count, ended = receive_window(wire, 0xffffffff, 1, 0xff, {}, stop, cancel, block_size)
+            count, ended = receive_window(wire, 0xffffffff, 1, 0xff, {}, stop, cancel, block_size, label)
             received += count
         if not ended:
             raise ProtocolError("reader did not confirm the switch to 2M")
@@ -78,7 +78,7 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
         ready = struct.pack(mask_format, 0xA7, 0xff, 0)
         ready += struct.pack("<H", binascii.crc_hqx(ready, 0xffff))
         if wire.write(ready) != len(ready):
-            raise ProtocolError("GBA 2M ready acknowledgement was not sent")
+            raise ProtocolError(f"{label} 2M ready acknowledgement was not sent")
         log(f"[{label} 2M] Reader confirmed at 2000000 baud\n")
         if expected_block is None:
             log("[")
@@ -91,10 +91,10 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
                 phase = "receiving frames"
                 received = 0
                 ended = False
-                received, ended = receive_window(wire, first, count, round_number, blocks, stop, cancel, block_size)
+                received, ended = receive_window(wire, first, count, round_number, blocks, stop, cancel, block_size, label)
                 mask = sum(1 << i for i in range(count) if first + i not in blocks)
                 if mask and round_number == MAX_ROUNDS - 1:
-                    raise ProtocolError(f"GBA 2M retry limit at block {first}")
+                    raise ProtocolError(f"{label} 2M retry limit at block {first}")
                 if not mask:
                     phase = "writing validated blocks"
                     for index in range(first, first + count):
@@ -103,13 +103,13 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
                             raise ProtocolError(f"2M benchmark data mismatch at block {index}")
                         payload = struct.pack("<BI", handle, index * block_size) + block
                         if store.dispatch(22, payload) != struct.pack("<BH", 0, block_size):
-                            raise ProtocolError(f"GBA 2M file write failed at block {index}")
+                            raise ProtocolError(f"{label} 2M file write failed at block {index}")
                         committed += block_size
                 request = struct.pack(mask_format, 0xA7, round_number, mask)
                 request += struct.pack("<H", binascii.crc_hqx(request, 0xffff))
                 phase = f"sending reply (mask=0x{mask:04X})"
                 if wire.write(request) != len(request):
-                    raise ProtocolError("GBA 2M retry request was not sent")
+                    raise ProtocolError(f"{label} 2M retry request was not sent")
                 if not mask:
                     if expected_block is None:
                         completed_stars = committed * 19 // length
