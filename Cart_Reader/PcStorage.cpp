@@ -462,10 +462,11 @@ static uint32_t gbaRetryMask(uint8_t round, bool wide) {
 }
 
 static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
-                             void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes) {
+                             void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
+                             uint8_t profile, void (*roundStarted)(uint8_t)) {
   data[0] = handle;
   put32(data + 1, length);
-  data[5] = snes ? 11 : 0; // Distinguish LoROM from GBA negotiation.
+  data[5] = profile; // 0=GBA, 11=SNES, 12=MD.
   if (call(30, 6) != 2 || data[0]) return false;
   const uint8_t frameShift = data[1];
   if (frameShift < 8 || frameShift > 10) stop();
@@ -501,6 +502,7 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
     uint32_t mask = validMask;
     for (uint8_t round = 0; mask; ++round) {
       if (round >= 10) stop();
+      if (roundStarted) roundStarted(round);
       for (uint8_t i = 0; i < count; ++i) {
         if (mask & (1UL << i)) sendFrame(first + i, round, false, beginBlock, readWord);
       }
@@ -819,9 +821,10 @@ void PcFsFile::checkpointFrame(uint32_t expectedEnd) {
     if(cancelled) PcLink::cancelRequested=true;
   }
 }
-bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes) {
+bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
+                           uint8_t profile, void (*roundStarted)(uint8_t)) {
   if (!writable || !handle || pos || !length || length % 512) return false;
-  if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, snes)) return false;
+  if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, profile, roundStarted)) return false;
   pos = size = length;
   return true;
 }
