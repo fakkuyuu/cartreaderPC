@@ -463,7 +463,8 @@ static uint32_t gbaRetryMask(uint8_t round, bool wide) {
 
 static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
                              void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
-                             uint8_t mode, uint32_t* measuredUs = nullptr) {
+                             uint8_t mode, uint32_t* measuredUs = nullptr,
+                             void (*roundStarted)(uint8_t) = nullptr) {
   data[0] = handle;
   put32(data + 1, length);
   data[5] = mode;
@@ -502,6 +503,7 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
     uint32_t mask = validMask;
     for (uint8_t round = 0; mask; ++round) {
       if (round >= 10) stop();
+      if (roundStarted) roundStarted(round);
       for (uint8_t i = 0; i < count; ++i) {
         if (mask & (1UL << i)) sendFrame(first + i, round, false, beginBlock, readWord);
       }
@@ -520,7 +522,7 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
   Serial.begin(safeBaud);
   activeBaud = safeBaud;
   delay(100);
-  PcConsole.print(F("[GBA 2M profile] payload_us="));
+  PcConsole.print(mode == PcLink::RETRY_PROFILE_MD ? F("[MD 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_SNES || mode == PcLink::RETRY_PROFILE_SNES_EXPERIMENTAL ? F("[SNES 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_BENCHMARK ? F("[Benchmark 2M profile] payload_us=") : F("[GBA 2M profile] payload_us="));
   PcConsole.print(gbaPayloadUs);
   PcConsole.print(F(" reply_us="));
   PcConsole.print(replyUs);
@@ -846,9 +848,18 @@ bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*
   return true;
 }
 
+bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
+                           PcLink::RetryProfile profile, void (*roundStarted)(uint8_t)) {
+  if (!writable || !handle || pos || !length || length % 512) return false;
+  if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord,
+                                (uint8_t)profile, nullptr, roundStarted)) return false;
+  pos = size = length;
+  return true;
+}
+
 void PcFsFile::benchmarkRetry(void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), uint32_t& elapsed) {
   const uint32_t length = 1048576UL;
-  if (PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, 12, &elapsed))
+  if (PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, PcLink::RETRY_PROFILE_BENCHMARK, &elapsed))
     pos = size = length;
 }
 
