@@ -1515,6 +1515,25 @@ static void readLoRomRetryWord_SNES(uint8_t* output) {
   }
 }
 
+// SA-1 ROM is exposed through the C0-FF banks. Re-establish both the
+// bank and the 16-bit address for every retry chunk; never rely on the
+// address left by the previous sequential read.
+static uint16_t sa1RetryAddress;
+static void beginSa1Retry_SNES(uint32_t offset) {
+  PORTL = (uint8_t)(0xC0U + (offset >> 16));
+  sa1RetryAddress = (uint16_t)offset;
+}
+
+static void readSa1RetryWord_SNES(uint8_t* output) {
+  for (uint8_t i = 0; i < 2; ++i) {
+    const uint16_t address = sa1RetryAddress++;
+    PORTF = (uint8_t)address;
+    PORTK = (uint8_t)(address >> 8);
+    NOP; NOP; NOP; NOP; NOP; NOP;
+    output[i] = PINC;
+  }
+}
+
 void readROM_SNES() {
   // Set control
   dataIn();
@@ -1522,6 +1541,17 @@ void readROM_SNES() {
 
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("SNES", "ROM", romName, "sfc");
+
+  // SA-1 ROM is read linearly from banks C0-FF (64 KiB per bank).
+  // The retry callback restores the exact bank/address for each 512-byte
+  // chunk, including chunks requested again after a CRC16 failure.
+  if (romType == SA && (romChips == 52 || romChips == 53) &&
+      numBanks > 0 && numBanks <= 64 &&
+      myFile.romRetry2M((uint32_t)numBanks * 65536UL,
+                       beginSa1Retry_SNES, readSa1RetryWord_SNES, true)) {
+    myFile.close();
+    return;
+  }
 
   // Ordinary LoROM only. The full existing path handles unusual bank maps.
   if (romType == LO && romChips <= 2 && numBanks > 0 && numBanks <= 64 &&
