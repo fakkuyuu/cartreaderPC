@@ -1447,6 +1447,32 @@ void writeSSF2Map(unsigned long myAddress, word myData) {
 }
 
 // Read rom and save to the SD card
+// Read one MD 16-bit word for PC-stream prefetch. Address is in MD word units.
+static uint32_t mdPrefetchWordAddress = 0;
+static void prefetchWord_MD(uint8_t* output) {
+  unsigned long myAddress = mdPrefetchWordAddress++;
+  PORTF = myAddress & 0xFF;
+  PORTK = (myAddress >> 8) & 0xFF;
+  PORTL = (myAddress >> 16) & 0xFF;
+  NOP;
+  PORTH &= ~(1 << 3);
+  PORTH &= ~(1 << 6);
+  PORTJ &= ~(1 << 1);
+  PORTG &= ~(1 << 5);
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  output[0] = PINA;
+  output[1] = PINC;
+  PORTH |= (1 << 3);
+  PORTH |= (1 << 6);
+  PORTJ |= (1 << 1);
+  PORTG |= (1 << 5);
+}
+
 void readROM_MD() {
   // Checksum
   uint16_t calcCKS = 0;
@@ -1478,6 +1504,15 @@ void readROM_MD() {
   if (SnKmode >= 2) totalProgressBar += (uint32_t)cartSizeLockon;
   if (SnKmode == 3) totalProgressBar += (uint32_t)cartSizeSonic2;
   draw_progressbar(0, totalProgressBar);
+
+  // Only ordinary MD ROMs use the 1024-byte PC-stream prefetch path.
+  // Keep mapper- and timing-sensitive cartridges on the original read path.
+  const bool useMdPcPrefetch = PcLink::usingPcStorage() && myFile.isPc()
+                               && PcLink::streamBlockSize() == 1024
+                               && !is32x && !isSVP && SnKmode == 0
+                               && cartSize <= 0x400000;
+  bool mdPrefetched = false;
+  uint32_t mdPrefetchedBlocks = 0;
 
   // Measure cartridge read/loop, storage writes, and final close separately.
   uint32_t mdReadLoopMicros = 0;
@@ -1543,48 +1578,52 @@ void readROM_MD() {
     d = 0;
 
     for (int currWord = 0; currWord < 512; currWord++) {
-      unsigned long myAddress = currBuffer + currWord - (offsetSSF2Bank * 0x80000);
-      PORTF = myAddress & 0xFF;
-      PORTK = (myAddress >> 8) & 0xFF;
-      PORTL = (myAddress >> 16) & 0xFF;
+      // A prefetched first half is already in sdBuffer; consume it without
+      // touching the cartridge again. All other words use the original cycle.
+      if (!mdPrefetched || currWord >= 256) {
+        unsigned long myAddress = currBuffer + currWord - (offsetSSF2Bank * 0x80000);
+        PORTF = myAddress & 0xFF;
+        PORTK = (myAddress >> 8) & 0xFF;
+        PORTL = (myAddress >> 16) & 0xFF;
 
-      // Arduino running at 16Mhz -> one nop = 62.5ns
-      NOP;
-      // Setting CS(PH3) LOW
-      PORTH &= ~(1 << 3);
-      // Setting OE(PH6) LOW
-      PORTH &= ~(1 << 6);
-      // Setting AS(PJ1) LOW
-      PORTJ &= ~(1 << 1);
-      // Setting ASEL(PG5) LOW
-      PORTG &= ~(1 << 5);
-      // Pulse CLK(PH1)
-      if (isSVP)
-        pulse_clock(10);
+        // Arduino running at 16Mhz -> one nop = 62.5ns
+        NOP;
+        // Setting CS(PH3) LOW
+        PORTH &= ~(1 << 3);
+        // Setting OE(PH6) LOW
+        PORTH &= ~(1 << 6);
+        // Setting AS(PJ1) LOW
+        PORTJ &= ~(1 << 1);
+        // Setting ASEL(PG5) LOW
+        PORTG &= ~(1 << 5);
+        // Pulse CLK(PH1)
+        if (isSVP)
+          pulse_clock(10);
 
-      // most MD ROMs are 200ns, comparable to SNES > use similar access delay of 6 x 62.5 = 375ns
-      NOP;
-      NOP;
-      NOP;
-      NOP;
-      NOP;
-      NOP;
+        // most MD ROMs are 200ns, comparable to SNES > use similar access delay of 6 x 62.5 = 375ns
+        NOP;
+        NOP;
+        NOP;
+        NOP;
+        NOP;
+        NOP;
 
-      // Read
-      sdBuffer[d] = PINA;
-      sdBuffer[d + 1] = PINC;
+        // Read
+        sdBuffer[d] = PINA;
+        sdBuffer[d + 1] = PINC;
 
-      // Setting CS(PH3) HIGH
-      PORTH |= (1 << 3);
-      // Setting OE(PH6) HIGH
-      PORTH |= (1 << 6);
-      // Setting AS(PJ1) HIGH
-      PORTJ |= (1 << 1);
-      // Setting ASEL(PG5) HIGH
-      PORTG |= (1 << 5);
-      // Pulse CLK(PH1)
-      if (isSVP)
-        pulse_clock(10);
+        // Setting CS(PH3) HIGH
+        PORTH |= (1 << 3);
+        // Setting OE(PH6) HIGH
+        PORTH |= (1 << 6);
+        // Setting AS(PJ1) HIGH
+        PORTJ |= (1 << 1);
+        // Setting ASEL(PG5) HIGH
+        PORTG |= (1 << 5);
+        // Pulse CLK(PH1)
+        if (isSVP)
+          pulse_clock(10);
+      }
 
       // Skip first 256 words
       if (((currBuffer == 0) && (currWord >= 256)) || (currBuffer > 0)) {
@@ -1593,8 +1632,24 @@ void readROM_MD() {
       d += 2;
       if (d == 512) {
         mdReadLoopMicros += micros() - mdSegmentStart;
+        const bool tryMdPrefetch = useMdPcPrefetch && currWord >= 256
+                                   && (currBuffer + currWord + 1 < cartSize / 2);
+        if (mdPrefetched && currWord < 256) {
+          // The prefetched first 512-byte block has now been queued.
+          mdPrefetched = false;
+        }
+        if (tryMdPrefetch) {
+          // The current word is the end of this 1024-byte frame. The next
+          // 256 MD words are fetched while that frame is transmitted.
+          mdPrefetchWordAddress = currBuffer + currWord + 1;
+          PcLink::preparePrefetch(prefetchWord_MD);
+        }
         uint32_t mdWriteStart = micros();
         myFile.write(sdBuffer, 512);
+        if (tryMdPrefetch) {
+          mdPrefetched = PcLink::finishPrefetch(sdBuffer);
+          if (mdPrefetched) ++mdPrefetchedBlocks;
+        }
         mdFileWriteMicros += micros() - mdWriteStart;
         mdSegmentStart = micros();
         d = 0;
@@ -1761,6 +1816,10 @@ void readROM_MD() {
   println_Msg(mdCloseMicros);
   print_Msg(F("[MD Timing] total us="));
   println_Msg(mdTotalMicros);
+  if (useMdPcPrefetch) {
+    PcConsole.print(F("[MD Prefetch] blocks="));
+    PcConsole.println(mdPrefetchedBlocks);
+  }
 
   // Reset SSF2 Banks
   if (cartSize > 0x400000) {
