@@ -1134,3 +1134,15 @@ PC113ツール+PC114ファームでNES Super Chinese 2のCRC AFCE1EEFがDBの26B
 2026-11-08 19:59 JST : 修正案。NES AutoはRAM SIZEのB/K表記を解析し、0B/0KはセーブなしとしてROM成功で完了。正の容量は単位込みで解釈し、未知の表記は手動確認に回す。実装待ち。
 2026-11-08 20:02 JST : 同じドラゴンボールを手動で吸うと0Kと表示されたとの報告。PCのBootDumpログ341番はMapper 16・0B・ROM CRC 33B899C9一致。手動側の画面とMapper値は未確認。
 2026-11-08 20:09 JST NES AutoのB/K判定を修正。0BはROMのみ、128B・256BはRead Saveへ進むことを模擬試験で確認。PC回帰126件成功。実機未確認。
+
+
+#053 MDのPC保存速度改善（読み出しと1024バイト転送の並行化）
+追加日時: 2026-11-11 22:04 JST
+最終更新日時: 2026-11-11 22:04 JST
+状態: IMPLEMENT / P2 / performance, md, pc-storage
+要望: MDのROM吸出し速度を改善する。GBA/SNESの2Mbps実績・測定値と混同しない。
+重要な訂正: 先に話題になった約140KB/sはGBA/SNESの結果であり、MDの結果ではない。ユーザーによればMDはツール吸いと単品吸いで速度差が小さい。MDとGBA/SNESの測定・実装を分離して扱う。
+基準値: experiment/md-speed、Sonic 1 512KiB、PC転送ブロック1024バイト。PC保存はread/loop 3.045972秒、file-write 5.734824秒、close 0.246568秒、total 9.037080秒。SD保存はread/loop 5.254216秒、file-write 1.892464秒、close 0.002936秒、total 7.159124秒。
+調査: 現在のMDは512バイト単位で読み出しと書き込みを順番に実行。PcStorageには1024バイトのPC転送中に16bit読み出しコールバックを挟む既存機構があり、GBAではプリフェッチに使用しているがMDでは未使用。
+実装範囲: MD専用の16bit読み出しコールバックを追加し、PC保存かつ転送ブロック1024バイトの場合だけPcLink::preparePrefetch()/finishPrefetch()を使う。初回は通常MD ROMに限定し、32X、SVP、Sonic & Knucklesロックオン、4MiB超のSSF2は除外して既存の特殊マッピング/タイミングを変更しない。チェックサム・ファイル形式・単品SD保存経路は維持する。GBA/SNESの転送処理は変更しない。
+検証: 同一512KiB ROM、同一リーダー/PC/ブロックサイズで前後比較。ROMデータ/CRC/内部チェックサムを確認。単品SD保存と対象外の特殊カートリッジに影響がないことを確認する。ソース実装、コンパイル、実機検証は別々に記録する。
