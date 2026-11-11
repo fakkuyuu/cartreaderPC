@@ -1621,6 +1621,59 @@ static void readSdd1RetryWord_SNES(uint8_t* output) {
   }
 }
 
+
+static uint8_t spc7110OriginalDMap;
+static uint8_t spc7110OriginalEMap;
+static uint8_t spc7110OriginalFMap;
+static uint8_t spc7110OriginalSramMap;
+static uint8_t spc7110RetryMode = 0xff;
+
+// SPC7110 exposes D0-DF, E0-EF and F0-FF as separate 1 MiB windows.
+// Reapply the captured baseline and the appropriate F-window page whenever
+// the requested frame moves to a different part of the ROM.
+static void setSpc7110RetryMode_SNES(uint8_t mode) {
+  if (mode == spc7110RetryMode) return;
+  const uint8_t fMap = (mode == 2) ? 3 : spc7110OriginalFMap;
+  const uint8_t sramMap = (mode == 0) ? spc7110OriginalSramMap : 0xff;
+  writeSnesRegister_SNES(0x4831, spc7110OriginalDMap);
+  writeSnesRegister_SNES(0x4832, spc7110OriginalEMap);
+  writeSnesRegister_SNES(0x4833, fMap);
+  writeSnesRegister_SNES(0x4834, sramMap);
+  spc7110RetryMode = mode;
+}
+
+static uint16_t spc7110RetryAddress;
+static void beginSpc7110Retry_SNES(uint32_t offset) {
+  uint8_t bank;
+  if (offset < 0x100000UL) {
+    setSpc7110RetryMode_SNES(0);
+    bank = (uint8_t)(0xC0U + (offset >> 16));
+  } else if (offset < 0x200000UL) {
+    setSpc7110RetryMode_SNES(0);
+    bank = (uint8_t)(0xD0U + ((offset - 0x100000UL) >> 16));
+  } else if (offset < 0x300000UL) {
+    setSpc7110RetryMode_SNES(1);
+    bank = (uint8_t)(0xE0U + ((offset - 0x200000UL) >> 16));
+  } else if (offset < 0x400000UL) {
+    setSpc7110RetryMode_SNES(1);
+    bank = (uint8_t)(0xF0U + ((offset - 0x300000UL) >> 16));
+  } else {
+    setSpc7110RetryMode_SNES(2);
+    bank = (uint8_t)(0xF0U + ((offset - 0x400000UL) >> 16));
+  }
+  PORTL = bank;
+  spc7110RetryAddress = (uint16_t)offset;
+}
+static void readSpc7110RetryWord_SNES(uint8_t* output) {
+  for (uint8_t i = 0; i < 2; ++i) {
+    const uint16_t address = spc7110RetryAddress++;
+    PORTF = (uint8_t)address;
+    PORTK = (uint8_t)(address >> 8);
+    NOP; NOP; NOP; NOP; NOP; NOP;
+    output[i] = PINC;
+  }
+}
+
 void readROM_SNES() {
   // Set control
   dataIn();
@@ -1818,6 +1871,36 @@ void readROM_SNES() {
 
     dataIn();
     controlIn_SNES();
+  }
+
+  // SPC7110: rebuild the relevant ROM window mapping from the file offset.
+  // 245 exposes 3 MiB (C0-DF + E0-EF); 249 exposes 5 MiB
+  // (C0-DF + E0-EF + F0-FF mapped first to page 2, then page 3).
+  if (romType == HI &&
+      ((romChips == 245 && numBanks == 48) ||
+       (romChips == 249 && numBanks == 80))) {
+    controlIn_SNES();
+    spc7110OriginalDMap = readBank_SNES(0, 0x4831);
+    spc7110OriginalEMap = readBank_SNES(0, 0x4832);
+    spc7110OriginalFMap = readBank_SNES(0, 0x4833);
+    spc7110OriginalSramMap = readBank_SNES(0, 0x4834);
+    spc7110RetryMode = 0xff;
+
+    const bool transferred = myFile.romRetry2M(
+        (uint32_t)numBanks * 65536UL,
+        beginSpc7110Retry_SNES, readSpc7110RetryWord_SNES, true);
+    if (spc7110RetryMode != 0xff) {
+      // Restore every mapping register to the value present before dumping.
+      writeSnesRegister_SNES(0x4831, spc7110OriginalDMap);
+      writeSnesRegister_SNES(0x4832, spc7110OriginalEMap);
+      writeSnesRegister_SNES(0x4833, spc7110OriginalFMap);
+      writeSnesRegister_SNES(0x4834, spc7110OriginalSramMap);
+    }
+    spc7110RetryMode = 0xff;
+    if (transferred) {
+      myFile.close();
+      return;
+    }
   }
 
   // Dump SPC7110 High-type ROM
