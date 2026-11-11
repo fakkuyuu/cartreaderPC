@@ -7,6 +7,13 @@
 using PhysicalFsFile = ::FsFile;
 using PhysicalSdFs = ::SdFs;
 namespace PcLink {
+enum RetryProfile : uint8_t {
+  RETRY_PROFILE_GBA = 0,
+  RETRY_PROFILE_SNES = 11,
+  RETRY_PROFILE_BENCHMARK = 12,
+  RETRY_PROFILE_SNES_EXPERIMENTAL = 13,
+  RETRY_PROFILE_MD = 14
+};
 // Sampled heap/stack gap, not a stack watermark or total allocator free space.
 enum RamStage : uint8_t { RAM_MENU, RAM_PROTOCOL, RAM_LIST_OPEN, RAM_LIST_ENTRY,
   RAM_COPY_OPEN, RAM_SD_READ, RAM_PC_WRITE, RAM_TRANSFER, RAM_CACHE, RAM_COMMAND,
@@ -78,6 +85,7 @@ class PcFsFile : public Stream {
   bool sync() { flush(); return true; }
   operator bool() const { return handle != 0; }
   bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes = false, bool experimental = false);
+  bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), PcLink::RetryProfile profile, void (*roundStarted)(uint8_t));
   void benchmarkRetry(void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), uint32_t& elapsed);
   bool isOpen() const { return handle != 0; }
   bool isDir() const { return kind & 1; }
@@ -134,6 +142,9 @@ class HybridFsFile : public Stream {
   bool isPc() const { return pc; }
   bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes = false, bool experimental = false) {
     return pc && remote.romRetry2M(length, beginBlock, readWord, snes, experimental);
+  }
+  bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), PcLink::RetryProfile profile, void (*roundStarted)(uint8_t)) {
+    return pc && remote.romRetry2M(length, beginBlock, readWord, profile, roundStarted);
   }
   uint32_t fileSize() const; uint32_t curPosition() const; uint32_t position() const;
   int available() override; int read() override; int peek() override; int read(void* dst, size_t n);
