@@ -1688,7 +1688,7 @@ void readROM_SNES() {
   if (romType == SA && (romChips == 52 || romChips == 53) &&
       numBanks > 0 && numBanks <= 64 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
-                       beginC0BankRetry_SNES, readC0BankRetryWord_SNES, true)) {
+                       beginC0BankRetry_SNES, readC0BankRetryWord_SNES, 11)) {
     myFile.close();
     return;
   }
@@ -1700,7 +1700,7 @@ void readROM_SNES() {
       romChips != 85 && romChips != 245 && romChips != 249 &&
       numBanks > 0 && numBanks <= 64 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
-                       beginC0BankRetry_SNES, readC0BankRetryWord_SNES, true)) {
+                       beginC0BankRetry_SNES, readC0BankRetryWord_SNES, 11)) {
     myFile.close();
     return;
   }
@@ -1740,7 +1740,7 @@ void readROM_SNES() {
 
     const bool transferred = myFile.romRetry2M(
         (uint32_t)numBanks * 32768UL,
-        beginExtendedLoRomRetry_SNES, readLoRomRetryWord_SNES, true);
+        beginExtendedLoRomRetry_SNES, readLoRomRetryWord_SNES, 11);
     loRomRetryLayout = 0;
 
     if (isCx4) {
@@ -1760,7 +1760,7 @@ void readROM_SNES() {
   // Ordinary LoROM only. The full existing path handles unusual bank maps.
   if (romType == LO && romChips <= 2 && numBanks > 0 && numBanks <= 64 &&
       myFile.romRetry2M((uint32_t)numBanks * 32768UL,
-                       beginLoRomRetry_SNES, readLoRomRetryWord_SNES, true)) {
+                       beginLoRomRetry_SNES, readLoRomRetryWord_SNES, 11)) {
     myFile.close();
     return;
   }
@@ -1833,7 +1833,7 @@ void readROM_SNES() {
     sdd1RetryMap = 0xff;
     const bool transferred = myFile.romRetry2M(
         (uint32_t)numBanks * 65536UL,
-        beginSdd1Retry_SNES, readSdd1RetryWord_SNES, true);
+        beginSdd1Retry_SNES, readSdd1RetryWord_SNES, 11);
     if (transferred) {
       writeSnesRegister_SNES(0x4807, originalSOMap);
       sdd1RetryMap = originalSOMap;
@@ -1888,7 +1888,7 @@ void readROM_SNES() {
 
     const bool transferred = myFile.romRetry2M(
         (uint32_t)numBanks * 65536UL,
-        beginSpc7110Retry_SNES, readSpc7110RetryWord_SNES, true);
+        beginSpc7110Retry_SNES, readSpc7110RetryWord_SNES, 11);
     if (spc7110RetryMode != 0xff) {
       // Restore every mapping register to the value present before dumping.
       writeSnesRegister_SNES(0x4831, spc7110OriginalDMap);
@@ -1965,7 +1965,7 @@ void readROM_SNES() {
   // ExHiROM: preserve the legacy C0-FF, then 00-xx physical bank order.
   if (romType == EX && numBanks > 0 && numBanks <= 128 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
-                       beginExHiRomRetry_SNES, readExHiRomRetryWord_SNES, true)) {
+                       beginExHiRomRetry_SNES, readExHiRomRetryWord_SNES, 11)) {
     myFile.close();
     return;
   }
@@ -1975,7 +1975,7 @@ void readROM_SNES() {
   if (romType == HI && romChips == 85) {
     const uint32_t srtcBanks = (numBanks < 64) ? 64UL : (uint32_t)numBanks;
     if (myFile.romRetry2M(srtcBanks * 65536UL,
-                          beginSrtcRetry_SNES, readSrtcRetryWord_SNES, true)) {
+                          beginSrtcRetry_SNES, readSrtcRetryWord_SNES, 11)) {
       myFile.close();
       return;
     }
