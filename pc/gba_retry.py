@@ -1,4 +1,4 @@
-"""Experimental GBA stream with CRC16 and selective retransmission."""
+"""CRC16 2 Mbps ROM stream with selective retransmission for GBA, SNES and MD."""
 import binascii
 import struct
 import time
