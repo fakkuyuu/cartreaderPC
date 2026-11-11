@@ -267,11 +267,11 @@ void streamWritePair(uint8_t handle, uint32_t offset,
   for(uint8_t i=0;i<4;i++) { uint8_t b=(uint8_t)(offset>>(i*8)); Serial.write(b); c=crc(c,b); }
   if(prefetchReader) {
     for(uint16_t i=0;i<firstCount;i++) {
-      if(!(i&1)) prefetchPoll();
+      if(!(i&1) && prefetchUsed<512) prefetchPoll();
       Serial.write(first[i]); c=crc(c,first[i]);
     }
     for(uint16_t i=0;i<secondCount;i++) {
-      if(!(i&1)) prefetchPoll();
+      if(!(i&1) && prefetchUsed<512) prefetchPoll();
       Serial.write(second[i]); c=crc(c,second[i]);
     }
   } else {
