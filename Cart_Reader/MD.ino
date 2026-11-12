@@ -1489,8 +1489,7 @@ static void readMd2mWord(uint8_t* output) {
 // Read a 256-word block for ordinary standalone MD ROMs.
 // Keep the cartridge control-signal order and access NOPs unchanged.
 template <bool AccumulateChecksum>
-static inline __attribute__((always_inline)) uint16_t readMdSdBlock_MD(uint32_t address, uint16_t checksum) {
-  byte* buffer = sdBuffer;
+static inline __attribute__((always_inline)) uint16_t readMdSdBlock_MD(uint32_t address, uint16_t checksum, byte* buffer) {
   for (uint16_t wordIndex = 0; wordIndex < 256; ++wordIndex, ++address) {
     PORTF = address & 0xFF;
     PORTK = (address >> 8) & 0xFF;
@@ -1585,24 +1584,36 @@ void readROM_MD() {
                                       && cartSize <= 0x400000;
 
   if (!md2mTransferred && useMdStandaloneFastPath) {
-    // Ordinary standalone SD dumps use a tight two-block loop. This removes
-    // per-word SVP/SSF2 checks and indexed-buffer bookkeeping without changing
-    // the MD bus strobes or the six-NOP ROM access interval.
+    // Allocate the 1 KiB batching buffer only for this MD standalone SD dump.
+    // If allocation fails, retain the original 512-byte writes using sdBuffer.
+    byte* mdBatchBuffer = (byte*)malloc(1024);
+
     for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
       if (currBuffer % 16384 == 0) blinkLED();
 
       for (uint8_t half = 0; half < 2; ++half) {
         const uint32_t blockAddress = currBuffer + ((uint32_t)half * 256UL);
+        byte* blockBuffer = mdBatchBuffer ? mdBatchBuffer + ((uint16_t)half * 512U) : sdBuffer;
         if (currBuffer == 0 && half == 0) {
           // Preserve the legacy rule: omit the first 256 header words.
-          readMdSdBlock_MD<false>(blockAddress, calcCKS);
+          readMdSdBlock_MD<false>(blockAddress, calcCKS, blockBuffer);
         } else {
-          calcCKS = readMdSdBlock_MD<true>(blockAddress, calcCKS);
+          calcCKS = readMdSdBlock_MD<true>(blockAddress, calcCKS, blockBuffer);
         }
 
+        if (!mdBatchBuffer) {
+          mdReadLoopMicros += micros() - mdSegmentStart;
+          uint32_t mdWriteStart = micros();
+          myFile.write(sdBuffer, 512);
+          mdFileWriteMicros += micros() - mdWriteStart;
+          mdSegmentStart = micros();
+        }
+      }
+
+      if (mdBatchBuffer) {
         mdReadLoopMicros += micros() - mdSegmentStart;
         uint32_t mdWriteStart = micros();
-        myFile.write(sdBuffer, 512);
+        myFile.write(mdBatchBuffer, 1024);
         mdFileWriteMicros += micros() - mdWriteStart;
         mdSegmentStart = micros();
       }
@@ -1610,6 +1621,8 @@ void readROM_MD() {
       processedProgressBar += 1024;
       draw_progressbar(processedProgressBar, totalProgressBar);
     }
+
+    free(mdBatchBuffer);
   } else if (!md2mTransferred) {
 
   for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
