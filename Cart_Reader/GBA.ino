@@ -985,11 +985,18 @@ static void readRomBlock_GBA(uint32_t byteAddress) {
 // Cooperative prefetch: one complete transaction, with CS/RD released on return.
 // Only used for PC ROM reads; the original block reader remains the fallback.
 static uint8_t prefetchLowGBA, prefetchMidGBA, prefetchHighGBA;
+// The normal dump replaces bytes 0x1FFFEFF..0x1FFFFFE with the byte at
+// 0x1FFFEFF. Cache that byte before 2M, so a retransmitted final block does
+// not depend on whether the preceding block was also requested.
+static bool retryPaddingGBA = false;
+static bool retryPaddingBlockGBA = false;
+static uint8_t retryPaddingByteGBA = 0;
 static void prefetchWordGBA(uint8_t* output) {
   DDRF=0xFF;
   DDRK=0xFF;
   DDRC=0xFF;
-  PORTF=prefetchLowGBA++;
+  const uint8_t low=prefetchLowGBA++;
+  PORTF=low;
   PORTK=prefetchMidGBA;
   PORTC=prefetchHighGBA;
   PORTH &= ~(1 << 3);
@@ -1005,12 +1012,19 @@ static void prefetchWordGBA(uint8_t* output) {
   PORTH |= (1 << 3);
   output[0]=lower;
   output[1]=upper;
+  if (retryPaddingBlockGBA && low >= 128) {
+    // Low 128..254: replace both bytes. Low 255: keep the ROM's last byte.
+    output[0]=retryPaddingByteGBA;
+    if (low != 255) output[1]=retryPaddingByteGBA;
+  }
 }
 static void beginRetryBlock_GBA(uint32_t byteAddress) {
   const uint32_t wordAddress = byteAddress >> 1;
   prefetchLowGBA = (uint8_t)wordAddress;
   prefetchMidGBA = (uint8_t)(wordAddress >> 8);
   prefetchHighGBA = (uint8_t)(wordAddress >> 16);
+  // Called once per <=512-byte chunk, even in 1024-byte 2M frames.
+  retryPaddingBlockGBA = retryPaddingGBA && byteAddress >= 0x1FFFE00UL;
 }
 
 // Dump ROM
@@ -1018,7 +1032,24 @@ void readROM_GBA() {
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("GBA", "ROM", romName, "gba");
   const bool needsPadding = cartSize == 0x2000000 && (saveType == 1 || saveType == 2);
-  if (!needsPadding && myFile.romRetry2M(cartSize, beginRetryBlock_GBA, prefetchWordGBA)) {
+  if (needsPadding && myFile.isPc()) {
+    // Match the normal dump's byte at 0x1FFFEFF (upper byte of this word).
+    // Sample before entering the raw 2M protocol; no console I/O during it.
+    uint8_t sample[2];
+    beginRetryBlock_GBA(0x1FFFEFEUL);
+    prefetchWordGBA(sample);
+    retryPaddingByteGBA=sample[1];
+    retryPaddingGBA=true;
+  }
+  const bool retrySucceeded=myFile.romRetry2M(cartSize, beginRetryBlock_GBA, prefetchWordGBA);
+  retryPaddingGBA=false;
+  retryPaddingBlockGBA=false;
+  if (retrySucceeded) {
+    if (needsPadding) {
+      char tempStr[32];
+      sprintf(tempStr, "Fixing ROM padding (0x%02X)", retryPaddingByteGBA);
+      println_Msg(tempStr);
+    }
     myFile.close();
     return;
   }
