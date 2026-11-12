@@ -1215,3 +1215,10 @@ Codexで必要な検証:
 CI追記 (2026-11-12):
 - 最初のハンドオフテスト実行 (commit cd98170ef06cb64c1492075271b4d667de3c64ab) はテストフィクスチャ2件が失敗。ファームのコンパイルエラーではない。ソース検査がC++側のバイト配列表記を考慮せず文字列"N64D"を探していたこと、および偽時計の進行が速すぎてready marker待ちで時間切れになったことが原因。commit 3bec7574571db876b11a9dd564ad1bfa2611cd40で修正。
 - GitHub Actions run 43149105199でPC回帰テスト133件すべて成功。今回ファームのビルドマトリクスはスキップされた。このワークフローは対応する機種の.inoファイルが変更された場合だけビルド対象にするため、N64.inoのクローズ位置に新しいハンドオフ完了条件のコメントを追加し、次のCIでHW3/HW5のN64ビルドも実行させる。
+
+
+最終CI検証 (2026-11-12):
+- ハンドオフ実装: commit cd98170ef06cb64c1492075271b4d667de3c64ab。テストフィクスチャ修正: commit 3bec7574571db876b11a9dd564ad1bfa2611cd40。N64ビルドマトリクス起動用の変更と記録: commit b4df5d1f6bbd75eba72e361035b8f7d54b256ccc。
+- GitHub Actions run 43149351491 成功。PC回帰テスト133件成功。ファームウェアはHW3-ENABLE_N64、HW5-ENABLE_N64の両方でコンパイル成功。
+- ソース、PCテスト、両HW向けビルドを確認済み。ただしPowerLeague64の再実機試験は未実施。切断問題を解決済みとせず、実機成功とも記録しない。
+- 次回はログ全体を保存する。新しいログの期待順序は、[N64 2M] Reader handoff marker received; acknowledgement sent、[N64 2M] Validated、[N64 2M profile]、[Reader] N64 2M close request、その後[N64 close]のfinalize=True、SHA-256、manifest closed、[SAVED]、DB照合各段階。

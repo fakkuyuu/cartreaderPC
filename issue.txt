@@ -1171,3 +1171,10 @@ Final 2 Mbps handoff investigation (2026-11-12):
 CI follow-up (2026-11-12):
 - The first handoff-test run (commit cd98170ef06cb64c1492075271b4d667de3c64ab) had two test-fixture failures, not a reported firmware compile failure: the source assertion expected a literal "N64D" string although firmware represents it as a byte array, and the fake clock advanced too quickly to pass the initial ready-marker wait. Both fixtures were corrected in commit 3bec7574571db876b11a9dd564ad1bfa2611cd40.
 - GitHub Actions run 43149105199 passed all 133 PC regression tests. The firmware matrix was skipped because this workflow only selects console builds when a matching console .ino file changes. The N64.ino close sites now document the new acknowledged handoff so the next workflow run also compiles N64 for HW3 and HW5.
+
+
+Final CI verification (2026-11-12):
+- Handoff implementation: commit cd98170ef06cb64c1492075271b4d667de3c64ab. Test-fixture correction: commit 3bec7574571db876b11a9dd564ad1bfa2611cd40. N64 build-matrix trigger and documentation: commit b4df5d1f6bbd75eba72e361035b8f7d54b256ccc.
+- GitHub Actions run 43149351491 succeeded. PC regression: 133 tests passed. Firmware compilation: HW3-ENABLE_N64 passed and HW5-ENABLE_N64 passed.
+- Source, PC tests, and both hardware-target builds are verified. Real PowerLeague64 retest remains pending; do not mark the disconnect issue resolved or claim hardware success yet.
+- On the next run, retain the whole log. Expected new sequence: [N64 2M] Reader handoff marker received; acknowledgement sent; [N64 2M] Validated; [N64 2M profile]; [Reader] N64 2M close request; then [N64 close] with finalize=True and subsequent SHA-256/manifest/[SAVED]/DB verification phases.
