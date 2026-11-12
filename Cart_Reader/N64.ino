@@ -2998,6 +2998,7 @@ void readRom_N64() {
   if (n64PcRetryEligible(totalBytes) &&
       myFile.romRetry2M(totalBytes, beginN64RetryBlock, readN64RetryWord,
                         PcLink::RETRY_PROFILE_N64, nullptr, true, n64RetryProgress)) {
+    // The retry transport returns only after the N64-specific 2 Mbps handoff is acknowledged.
     PcConsole.println(F("[Reader] N64 2M close request"));
     myFile.close();
     PcConsole.println(F("[Reader] N64 2M close response received"));
@@ -3061,6 +3062,7 @@ uint32_t readRom_N64() {
   if (n64PcRetryEligible(totalBytes) &&
       myFile.romRetry2M(totalBytes, beginN64RetryBlock, readN64RetryWord,
                         PcLink::RETRY_PROFILE_N64, nullptr, true, n64RetryProgress)) {
+    // The retry transport returns only after the N64-specific 2 Mbps handoff is acknowledged.
     PcConsole.println(F("[Reader] N64 2M close request"));
     myFile.close();
     PcLink::profileEnd();
