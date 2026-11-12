@@ -228,12 +228,29 @@ class N64RetryTests(unittest.TestCase):
         self.assertNotIn("Validated 2048 bytes", log)
         self.assertEqual(wire.handoff_acks, [])
 
+    def test_invalid_n64_handoff_marker_reports_received_bytes(self):
+        wire = ScriptedWire(bytes.fromhex("43 52 50 43 01 0d"), b"", b"")
+        from gba_retry import complete_n64_handoff
+        with self.assertRaisesRegex(
+                ProtocolError, r"bytes=43 52 50 43 01 0d"):
+            complete_n64_handoff(wire, FakeEvent(), None)
+
     def test_firmware_callback_restores_absolute_offset_and_z64_byte_order(self):
         source = (Path(__file__).resolve().parents[1] / "Cart_Reader" / "N64.ino").read_text(encoding="utf-8")
         self.assertIn("setAddress_N64(romBase + byteOffset);", source)
         callback = source.split("static void readN64RetryWord(uint8_t* output)", 1)[1].split("}", 1)[0]
         self.assertLess(callback.index("output[0] = PINK"), callback.index("output[1] = PINF"))
         self.assertIn("n64PcRetryKnownCart && !n64SpecialDeviceMode", source)
+        progress = source.split("static void n64RetryProgress(uint32_t completedBytes)", 1)[1].split("}", 1)[0]
+        self.assertIn("draw_progressbar(completedBytes, totalBytes, false);", progress)
+        self.assertIn("blinkLEDLocal();", progress)
+        self.assertNotIn("blinkLED();", progress)
+        reader = (Path(__file__).resolve().parents[1] / "Cart_Reader" / "Cart_Reader.ino").read_text(encoding="utf-8")
+        self.assertIn("void draw_progressbar(uint32_t processed, uint32_t total, bool reportToPc)", reader)
+        self.assertIn("static void updateProgressDisplayLocal()", reader)
+        self.assertIn("void blinkLEDLocal()", reader)
+        local_blink = reader.split("void blinkLEDLocal()", 1)[1].split("}", 1)[0]
+        self.assertNotIn("PcLink::activityBlinking()", local_blink)
         storage = (Path(__file__).resolve().parents[1] / "Cart_Reader" / "PcStorage.cpp").read_text(encoding="utf-8")
         self.assertIn("if (mode == PcLink::RETRY_PROFILE_N64) gbaN64Handoff();", storage)
         self.assertIn("static void gbaN64Handoff()", storage)

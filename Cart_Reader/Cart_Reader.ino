@@ -372,7 +372,8 @@ void resetArduino(void) {
 }
 
 // Progressbar
-void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
+void draw_progressbar(uint32_t processedsize, uint32_t totalsize, bool reportToPc = true);
+void blinkLEDLocal();
 
 // used by MD and NES modules
 byte eepbit[8];
@@ -2123,7 +2124,28 @@ static void updateProgressDisplay() {
 #endif
   display_Update();
 }
-void draw_progressbar(uint32_t processed, uint32_t total) {
+
+// Refresh only the reader's physical display. Do not flush PcConsole while
+// UART0 carries raw 2 Mbps retry frames and the final N64 handoff exchange.
+static void updateProgressDisplayLocal() {
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
+  display.updateDisplay();
+#endif
+}
+
+static void progressbarMessage(const __FlashStringHelper* message, bool newline, bool reportToPc) {
+  if (reportToPc) {
+    if (newline) println_Msg(message);
+    else print_Msg(message);
+    return;
+  }
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
+  display.print(message);
+  if (newline) display.setCursor(0, display.ty + 8);
+#endif
+}
+
+void draw_progressbar(uint32_t processed, uint32_t total, bool reportToPc) {
   uint8_t current, i;
   static uint8_t previous;
   static uint32_t cachedTotal, unit, nextThreshold;
@@ -2136,8 +2158,9 @@ void draw_progressbar(uint32_t processed, uint32_t total) {
     unit = total / steps;
     if (!unit) unit = 1;
     nextThreshold = unit;
-    print_Msg(F("["));
-    updateProgressDisplay();
+    progressbarMessage(F("["), false, reportToPc);
+    if (reportToPc) updateProgressDisplay();
+    else updateProgressDisplayLocal();
     return;
   }
 
@@ -2164,15 +2187,16 @@ void draw_progressbar(uint32_t processed, uint32_t total) {
       // steps are 20, so 20 - 1 = 19.
       if (i == (19)) {
         //If end of progress bar, finish progress bar by drawing "]"
-        println_Msg(F("]"));
+        progressbarMessage(F("]"), true, reportToPc);
       } else {
-        print_Msg(F("*"));
+        progressbarMessage(F("*"), false, reportToPc);
       }
     }
     //update previous "*" status
     previous = current;
     //Update display
-    updateProgressDisplay();
+    if (reportToPc) updateProgressDisplay();
+    else updateProgressDisplayLocal();
   }
 }
 
@@ -3203,7 +3227,7 @@ void rgbLed(byte Color) {
 #endif
 }
 
-void blinkLED() {
+static void toggleLEDHardware() {
 #if defined(ENABLE_VSELECT)
   // Nothing
 #elif defined(HW5)
@@ -3220,6 +3244,15 @@ void blinkLED() {
   // 3mm LED on D38, front of PCB (HW5)
   PORTB ^= (1 << 7);
 #endif
+}
+
+// Local-only activity for raw transfers; do not notify the PC over UART0.
+void blinkLEDLocal() {
+  toggleLEDHardware();
+}
+
+void blinkLED() {
+  toggleLEDHardware();
 #ifdef PC_MENU
   PcLink::activityBlinking();
 #endif

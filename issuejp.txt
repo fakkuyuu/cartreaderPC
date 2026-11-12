@@ -1222,3 +1222,11 @@ CI追記 (2026-11-12):
 - GitHub Actions run 43149351491 成功。PC回帰テスト133件成功。ファームウェアはHW3-ENABLE_N64、HW5-ENABLE_N64の両方でコンパイル成功。
 - ソース、PCテスト、両HW向けビルドを確認済み。ただしPowerLeague64の再実機試験は未実施。切断問題を解決済みとせず、実機成功とも記録しない。
 - 次回はログ全体を保存する。新しいログの期待順序は、[N64 2M] Reader handoff marker received; acknowledgement sent、[N64 2M] Validated、[N64 2M profile]、[Reader] N64 2M close request、その後[N64 close]のfinalize=True、SHA-256、manifest closed、[SAVED]、DB照合各段階。
+
+
+N64進捗通知による終了マーカー汚染の確認・修正 (2026-11-12):
+- 追加実機報告: 8 MiBすべてが書き込まれ、残ったファイルのSHA-256は前回DB一致品と同じ。失敗は2 Mbps終了ハンドオフだけで、PCが受け取った6バイトがN64Dに一致せず、接続終了時にopen fileがincomplete扱いになった。
+- ソースで混入経路を確認。n64RetryProgress()はdraw_progressbar()を呼び、内部のprint_Msg()/println_Msg()がPcConsoleへ出力し、updateProgressDisplay()がPcConsoleをflushしていた。またblinkLED()もPcLink::activityBlinking()経由でCRPCの一方向通知を送る。どちらもraw GB2M/N64D/N64A通信と同じUART0を使うため、最終進捗通知がN64Dより先に届き、PCが終了マーカーとして誤読する経路が成立する。
+- 修正: N64再送の進捗コールバックはdraw_progressbar(..., false)で本体LCD/OLEDだけを更新し、blinkLEDLocal()でPC向け活動通知を出さずに物理LEDだけを点滅させる。通常の進捗バーとblinkLED()の既存PCログ動作は維持。PC側進捗は従来どおり受信・検証済みバイト数に基づく。
+- PC側の終了マーカーエラーに、実際に受け取った6バイトを16進で記録する診断を追加。再発時にUART混入内容を判別できる。ローカル専用進捗/LED動作と受信バイト診断の回帰テストを追加。
+- この修正のCI・実機検証結果は未確認。

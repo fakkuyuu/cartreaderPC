@@ -677,8 +677,10 @@ static void readN64RetryWord(uint8_t* output) {
 
 static void n64RetryProgress(uint32_t completedBytes) {
   const uint32_t totalBytes = (uint32_t)cartSize * 1024UL * 1024UL;
-  draw_progressbar(completedBytes, totalBytes);
-  if ((completedBytes & 0x3FFFUL) == 0) blinkLED();
+  // Keep this callback local-only. PcConsole sends CRPC notifications on
+  // UART0, which is carrying raw GB2M frames and the final N64D/N64A handoff.
+  draw_progressbar(completedBytes, totalBytes, false);
+  if ((completedBytes & 0x3FFFUL) == 0) blinkLEDLocal();
 }
 
 static bool n64PcRetryEligible(uint32_t totalBytes) {

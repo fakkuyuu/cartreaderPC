@@ -24,11 +24,12 @@ def complete_n64_handoff(wire, stop, cancel):
             marker.extend(chunk)
     if len(marker) != 6:
         raise ProtocolError("reader did not send the final N64 2M handoff marker")
+    observed = marker.hex(" ")
     if marker[:4] != N64_HANDOFF_MAGIC:
-        raise ProtocolError("invalid final N64 2M handoff marker")
+        raise ProtocolError(f"invalid final N64 2M handoff marker: bytes={observed}")
     expected = binascii.crc_hqx(marker[:4], 0xffff)
     if int.from_bytes(marker[4:], "little") != expected:
-        raise ProtocolError("final N64 2M handoff marker CRC mismatch")
+        raise ProtocolError(f"final N64 2M handoff marker CRC mismatch: bytes={observed}")
     acknowledgement = N64_HANDOFF_ACK + struct.pack(
         "<H", binascii.crc_hqx(N64_HANDOFF_ACK, 0xffff))
     if wire.write(acknowledgement) != len(acknowledgement):

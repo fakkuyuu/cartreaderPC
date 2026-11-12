@@ -1178,3 +1178,11 @@ Final CI verification (2026-11-12):
 - GitHub Actions run 43149351491 succeeded. PC regression: 133 tests passed. Firmware compilation: HW3-ENABLE_N64 passed and HW5-ENABLE_N64 passed.
 - Source, PC tests, and both hardware-target builds are verified. Real PowerLeague64 retest remains pending; do not mark the disconnect issue resolved or claim hardware success yet.
 - On the next run, retain the whole log. Expected new sequence: [N64 2M] Reader handoff marker received; acknowledgement sent; [N64 2M] Validated; [N64 2M profile]; [Reader] N64 2M close request; then [N64 close] with finalize=True and subsequent SHA-256/manifest/[SAVED]/DB verification phases.
+
+
+N64 progress-notification contamination confirmed and corrected (2026-11-12):
+- Follow-up hardware report: all 8 MiB were written and the remaining file's SHA-256 matched the prior database-matching dump. Failure was limited to the final 2 Mbps handoff; host received six bytes that did not match N64D, then the open file was marked incomplete during shutdown.
+- Source confirmed the contamination path. n64RetryProgress() called draw_progressbar(), whose print_Msg()/println_Msg() calls PcConsole, and updateProgressDisplay() flushes PcConsole. It also called blinkLED(), which invokes PcLink::activityBlinking() and sends another one-way CRPC notification. Both notifications share UART0 with the raw GB2M/N64D/N64A traffic. The final progress update therefore could precede N64D and be mistaken by the host for the six-byte handoff marker.
+- Fix: N64 retry progress now calls draw_progressbar(..., false) to update only the reader's physical LCD/OLED, and blinkLEDLocal() to toggle hardware LEDs without the PC activity notification. Ordinary progress bars and blinkLED() retain their existing PC logging behavior. PC progress remains based on host-side received/validated bytes.
+- Host now includes the exact unexpected six bytes in final handoff errors, so any remaining UART contamination is directly identifiable. Added regression assertions for local-only N64 progress/LED behavior and the raw-byte diagnostic.
+- CI and hardware validation status pending for this correction.
