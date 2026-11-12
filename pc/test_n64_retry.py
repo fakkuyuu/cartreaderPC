@@ -249,7 +249,7 @@ class N64RetryTests(unittest.TestCase):
         self.assertIn("void draw_progressbar(uint32_t processed, uint32_t total, bool reportToPc)", reader)
         self.assertIn("static void updateProgressDisplayLocal()", reader)
         self.assertIn("void blinkLEDLocal()", reader)
-        local_blink = reader.split("void blinkLEDLocal()", 1)[1].split("}", 1)[0]
+        local_blink = reader.rsplit("void blinkLEDLocal()", 1)[1].split("}", 1)[0]
         self.assertNotIn("PcLink::activityBlinking()", local_blink)
         storage = (Path(__file__).resolve().parents[1] / "Cart_Reader" / "PcStorage.cpp").read_text(encoding="utf-8")
         self.assertIn("if (mode == PcLink::RETRY_PROFILE_N64) gbaN64Handoff();", storage)
