@@ -1583,34 +1583,51 @@ void readROM_MD() {
                                       && !is32x && !isSVP && SnKmode == 0
                                       && cartSize <= 0x400000;
 
+  // Allocate the extra MD batching buffer only while an ordinary standalone
+  // dump is running. The shared 512-byte buffer remains unchanged for every
+  // other console and for the rest of the firmware's lifetime.
+  byte* mdBatchBuffer = useMdStandaloneFastPath ? (byte*)malloc(1024) : nullptr;
+
   if (!md2mTransferred && useMdStandaloneFastPath) {
-    // Ordinary standalone SD dumps use a tight two-block loop. This removes
-    // per-word SVP/SSF2 checks and indexed-buffer bookkeeping without changing
-    // the MD bus strobes or the six-NOP ROM access interval.
+    // When the temporary buffer is available, two adjacent sectors are written
+    // together. If RAM is too fragmented, fall back safely to the original
+    // 512-byte writes instead of failing the dump.
     for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
       if (currBuffer % 16384 == 0) blinkLED();
 
-      // Fill two adjacent sectors before writing so SdFat can use multi-sector I/O.
       for (uint8_t half = 0; half < 2; ++half) {
         const uint32_t blockAddress = currBuffer + ((uint32_t)half * 256UL);
-        byte* blockBuffer = sdBuffer + ((uint16_t)half * 512U);
+        byte* blockBuffer = mdBatchBuffer ? mdBatchBuffer + ((uint16_t)half * 512U) : sdBuffer;
         if (currBuffer == 0 && half == 0) {
           // Preserve the legacy rule: omit the first 256 header words.
           readMdSdBlock_MD<false>(blockAddress, calcCKS, blockBuffer);
         } else {
           calcCKS = readMdSdBlock_MD<true>(blockAddress, calcCKS, blockBuffer);
         }
+
+        if (!mdBatchBuffer) {
+          mdReadLoopMicros += micros() - mdSegmentStart;
+          uint32_t mdWriteStart = micros();
+          myFile.write(sdBuffer, 512);
+          mdFileWriteMicros += micros() - mdWriteStart;
+          mdSegmentStart = micros();
+          processedProgressBar += 512;
+          draw_progressbar(processedProgressBar, totalProgressBar);
+        }
       }
 
-      mdReadLoopMicros += micros() - mdSegmentStart;
-      uint32_t mdWriteStart = micros();
-      myFile.write(sdBuffer, 1024);
-      mdFileWriteMicros += micros() - mdWriteStart;
-      mdSegmentStart = micros();
-
-      processedProgressBar += 1024;
-      draw_progressbar(processedProgressBar, totalProgressBar);
+      if (mdBatchBuffer) {
+        mdReadLoopMicros += micros() - mdSegmentStart;
+        uint32_t mdWriteStart = micros();
+        myFile.write(mdBatchBuffer, 1024);
+        mdFileWriteMicros += micros() - mdWriteStart;
+        mdSegmentStart = micros();
+        processedProgressBar += 1024;
+        draw_progressbar(processedProgressBar, totalProgressBar);
+      }
     }
+    free(mdBatchBuffer);
+    mdBatchBuffer = nullptr;
   } else if (!md2mTransferred) {
 
   for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
