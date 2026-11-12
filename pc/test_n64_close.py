@@ -10,6 +10,7 @@ class N64ClosePhaseTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             messages = []
             store = Storage(directory, log=messages.append)
+            store.hello = True
             target = Path(directory) / "N64" / "ROM" / "PowerLeague64" / "PowerLeague64.z64"
             target.parent.mkdir(parents=True)
             handle = store.allocate(target, flags=2 | 4 | 8)[0]
