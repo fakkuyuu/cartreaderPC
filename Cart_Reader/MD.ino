@@ -1522,6 +1522,8 @@ static inline __attribute__((always_inline)) uint16_t readMdSdBlock_MD(uint32_t 
     }
   }
   return checksum;
+}
+
 void readROM_MD() {
   // Checksum
   uint16_t calcCKS = 0;
