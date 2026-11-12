@@ -25,14 +25,15 @@ def frame(index, round_number, payload=None):
     return MAGIC + body + struct.pack("<H", binascii.crc_hqx(body, 0xffff))
 
 
-def collision_payload():
+def collision_payload(index=BLOCK):
     payload = bytearray((37 * i + 13) & 255 for i in range(512))
-    payload[:2] = b"\x45\x51"
+    # Both indexes give CRC16 0x6176, and the 1-byte-loss CRC 0x4761.
+    payload[:2] = {BLOCK: b"\x45\x51", 0: b"\x1e\x03"}[index]
     return bytes(payload)
 
 
-def damaged_frame():
-    original = frame(BLOCK, 0, collision_payload())
+def damaged_frame(index=BLOCK):
+    original = frame(index, 0, collision_payload(index))
     assert original[-2:] == b"\x76\x61"
     # One payload byte is missing, including when the CRC16 happens to match.
     return original[:10 + DROP_OFFSET] + original[11 + DROP_OFFSET:]
@@ -114,7 +115,8 @@ class BoundaryTests(unittest.TestCase):
         self.assertEqual(checksum, observed)
         blocks, ended = self.read_round(forged)
         self.assertNotIn(BLOCK, blocks)
-        self.assertFalse(ended)
+        # The complete end marker is still on the wire; resync may find it.
+        self.assertTrue(ended)
 
     def test_corrupted_middle_frame_does_not_poison_other_blocks(self):
         final_payload = bytes([0x5a]) * 512
@@ -124,7 +126,11 @@ class BoundaryTests(unittest.TestCase):
                frame(BLOCK, 0))
         blocks, ended = self.read_round(raw, count=3)
         self.assertTrue(ended)
-        self.assertEqual(blocks, {BLOCK + 2: final_payload})
+        # Reject only the corrupt block; valid later frames can be rescued.
+        self.assertEqual(blocks, {
+            BLOCK + 1: bytes([0x21]) * 512,
+            BLOCK + 2: final_payload,
+        })
 
     def test_valid_magic_inside_payload_never_triggers_false_boundary(self):
         for size in (256, 512, 1024):
@@ -152,9 +158,10 @@ class BoundaryTests(unittest.TestCase):
         self.assertFalse(ended)
         self.assertNotIn(BLOCK, blocks)
 
-    def run_transfer(self, rounds):
+    def run_transfer(self, rounds, store=None):
         wire = Wire(frame(0xffffffff, 0xff), rounds=rounds)
-        store = Store()
+        if store is None:
+            store = Store()
         log = []
         with patch("gba_retry.time.monotonic", Clock().monotonic), patch(
                 "gba_retry.time.sleep", lambda _: None):
@@ -164,27 +171,21 @@ class BoundaryTests(unittest.TestCase):
         return wire, store, result, "".join(log)
 
     def test_selective_retry_repairs_crc16_valid_dropped_byte(self):
-        bad_round = damaged_frame() + frame(0, 0)
-        good_round = frame(0, 1, collision_payload()) + frame(0, 1)
-        # The synthetic collision is for index BLOCK, so use its index
-        # in the on-wire frame and align the storage offset to that index.
-        # receive_dump operates from index zero; rebuild equivalent
-        # collision using a private frame helper at the observed offset.
-        # Verify the common receiver itself via the direct test above.
-        # Full-transfer recovery is exercised with a malformed last marker.
-        corrupt_end = bytearray(frame(0, 0))
-        corrupt_end[-1] ^= 1
-        rounds = [frame(0, 0, bytes([0x42]) * 512) + corrupt_end,
-                  frame(0, 1, bytes([0x42]) * 512) + frame(0, 1)]
-        wire, store, result, log = self.run_transfer(rounds)
+        bad_round = damaged_frame(0) + frame(0, 0)
+        good_round = frame(0, 1, collision_payload(0)) + frame(0, 1)
+        # Real CRC16 collision in round zero must trigger a selective
+        # retransmit rather than persist the shifted bytes to the ROM.
+        wire, store, result, log = self.run_transfer([bad_round, good_round])
         self.assertEqual(result[1], 1)
-        self.assertEqual(store.contents, {0: bytes([0x42]) * 512})
+        self.assertEqual(store.contents, {0: collision_payload(0)})
         self.assertIn("retransmitted 1 blocks", log)
 
     def test_retry_limit_fails_closed_without_saving_rom(self):
         rounds = [frame(0, n, bytes([0x42]) * 512) for n in range(10)]
+        store = Store()
         with self.assertRaisesRegex(ProtocolError, "retry limit"):
-            self.run_transfer(rounds)
+            self.run_transfer(rounds, store=store)
+        self.assertEqual(store.contents, {})
 
 
 if __name__ == "__main__":
