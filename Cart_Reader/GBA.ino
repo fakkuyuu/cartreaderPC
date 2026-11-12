@@ -1027,10 +1027,37 @@ static void beginRetryBlock_GBA(uint32_t byteAddress) {
   retryPaddingBlockGBA = retryPaddingGBA && byteAddress >= 0x1FFFE00UL;
 }
 
+// GBA ROM-only folder handling. Keep the global log timestamp from
+// createFolder(), but stop before opening a ROM if mkdir/chdir fails.
+static void createRomFile_GBA() {
+  snprintf(fileName, FILENAME_LENGTH, "%s.gba", romName);
+  EEPROM_readAnything(0, foldern);
+  // The fixed directory components stay in flash, not AVR SRAM.
+  const int pathLength = snprintf_P(folder, sizeof(folder),
+                                    PSTR("GBA/ROM/%s/%d"), romName, foldern);
+  if (pathLength < 0 || pathLength >= (int)sizeof(folder)) {
+    print_FatalError(F("GBA ROM path too long"));
+  }
+#ifdef ENABLE_GLOBAL_LOG
+  if (loggingEnabled && !PcLink::usingPcStorage() && myLog)
+    PcLink::writeDumpTimestamp(myLog, F("Dump started: "), PcLink::hostTime());
+#endif
+  // mkdir can fail when an SD directory already exists; allow that case.
+  if (!sd.mkdir(folder, true) && !sd.exists(folder)) {
+    print_FatalError(F("GBA ROM mkdir failed"));
+  }
+  if (!sd.chdir(folder)) {
+    print_FatalError(F("GBA ROM chdir failed"));
+  }
+  printAndIncrementFolder(true);
+  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    print_FatalError(sd_error_STR);
+  }
+}
+
 // Dump ROM
 void readROM_GBA() {
-  // Get name, add extension and convert to char array for sd lib
-  createFolderAndOpenFile("GBA", "ROM", romName, "gba");
+  createRomFile_GBA();
   const bool needsPadding = cartSize == 0x2000000 && (saveType == 1 || saveType == 2);
   if (needsPadding && myFile.isPc()) {
     // Match the normal dump's byte at 0x1FFFEFF (upper byte of this word).
