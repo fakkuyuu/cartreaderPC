@@ -353,7 +353,7 @@ int foldern;
 char folder[38];
 
 // Array that holds the data
-byte sdBuffer[512];
+byte sdBuffer[1024];
 
 // soft reset Arduino: jumps to 0
 // using the watchdog timer would be more elegant but some Mega2560 bootloaders are buggy with it

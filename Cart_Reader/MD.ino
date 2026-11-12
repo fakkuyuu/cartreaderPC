@@ -1489,8 +1489,7 @@ static void readMd2mWord(uint8_t* output) {
 // Read a 256-word block for ordinary standalone MD ROMs.
 // Keep the cartridge control-signal order and access NOPs unchanged.
 template <bool AccumulateChecksum>
-static inline __attribute__((always_inline)) uint16_t readMdSdBlock_MD(uint32_t address, uint16_t checksum) {
-  byte* buffer = sdBuffer;
+static inline __attribute__((always_inline)) uint16_t readMdSdBlock_MD(uint32_t address, uint16_t checksum, byte* buffer) {
   for (uint16_t wordIndex = 0; wordIndex < 256; ++wordIndex, ++address) {
     PORTF = address & 0xFF;
     PORTK = (address >> 8) & 0xFF;
@@ -1591,21 +1590,23 @@ void readROM_MD() {
     for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
       if (currBuffer % 16384 == 0) blinkLED();
 
+      // Fill two adjacent sectors before writing so SdFat can use multi-sector I/O.
       for (uint8_t half = 0; half < 2; ++half) {
         const uint32_t blockAddress = currBuffer + ((uint32_t)half * 256UL);
+        byte* blockBuffer = sdBuffer + ((uint16_t)half * 512U);
         if (currBuffer == 0 && half == 0) {
           // Preserve the legacy rule: omit the first 256 header words.
-          readMdSdBlock_MD<false>(blockAddress, calcCKS);
+          readMdSdBlock_MD<false>(blockAddress, calcCKS, blockBuffer);
         } else {
-          calcCKS = readMdSdBlock_MD<true>(blockAddress, calcCKS);
+          calcCKS = readMdSdBlock_MD<true>(blockAddress, calcCKS, blockBuffer);
         }
-
-        mdReadLoopMicros += micros() - mdSegmentStart;
-        uint32_t mdWriteStart = micros();
-        myFile.write(sdBuffer, 512);
-        mdFileWriteMicros += micros() - mdWriteStart;
-        mdSegmentStart = micros();
       }
+
+      mdReadLoopMicros += micros() - mdSegmentStart;
+      uint32_t mdWriteStart = micros();
+      myFile.write(sdBuffer, 1024);
+      mdFileWriteMicros += micros() - mdWriteStart;
+      mdSegmentStart = micros();
 
       processedProgressBar += 1024;
       draw_progressbar(processedProgressBar, totalProgressBar);
