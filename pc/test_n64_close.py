@@ -18,7 +18,7 @@ class N64ClosePhaseTests(unittest.TestCase):
             store.track_write(store.handles[handle], len(payload))
             response = store.dispatch(3, bytes((handle,)))
 
-            self.assertEqual(response[0], 0)
+            self.assertEqual(response[0], 0, "".join(messages))
             self.assertEqual(target.stat().st_size, len(payload))
             self.assertEqual(store.manifest["N64/ROM/PowerLeague64/PowerLeague64.z64"]["state"], "closed")
             trace = "".join(messages)
