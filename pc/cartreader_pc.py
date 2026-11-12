@@ -513,7 +513,8 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                         result = receive_dump(wire, store, handle, length, log, stop, cancel_event,
                                               block_size, 8192 // block_size, label,
                                               expected_block=bytes(range(256)) * 2 if probe else None,
-                                              fallback_before_payload=n64)
+                                              fallback_before_payload=n64,
+                                              completion_handshake=n64)
                         if n64 and result is None:
                             log("[N64 2M] Falling back to the ordinary N64 PC dump path\n")
                     continue

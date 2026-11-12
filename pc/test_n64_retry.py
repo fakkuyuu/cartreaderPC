@@ -59,12 +59,14 @@ def retry_frame(index, round_number, end, payload=b""):
 
 
 class ScriptedWire(FakeWire):
-    def __init__(self, marker, round_zero, round_one):
+    def __init__(self, marker, round_zero, round_one, provide_handoff=False):
         super().__init__()
         self.baudrate = 250_000
         self.stream = bytearray(marker)
         self.round_zero = round_zero
         self.round_one = round_one
+        self.provide_handoff = provide_handoff
+        self.handoff_acks = []
 
     @property
     def in_waiting(self):
@@ -78,11 +80,17 @@ class ScriptedWire(FakeWire):
 
     def write(self, data):
         self.writes.append(bytes(data))
-        if len(data) >= 2 and data[0] == 0xA7:
+        if data.startswith(b"N64A"):
+            self.handoff_acks.append(bytes(data))
+        elif len(data) >= 2 and data[0] == 0xA7:
             if data[1] == 0xFF:
                 self.stream.extend(self.round_zero)
             elif data[1] == 0:
                 self.stream.extend(self.round_one)
+            elif data[1] == 1 and self.provide_handoff:
+                marker = b"N64D"
+                self.stream.extend(marker + struct.pack(
+                    "<H", binascii.crc_hqx(marker, 0xffff)))
         return len(data)
 
 
@@ -156,12 +164,74 @@ class N64RetryTests(unittest.TestCase):
         self.assertIn("retransmitted 1 blocks", "".join(messages))
         self.assertGreaterEqual(elapsed, 0)
 
+    def test_n64_final_handoff_is_acknowledged_before_validated(self):
+        blocks = [bytes([i]) * 512 for i in range(4)]
+        round_zero = bytearray()
+        round_zero.extend(retry_frame(3, 0, False, blocks[3]))
+        round_zero.extend(retry_frame(1, 0, False, blocks[1]))
+        round_zero.extend(retry_frame(0, 0, False, blocks[0]))
+        round_zero.extend(retry_frame(0, 0, True))
+        round_one = bytearray(retry_frame(2, 1, False, blocks[2]))
+        round_one.extend(retry_frame(0, 1, True))
+        wire = ScriptedWire(retry_frame(0xffffffff, 0xff, True),
+                            round_zero, round_one, provide_handoff=True)
+        store = RecordingStore()
+        messages = []
+        tick = [0.0]
+
+        def monotonic():
+            tick[0] += 0.05
+            return tick[0]
+
+        with patch("gba_retry.time.monotonic", monotonic), patch("gba_retry.time.sleep", lambda _s: None):
+            receive_dump(
+                wire, store, 7, 2048, messages.append, FakeEvent(), None,
+                block_size=512, window=4, label="N64",
+                completion_handshake=True,
+            )
+
+        expected_ack = b"N64A" + struct.pack(
+            "<H", binascii.crc_hqx(b"N64A", 0xffff))
+        self.assertEqual(wire.handoff_acks, [expected_ack])
+        self.assertEqual(wire.baudrate, 250_000)
+        self.assertIn("Reader handoff marker received", "".join(messages))
+        self.assertIn("Validated 2048 bytes", "".join(messages))
+
+    def test_n64_missing_final_handoff_marker_fails_closed(self):
+        blocks = [bytes([i]) * 512 for i in range(4)]
+        round_zero = bytearray()
+        round_zero.extend(retry_frame(0, 0, False, blocks[0]))
+        round_zero.extend(retry_frame(1, 0, False, blocks[1]))
+        round_zero.extend(retry_frame(3, 0, False, blocks[3]))
+        round_zero.extend(retry_frame(0, 0, True))
+        round_one = bytearray(retry_frame(2, 1, False, blocks[2]))
+        round_one.extend(retry_frame(0, 1, True))
+        wire = ScriptedWire(retry_frame(0xffffffff, 0xff, True),
+                            round_zero, round_one, provide_handoff=False)
+        store = RecordingStore()
+        messages = []
+        clock = FakeClock()
+        with patch("gba_retry.time.monotonic", clock.monotonic), patch("gba_retry.time.sleep", lambda _s: None):
+            with self.assertRaisesRegex(ProtocolError, "final N64 2M handoff marker"):
+                receive_dump(
+                    wire, store, 7, 2048, messages.append, FakeEvent(), None,
+                    block_size=512, window=4, label="N64",
+                    completion_handshake=True,
+                )
+        log = "".join(messages)
+        self.assertIn("Failed while waiting for final N64 2M handoff marker", log)
+        self.assertNotIn("Validated 2048 bytes", log)
+        self.assertEqual(wire.handoff_acks, [])
+
     def test_firmware_callback_restores_absolute_offset_and_z64_byte_order(self):
         source = (Path(__file__).resolve().parents[1] / "Cart_Reader" / "N64.ino").read_text(encoding="utf-8")
         self.assertIn("setAddress_N64(romBase + byteOffset);", source)
         callback = source.split("static void readN64RetryWord(uint8_t* output)", 1)[1].split("}", 1)[0]
         self.assertLess(callback.index("output[0] = PINK"), callback.index("output[1] = PINF"))
         self.assertIn("n64PcRetryKnownCart && !n64SpecialDeviceMode", source)
+        storage = (Path(__file__).resolve().parents[1] / "Cart_Reader" / "PcStorage.cpp").read_text(encoding="utf-8")
+        self.assertIn("if (mode == PcLink::RETRY_PROFILE_N64) gbaN64Handoff();", storage)
+        self.assertIn("N64D", storage)
 
 
 if __name__ == "__main__":

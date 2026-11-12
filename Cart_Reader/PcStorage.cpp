@@ -464,6 +464,37 @@ static uint32_t gbaRetryMask(uint8_t round, bool wide) {
   return mask;
 }
 
+static void gbaN64Handoff() {
+  const uint8_t marker[] = {'N', '6', '4', 'D'};
+  uint16_t check = 0xffff;
+  for (uint8_t value : marker) {
+    gbaWriteByte(value);
+    check = crc(check, value);
+  }
+  gbaWriteByte((uint8_t)check);
+  gbaWriteByte((uint8_t)(check >> 8));
+  gbaFlushTx();
+
+  const uint8_t expected[] = {'N', '6', '4', 'A'};
+  uint8_t reply[6];
+  uint8_t received = 0;
+  const uint32_t started = millis();
+  while (received < sizeof(reply) && (uint32_t)(millis() - started) < 3000UL) {
+    if (Serial.available())
+      reply[received++] = (uint8_t)Serial.read();
+  }
+  if (received != sizeof(reply))
+    stop();
+  check = 0xffff;
+  for (uint8_t i = 0; i < sizeof(expected); ++i) {
+    if (reply[i] != expected[i])
+      stop();
+    check = crc(check, reply[i]);
+  }
+  if (check != (uint16_t)(reply[4] | ((uint16_t)reply[5] << 8)))
+    stop();
+}
+
 static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
                              void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
                              uint8_t mode, uint32_t* measuredUs = nullptr,
@@ -535,6 +566,8 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
     }
     if (progress) progress((first + count) << frameShift);
   }
+  // N64 requires both ends to confirm the final zero-mask before changing baud.
+  if (mode == PcLink::RETRY_PROFILE_N64) gbaN64Handoff();
   const uint32_t streamUs = micros() - streamStart;
   if (measuredUs) *measuredUs = streamUs;
   delay(150);

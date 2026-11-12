@@ -8,6 +8,32 @@ from protocol import ProtocolError
 MAGIC = b"GB2M"
 HEADER = struct.Struct("<IBB")
 MAX_ROUNDS = 10
+N64_HANDOFF_MAGIC = b"N64D"
+N64_HANDOFF_ACK = b"N64A"
+
+
+def complete_n64_handoff(wire, stop, cancel):
+    """Confirm the reader consumed the final zero-mask before leaving 2 Mbps."""
+    deadline = time.monotonic() + 2.5
+    marker = bytearray()
+    while len(marker) < 6 and time.monotonic() < deadline:
+        if stop.is_set() or (cancel is not None and cancel.is_set()):
+            raise ProtocolError("N64 2M handoff cancelled")
+        chunk = wire.read(6 - len(marker))
+        if chunk:
+            marker.extend(chunk)
+    if len(marker) != 6:
+        raise ProtocolError("reader did not send the final N64 2M handoff marker")
+    if marker[:4] != N64_HANDOFF_MAGIC:
+        raise ProtocolError("invalid final N64 2M handoff marker")
+    expected = binascii.crc_hqx(marker[:4], 0xffff)
+    if int.from_bytes(marker[4:], "little") != expected:
+        raise ProtocolError("final N64 2M handoff marker CRC mismatch")
+    acknowledgement = N64_HANDOFF_ACK + struct.pack(
+        "<H", binascii.crc_hqx(N64_HANDOFF_ACK, 0xffff))
+    if wire.write(acknowledgement) != len(acknowledgement):
+        raise ProtocolError("final N64 2M handoff acknowledgement was not sent")
+    wire.flush()
 
 
 def receive_window(wire, first, count, round_number, blocks, stop, cancel, block_size, label="GBA"):
@@ -52,7 +78,7 @@ def receive_window(wire, first, count, round_number, blocks, stop, cancel, block
     return received, False
 
 
-def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512, window=16, label="GBA", *, expected_block=None, fallback_before_payload=False):
+def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512, window=16, label="GBA", *, expected_block=None, fallback_before_payload=False, completion_handshake=False):
     if expected_block is not None and len(expected_block) != block_size:
         raise ValueError("benchmark pattern must match the frame size")
     previous_baud, previous_timeout = wire.baudrate, wire.timeout
@@ -121,6 +147,10 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
                             stars = completed_stars
                     break
                 resends += mask.bit_count()
+        if completion_handshake:
+            phase = "waiting for final N64 2M handoff marker"
+            complete_n64_handoff(wire, stop, cancel)
+            log("[N64 2M] Reader handoff marker received; acknowledgement sent\n")
         phase = "flushing the last reply"
         wire.flush()
         time.sleep(0.04)

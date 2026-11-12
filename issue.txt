@@ -1,5 +1,5 @@
 cartreaderPC Issues
-Last updated: 2026-11-05 19:44 JST
+Last updated: 2026-11-12 JST
 Applies to: PC tool PC108 / firmware PC107 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
@@ -1158,3 +1158,11 @@ Hardware report and close-boundary diagnostics (2026-11-12):
 - Follow-up test harness commits: d3bcb1d91fe713eb5f490432c2541d0bf2f2f0e6 exposes close test failure details; c39f3b15c73978f424b5917728cb3ba75a449798 initializes the host HELLO state correctly in the test.
 - PC regression: GitHub Actions run 43144986412 passed all 131 tests, including the N64 close phase-order test. Firmware build: run 43144756930 passed HW3-ENABLE_N64 and HW5-ENABLE_N64 for the same firmware source in fb96aec7f4525906ceaf44b33ad606042a05ffa8; later commits only changed the PC test harness and do not alter firmware sources.
 - Still unconfirmed: whether the original failure was a 10 s close-response timeout, a host-side file/manifest operation failure, a COM/driver error, or another interruption at the close boundary. Repeat the PowerLeague64 run with this diagnostic version and preserve the complete timestamped log, especially the last [N64 2M] / [Reader] / [N64 close] lines. Do not mark hardware verification complete until file size, SHA-256, DB CRC32, and actual retry behavior are checked.
+
+
+Final 2 Mbps handoff investigation (2026-11-12):
+- New PowerLeague64 hardware log: the complete 8,388,608-byte payload was CRC16-validated in 58.707 s with 2,114 retransmitted blocks. Host close diagnostics show flush 0.000 s, fsync 0.005 s, file handle close 0.005 s, then "file left incomplete; finalize=False". No SHA-256, manifest-closed, [SAVED], database verification, or [Reader] N64 2M close request was logged.
+- Correction to the earlier close-timeout theory: finalize=False is the host's shutdown cleanup path, not a completed op=3 close. The absent [Reader] close-request marker means the ordinary firmware close request was not observed. The 30 s op=3 timeout is therefore not supported as the first failure point by this run.
+- Source timing gap: after sending the final zero retry mask, the PC receiver waited 40 ms and restored its previous baud. The firmware only then consumed that reply, waited 150 ms, reinitialized UART at safe baud, and waited another 100 ms. There was no explicit final acknowledgement proving both ends had crossed the 2 Mbps boundary. This is a synchronization gap, not yet a proven root cause.
+- N64-only handoff added: after the final zero-mask, firmware sends a CRC16-protected N64D marker at 2 Mbps and waits for a CRC16-protected N64A acknowledgement. The PC waits for N64D and sends N64A before restoring its previous baud. Other GBA/SNES/MD profiles do not use this handshake. "Validated" is emitted only after the handoff exchange succeeds; missing or corrupt markers fail closed and leave the ROM incomplete.
+- Added PC tests for the successful handoff acknowledgement and for a missing marker failing closed. Hardware validation and CI results remain pending until rerun.
