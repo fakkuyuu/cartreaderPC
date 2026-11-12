@@ -2109,19 +2109,10 @@ void aboutScreen() {
 /******************************************
   Progressbar
 *****************************************/
+static void updateDisplay(bool waitForSerial);
+
 static void updateProgressDisplay() {
-#ifdef PC_MENU
-  if (PcLink::usingPcStorage()) {
-#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
-    display.updateDisplay();
-#endif
-#ifdef ENABLE_SERIAL
-    PcConsole.flush();
-#endif
-    return;
-  }
-#endif
-  display_Update();
+  updateDisplay(false);
 }
 void draw_progressbar(uint32_t processed, uint32_t total) {
   uint8_t current, i;
@@ -3117,7 +3108,7 @@ void readerConnectionDisplayRefresh() {
 #endif
 }
 
-void display_Update() {
+static void updateDisplay(bool waitForSerial) {
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.updateDisplay();
 #endif
@@ -3125,13 +3116,16 @@ void display_Update() {
   // Progress bars use short, non-newline writes. Push them immediately so the
   // PC UI shows live progress instead of receiving the whole bar at the end.
   PcConsole.flush();
-  delay(100);
+  if (waitForSerial) delay(100);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.flush();
 #endif
 }
 
+void display_Update() {
+  updateDisplay(true);
+}
 void display_Clear() {
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.clearDisplay();
