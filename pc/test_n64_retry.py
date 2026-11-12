@@ -210,8 +210,13 @@ class N64RetryTests(unittest.TestCase):
                             round_zero, round_one, provide_handoff=False)
         store = RecordingStore()
         messages = []
-        clock = FakeClock()
-        with patch("gba_retry.time.monotonic", clock.monotonic), patch("gba_retry.time.sleep", lambda _s: None):
+        tick = [0.0]
+
+        def monotonic():
+            tick[0] += 0.05
+            return tick[0]
+
+        with patch("gba_retry.time.monotonic", monotonic), patch("gba_retry.time.sleep", lambda _s: None):
             with self.assertRaisesRegex(ProtocolError, "final N64 2M handoff marker"):
                 receive_dump(
                     wire, store, 7, 2048, messages.append, FakeEvent(), None,
@@ -231,7 +236,8 @@ class N64RetryTests(unittest.TestCase):
         self.assertIn("n64PcRetryKnownCart && !n64SpecialDeviceMode", source)
         storage = (Path(__file__).resolve().parents[1] / "Cart_Reader" / "PcStorage.cpp").read_text(encoding="utf-8")
         self.assertIn("if (mode == PcLink::RETRY_PROFILE_N64) gbaN64Handoff();", storage)
-        self.assertIn("N64D", storage)
+        self.assertIn("static void gbaN64Handoff()", storage)
+        self.assertIn("const uint8_t marker[] = {'N', '6', '4', 'D'};", storage)
 
 
 if __name__ == "__main__":
