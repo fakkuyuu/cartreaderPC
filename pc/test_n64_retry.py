@@ -26,8 +26,12 @@ class FakeWire:
     def __init__(self):
         self.baudrate = 1_000_000
         self.timeout = 0.125
-        self.in_waiting = 0
+        self._in_waiting = 0
         self.writes = []
+
+    @property
+    def in_waiting(self):
+        return self._in_waiting
 
     def read(self, _count):
         return b""
