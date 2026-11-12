@@ -1486,6 +1486,42 @@ static void readMd2mWord(uint8_t* output) {
   }
 }
 
+// Read a 256-word block for ordinary standalone MD ROMs.
+// Keep the cartridge control-signal order and access NOPs unchanged.
+template <bool AccumulateChecksum>
+static inline __attribute__((always_inline)) uint16_t readMdSdBlock_MD(uint32_t address, uint16_t checksum) {
+  byte* buffer = sdBuffer;
+  for (uint16_t wordIndex = 0; wordIndex < 256; ++wordIndex, ++address) {
+    PORTF = address & 0xFF;
+    PORTK = (address >> 8) & 0xFF;
+    PORTL = (address >> 16) & 0xFF;
+
+    NOP;
+    PORTH &= ~(1 << 3);
+    PORTH &= ~(1 << 6);
+    PORTJ &= ~(1 << 1);
+    PORTG &= ~(1 << 5);
+
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+
+    *buffer++ = PINA;
+    *buffer++ = PINC;
+
+    PORTH |= (1 << 3);
+    PORTH |= (1 << 6);
+    PORTJ |= (1 << 1);
+    PORTG |= (1 << 5);
+
+    if (AccumulateChecksum) {
+      checksum += ((uint16_t)buffer[-2] << 8) | (uint16_t)buffer[-1];
+    }
+  }
+  return checksum;
 void readROM_MD() {
   // Checksum
   uint16_t calcCKS = 0;
@@ -1542,7 +1578,37 @@ void readROM_MD() {
     if (md2mTransferred) calcCKS = md2mChecksum;
   }
 
-  if (!md2mTransferred) {
+  const bool useMdStandaloneFastPath = !PcLink::usingPcStorage() && !myFile.isPc()
+                                      && !is32x && !isSVP && SnKmode == 0
+                                      && cartSize <= 0x400000;
+
+  if (!md2mTransferred && useMdStandaloneFastPath) {
+    // Ordinary standalone SD dumps use a tight two-block loop. This removes
+    // per-word SVP/SSF2 checks and indexed-buffer bookkeeping without changing
+    // the MD bus strobes or the six-NOP ROM access interval.
+    for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
+      if (currBuffer % 16384 == 0) blinkLED();
+
+      for (uint8_t half = 0; half < 2; ++half) {
+        const uint32_t blockAddress = currBuffer + ((uint32_t)half * 256UL);
+        if (currBuffer == 0 && half == 0) {
+          // Preserve the legacy rule: omit the first 256 header words.
+          readMdSdBlock_MD<false>(blockAddress, calcCKS);
+        } else {
+          calcCKS = readMdSdBlock_MD<true>(blockAddress, calcCKS);
+        }
+
+        mdReadLoopMicros += micros() - mdSegmentStart;
+        uint32_t mdWriteStart = micros();
+        myFile.write(sdBuffer, 512);
+        mdFileWriteMicros += micros() - mdWriteStart;
+        mdSegmentStart = micros();
+      }
+
+      processedProgressBar += 1024;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+  } else if (!md2mTransferred) {
 
   for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
     // Blink led
