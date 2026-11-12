@@ -12,3 +12,10 @@
 - ユーザーの手元のテスト用はHW3と選択済み機種設定を維持する。公開のためにテスト用設定を上書きしない。
 - PC対応に必要な独自設定は残す。公開前にConfig.hの差分を確認する。
 - issueは英語issue.txt・日本語issuejp.txtの両方を管理する。
+
+## Parallel branches and integration
+
+- Before work starts, record the starting commit, task branch, and scope. Give the same details to each participating chat.
+- Push changes to the task branch and report the final commit, the changes to integrate, and the checks run. Codex integrates approved changes and checks that fixes from the previous hardware-tested build are still present.
+- Build hardware-test and release firmware and PC tools from a specified integration commit. For a PC-only or firmware-only update, record the exact companion version. For an isolated experiment, state the test scope and which previously integrated fixes it omits before handing it over.
+- Record the integration branch, commit, artifact versions, and actual hardware results in the version history.
