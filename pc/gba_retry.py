@@ -74,6 +74,36 @@ def receive_window(wire, first, count, round_number, blocks, stop, cancel, block
                 continue
             if end:
                 return received, True
+            # CRC16 alone cannot authenticate the framing: if one payload
+            # byte vanishes, the low CRC byte may move into the payload and
+            # the high CRC byte plus the next frame's 'G' can accidentally
+            # pass CRC16 (observed on a real 32 MiB GBA dump). Do not commit
+            # a block until the *whole* next frame marker and its header are
+            # present at the exact byte boundary.
+            next_at = length
+            if len(buffer) < next_at + len(MAGIC):
+                break
+            if buffer[next_at:next_at + len(MAGIC)] != MAGIC:
+                # The candidate frame swallowed or skipped a byte. Discard
+                # the candidate and resynchronize, then request retransmit.
+                del buffer[0]
+                continue
+            if len(buffer) < next_at + 12:
+                break
+            next_index, next_round, next_end = HEADER.unpack_from(buffer, next_at + 4)
+            if (next_round != round_number or next_end not in (0, 1)
+                    or not first <= next_index < first + count
+                    or (next_end and next_index != first)):
+                del buffer[0]
+                continue
+            if next_end:
+                # The last data frame must lead into a *valid* end marker.
+                # A bad or absent end marker cannot certify its boundary.
+                next_body = buffer[next_at + 4:next_at + 10]
+                next_crc = int.from_bytes(buffer[next_at + 10:next_at + 12], "little")
+                if binascii.crc_hqx(next_body, 0xffff) != next_crc:
+                    del buffer[0]
+                    continue
             blocks[index] = bytes(body[HEADER.size:])
             del buffer[:length]
     return received, False
