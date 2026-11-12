@@ -14,7 +14,7 @@ extern "C" {
 }
 extern void pcVerificationResult(uint8_t code);
 extern HybridSdFs sd;
-extern uint8_t sdBuffer[1024];
+extern uint8_t sdBuffer[512];
 static uint16_t sdCopyReadSize = 256;
 static uint16_t sdCopyProgressMs = 0;
 static uint32_t sdCopyLastProgress = 0;
