@@ -1186,3 +1186,10 @@ N64 progress-notification contamination confirmed and corrected (2026-11-12):
 - Fix: N64 retry progress now calls draw_progressbar(..., false) to update only the reader's physical LCD/OLED, and blinkLEDLocal() to toggle hardware LEDs without the PC activity notification. Ordinary progress bars and blinkLED() retain their existing PC logging behavior. PC progress remains based on host-side received/validated bytes.
 - Host now includes the exact unexpected six bytes in final handoff errors, so any remaining UART contamination is directly identifiable. Added regression assertions for local-only N64 progress/LED behavior and the raw-byte diagnostic.
 - CI and hardware validation status pending for this correction.
+
+
+CI verification for local-only N64 progress (2026-11-12):
+- GitHub Actions run 43159153658 passed PC regression (134 tests) and the standard ALL_DEFAULTS firmware builds for both HW3 and HW5. The firmware compile includes N64 and the changed shared progress/LED helpers.
+- A follow-up test-only commit (326fc4a744606d70c9bc377a522f90d7f697ab28) corrected a source-inspection assertion to inspect the function definition rather than its forward declaration; the follow-up PC regression workflow run 43159250838 also passed.
+- The old hardware log did not capture the unexpected six bytes, so the exact received marker is still unknown. The firmware source shows that the final progress-bar close calls PcConsole.println(), whose CRPC notification begins with bytes 43 52 50 43 01 0d; blinkLED() can also emit a PcLink activity notification. This is the concrete source path removed from the N64 retry callback.
+- Real-hardware retest with the updated EXE and firmware is still required. Confirm the N64D/N64A handoff, [Reader] close request, finalize=True, [SAVED], and DB verification before considering the issue resolved.
