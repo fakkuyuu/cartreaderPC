@@ -464,7 +464,9 @@ static uint32_t gbaRetryMask(uint8_t round, bool wide) {
 static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
                              void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
                              uint8_t mode, uint32_t* measuredUs = nullptr,
-                             void (*roundStarted)(uint8_t) = nullptr) {
+                             void (*roundStarted)(uint8_t) = nullptr,
+                             bool fallbackBeforePayload = false,
+                             void (*progress)(uint32_t) = nullptr) {
   data[0] = handle;
   put32(data + 1, length);
   data[5] = mode;
@@ -486,7 +488,21 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
   // CRC-checked marker at the new baud and acknowledged it.
   const uint32_t readyStarted = millis();
   while (!Serial.available()) {
-    if (millis() - readyStarted >= 3000UL) stop();
+    if (millis() - readyStarted >= 3000UL) {
+      if (fallbackBeforePayload) {
+        // The host did not see a raw 2M marker, so no ROM payload has begun.
+        // Restore the normal link before the caller starts its legacy dump.
+        gbaFlushTx();
+        delay(50);
+        Serial.end();
+        Serial.begin(safeBaud);
+        activeBaud = safeBaud;
+        delay(100);
+        PcConsole.println(F("[N64 2M] negotiation timed out before payload; using normal transfer"));
+        return false;
+      }
+      stop();
+    }
     sendFrame(0xffffffffUL, 0xff, true, beginBlock, readWord);
     gbaFlushTx();
     const uint32_t sent = millis();
@@ -514,6 +530,7 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
       replyUs += micros() - replyStart;
       if (mask & ~validMask) stop();
     }
+    if (progress) progress((first + count) << frameShift);
   }
   const uint32_t streamUs = micros() - streamStart;
   if (measuredUs) *measuredUs = streamUs;
@@ -522,7 +539,7 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
   Serial.begin(safeBaud);
   activeBaud = safeBaud;
   delay(100);
-  PcConsole.print(mode == PcLink::RETRY_PROFILE_MD ? F("[MD 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_SNES || mode == PcLink::RETRY_PROFILE_SNES_EXPERIMENTAL ? F("[SNES 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_BENCHMARK ? F("[Benchmark 2M profile] payload_us=") : F("[GBA 2M profile] payload_us="));
+  PcConsole.print(mode == PcLink::RETRY_PROFILE_N64 ? F("[N64 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_MD ? F("[MD 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_SNES || mode == PcLink::RETRY_PROFILE_SNES_EXPERIMENTAL ? F("[SNES 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_BENCHMARK ? F("[Benchmark 2M profile] payload_us=") : F("[GBA 2M profile] payload_us="));
   PcConsole.print(gbaPayloadUs);
   PcConsole.print(F(" reply_us="));
   PcConsole.print(replyUs);
@@ -849,10 +866,12 @@ bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*
 }
 
 bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
-                           PcLink::RetryProfile profile, void (*roundStarted)(uint8_t)) {
+                           PcLink::RetryProfile profile, void (*roundStarted)(uint8_t),
+                           bool fallbackBeforePayload, void (*progress)(uint32_t)) {
   if (!writable || !handle || pos || !length || length % 512) return false;
   if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord,
-                                (uint8_t)profile, nullptr, roundStarted)) return false;
+                                (uint8_t)profile, nullptr, roundStarted,
+                                fallbackBeforePayload, progress)) return false;
   pos = size = length;
   return true;
 }

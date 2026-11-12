@@ -458,11 +458,16 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     experimental = snes and payload[5] == 13
                     probe = len(payload) == 6 and payload[5] == 12
                     md = len(payload) == 6 and payload[5] == 14
+                    n64 = len(payload) == 6 and payload[5] == 15
                     enabled = not experimental and retry_benchmark_preferred(identity)
                     block_size = 512
                     try:
                         settings = json.loads(TRANSFER_SETTINGS_FILE.read_text(encoding="utf-8"))
-                        if md:
+                        if n64:
+                            # N64 may be disabled locally, but it never bypasses
+                            # the adapter-specific retry benchmark decision.
+                            enabled = enabled and settings.get("n64_retry_2m", True) is True
+                        elif md:
                             # An explicit boolean overrides the device-specific
                             # retry benchmark result; otherwise follow that result.
                             enabled = settings.get("md_retry_2m", enabled) is True
@@ -479,20 +484,21 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                         pass
                     selectable = len(payload) == 6 and payload[5] == 0
                     legacy = len(payload) == 6 and payload[5] == 9
-                    if legacy or snes or probe or md:
-                        # SNES retry and MD use the established 512-byte frame.
+                    if legacy or snes or probe or md or n64:
+                        # SNES, MD and N64 use the established 512-byte frame.
                         block_size = 512
-                    handle = payload[0] if selectable or legacy or snes or probe or md else 0
+                    handle = payload[0] if selectable or legacy or snes or probe or md or n64 else 0
                     length = int.from_bytes(payload[1:5], "little")
                     entry = store.handles.get(handle)
                     if probe:
                         enabled = bool(host_state and host_state.get("retry_probe") and entry
                                        and entry["path"].relative_to(store.root).as_posix()
                                        == "__diagnostics__/tx-test.crpctest" and length == 1048576)
+                    max_length = 128 * 1024**2 if n64 else 32 * 1024**2
                     allowed = bool(enabled and entry and entry["write"]
-                                   and 0 < length <= 32 * 1024**2 and length % block_size == 0)
+                                   and 0 < length <= max_length and length % block_size == 0)
                     answer = bytes([not allowed])
-                    if allowed and (selectable or snes or probe or md):
+                    if allowed and (selectable or snes or probe or md or n64):
                         answer += bytes([block_size.bit_length() - 1])
                     reply = encode(op | 0x80, seq, answer)
                     if wire.write(reply) != len(reply):
@@ -501,12 +507,15 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     if allowed:
                         # Preserve the old-baud ACK before changing the port, as op=17 does.
                         time.sleep(.05)
-                        label = "Benchmark" if probe else "MD" if md else "SNES" if snes else "GBA"
+                        label = "Benchmark" if probe else "N64" if n64 else "MD" if md else "SNES" if snes else "GBA"
                         log(f"[{label} 2M] Starting CRC16 transfer with selective retransmission\n")
                         log(f"[{label} 2M] Frame size {block_size} B, reply window 8192 B\n")
-                        receive_dump(wire, store, handle, length, log, stop, cancel_event,
-                                     block_size, 8192 // block_size, label,
-                                     expected_block=bytes(range(256)) * 2 if probe else None)
+                        result = receive_dump(wire, store, handle, length, log, stop, cancel_event,
+                                              block_size, 8192 // block_size, label,
+                                              expected_block=bytes(range(256)) * 2 if probe else None,
+                                              fallback_before_payload=n64)
+                        if n64 and result is None:
+                            log("[N64 2M] Falling back to the ordinary N64 PC dump path\n")
                     continue
                 response = store.dispatch(op, payload)
                 if tx2m is not None:
@@ -2050,6 +2059,8 @@ def gui(args):
                                            ("SNES", "snes_retry_2m"),
                                            ("MD", "md_retry_2m"))
                    if settings.get(key, preferred) is True]
+        if preferred and settings.get("n64_retry_2m", True) is True:
+            enabled.append("N64")
         retry_baud.set("ROM 2M (CRC16): " + (", ".join(enabled) or "—"))
         if port.get() and has_completed_benchmark(port_identity(port.get())):
             benchmark_hint.pack_forget()

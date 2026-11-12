@@ -52,7 +52,7 @@ def receive_window(wire, first, count, round_number, blocks, stop, cancel, block
     return received, False
 
 
-def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512, window=16, label="GBA", *, expected_block=None):
+def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512, window=16, label="GBA", *, expected_block=None, fallback_before_payload=False):
     if expected_block is not None and len(expected_block) != block_size:
         raise ValueError("benchmark pattern must match the frame size")
     previous_baud, previous_timeout = wire.baudrate, wire.timeout
@@ -73,6 +73,9 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
             count, ended = receive_window(wire, 0xffffffff, 1, 0xff, {}, stop, cancel, block_size, label)
             received += count
         if not ended:
+            if fallback_before_payload:
+                log(f"[{label} 2M] no ready marker; no ROM payload sent, returning to normal transfer\n")
+                return None
             raise ProtocolError("reader did not confirm the switch to 2M")
         phase = "sending the 2M ready acknowledgement"
         ready = struct.pack(mask_format, 0xA7, 0xff, 0)
