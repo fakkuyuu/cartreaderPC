@@ -1194,3 +1194,11 @@ Codexで必要な検証:
 - ファームウェアビルド: GitHub Actions run 43136458999 でHW3-ENABLE_N64とHW5-ENABLE_N64の両方が成功。その後のコミットではPCテストだけを修正・追加しており、当該ビルド対象ファームウェアソースは同一。
 - 実装変更ファイル: Cart_Reader/N64.ino、Cart_Reader/PcStorage.h、Cart_Reader/PcStorage.cpp、pc/cartreader_pc.py、pc/gba_retry.py、pc/test_n64_retry.py。
 - 実機での比較は未実施。同一カートの1Mbps/2Mbpsでのサイズ・SHA-256・DB CRC32・転送時間比較、および実際に再送が発生した回での一致確認はユーザー側の実機検証待ち。
+
+実機報告とファイル確定境界の診断改修 (2026-11-12):
+- ユーザー実機報告: PowerLeague64、8 MiB。PCは全ROMペイロードを受信しCRC16検証済み。2Mbps転送59.620秒、再送2,095ブロック。転送完了後、ファイル確定・DB照合前に接続が切れ、manifestは"incomplete"、COM5は約2秒後に再接続。観測上はraw転送完了からPCファイルclose/確定処理への移行区間に絞れたが、原因特定には至っていない。
+- ソース追跡: 最終ウィンドウの再送mask=0後、ファームはsafe baudへ復帰しgbaRetryTransfer()を抜け、N64側でmyFile.close()を呼ぶ。ここでop=3を送る。PC側Storage.close_handle()は同期処理で、file.flush()、os.fsync()、file.close()、SHA-256、manifestをclosedへ更新、[SAVED]、verify_rom()（CRC32とN64 DB照合）、TXT作成の順に処理する。従来ファームのcall()応答待ちは各バイト10秒固定だったため、PCのclose確定処理が長引くとホスト消失扱いになる可能性がある。ただし今回の原因と確定したわけではない。
+- 診断改修commit fb96aec7f4525906ceaf44b33ad606042a05ffa8: op=3の応答待ちを10秒から30秒へ延長。N64ファームから[Reader] N64 2M close request / close response receivedを出す。PC側はflush、fsync、ハンドルclose、SHA-256、manifest確定、DB照合、companion TXT作成の各段階で経過時間つき[N64 close]ログを出す。次回実機ログで停止段階を特定し、ファイル確定処理中の不要なリセットも避ける。
+- テスト修正commit: d3bcb1d91fe713eb5f490432c2541d0bf2f2f0e6でcloseテストのエラー詳細を表示。c39f3b15c73978f424b5917728cb3ba75a449798でテスト側のHELLO確立状態を初期化。
+- PC回帰: GitHub Actions run 43144986412で131テスト全件成功。N64 close各段階の順序テストを含む。ファームビルド: run 43144756930でHW3-ENABLE_N64とHW5-ENABLE_N64の両方が成功。ビルド対象のファームソースはfb96aec7f4525906ceaf44b33ad606042a05ffa8で、その後のコミットはPCテストハーネスのみでファームは変更なし。
+- 未確定: 元の切断原因がop=3の10秒応答待ち、PC側のファイル/manifest処理、COM/ドライバ異常、またはclose境界の別の中断のどれかはまだ不明。診断版でPowerLeague64を再試験し、タイムスタンプを含むログ全体、とくに末尾の[N64 2M] / [Reader] / [N64 close]行を保存する。ファイルサイズ・SHA-256・DB CRC32・実際の再送内容を確認するまでは実機検証完了にしない。
