@@ -1109,3 +1109,34 @@ Follow-up after first hardware run (2026-11-11): 512 KiB Sonic the Hedgehog comp
 Integration with the retry-benchmark branch (2026-11-11 23:31 JST): Do not reuse op=30 kind 12 (retry-speed benchmark probe) or 13 (experimental SNES transfer). The new MD retry profile is kind 14. Firmware uses an explicit RetryProfile enum and passes a round-start callback to the shared CRC16 retry engine. MD checksum is maintained per 512-byte frame; on retransmission the old frame contribution is removed before replacement, preserving the legacy skip-first-256-words rule without double-counting. The host forces MD retry frames to 512 B.
 PC default policy: when `md_retry_2m` is absent, use the adapter-specific `retry_benchmark_preferred(identity)` result (`retry_us < normal_us`). An explicit boolean `md_retry_2m: true/false` overrides that result. The existing `ROM 2M (CRC16)` status now includes MD whenever this same effective setting is enabled. Modes 12 and 13, benchmark behavior, SNES normal/experimental behavior, and GBA settings are retained. Source changes are on `experiment/retry-benchmark`; compile and hardware validation remain pending.
 Final validation (2026-11-11): latest firmware source commit 6d300f37527a42a40015e792ca0597cb604a3e0a. PC regression suite passed in Actions. Firmware compile passed for HW3-ENABLE_MD and HW5-ENABLE_MD (run 43042678548); full default-core compile passed for HW3 and HW5 (run 43042339943). The isolated MD build initially exposed pre-existing unguarded CORE_NES references in PC menu code; these three NES-only paths are now wrapped in ENABLE_NES in Cart_Reader/Cart_Reader.ino, after which both MD-only builds passed. Hardware ROM-dump validation for MD mode 14 is still pending.
+
+#054 N64 PC ROM transfer at 2 Mbps with CRC16 selective retransmission
+Added: 2026-11-12 JST
+Last updated: 2026-11-12 JST
+Status: IMPLEMENT / P2 / n64, pc-storage, transfer
+
+Request: Add the existing 2 Mbps CRC16 selective-retransmission transport to the N64 ROM-to-PC-storage path. It must work for both the manual Read ROM action and Auto N64.
+
+Scope and exclusions:
+- Change only the N64 ROM path that streams the ROM to PC storage. Do not change N64 save read/write, standalone operation, SD-card ROM dumping, or transfer behavior for any other console.
+- Reuse the existing shared 512-byte frame, CRC16, and selective-retransmission engine used by GBA/SNES/MD. Do not create a second independent retry protocol.
+- Keep N64-specific logic limited to translating a requested ROM byte offset into the correct N64 cartridge address and reading that frame. Every initial send and retry must restore the address from the requested offset; it must not depend on the address left by the preceding frame.
+- A retransmitted 512-byte range must contain exactly the same bytes, in the same byte order, as that range in the ordinary N64 PC dump. Preserve the current N64 ROM image byte order and account for the existing ROM base/address mapping.
+- Enable the retry path only when the existing adapter-specific speed-benchmark policy says 2 Mbps is usable/preferred. When 2 Mbps is disabled or unsupported, retain the ordinary N64 PC transfer.
+- If negotiation fails before any ROM payload has started, restore the normal baud/protocol state and fall back to the ordinary transfer. Do not leave the reader or host at 2 Mbps.
+- After payload transfer has started, an unrecoverable timeout, malformed response, CRC/protocol error, or exhausted retry must fail the ROM transfer as incomplete. Do not silently fall back and present a partially written file as a successful dump.
+- Check all existing firmware and PC-side op=30/profile values before assigning the N64 profile. In particular, preserve the existing benchmark, SNES, and MD assignments (12, 13, and 14); choose a genuinely unused value and keep the host and firmware definitions synchronized.
+- Include only N64 cartridge/read paths for which arbitrary-offset rereads are known to reproduce the same bytes. Keep special cartridges or alternate/banked read paths on the legacy transfer unless both the initial send and retry can be proven equivalent.
+- Show only one console progress bar during 2 Mbps transfer; do not leave the legacy loop updating a second bar.
+- In Auto N64, once the ROM dump has completed successfully, the existing save-processing sequence must continue unchanged.
+
+Implementation guidance:
+Trace both the manual Read ROM and Auto N64 call paths, including the PC-storage file lifecycle and the normal N64 dump implementations. Keep the legacy path intact and make the 2 Mbps path explicitly conditional. Preserve existing protocol users and error semantics; adjust the shared engine only as needed to provide safe pre-payload negotiation fallback for this profile without changing established GBA/SNES/MD behavior.
+
+Validation required from Codex:
+- Run the complete PC regression test suite, including tests for 512-byte offset-to-address mapping, byte order, arbitrary/out-of-order frame rereads, CRC16 retry replacement, and the pre-payload fallback versus post-start failure distinction.
+- Run N64-enabled firmware builds for both HW3 and HW5.
+- Verify by code/tests that benchmark-disabled/unsupported environments use the legacy path, no save/SD/standalone/other-console behavior was changed, the console has one progress bar, and Auto N64 still reaches its existing save phase after successful ROM completion.
+- Record exact commits, changed files, test commands/results, and any remaining limitations in both issue logs. Do not claim real-hardware validation.
+
+Hardware verification (to be performed by the user): With the same N64 cartridge, compare 1 Mbps and 2 Mbps PC dumps for file size, SHA-256, database CRC32, and transfer time. Also induce/observe an actual retransmission and repeat the content comparisons on that run. Real-device completion is not part of the source/CI acceptance criteria and must remain explicitly pending until the user reports the results.
