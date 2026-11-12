@@ -33,6 +33,8 @@ String lastbutton = "N/A";
 unsigned long romBase = 0x10000000;
 // Only database-identified standard cartridges are eligible for N64 retry reads.
 static bool n64PcRetryKnownCart = false;
+// Flash repro, Gameshark and Xplorer paths are not assumed to be linear ROM readers.
+static bool n64SpecialDeviceMode = false;
 
 // Flashram type
 byte flashramType = 1;
@@ -122,6 +124,7 @@ void n64Menu() {
   // wait for user choice to come back from the question box menu
   switch (n64Dev) {
     case 0:
+      n64SpecialDeviceMode = false;
       display_Clear();
       display_Update();
       setup_N64_Cart();
@@ -138,6 +141,7 @@ void n64Menu() {
 
 #if defined(ENABLE_FLASH)
     case 2:
+      n64SpecialDeviceMode = true;
       display_Clear();
       display_Update();
       setup_N64_Cart();
@@ -148,6 +152,7 @@ void n64Menu() {
 #endif
 
     case 3:
+      n64SpecialDeviceMode = true;
       display_Clear();
       display_Update();
       setup_N64_Cart();
@@ -157,6 +162,7 @@ void n64Menu() {
       break;
 
     case 4:
+      n64SpecialDeviceMode = true;
       display_Clear();
       display_Update();
       setup_N64_Cart();
@@ -677,7 +683,8 @@ static void n64RetryProgress(uint32_t completedBytes) {
 
 static bool n64PcRetryEligible(uint32_t totalBytes) {
   // Unknown IDs and non-standard cartridge paths remain on the legacy reader.
-  return n64PcRetryKnownCart && PcLink::usingPcStorage() && myFile.isPc()
+  return n64PcRetryKnownCart && !n64SpecialDeviceMode
+         && PcLink::usingPcStorage() && myFile.isPc()
          && romBase == 0x10000000UL
          && totalBytes >= 512UL && (totalBytes & 511UL) == 0
          && totalBytes <= 128UL * 1024UL * 1024UL;
