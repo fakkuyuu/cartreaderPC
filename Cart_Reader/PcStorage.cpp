@@ -182,9 +182,9 @@ bool detachToPhysical() {
   readerConnectionDisplayRefresh();
   return ready;
 }
-static uint8_t receive() {
+static uint8_t receive(uint32_t timeoutMs) {
   unsigned long t = millis();
-  while (!Serial.available()) if (millis()-t > 10000UL) resetAfterHostLoss();
+  while (!Serial.available()) if ((uint32_t)(millis()-t) > timeoutMs) resetAfterHostLoss();
   return Serial.read();
 }
 void put32(uint8_t* p, uint32_t v) { for(uint8_t i=0;i<4;i++) {p[i]=v; v>>=8;} }
@@ -195,6 +195,9 @@ uint16_t call(uint8_t op, uint16_t n) {
   sampleRam(RAM_PROTOCOL);
   if(n>dataCapacity) stop();
   uint16_t seq=++sequence;
+  // PC file close includes flush/fsync, hashing and database verification.
+  // Allow that synchronous host-side finalization more time than ordinary RPCs.
+  const uint32_t responseTimeoutMs = op == 3 ? 30000UL : 10000UL;
   uint8_t h[]={1,op,(uint8_t)seq,(uint8_t)(seq>>8),(uint8_t)n,(uint8_t)(n>>8)};
   uint16_t c=0xffff;
   Serial.write((const uint8_t*)"CRPC",4);
@@ -202,15 +205,15 @@ uint16_t call(uint8_t op, uint16_t n) {
   for(uint16_t i=0;i<n;i++) { Serial.write(data[i]); c=crc(c,data[i]); }
   Serial.write((uint8_t)c); Serial.write((uint8_t)(c>>8));
   const char* magic="CRPC";
-  for(uint8_t i=0;i<4;i++) if(receive()!=magic[i]) stop();
+  for(uint8_t i=0;i<4;i++) if(receive(responseTimeoutMs)!=magic[i]) stop();
   c=0xffff;
   uint8_t r[6];
-  for(uint8_t i=0;i<6;i++) { r[i]=receive(); c=crc(c,r[i]); }
+  for(uint8_t i=0;i<6;i++) { r[i]=receive(responseTimeoutMs); c=crc(c,r[i]); }
   if(r[0]!=1 || r[1]!=(op|0x80) || r[2]!=h[2] || r[3]!=h[3]) stop();
   n=r[4]|((uint16_t)r[5]<<8);
   if(n<1 || n>dataCapacity) stop();
-  for(uint16_t i=0;i<n;i++) {data[i]=receive(); c=crc(c,data[i]);}
-  uint16_t got=receive(); got|=(uint16_t)receive()<<8;
+  for(uint16_t i=0;i<n;i++) {data[i]=receive(responseTimeoutMs); c=crc(c,data[i]);}
+  uint16_t got=receive(responseTimeoutMs); got|=(uint16_t)receive(responseTimeoutMs)<<8;
   if(c!=got) stop();
   return n;
 }

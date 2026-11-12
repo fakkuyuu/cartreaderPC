@@ -2998,7 +2998,9 @@ void readRom_N64() {
   if (n64PcRetryEligible(totalBytes) &&
       myFile.romRetry2M(totalBytes, beginN64RetryBlock, readN64RetryWord,
                         PcLink::RETRY_PROFILE_N64, nullptr, true, n64RetryProgress)) {
+    PcConsole.println(F("[Reader] N64 2M close request"));
     myFile.close();
+    PcConsole.println(F("[Reader] N64 2M close response received"));
     return;
   }
 
@@ -3059,8 +3061,10 @@ uint32_t readRom_N64() {
   if (n64PcRetryEligible(totalBytes) &&
       myFile.romRetry2M(totalBytes, beginN64RetryBlock, readN64RetryWord,
                         PcLink::RETRY_PROFILE_N64, nullptr, true, n64RetryProgress)) {
+    PcConsole.println(F("[Reader] N64 2M close request"));
     myFile.close();
     PcLink::profileEnd();
+    PcConsole.println(F("[Reader] N64 2M close response received"));
     return oldcrc32;
   }
 
