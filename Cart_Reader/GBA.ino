@@ -985,9 +985,9 @@ static void readRomBlock_GBA(uint32_t byteAddress) {
 // Cooperative prefetch: one complete transaction, with CS/RD released on return.
 // Only used for PC ROM reads; the original block reader remains the fallback.
 static uint8_t prefetchLowGBA, prefetchMidGBA, prefetchHighGBA;
-// The normal dump replaces bytes 0x1FFFEFF..0x1FFFFFE with the byte at
-// 0x1FFFEFF. Cache that byte before 2M, so a retransmitted final block does
-// not depend on whether the preceding block was also requested.
+// The normal dump reads the byte at 0x1FFFEFF, then overwrites the final
+// 256 bytes (0x1FFFF00..0x1FFFFFF) with it. Cache that byte before 2M so
+// retransmissions of the final block produce the same corrected payload.
 static bool retryPaddingGBA = false;
 static bool retryPaddingBlockGBA = false;
 static uint8_t retryPaddingByteGBA = 0;
@@ -1013,9 +1013,9 @@ static void prefetchWordGBA(uint8_t* output) {
   output[0]=lower;
   output[1]=upper;
   if (retryPaddingBlockGBA && low >= 128) {
-    // Low 128..254: replace both bytes. Low 255: keep the ROM's last byte.
+    // Low 128..255: replace BOTH bytes, including byte 0x1FFFFFF.
     output[0]=retryPaddingByteGBA;
-    if (low != 255) output[1]=retryPaddingByteGBA;
+    output[1]=retryPaddingByteGBA;
   }
 }
 static void beginRetryBlock_GBA(uint32_t byteAddress) {
