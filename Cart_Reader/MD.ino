@@ -1587,6 +1587,11 @@ void readROM_MD() {
     // Allocate the 1 KiB batching buffer only for this MD standalone SD dump.
     // If allocation fails, retain the original 512-byte writes using sdBuffer.
     byte* mdBatchBuffer = (byte*)malloc(1024);
+    if (mdBatchBuffer) {
+      println_Msg(F("[MD SD] 1 KiB batch buffer allocated"));
+    } else {
+      println_Msg(F("[MD SD] 1 KiB batch buffer allocation failed; using 512-byte writes"));
+    }
 
     for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
       if (currBuffer % 16384 == 0) blinkLED();
