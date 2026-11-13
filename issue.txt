@@ -1197,3 +1197,20 @@ CI verification for local-only N64 progress (2026-11-12):
 
 
 2026-11-13 23:07 JST | OPEN | Show speed benchmark progress below the button: progress bar, baud rate under test, current/total trials, and reader response wait. On completion show the selected baud rate and whether 2 Mbps passed.
+
+
+2026-11-13 JST | #053 MD hardware results
+- 89eaf94, Batman Forever 4 MiB, SD save with PC tool connected: 1 KiB allocation succeeded, 20.194 s (previous 35.914 s), internal checksum OK, matching CRC32 DB41F2D5. Standalone appeared similar. Exact baseline conditions are unconfirmed.
+- Sonic 512 KiB SD log: 3.609 s (previous 7.159 s), 2.540 s read loop and 1.061 s writes. 1 KiB allocation succeeded, internal checksum OK and database CRC32 AFE05EEE matched. Standalone took about 3 s by observation; connection status for the timed log is unconfirmed.
+- MD experimental firmware uses 2M mode 12; integration uses mode 14. Use the matching EXE and enable md_retry_2m for the experiment. Integrated MD PC 2M needs hardware validation.
+- Proposed: remove detailed diagnostics from the reader display in normal builds and retain host-measured speed and retries in the PC log. Pending implementation.
+
+2026-11-13 JST | 2M integration candidate (GBA, SNES, N64, MD)
+- Local 9100512 adds N64 progress-call compatibility and MD SD batching to integration/2m. Includes GBA ROM path, 32 MiB EEPROM tail and 115 B companion-file handling, plus the shared 2M frame-boundary guard.
+- All 143 PC regression tests passed. HW3: 209886 B flash, 5960 B static RAM. HW5: 209428 B flash, 5986 B static RAM. MSX, Virtual Boy and Neo Geo Pocket disabled in test builds.
+- HW3 uploaded to COM5 without read-back verification. Initial EXE failed at startup because tkinter was missing. Rebuilt EXE contains _tkinter.pyd. Startup of the rebuilt EXE and candidate hardware checks (GBA ROM and save, N64 2M file finalization, MD SD and PC 2M) are pending. Code has not been merged into master.
+
+2026-11-13 JST | Windows self-build and workspace sync
+- Batch builds an EXE or firmware from GitHub. User-built 89eaf94 EXE confirmed. Current workflow uses dated folders, identical EXE names and manual commit entry for experimental builds. Branch selection, clearer artifact location and persistent build logs are pending. One generated MD build needed a manual correction to its copied 2M settings.
+- Local sync supports selectable files and configurable intervals, defaulting to five minutes. Bidirectional updates and conflict preservation are implemented locally. End-to-end GitHub exchange remains unverified.
+- GUI writes OSCR_LOGPC.txt at exit. Live flushing and Sync Now are pending. GitHub issue records and commits are the proposed handoff between free chats. Automatic chat notification is pending.
