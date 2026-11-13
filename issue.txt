@@ -1194,3 +1194,6 @@ CI verification for local-only N64 progress (2026-11-12):
 - A follow-up test-only commit (326fc4a744606d70c9bc377a522f90d7f697ab28) corrected a source-inspection assertion to inspect the function definition rather than its forward declaration; the follow-up PC regression workflow run 43159250838 also passed.
 - The old hardware log did not capture the unexpected six bytes, so the exact received marker is still unknown. The firmware source shows that the final progress-bar close calls PcConsole.println(), whose CRPC notification begins with bytes 43 52 50 43 01 0d; blinkLED() can also emit a PcLink activity notification. This is the concrete source path removed from the N64 retry callback.
 - Real-hardware retest with the updated EXE and firmware is still required. Confirm the N64D/N64A handoff, [Reader] close request, finalize=True, [SAVED], and DB verification before considering the issue resolved.
+
+
+2026-11-13 23:07 JST | OPEN | Show speed benchmark progress below the button: progress bar, baud rate under test, current/total trials, and reader response wait. On completion show the selected baud rate and whether 2 Mbps passed.
