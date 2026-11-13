@@ -372,7 +372,8 @@ void resetArduino(void) {
 }
 
 // Progressbar
-void draw_progressbar(uint32_t processedsize, uint32_t totalsize);
+void draw_progressbar(uint32_t processedsize, uint32_t totalsize, bool reportToPc);
+void blinkLEDLocal();
 
 // used by MD and NES modules
 byte eepbit[8];
@@ -1019,13 +1020,15 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
     uint8_t b = 0;
     while (1) {
 #ifdef PC_MENU
+#ifdef ENABLE_NES
       // Safe NES-only escape from the database candidate browser.
       // Transfer and flash routines never read commands in this loop.
       if (mode == CORE_NES && PcConsole.available() && PcConsole.peek() == '!') {
         PcConsole.read();
         resetArduino();
       }
-#endif
+#endif  // ENABLE_NES
+#endif  // PC_MENU
       // Check button input
       b = standaloneCandidate(3) ? 3 : checkButton();
 
@@ -1091,9 +1094,11 @@ void pcPhysicalControlsReady() {
 void pcAlphabetReady(byte index, const char* databaseName) {
   standaloneError();
 #ifdef PC_MENU
+#ifdef ENABLE_NES
   // Capability marker: older firmware must not receive the '!' escape.
   if (mode == CORE_NES)
     PcConsole.println(F("[Control] nes-reset-supported"));
+#endif  // ENABLE_NES
   PcConsole.print(F("[Control] alphabet\t"));
   PcConsole.print(index);
   PcConsole.print('\t');
@@ -1269,11 +1274,13 @@ byte starting_letter(const char* databaseName) {
     // avoids the reader scanning from A to Z over the serial filesystem.
     if (PcConsole.available()) {
       char direct = PcConsole.peek();
+#ifdef ENABLE_NES
       // One-command NES return to the system menu on manual alphabet screen.
       if (mode == CORE_NES && direct == '!') {
         PcConsole.read();
         resetArduino();
       }
+#endif  // ENABLE_NES
       if (direct == '@') {
         PcConsole.read();
         char encoded[9];
@@ -2117,7 +2124,32 @@ static void updateProgressDisplay() {
 #endif
   display_Update();
 }
+
+// Refresh only the reader's physical display. Do not flush PcConsole while
+// UART0 carries raw 2 Mbps retry frames and the final N64 handoff exchange.
+static void updateProgressDisplayLocal() {
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
+  display.updateDisplay();
+#endif
+}
+
+static void progressbarMessage(const __FlashStringHelper* message, bool newline, bool reportToPc) {
+  if (reportToPc) {
+    if (newline) println_Msg(message);
+    else print_Msg(message);
+    return;
+  }
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
+  display.print(message);
+  if (newline) display.setCursor(0, display.ty + 8);
+#endif
+}
+
 void draw_progressbar(uint32_t processed, uint32_t total) {
+  draw_progressbar(processed, total, true);
+}
+
+void draw_progressbar(uint32_t processed, uint32_t total, bool reportToPc) {
   uint8_t current, i;
   static uint8_t previous;
   static uint32_t cachedTotal, unit, nextThreshold;
@@ -2130,8 +2162,9 @@ void draw_progressbar(uint32_t processed, uint32_t total) {
     unit = total / steps;
     if (!unit) unit = 1;
     nextThreshold = unit;
-    print_Msg(F("["));
-    updateProgressDisplay();
+    progressbarMessage(F("["), false, reportToPc);
+    if (reportToPc) updateProgressDisplay();
+    else updateProgressDisplayLocal();
     return;
   }
 
@@ -2158,15 +2191,16 @@ void draw_progressbar(uint32_t processed, uint32_t total) {
       // steps are 20, so 20 - 1 = 19.
       if (i == (19)) {
         //If end of progress bar, finish progress bar by drawing "]"
-        println_Msg(F("]"));
+        progressbarMessage(F("]"), true, reportToPc);
       } else {
-        print_Msg(F("*"));
+        progressbarMessage(F("*"), false, reportToPc);
       }
     }
     //update previous "*" status
     previous = current;
     //Update display
-    updateProgressDisplay();
+    if (reportToPc) updateProgressDisplay();
+    else updateProgressDisplayLocal();
   }
 }
 
@@ -3197,7 +3231,7 @@ void rgbLed(byte Color) {
 #endif
 }
 
-void blinkLED() {
+static void toggleLEDHardware() {
 #if defined(ENABLE_VSELECT)
   // Nothing
 #elif defined(HW5)
@@ -3214,6 +3248,15 @@ void blinkLED() {
   // 3mm LED on D38, front of PCB (HW5)
   PORTB ^= (1 << 7);
 #endif
+}
+
+// Local-only activity for raw transfers; do not notify the PC over UART0.
+void blinkLEDLocal() {
+  toggleLEDHardware();
+}
+
+void blinkLED() {
+  toggleLEDHardware();
 #ifdef PC_MENU
   PcLink::activityBlinking();
 #endif
@@ -3377,8 +3420,8 @@ redraw:
     // endings left by the PC entry box.
     if (PcConsole.available()) {
       char incomingByte = PcConsole.read();
-      if (incomingByte == 'T') {
-        PcLink::transmitTest();
+      if (incomingByte == 'T' || incomingByte == 'Y' || incomingByte == 'W') {
+        PcLink::transmitTest(incomingByte == 'Y', incomingByte == 'W');
         PcLink::menuReady();
         continue;
       }

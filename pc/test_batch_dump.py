@@ -318,6 +318,48 @@ class BatchDumpTests(unittest.TestCase):
         self.assertIsNone(run.on_menu("GBA Cart Reader", GBA_MENU))
         self.assertEqual(run.reason, "一括吸出し完了: ROM + SAVE")
 
+    def test_gba_extensionless_metadata_does_not_override_512_byte_eeprom(self):
+        # Observed with KURESHIN2006: the firmware writes a 512-byte .eep
+        # followed by a 115-byte metadata report lacking a .txt extension.
+        run = BatchDump()
+        run.begin("GBA")
+        run.phase = "save_read"
+        run.rom_saved = True
+        run.rom_verified = True
+        run.save = True
+        run.save_expected_bytes = 512
+        name = ("GBA/SAVE/KURESHIN2006/14/"
+                "Crayon Shin-chan - Densetsu o Yobu Omake no Miyako Shockgaan! (Japan)")
+        report = f"[SAVED] {name} (115 bytes) SHA256=abcd"
+        run.on_line(report)
+        self.assertTrue(run.active)
+        self.assertFalse(run.save_saved)
+        run.on_line(f"[SAVED] {name}.eep (512 bytes) SHA256=abcd")
+        self.assertTrue(run.active)
+        self.assertTrue(run.save_saved)
+        run.on_line(report)
+        run.on_line(f"[SAVED] {name}.txt (115 bytes) SHA256=abcd")
+        self.assertTrue(run.active)
+        self.assertTrue(run.save_saved)
+        self.assertIsNone(run.on_menu("GBA Cart Reader", GBA_MENU))
+        self.assertEqual(run.reason, "一括吸出し完了: ROM + SAVE")
+
+    def test_gba_save_payload_extensions_still_enforce_size(self):
+        for ext in (".eep", ".srm", ".fla"):
+            with self.subTest(extension=ext):
+                run = BatchDump()
+                run.begin("GBA")
+                run.phase = "save_read"
+                run.rom_saved = True
+                run.rom_verified = True
+                run.save = True
+                run.save_expected_bytes = 512
+                run.on_line(
+                    f"[SAVED] GBA/SAVE/Test/1/Test{ext} (115 bytes) SHA256=abcd")
+                self.assertFalse(run.active)
+                self.assertTrue(run.save_failure_after_rom)
+                self.assertIn("セーブサイズ不一致", run.reason)
+
     def test_gba_unknown_physical_screen_is_not_confirmed(self):
         run = BatchDump()
         run.begin("GBA")

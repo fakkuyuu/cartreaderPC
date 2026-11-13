@@ -182,9 +182,9 @@ bool detachToPhysical() {
   readerConnectionDisplayRefresh();
   return ready;
 }
-static uint8_t receive() {
+static uint8_t receive(uint32_t timeoutMs) {
   unsigned long t = millis();
-  while (!Serial.available()) if (millis()-t > 10000UL) resetAfterHostLoss();
+  while (!Serial.available()) if ((uint32_t)(millis()-t) > timeoutMs) resetAfterHostLoss();
   return Serial.read();
 }
 void put32(uint8_t* p, uint32_t v) { for(uint8_t i=0;i<4;i++) {p[i]=v; v>>=8;} }
@@ -195,6 +195,9 @@ uint16_t call(uint8_t op, uint16_t n) {
   sampleRam(RAM_PROTOCOL);
   if(n>dataCapacity) stop();
   uint16_t seq=++sequence;
+  // PC file close includes flush/fsync, hashing and database verification.
+  // Allow that synchronous host-side finalization more time than ordinary RPCs.
+  const uint32_t responseTimeoutMs = op == 3 ? 30000UL : 10000UL;
   uint8_t h[]={1,op,(uint8_t)seq,(uint8_t)(seq>>8),(uint8_t)n,(uint8_t)(n>>8)};
   uint16_t c=0xffff;
   Serial.write((const uint8_t*)"CRPC",4);
@@ -202,15 +205,15 @@ uint16_t call(uint8_t op, uint16_t n) {
   for(uint16_t i=0;i<n;i++) { Serial.write(data[i]); c=crc(c,data[i]); }
   Serial.write((uint8_t)c); Serial.write((uint8_t)(c>>8));
   const char* magic="CRPC";
-  for(uint8_t i=0;i<4;i++) if(receive()!=magic[i]) stop();
+  for(uint8_t i=0;i<4;i++) if(receive(responseTimeoutMs)!=magic[i]) stop();
   c=0xffff;
   uint8_t r[6];
-  for(uint8_t i=0;i<6;i++) { r[i]=receive(); c=crc(c,r[i]); }
+  for(uint8_t i=0;i<6;i++) { r[i]=receive(responseTimeoutMs); c=crc(c,r[i]); }
   if(r[0]!=1 || r[1]!=(op|0x80) || r[2]!=h[2] || r[3]!=h[3]) stop();
   n=r[4]|((uint16_t)r[5]<<8);
   if(n<1 || n>dataCapacity) stop();
-  for(uint16_t i=0;i<n;i++) {data[i]=receive(); c=crc(c,data[i]);}
-  uint16_t got=receive(); got|=(uint16_t)receive()<<8;
+  for(uint16_t i=0;i<n;i++) {data[i]=receive(responseTimeoutMs); c=crc(c,data[i]);}
+  uint16_t got=receive(responseTimeoutMs); got|=(uint16_t)receive(responseTimeoutMs)<<8;
   if(c!=got) stop();
   return n;
 }
@@ -267,11 +270,11 @@ void streamWritePair(uint8_t handle, uint32_t offset,
   for(uint8_t i=0;i<4;i++) { uint8_t b=(uint8_t)(offset>>(i*8)); Serial.write(b); c=crc(c,b); }
   if(prefetchReader) {
     for(uint16_t i=0;i<firstCount;i++) {
-      if(!(i&1)) prefetchPoll();
+      if(!(i&1) && prefetchUsed<512) prefetchPoll();
       Serial.write(first[i]); c=crc(c,first[i]);
     }
     for(uint16_t i=0;i<secondCount;i++) {
-      if(!(i&1)) prefetchPoll();
+      if(!(i&1) && prefetchUsed<512) prefetchPoll();
       Serial.write(second[i]); c=crc(c,second[i]);
     }
   } else {
@@ -398,6 +401,189 @@ static bool switchRuntimeBaud(uint32_t target) {
   activeBaud=target;
   return true;
 }
+// A raw transfer negotiated at the normal CRPC baud. CRPC sequence numbers
+// are suspended until the file is complete and both ends restore safe baud.
+static uint32_t gbaPayloadUs;
+static inline void gbaWriteByte(uint8_t byte) {
+  while (!(UCSR0A & _BV(UDRE0))) {}
+  UDR0 = byte;
+  UCSR0A = _BV(U2X0) | _BV(TXC0);
+}
+
+static inline void gbaFlushTx() {
+  while (!(UCSR0A & _BV(TXC0))) {}
+}
+template <uint16_t FrameSize>
+static void sendGbaRetryFrame(uint32_t block, uint8_t round, bool end,
+                              void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*)) {
+  uint8_t header[6];
+  put32(header, block);
+  header[4] = round;
+  header[5] = end;
+  uint16_t check = 0xffff;
+  gbaWriteByte('G'); gbaWriteByte('B'); gbaWriteByte('2'); gbaWriteByte('M');
+  for (uint8_t byte : header) {
+    gbaWriteByte(byte);
+    check = crc(check, byte);
+  }
+  if (!end) {
+    const uint32_t address = block * FrameSize;
+    const uint32_t payloadStart = micros();
+    for (uint16_t offset = 0; offset < FrameSize; offset += 512) {
+      beginBlock(address + offset);
+      for (uint16_t wordIndex = 0; wordIndex < (FrameSize < 512 ? FrameSize : 512) / 2; ++wordIndex) {
+        uint8_t word[2];
+        readWord(word);
+        for (uint8_t byte : word) {
+          gbaWriteByte(byte);
+          check = crc(check, byte);
+        }
+      }
+    }
+    gbaPayloadUs += micros() - payloadStart;
+  }
+  gbaWriteByte((uint8_t)check);
+  gbaWriteByte((uint8_t)(check >> 8));
+}
+
+static uint32_t gbaRetryMask(uint8_t round, bool wide) {
+  uint8_t reply[8];
+  const uint8_t size = wide ? 8 : 6;
+  uint8_t received = 0;
+  uint32_t started = millis();
+  while (received < size && millis() - started < 3000UL) {
+    int value = Serial.read();
+    if (value >= 0) reply[received++] = (uint8_t)value;
+  }
+  if (received != size || reply[0] != 0xA7 || reply[1] != round) stop();
+  uint16_t check = 0xffff;
+  for (uint8_t i = 0; i < size - 2; ++i) check = crc(check, reply[i]);
+  if (check != (uint16_t)(reply[size - 2] | ((uint16_t)reply[size - 1] << 8))) stop();
+  uint32_t mask = reply[2] | ((uint32_t)reply[3] << 8);
+  if (wide) mask |= ((uint32_t)reply[4] << 16) | ((uint32_t)reply[5] << 24);
+  return mask;
+}
+
+static void gbaN64Handoff() {
+  const uint8_t marker[] = {'N', '6', '4', 'D'};
+  uint16_t check = 0xffff;
+  for (uint8_t value : marker) {
+    gbaWriteByte(value);
+    check = crc(check, value);
+  }
+  gbaWriteByte((uint8_t)check);
+  gbaWriteByte((uint8_t)(check >> 8));
+  gbaFlushTx();
+
+  const uint8_t expected[] = {'N', '6', '4', 'A'};
+  uint8_t reply[6];
+  uint8_t received = 0;
+  const uint32_t started = millis();
+  while (received < sizeof(reply) && (uint32_t)(millis() - started) < 3000UL) {
+    if (Serial.available())
+      reply[received++] = (uint8_t)Serial.read();
+  }
+  if (received != sizeof(reply))
+    stop();
+  check = 0xffff;
+  for (uint8_t i = 0; i < sizeof(expected); ++i) {
+    if (reply[i] != expected[i])
+      stop();
+    check = crc(check, reply[i]);
+  }
+  if (check != (uint16_t)(reply[4] | ((uint16_t)reply[5] << 8)))
+    stop();
+}
+
+static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
+                             void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
+                             uint8_t mode, uint32_t* measuredUs = nullptr,
+                             void (*roundStarted)(uint8_t) = nullptr,
+                             bool fallbackBeforePayload = false,
+                             void (*progress)(uint32_t) = nullptr) {
+  data[0] = handle;
+  put32(data + 1, length);
+  data[5] = mode;
+  if (call(30, 6) != 2 || data[0]) return false;
+  const uint8_t frameShift = data[1];
+  if (frameShift < 8 || frameShift > 10) stop();
+  const auto sendFrame = frameShift == 8 ? sendGbaRetryFrame<256> :
+                         frameShift == 9 ? sendGbaRetryFrame<512> : sendGbaRetryFrame<1024>;
+  const uint8_t window = 8192U >> frameShift;
+  const bool wide = window > 16;
+
+  Serial.flush();
+  delay(100);
+  Serial.end();
+  Serial.begin(2000000UL);
+  activeBaud = 2000000UL;
+  delay(100);
+  // Do not start reading the cartridge until the host has received a
+  // CRC-checked marker at the new baud and acknowledged it.
+  const uint32_t readyStarted = millis();
+  while (!Serial.available()) {
+    if (millis() - readyStarted >= 3000UL) {
+      if (fallbackBeforePayload) {
+        // The host did not see a raw 2M marker, so no ROM payload has begun.
+        // Restore the normal link before the caller starts its legacy dump.
+        gbaFlushTx();
+        delay(50);
+        Serial.end();
+        Serial.begin(safeBaud);
+        activeBaud = safeBaud;
+        delay(100);
+        PcConsole.println(F("[N64 2M] negotiation timed out before payload; using normal transfer"));
+        return false;
+      }
+      stop();
+    }
+    sendFrame(0xffffffffUL, 0xff, true, beginBlock, readWord);
+    gbaFlushTx();
+    const uint32_t sent = millis();
+    while (!Serial.available() && millis() - sent < 100UL) {}
+  }
+  if (gbaRetryMask(0xff, wide) != 0) stop();
+  gbaPayloadUs = 0;
+  uint32_t replyUs = 0;
+  const uint32_t streamStart = micros();
+  const uint32_t blocks = length >> frameShift;
+  for (uint32_t first = 0; first < blocks; first += window) {
+    uint8_t count = min((uint32_t)window, blocks - first);
+    const uint32_t validMask = 0xffffffffUL >> (32 - count);
+    uint32_t mask = validMask;
+    for (uint8_t round = 0; mask; ++round) {
+      if (round >= 10) stop();
+      if (roundStarted) roundStarted(round);
+      for (uint8_t i = 0; i < count; ++i) {
+        if (mask & (1UL << i)) sendFrame(first + i, round, false, beginBlock, readWord);
+      }
+      sendFrame(first, round, true, beginBlock, readWord);
+      gbaFlushTx();
+      const uint32_t replyStart = micros();
+      mask = gbaRetryMask(round, wide);
+      replyUs += micros() - replyStart;
+      if (mask & ~validMask) stop();
+    }
+    if (progress) progress((first + count) << frameShift);
+  }
+  // N64 requires both ends to confirm the final zero-mask before changing baud.
+  if (mode == PcLink::RETRY_PROFILE_N64) gbaN64Handoff();
+  const uint32_t streamUs = micros() - streamStart;
+  if (measuredUs) *measuredUs = streamUs;
+  delay(150);
+  Serial.end();
+  Serial.begin(safeBaud);
+  activeBaud = safeBaud;
+  delay(100);
+  PcConsole.print(mode == PcLink::RETRY_PROFILE_N64 ? F("[N64 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_MD ? F("[MD 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_SNES || mode == PcLink::RETRY_PROFILE_SNES_EXPERIMENTAL ? F("[SNES 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_BENCHMARK ? F("[Benchmark 2M profile] payload_us=") : F("[GBA 2M profile] payload_us="));
+  PcConsole.print(gbaPayloadUs);
+  PcConsole.print(F(" reply_us="));
+  PcConsole.print(replyUs);
+  PcConsole.print(F(" stream_us="));
+  PcConsole.println(streamUs);
+  return true;
+}
+
 bool enterDumpBaud() { return switchRuntimeBaud(dumpBaud); }
 bool leaveDumpBaud() { return switchRuntimeBaud(safeBaud); }
 bool connected() { return started; }
@@ -560,7 +746,14 @@ bool benchmarkOne(uint8_t index, uint32_t& candidate) {
   activeBaud = candidate;
   return true;
 }
-void transmitTest() {
+static uint8_t benchmarkByte;
+static void beginBenchmarkBlock(uint32_t offset) { benchmarkByte = offset; }
+static void readBenchmarkWord(uint8_t* word) {
+  word[0] = benchmarkByte++;
+  word[1] = benchmarkByte++;
+}
+
+void transmitTest(bool test2M, bool compareRetry) {
   if(!connected()) return;
   PcSdFs fs;
   strcpy_P((char*)sdBuffer,PSTR("/__diagnostics__"));
@@ -577,6 +770,11 @@ void transmitTest() {
   // Reuse the cartridge block buffer; no extra SRAM and no cartridge access.
   for(uint16_t i=0;i<512;i++) sdBuffer[i]=(uint8_t)i;
   PcConsole.println(F("[TX test] starting 1048576 bytes"));
+  const uint32_t configuredDumpBaud = dumpBaud;
+  if(test2M) {
+    PcConsole.println(F("[TX test] diagnostic 2M"));
+    dumpBaud = 2000000UL;
+  }
   if(!enterDumpBaud()) stop();
   uint32_t startedUs=micros();
   for(uint16_t block=0;block<2048;block++) file.write(sdBuffer,512);
@@ -585,6 +783,18 @@ void transmitTest() {
   uint32_t transferUs=micros()-startedUs;
   // Close checks the complete pattern on the host and returns to safe baud.
   file.close();
+  dumpBaud = configuredDumpBaud;
+  if (compareRetry) {
+    strcpy_P((char*)sdBuffer,PSTR("/__diagnostics__/tx-test.crpctest"));
+    if (!file.open((char*)sdBuffer,O_WRITE|O_CREAT|O_TRUNC)) return;
+    uint32_t retryUs = 0;
+    file.benchmarkRetry(beginBenchmarkBlock, readBenchmarkWord, retryUs);
+    file.close();
+    PcConsole.print(F("[Benchmark] retry comparison "));
+    PcConsole.print(transferUs);
+    PcConsole.print(' ');
+    PcConsole.println(retryUs);
+  }
   PcConsole.print(F("[TX test] transfer_us=")); PcConsole.println(transferUs);
   PcConsole.println(F("[TX test] complete"));
 }
@@ -684,6 +894,30 @@ void PcFsFile::checkpointFrame(uint32_t expectedEnd) {
     if(cancelled) PcLink::cancelRequested=true;
   }
 }
+bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes, bool experimental) {
+  if (!writable || !handle || pos || !length || length % 512) return false;
+  if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, experimental ? 13 : snes ? 11 : 0)) return false;
+  pos = size = length;
+  return true;
+}
+
+bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
+                           PcLink::RetryProfile profile, void (*roundStarted)(uint8_t),
+                           bool fallbackBeforePayload, void (*progress)(uint32_t)) {
+  if (!writable || !handle || pos || !length || length % 512) return false;
+  if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord,
+                                (uint8_t)profile, nullptr, roundStarted,
+                                fallbackBeforePayload, progress)) return false;
+  pos = size = length;
+  return true;
+}
+
+void PcFsFile::benchmarkRetry(void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), uint32_t& elapsed) {
+  const uint32_t length = 1048576UL;
+  if (PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, PcLink::RETRY_PROFILE_BENCHMARK, &elapsed))
+    pos = size = length;
+}
+
 void PcFsFile::close() {
   if(!handle) return;
   flush();

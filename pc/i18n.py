@@ -23,6 +23,7 @@ WORDS = {
     "確認中": "Checking",
     "数字メニューへ戻ってからSDを読み込みます": "Waiting for the numbered menu before reading SD",
     "転送試験 1MiB": "TX test 1MiB",
+    "転送試験 1MiB (2M)": "TX test 1MiB (2M)",
     "確認間隔：": "Checkpoint: ",
     "転送ブロック：": "Transfer block: ",
     "（設定）": " (configured)",

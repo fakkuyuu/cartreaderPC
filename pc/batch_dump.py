@@ -273,6 +273,16 @@ class BatchDump:
                     self.db_match = True
         elif self.phase == "save_read":
             if line.startswith("[SAVED] ") and "/SAVE/" in line.upper() and not re.search(r"\.txt \(\d+ bytes\)", line, re.IGNORECASE):
+                if self.target == "GBA":
+                    # GBA's DB save helper also emits a metadata report. It
+                    # can appear as an extensionless [SAVED] entry; its size
+                    # must not overwrite the already-valid EEPROM save result.
+                    saved = re.fullmatch(
+                        r"\[SAVED\] (?P<path>.+) \((?P<size>\d+) bytes\) SHA256=[0-9a-fA-F]+",
+                        line)
+                    if (saved is None or
+                            not saved.group("path").lower().endswith((".eep", ".srm", ".fla"))):
+                        return
                 size = re.search(r"\((\d+) bytes\)", line)
                 if size:
                     actual = int(size.group(1))

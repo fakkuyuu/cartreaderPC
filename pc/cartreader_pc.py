@@ -167,7 +167,7 @@ def has_completed_benchmark(identity):
         return False
 
 
-def save_profile(identity, baud, passed=None, *, benchmark_complete=None):
+def save_profile(identity, baud, passed=None, *, benchmark_complete=None, retry_benchmark=None):
     try:
         profiles = json.loads(PROFILE_FILE.read_text(encoding="utf-8"))
         if not isinstance(profiles, dict):
@@ -183,6 +183,10 @@ def save_profile(identity, baud, passed=None, *, benchmark_complete=None):
     profiles[identity] = {
         "safe": min(int(baud), 500000), "dump": int(baud), "passed": passed,
         "benchmark_complete": benchmark_complete}
+    if retry_benchmark is None and isinstance(previous, dict):
+        retry_benchmark = previous.get("retry_benchmark")
+    if retry_benchmark is not None:
+        profiles[identity]["retry_benchmark"] = retry_benchmark
     temporary = PROFILE_FILE.with_suffix(".tmp")
     temporary.write_text(json.dumps(profiles, ensure_ascii=False, indent=2), encoding="utf-8")
     temporary.replace(PROFILE_FILE)
@@ -202,7 +206,16 @@ def checkpoint_profile(identity, baud):
 
 def reset_profile_candidates(identity):
     safe, dump = load_profile(identity)
-    save_profile(identity, dump, [])
+    save_profile(identity, dump, [], retry_benchmark={})
+
+
+def retry_benchmark_preferred(identity):
+    try:
+        profiles = json.loads(PROFILE_FILE.read_text(encoding="utf-8"))
+        result = profiles.get(identity, {}).get("retry_benchmark", {})
+        return 0 < result["retry_us"] < result["normal_us"]
+    except (OSError, ValueError, AttributeError, TypeError, KeyError):
+        return False
 
 
 def demote_profile(identity, failed):
@@ -270,6 +283,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
     transfer_block = load_transfer_block()
     checkpoint_kib = load_checkpoint_kib()
     store = None
+    tx2m = None
     try:
         # A manual connection pulses DTR so a reader already in standalone
         # mode reboots into PC mode.  After a menu/benchmark reset, the reader
@@ -335,6 +349,8 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     time.sleep(.01)
                     continue
                 if not wire.in_waiting:
+                    if tx2m is not None and time.monotonic() >= tx2m["deadline"]:
+                        raise TimeoutError("no diagnostic frame received for 5 seconds")
                     if pending_baud and time.monotonic() >= pending_baud[2]:
                         failed, previous, recovery_base, switched = pending_baud
                         wire.baudrate = previous
@@ -406,6 +422,13 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     log(f"[Baud] {pending_baud[0]} passed\n")
                     pending_baud = None
                 if op == 13:
+                    comparison = re.search(rb"\[Benchmark\] retry comparison (\d+) (\d+)", payload)
+                    if comparison and host_state is not None and host_state.pop("retry_probe", False):
+                        normal_us, retry_us = map(int, comparison.groups())
+                        save_profile(identity, dump_baud, retry_benchmark={
+                            "normal_us": normal_us, "retry_us": retry_us})
+                        chosen = "2M with selective retry" if 0 < retry_us < normal_us else "normal transfer"
+                        log(f"[Benchmark] GBA/SNES selected {chosen}\n")
                     stable = re.search(rb"\[Benchmark\] stable baud=(\d+)", payload)
                     passed = re.search(rb"\[Benchmark\] passed baud=(\d+)", payload)
                     if stable:
@@ -419,7 +442,94 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                 if last_seq is not None and seq != ((last_seq + 1) & 0xffff):
                     raise ValueError("unexpected sequence/reset; reconnect reader")
                 last_seq = seq
+                if op == 13 and b"[TX test] diagnostic 2M" in payload:
+                    tx2m = {"bytes": 0, "frames": 0, "checkpoints": 0,
+                            "phase": "waiting for baud switch",
+                            "deadline": time.monotonic() + 5}
+                if tx2m is not None:
+                    tx2m["deadline"] = time.monotonic() + 5
+                    if op == 25:
+                        tx2m["phase"] = "checkpoint"
+                    elif op == 3:
+                        tx2m["phase"] = "file close / pattern verification"
+                if op == 30:
+                    from gba_retry import receive_dump
+                    snes = len(payload) == 6 and payload[5] in (11, 13)
+                    experimental = snes and payload[5] == 13
+                    probe = len(payload) == 6 and payload[5] == 12
+                    md = len(payload) == 6 and payload[5] == 14
+                    n64 = len(payload) == 6 and payload[5] == 15
+                    enabled = not experimental and retry_benchmark_preferred(identity)
+                    block_size = 512
+                    try:
+                        settings = json.loads(TRANSFER_SETTINGS_FILE.read_text(encoding="utf-8"))
+                        if n64:
+                            # N64 may be disabled locally, but it never bypasses
+                            # the adapter-specific retry benchmark decision.
+                            enabled = enabled and settings.get("n64_retry_2m", True) is True
+                        elif md:
+                            # An explicit boolean overrides the device-specific
+                            # retry benchmark result; otherwise follow that result.
+                            enabled = settings.get("md_retry_2m", enabled) is True
+                        else:
+                            enabled = settings.get("snes_retry_2m" if snes else "gba_retry_2m", enabled) is True
+                        if experimental:
+                            enabled = enabled and settings.get("snes_experimental_2m") is True
+                        configured = settings.get("gba_2m_frame_size", 512)
+                        if type(configured) is int and configured in (256, 512, 1024):
+                            block_size = configured
+                        else:
+                            log("[GBA 2M] Invalid gba_2m_frame_size; using 512 B\n")
+                    except (OSError, ValueError, AttributeError):
+                        pass
+                    selectable = len(payload) == 6 and payload[5] == 0
+                    legacy = len(payload) == 6 and payload[5] == 9
+                    if legacy or snes or probe or md or n64:
+                        # SNES, MD and N64 use the established 512-byte frame.
+                        block_size = 512
+                    handle = payload[0] if selectable or legacy or snes or probe or md or n64 else 0
+                    length = int.from_bytes(payload[1:5], "little")
+                    entry = store.handles.get(handle)
+                    if probe:
+                        enabled = bool(host_state and host_state.get("retry_probe") and entry
+                                       and entry["path"].relative_to(store.root).as_posix()
+                                       == "__diagnostics__/tx-test.crpctest" and length == 1048576)
+                    max_length = 128 * 1024**2 if n64 else 32 * 1024**2
+                    allowed = bool(enabled and entry and entry["write"]
+                                   and 0 < length <= max_length and length % block_size == 0)
+                    answer = bytes([not allowed])
+                    if allowed and (selectable or snes or probe or md or n64):
+                        answer += bytes([block_size.bit_length() - 1])
+                    reply = encode(op | 0x80, seq, answer)
+                    if wire.write(reply) != len(reply):
+                        raise ProtocolError("2M retry negotiation reply was not sent")
+                    wire.flush()
+                    if allowed:
+                        # Preserve the old-baud ACK before changing the port, as op=17 does.
+                        time.sleep(.05)
+                        label = "Benchmark" if probe else "N64" if n64 else "MD" if md else "SNES" if snes else "GBA"
+                        log(f"[{label} 2M] Starting CRC16 transfer with selective retransmission\n")
+                        log(f"[{label} 2M] Frame size {block_size} B, reply window 8192 B\n")
+                        result = receive_dump(wire, store, handle, length, log, stop, cancel_event,
+                                              block_size, 8192 // block_size, label,
+                                              expected_block=bytes(range(256)) * 2 if probe else None,
+                                              fallback_before_payload=n64,
+                                              completion_handshake=n64)
+                        if n64 and result is None:
+                            log("[N64 2M] Falling back to the ordinary N64 PC dump path\n")
+                    continue
                 response = store.dispatch(op, payload)
+                if tx2m is not None:
+                    if op in (3, 17, 25) and response[0]:
+                        raise OSError(f"diagnostic request rejected (op={op})")
+                    if op == 22 and not response[0]:
+                        tx2m["frames"] += 1
+                        tx2m["bytes"] += len(payload) - 5
+                        tx2m["phase"] = "waiting for stream or checkpoint"
+                    elif op == 25:
+                        tx2m["checkpoints"] += 1
+                    elif op == 13 and b"[TX test] complete" in payload:
+                        tx2m = None
                 if response[0] and op == 22:
                     raise OSError("streamed host file write failed; transfer stopped")
                 if pending_baud and op == 13 and b"[Benchmark] stable baud=" in payload:
@@ -458,10 +568,17 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                         log(f"[Baud] USB serial driver rejected {requested}: {exc}\n")
                     runtime_switch = len(payload) == 5 and payload[4] == 1
                     if runtime_switch:
+                        if tx2m is not None:
+                            tx2m["phase"] = f"baud switch to {requested}"
+                            if not switched:
+                                raise OSError(f"USB serial driver rejected {requested}")
+                            tx2m["phase"] = ("waiting for first stream frame" if requested == 2000000
+                                             else "waiting for completion at normal baud")
                         pending_baud = None
                         if host_state is not None:
                             host_state["runtime_baud"] = requested
-                        log(f"[Baud] runtime switched to {requested}\n")
+                        if tx2m is None:
+                            log(f"[Baud] runtime switched to {requested}\n")
                     else:
                         # Reader needs up to 2.5 seconds to time out at the rejected
                         # speed, then 300 ms to restore the previous speed.
@@ -470,6 +587,11 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     raise OSError("fatal host file error; transfer stopped")
         finally:
             wire.close()
+    except (OSError, ValueError, ProtocolError, serial.SerialException) as exc:
+        if tx2m is not None:
+            log(f"[TX test] 2M FAILED: {tx2m['phase']}; received {tx2m['bytes']} bytes "
+                f"in {tx2m['frames']} frames; {tx2m['checkpoints']} checkpoints; {exc}\n")
+        raise
     finally:
         if store is not None:
             incomplete = store.shutdown()
@@ -516,7 +638,7 @@ def gui(args):
     _saved_lang = ui_settings.get("language", "English")
     language = tk.StringVar(value="Japanese" if _saved_lang in ("日本語", "JAPANESE") else _saved_lang)
     translator = UiTranslator(window, language)
-    window.title("cartreaderPC PC129 — Disconnected")
+    window.title("cartreaderPC PC133 — Disconnected")
     saved_geometry = ui_settings.get("window_geometry", "1120x720")
     if not re.fullmatch(r"\d+x\d+(?:[+-]\d+){0,2}", str(saved_geometry)):
         saved_geometry = "1120x720"
@@ -628,6 +750,7 @@ def gui(args):
     pending_paged = False
     normal_baud = tk.StringVar(value="通信速度（通常）：未接続")
     dump_baud = tk.StringVar(value="通信速度（吸い出し）：未接続")
+    retry_baud = tk.StringVar()
     transfer_block_label = tk.StringVar(value=f"転送ブロック：{load_transfer_block()} bytes（設定）")
     checkpoint_label = tk.StringVar(value=f"確認間隔：{load_checkpoint_kib()} KiB（設定）")
     transfer_speed = tk.StringVar(value="転送: 待機")
@@ -685,6 +808,7 @@ def gui(args):
     ttk.Label(status_summary, textvariable=dump_baud).grid(row=1, column=0, sticky="w")
     ttk.Label(status_summary, textvariable=transfer_block_label).grid(row=2, column=0, sticky="w")
     ttk.Label(status_summary, textvariable=checkpoint_label).grid(row=2, column=1, sticky="w")
+    ttk.Label(status_summary, textvariable=retry_baud).grid(row=3, column=0, columnspan=2, sticky="w")
     led_box = ttk.Frame(status_summary)
     led_box.grid(row=0, column=1, rowspan=2, padx=(14, 0), sticky="w")
     ttk.Label(led_box, textvariable=led_state).pack(side="left")
@@ -1497,7 +1621,7 @@ def gui(args):
                 set_storage_state("PC", desired if desired != "PC" else None)
             if version_match:
                 window.title(
-                    f"cartreaderPC PC129 — firmware {version_match.group(2)} / {version_match.group(1)}")
+                    f"cartreaderPC PC133 — firmware {version_match.group(2)} / {version_match.group(1)}")
             if runtime_match:
                 value = int(runtime_match.group(1))
                 if value > 500000:
@@ -1527,6 +1651,8 @@ def gui(args):
                 selected = int(stable_match.group(1))
                 normal_baud.set(f"通信速度（通常）：{min(selected, 500000):,} baud")
                 dump_baud.set(f"通信速度（吸い出し）：{selected:,} baud")
+            if line.startswith("[Benchmark] GBA/SNES selected "):
+                refresh_benchmark_hint()
             if transfer_match:
                 copied = int(transfer_match.group(1)) / 1048576
                 transfer_speed.set(
@@ -1577,7 +1703,7 @@ def gui(args):
                 power_on.disconnected()
                 set_led_activity(False)
                 set_led_state("unknown")
-                window.title("cartreaderPC PC129 — Disconnected")
+                window.title("cartreaderPC PC133 — Disconnected")
                 normal_baud.set("通信速度（通常）：未接続")
                 dump_baud.set("通信速度（吸い出し）：未接続")
                 transfer_speed.set("転送: 待機")
@@ -1763,6 +1889,8 @@ def gui(args):
             inbox.put(f"[Benchmark] stable baud={selected}\n")
             benchmark["index"] = None
             benchmark["waiting"] = False
+            host_state["retry_probe"] = True
+            keys.put(ord("W"))
             return
         if not benchmark["waiting"]:
             keys.put(ord("A") + index)
@@ -1921,6 +2049,20 @@ def gui(args):
         text="初めて吸い出す前に速度ベンチを実行してください。安定して使える最速の吸い出し速度を測り、自動で設定します。")
 
     def refresh_benchmark_hint(*_):
+        preferred = bool(port.get() and retry_benchmark_preferred(port_identity(port.get())))
+        try:
+            settings = json.loads(TRANSFER_SETTINGS_FILE.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            settings = {}
+        if not isinstance(settings, dict):
+            settings = {}
+        enabled = [name for name, key in (("GBA", "gba_retry_2m"),
+                                           ("SNES", "snes_retry_2m"),
+                                           ("MD", "md_retry_2m"))
+                   if settings.get(key, preferred) is True]
+        if preferred and settings.get("n64_retry_2m", True) is True:
+            enabled.append("N64")
+        retry_baud.set("ROM 2M (CRC16): " + (", ".join(enabled) or "—"))
         if port.get() and has_completed_benchmark(port_identity(port.get())):
             benchmark_hint.pack_forget()
         elif not benchmark_hint.winfo_manager():
@@ -1928,17 +2070,23 @@ def gui(args):
 
     port.trace_add("write", refresh_benchmark_hint)
     refresh_benchmark_hint()
-    def request_transmit_test():
+    def request_transmit_test(test_2m=False):
         if (not (worker and worker.is_alive()) or not input_ready.get()
                 or input_mode.get() != "menu" or sd_browser["busy"]
                 or benchmark["index"] is not None):
             inbox.put("[TX test] wait for a numbered menu before starting\n")
             return
-        inbox.put("[TX test] requested\n")
-        send_key("T")
+        firmware = re.search(r"firmware V\S+-PC(\d+)\b", window.title())
+        if test_2m and (firmware is None or int(firmware.group(1)) < 132):
+            inbox.put("[TX test] 2M requires firmware PC132 or newer\n")
+            return
+        inbox.put("[TX test] 2M requested\n" if test_2m else "[TX test] requested\n")
+        send_key("Y" if test_2m else "T")
     diagnostic_log = tk.BooleanVar(value=False)
     diagnostic_menu = tk.Menu(window, tearoff=False)
     diagnostic_menu.add_command(label="転送試験 1MiB", command=request_transmit_test)
+    diagnostic_menu.add_command(label="転送試験 1MiB (2M)",
+                                command=lambda: request_transmit_test(test_2m=True))
     diagnostic_menu.add_checkbutton(label="詳細ログを表示", variable=diagnostic_log)
     diagnostic_button = ttk.Menubutton(row, text="診断", menu=diagnostic_menu)
     diagnostic_button.pack(side="left")
