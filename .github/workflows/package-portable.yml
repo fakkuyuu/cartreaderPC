@@ -7,7 +7,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: portable-release-PC115
+  group: portable-release-PC133
   cancel-in-progress: false
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 35
     env:
-      RELEASE_TAG: v15.5-PC115
+      RELEASE_TAG: v15.5-PC133
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -31,12 +31,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $zip = "$env:RUNNER_TEMP/cartreaderPC-PC115-Portable.zip"
+          $zip = "$env:RUNNER_TEMP/cartreaderPC-PC133-Portable.zip"
           $notes = "$env:RUNNER_TEMP/portable-release-notes.md"
           $release = gh release list --limit 100 --json tagName,isDraft | ConvertFrom-Json |
             Where-Object tagName -eq $env:RELEASE_TAG
           if (!$release) {
-            gh release create $env:RELEASE_TAG --draft --target $env:GITHUB_SHA --title "cartreaderPC PC115" --notes-file $notes $zip "$zip.sha256"
+            gh release create $env:RELEASE_TAG --draft --target $env:GITHUB_SHA --title "cartreaderPC PC133" --notes-file $notes $zip "$zip.sha256"
           } elseif ($release.isDraft) {
             gh release upload $env:RELEASE_TAG $zip "$zip.sha256" --clobber
             gh release edit $env:RELEASE_TAG --target $env:GITHUB_SHA --notes-file $notes

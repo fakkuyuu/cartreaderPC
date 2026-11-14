@@ -658,7 +658,7 @@ def gui(args):
         if not port.get() and ports["values"]:
             port.set(ports["values"][0])
     ttk.Button(row, text="更新", command=refresh).pack(side="left")
-    output = tk.StringVar(value=str(Path(args.output or ui_settings.get("output_directory") or BASE).resolve()))
+    output = tk.StringVar(value=str(Path(args.output or ui_settings.get("output_directory") or args.sd).resolve()))
     folder = ttk.Frame(window, padding=8)
     folder.pack(fill="x")
     ttk.Label(folder, text="保存先").pack(side="left")
@@ -2626,7 +2626,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", help="COM3, /dev/ttyACM0, etc.")
     parser.add_argument("--output", default=None)
-    parser.add_argument("--sd", default=str(BASE / "sd"), help="PC-side database folder; physical SD is unnecessary")
+    parser.add_argument("--sd", default=str(BASE / ("SD Card" if (BASE / "SD Card").is_dir() else "sd")), help="PC-side database folder; physical SD is unnecessary")
     parser.add_argument("--cli", action="store_true")
     parser.add_argument("--list-ports", action="store_true")
     parser.add_argument("--self-test", action="store_true", help=argparse.SUPPRESS)
@@ -2655,7 +2655,7 @@ def main():
         for port in list_ports.comports():
             print(port.device, port.description)
     elif args.cli:
-        args.output = args.output or str(BASE)
+        args.output = args.output or args.sd
         if not args.port:
             parser.error("--cli requires --port")
         terminal(args)

@@ -7,11 +7,11 @@ $sevenZip = Join-Path $env:ProgramFiles '7-Zip/7z.exe'
 $seed = Join-Path $temp 'upstream-v15.5.zip'
 $extracted = Join-Path $temp 'package'
 $stage = Join-Path $extracted 'V15.5_Portable'
-$archive = Join-Path $temp 'cartreaderPC-PC115-Portable.zip'
+$archive = Join-Path $temp 'cartreaderPC-PC133-Portable.zip'
 
-if (!(Select-String -Path "$repo/Cart_Reader/OSCR.cpp" -SimpleMatch '"V15.5-PC114"') -or
-    !(Select-String -Path "$repo/pc/cartreader_pc.py" -SimpleMatch 'cartreaderPC PC115')) {
-    throw 'Expected PC114 firmware and PC115 PC tool.'
+if (!(Select-String -Path "$repo/Cart_Reader/OSCR.cpp" -SimpleMatch '"V15.5-PC133"') -or
+    !(Select-String -Path "$repo/pc/cartreader_pc.py" -SimpleMatch 'cartreaderPC PC133')) {
+    throw 'Expected PC133 firmware and PC133 PC tool.'
 }
 
 curl.exe --fail --location --retry 3 --output $seed 'https://github.com/sanni/cartreader/releases/download/V15.5/V15.5_Portable.zip'
@@ -60,25 +60,34 @@ if ([regex]::Matches($configText, $hw3).Count -ne 1) { throw 'Expected exactly o
 python -m PyInstaller --noconfirm --onefile --windowed --name cartreaderPC --distpath $stage --workpath "$temp/pyi" --specpath $temp "$repo/pc/cartreader_pc.py"
 $exe = Start-Process -FilePath "$stage/cartreaderPC.exe" -ArgumentList '--self-test' -WindowStyle Hidden -Wait -PassThru
 if ($exe.ExitCode -ne 0) { throw "PC executable self-test failed: $($exe.ExitCode)" }
-foreach ($entry in @('README.md', 'README_PC_USB.md', 'LICENSE', 'transfer_settings.json', 'sd')) {
+foreach ($entry in @('README.md', 'README_PC_USB.md', 'LICENSE', 'transfer_settings.json')) {
     Copy-Item -LiteralPath (Join-Path $repo $entry) -Destination $stage -Recurse
 }
+Copy-Item "$repo/sd/*.txt" -Destination "$stage/SD Card" -Force
 @"
-PC tool: PC115
-Firmware source: V15.5-PC114
+PC tool: PC133
+Firmware source: V15.5-PC133
 Source commit: $env:GITHUB_SHA
 IDE seed: upstream V15.5_Portable.zip
 IDE seed SHA256: $expected
 "@ | Set-Content -LiteralPath "$stage/BUILD.txt" -Encoding utf8
 @"
-Windows Portable distribution with the PC115 tool and V15.5-PC114 firmware source.
+Windows Portable distribution with the PC133 tool and V15.5-PC133 firmware source.
 
 - Extract the ZIP to a short path, such as C:\OSCR.
-- Open V15.5_Portable and run cartreaderPC.exe for the PC tool. The PC cartridge databases are in sd. The upstream SD Card folder is also included.
+- Open V15.5_Portable and run cartreaderPC.exe for the PC tool. SD Card is the default save location and contains the cartridge databases.
 - To build or upload the firmware, launch Arduino IDE/arduino.exe and open Cart_Reader from File > Sketchbook. Select your hardware in Config.h and use the Arduino Mega 2560 board setting.
 - The bundled IDE and libraries originate from the upstream sanni/cartreader V15.5 Portable distribution. The firmware source in this ZIP comes from this release's commit.
 
-PC115ツール、PC114ファームのソース、本家のPortable IDE一式、データベースを同梱しています。ZIPを短いパスに展開し、V15.5_Portable の cartreaderPC.exe を起動してください。ファームを書き込む場合は Arduino IDE/arduino.exe のスケッチブックから Cart_Reader を開き、Config.h で実機のHWを選択してください。
+PC133ツール、PC133ファームのソース、本家のPortable IDE一式、データベースを同梱しています。ZIPを短いパスに展開し、V15.5_Portable の cartreaderPC.exe を起動してください。ファームを書き込む場合は Arduino IDE/arduino.exe のスケッチブックから Cart_Reader を開き、Config.h で実機のHWを選択してください。
+
+Changes since PC115 / PC115からの変更
+
+- GBA, SNES, N64 and MD: benchmark-gated 2 Mbps PC ROM transfer with selective retransmission and frame-boundary validation.
+- Faster MD SD saves with 1 KiB batching. Fixed GBA ROM paths, EEPROM padding and save detection, N64 file finalization, and duplicate SNES SA-1 reset.
+- 対応するGBA・SNES・N64・MDのPC保存を2 Mbps化。速度ベンチによる判定、選択再送、フレーム境界の検証に対応。
+- MDのSD保存を1 KiBまとめ書きなどで高速化。GBAの保存先・EEPROM末尾補正・セーブ誤判定、N64のファイル確定、SNES SA-1の二重リセットを修正。
+- データベース同梱の SD Card を既定の保存場所に変更。
 
 Source commit: $env:GITHUB_SHA
 "@ | Set-Content -LiteralPath "$temp/portable-release-notes.md" -Encoding utf8
