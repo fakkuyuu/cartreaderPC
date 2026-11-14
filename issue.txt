@@ -1,5 +1,5 @@
 cartreaderPC Issues
-Last updated: 2026-11-05 19:44 JST
+Last updated: 2026-11-14 16:23 JST
 Applies to: PC tool PC108 / firmware PC107 / HW3 (PC based on GitHub 1975283)
 
 This tracker records requests, bugs, and ideas. It is a published copy of the authoritative local record, not a set of individual GitHub Issues.
@@ -71,6 +71,8 @@ ID    Status   Prio Categories                    Title
 047   VERIFY   P2   enhancement/ui                Small persistent reader-display host connection marker
 048   VERIFY     P2   bug/ws/save                   WonderSwan Write Save selection triggers a reset
 051   CLOSED   P2   bug/snes/reset                SNES SA-1 save restore shows the main menu twice
+055   OPEN     P2   performance/gb/gbc/dump       Speed up GB/GBC ROM dumping across three storage modes
+056   IDEA     P2   performance/database          Shared ROM database lookup speedups on reader and with PC
 
 [UPSTREAM FIX INDEX]
 ID    Status   Prio Categories                    Title
@@ -1216,3 +1218,52 @@ CI verification for local-only N64 progress (2026-11-12):
 - GUI writes OSCR_LOGPC.txt at exit. Live flushing and Sync Now are pending. GitHub issue records and commits are the proposed handoff between free chats. Automatic chat notification is pending.
 
 2026-11-14 JST | #053 and #054 / 2M integration: HW3 candidate 9100512 completed GBA Shin-chan ROM and save (CRC 52F463FE), finalized N64 Power League 64 (CRC AEC21C28), and verified MD Sonic (CRC AFE05EEE) against the database. Final candidate 2b716ea passed HW3/HW5 builds and all 143 PC regression tests. Sonic SD save took about 3 seconds by observation, with no detailed timing on the LCD. PC save at 2 Mbps took 4.527 s with 106 retransmissions and matched database CRC AFE05EEE.
+
+#055 Speed up GB/GBC ROM dumping across all three storage modes
+Status: OPEN / Priority: P2 / Category: performance/gb/gbc/dump
+Added: 2026-11-14 JST
+Last updated: 2026-11-14 JST
+Source: User-supplied reader LCD timing measurements; inspection of the published master code. The current local timing instrumentation source is not available here.
+Goal: Improve GB/GBC ROM dump time separately for (1) PC-tool PC storage, (2) PC-tool SD storage, and (3) standalone SD storage. Do not imply that a PC-only optimization benefits SD dumping.
+
+Measured values (2026-11-14, all milliseconds, from reader LCD; do not assume identical test conditions without user confirmation):
+- Standalone SD, initial: Loop 1470 / Write 241 / 2M 0 / Close 2 / Post 4582 / total 6295.
+- PC storage, initial: Loop 1332 / Write 893 / 2M 0 / Close 251 / Post 157 / total 2633.
+- PC-tool SD storage, initial: Loop 1959 / Write 516 / 2M 0 / Close 2 / Post 9253 / total 11730.
+- PC storage, detailed: Loop 1308 (Read 231; Loop other 1077) / Write 892 / 2M 0 / Close 244 / Post 157 (Checksum 0; CRC32 0; DB 0) / total 2601.
+- SD storage, detailed (PC attachment state not established by this report alone): Loop 1465 (Read 231; Loop other 1234) / Write 228 / 2M 0 / Close 2 / Post 9254 (Checksum 195; CRC32 312; DB 5880; unclassified 2867) / total 10949.
+- Loop excludes the separately measured Write, 2M and Close time from file-open through file-close. Read is contained WITHIN Loop; do not add it twice. Post spans file-close through the reader's timing display. Some host-side work may lie outside these timings. 2M=0 in all these runs does not imply successful 2 Mbps streaming.
+
+Assessment:
+- The measured cartridge Read is only 231ms. On PC storage, Loop other is 1077ms and Write is 892ms; optimizing only the raw ROM read may yield a small overall benefit.
+- The detailed SD measurement has DB 5880ms and unclassified Post 2867ms. Shared DB optimizations are tracked separately in #056.
+- Break Loop other into display/progress, LED, mapper banking and remaining work; isolate unclassified Post before choosing a change. The local Codex timing implementation must be inspected before asserting exact measurement scopes.
+
+Unimplemented proposals:
+1. PC-storage-only: while transmitting a 1024-byte PC frame, prefetch the next 512 cartridge bytes, similar to existing GBA preparePrefetch()/finishPrefetch(). Never cross a mapper bank boundary; preserve 512-byte-frame and SD/standalone paths. Experimental patch in private fakkuyuu/temp: gb-gbc-speed/GB-prefetch-experimental.patch, based on public master 8b677a5. NOT compiled, hardware-tested or merged. Similar prefetch for MD regressed performance, so benchmark before adoption.
+2. All modes: profile and reduce the measured expensive parts of readROM_GB()/readByte_GB(), mapper switching, progress display and LED; preserve ROM bus timing, mapper behavior and output bytes.
+3. PC storage: compare actual Write, 1024-byte aggregation, checkpoint waits and Close; review stream framing without conflating it with CRC16/2 Mbps retry transport.
+4. SD modes: separately examine rereads for checksum/CRC, DB scans and display overhead. Consider CRC accumulation during the ROM dump if it can preserve correctness; see #056.
+
+Required verification: Compare old/new timing per mode, reader and host elapsed time, file size, CRC32/SHA-256, database identification, save behavior, normal and Auto dumping. Exercise GB MBC1 banks 0x20/0x40/0x60, MBC1M, common GBC MBC3/MBC5 and large ROMs, plus special mappers where available. Record actual user-supplied hardware/test conditions rather than assuming them. Watch SRAM and flash: target <=240KiB for legacy MEGA2560 bootloader compatibility. Do not claim compilation, verified speedup or real-device success for these proposals.
+
+#056 Shared ROM database lookup performance (reader and PC-assisted SD storage)
+Status: IDEA / Priority: P2 / Category: performance/database
+Added: 2026-11-14 JST
+Last updated: 2026-11-14 JST
+Source: GB/GBC timing report and the current shared firmware/host DB lookup paths.
+Goal: Speed up reader-side CRC32 database lookup shared by many consoles, and evaluate host-side lookup when the ROM itself is saved to SD.
+
+Current implementation:
+- Cart_Reader/Cart_Reader.ino compareCRC() scans database records sequentially (name via get_line(), CRC via get_line(), then skip_line()). get_line() performs read-ahead then seekCur() to restore the position after CRLF. Keep the existing DB format and matching semantics.
+- In the detailed GB/GBC SD timing, DB=5880ms, CRC32=312ms, Checksum=195ms, and unclassified Post=2867ms. Do not extrapolate that timing to other consoles.
+- Published PcStorage.cpp routes root database .txt reads to the PC remote file while connected even if ROM storage is SD; the reader may still perform the line-by-line search. Inspect the actual local instrumentation/firmware before claiming which DB copy was used in a hardware test.
+- PcFsFile::findRecord() and host pc/storage.py op=21 already support a host-side DB search returning a record offset. PC storage already performs ROM CRC32/DB verification on the host.
+
+Unimplemented options:
+1. Standalone SD: sequential chunk-buffered scans comparing CRC fields without repeated name parsing/seeking; preserve CRLF format, SRAM budget and long-name handling. Prefer a new specialized scanner over globally changing get_line() without full call-site testing.
+2. Large databases: optional CRC32-to-record-offset index with correct update/fallback behavior; do not require it for basic compatibility.
+3. PC-tool SD storage: provide the reader-computed CRC32 to the host and reuse findRecord()/op=21 or equivalent PC-side DB search, returning only the matching record/name. ROM stays on the SD. Preserve SD-side rename, validation and safe fallback on host disconnect. Assess existing PC remote DB routing before changing it.
+4. Consider calculating CRC32 while dumping instead of rereading, but validate byte order, padding/header corrections, retries, errors and mapper-specific semantics.
+
+Verify all affected shared and console-specific callers (including GB/GBC, NES, SNES, GBA, MD and N64), matched/unmatched/missing DBs, last records, long names, multiple matches and host disconnection. Compare DB time and complete Post time, CRC32, final names and result indicators. #055 is the GB/GBC end-to-end speed issue; this one tracks shared DB lookup work. Neither is completed by creating this proposal.
