@@ -1563,13 +1563,6 @@ void readROM_MD() {
   if (SnKmode == 3) totalProgressBar += (uint32_t)cartSizeSonic2;
   draw_progressbar(0, totalProgressBar);
 
-  // Measure cartridge read/loop, storage writes, and final close separately.
-  uint32_t mdReadLoopMicros = 0;
-  uint32_t mdFileWriteMicros = 0;
-  uint32_t mdCloseMicros = 0;
-  uint32_t mdTotalStart = micros();
-  uint32_t mdSegmentStart = mdTotalStart;
-  uint32_t md2mTransferMicros = 0;
   bool md2mTransferred = false;
 
   // Only ordinary MD ROMs use the CRC-checked 2 Mbps retry stream.
@@ -1580,10 +1573,8 @@ void readROM_MD() {
   if (md2mEligible) {
     md2mChecksum = 0;
     memset(md2mBlockChecksums, 0, sizeof(md2mBlockChecksums));
-    const uint32_t retryStart = micros();
     md2mTransferred = myFile.romRetry2M(cartSize, beginMd2mBlock, readMd2mWord,
                                         PcLink::RETRY_PROFILE_MD, md2mRoundStarted);
-    md2mTransferMicros = micros() - retryStart;
     if (md2mTransferred) calcCKS = md2mChecksum;
   }
 
@@ -1613,20 +1604,12 @@ void readROM_MD() {
         }
 
         if (!mdBatchBuffer) {
-          mdReadLoopMicros += micros() - mdSegmentStart;
-          uint32_t mdWriteStart = micros();
           myFile.write(sdBuffer, 512);
-          mdFileWriteMicros += micros() - mdWriteStart;
-          mdSegmentStart = micros();
         }
       }
 
       if (mdBatchBuffer) {
-        mdReadLoopMicros += micros() - mdSegmentStart;
-        uint32_t mdWriteStart = micros();
         myFile.write(mdBatchBuffer, 1024);
-        mdFileWriteMicros += micros() - mdWriteStart;
-        mdSegmentStart = micros();
       }
 
       processedProgressBar += 1024;
@@ -1742,11 +1725,7 @@ void readROM_MD() {
       }
       d += 2;
       if (d == 512) {
-        mdReadLoopMicros += micros() - mdSegmentStart;
-        uint32_t mdWriteStart = micros();
         myFile.write(sdBuffer, 512);
-        mdFileWriteMicros += micros() - mdWriteStart;
-        mdSegmentStart = micros();
         d = 0;
       }
     }
@@ -1813,11 +1792,7 @@ void readROM_MD() {
         }
         d += 2;
         if (d == 512) {
-          mdReadLoopMicros += micros() - mdSegmentStart;
-          uint32_t mdWriteStart = micros();
           myFile.write(sdBuffer, 512);
-          mdFileWriteMicros += micros() - mdWriteStart;
-          mdSegmentStart = micros();
           d = 0;
         }
       }
@@ -1882,11 +1857,7 @@ void readROM_MD() {
         calcCKSSonic2 += ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
         d += 2;
         if (d == 512) {
-          mdReadLoopMicros += micros() - mdSegmentStart;
-        uint32_t mdWriteStart = micros();
         myFile.write(sdBuffer, 512);
-        mdFileWriteMicros += micros() - mdWriteStart;
-        mdSegmentStart = micros();
           d = 0;
         }
       }
@@ -1900,33 +1871,9 @@ void readROM_MD() {
   if (md2mTransferred) {
     processedProgressBar = totalProgressBar;
     draw_progressbar(processedProgressBar, totalProgressBar);
-  } else {
-    mdReadLoopMicros += micros() - mdSegmentStart;
   }
 
-  // Close includes the final queued transfer, checkpoint, and host file verification.
-  uint32_t mdCloseStart = micros();
   myFile.close();
-  mdCloseMicros = micros() - mdCloseStart;
-  uint32_t mdTotalMicros = micros() - mdTotalStart;
-  if (md2mTransferred) {
-    print_Msg(F("[MD 2M Timing] transfer us="));
-    println_Msg(md2mTransferMicros);
-    print_Msg(F("[MD Timing] close us="));
-    println_Msg(mdCloseMicros);
-    print_Msg(F("[MD Timing] total us="));
-    println_Msg(mdTotalMicros);
-  } else {
-    print_Msg(F("[MD Timing] read/loop us="));
-    println_Msg(mdReadLoopMicros);
-    print_Msg(F("[MD Timing] file-write us="));
-    println_Msg(mdFileWriteMicros);
-    print_Msg(F("[MD Timing] close us="));
-    println_Msg(mdCloseMicros);
-    print_Msg(F("[MD Timing] total us="));
-    println_Msg(mdTotalMicros);
-  }
-
   // Reset SSF2 Banks
   if (cartSize > 0x400000) {
     writeSSF2Map(0x50987E, 6);  // 0xA130FD
