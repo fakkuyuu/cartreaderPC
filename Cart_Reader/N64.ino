@@ -31,6 +31,10 @@ String lastbutton = "N/A";
 
 // Rom base address
 unsigned long romBase = 0x10000000;
+// Only database-identified standard cartridges are eligible for N64 retry reads.
+static bool n64PcRetryKnownCart = false;
+// Flash repro, Gameshark and Xplorer paths are not assumed to be linear ROM readers.
+static bool n64SpecialDeviceMode = false;
 
 // Flashram type
 byte flashramType = 1;
@@ -120,6 +124,7 @@ void n64Menu() {
   // wait for user choice to come back from the question box menu
   switch (n64Dev) {
     case 0:
+      n64SpecialDeviceMode = false;
       display_Clear();
       display_Update();
       setup_N64_Cart();
@@ -136,6 +141,7 @@ void n64Menu() {
 
 #if defined(ENABLE_FLASH)
     case 2:
+      n64SpecialDeviceMode = true;
       display_Clear();
       display_Update();
       setup_N64_Cart();
@@ -146,6 +152,7 @@ void n64Menu() {
 #endif
 
     case 3:
+      n64SpecialDeviceMode = true;
       display_Clear();
       display_Update();
       setup_N64_Cart();
@@ -155,6 +162,7 @@ void n64Menu() {
       break;
 
     case 4:
+      n64SpecialDeviceMode = true;
       display_Clear();
       display_Update();
       setup_N64_Cart();
@@ -645,6 +653,43 @@ word readWord_N64() {
   PORTH |= (1 << 6);
 
   return tempWord;
+}
+
+// N64 retry callbacks use offsets relative to the dumped ROM image. Always
+// restore the absolute cartridge address so a retransmitted frame is
+// independent of the address left by the preceding frame.
+static void beginN64RetryBlock(uint32_t byteOffset) {
+  setAddress_N64(romBase + byteOffset);
+  NOP;
+}
+
+static void readN64RetryWord(uint8_t* output) {
+  PORTH &= ~(1 << 6);
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
+  output[0] = PINK;  // N64 ROM high byte, matching the ordinary Z64 dump.
+  output[1] = PINF;  // N64 ROM low byte.
+  PORTH |= (1 << 6);
+}
+
+static void n64RetryProgress(uint32_t completedBytes) {
+  const uint32_t totalBytes = (uint32_t)cartSize * 1024UL * 1024UL;
+  // Keep this callback local-only. PcConsole sends CRPC notifications on
+  // UART0, which is carrying raw GB2M frames and the final N64D/N64A handoff.
+  draw_progressbar(completedBytes, totalBytes, false);
+  if ((completedBytes & 0x3FFFUL) == 0) blinkLEDLocal();
+}
+
+static bool n64PcRetryEligible(uint32_t totalBytes) {
+  // Unknown IDs and non-standard cartridge paths remain on the legacy reader.
+  return n64PcRetryKnownCart && !n64SpecialDeviceMode
+         && PcLink::usingPcStorage() && myFile.isPc()
+         && romBase == 0x10000000UL
+         && totalBytes >= 512UL && (totalBytes & 511UL) == 0
+         && totalBytes <= 128UL * 1024UL * 1024UL;
 }
 
 // Write one word to data pins of the cartridge
@@ -2124,6 +2169,7 @@ void getCartInfo_N64() {
   // cart not in list
   cartSize = 0;
   saveType = 0;
+  n64PcRetryKnownCart = false;
 
   // Read cart id
   idCart();
@@ -2162,6 +2208,7 @@ void getCartInfo_N64() {
 
         // Read the next ascii character and subtract 48 to convert to decimal
         saveType = myFile.read() - 48;
+        n64PcRetryKnownCart = true;
 
         // End loop
         break;
@@ -2948,6 +2995,18 @@ void readRom_N64() {
   uint32_t totalProgressBar = (uint32_t)(cartSize) * 1024 * 1024;
   draw_progressbar(0, totalProgressBar);
 
+  // PC-only N64 retry transport. SD/standalone dumps retain the old reader.
+  const uint32_t totalBytes = totalProgressBar;
+  if (n64PcRetryEligible(totalBytes) &&
+      myFile.romRetry2M(totalBytes, beginN64RetryBlock, readN64RetryWord,
+                        PcLink::RETRY_PROFILE_N64, nullptr, true, n64RetryProgress)) {
+    // The retry transport returns only after the N64-specific 2 Mbps handoff is acknowledged.
+    PcConsole.println(F("[Reader] N64 2M close request"));
+    myFile.close();
+    PcConsole.println(F("[Reader] N64 2M close response received"));
+    return;
+  }
+
   for (unsigned long currByte = romBase; currByte < (romBase + (cartSize * 1024 * 1024)); currByte += 512) {
     // Blink led
     if ((currByte & 0x3FFF) == 0)
@@ -2998,6 +3057,20 @@ uint32_t readRom_N64() {
   // standalone/physical-SD dumps, without changing the fast read sequence.
   const bool calculateOnReader = !PcLink::usingPcStorage();
   PcLink::profileBegin();
+
+  // PC-only N64 retry transport. The validated host file supplies CRC32;
+  // local SD/standalone dumps keep the original CRC32 + read loop untouched.
+  const uint32_t totalBytes = totalProgressBar;
+  if (n64PcRetryEligible(totalBytes) &&
+      myFile.romRetry2M(totalBytes, beginN64RetryBlock, readN64RetryWord,
+                        PcLink::RETRY_PROFILE_N64, nullptr, true, n64RetryProgress)) {
+    // The retry transport returns only after the N64-specific 2 Mbps handoff is acknowledged.
+    PcConsole.println(F("[Reader] N64 2M close request"));
+    myFile.close();
+    PcLink::profileEnd();
+    PcConsole.println(F("[Reader] N64 2M close response received"));
+    return oldcrc32;
+  }
 
   // run combined dumper + crc32 routine for better performance, as N64 ROMs are quite large for an 8bit micro
   // currently dumps + checksums a 32MB cart in 170 seconds (down from 347 seconds)

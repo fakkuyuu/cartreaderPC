@@ -1447,6 +1447,90 @@ void writeSSF2Map(unsigned long myAddress, word myData) {
 }
 
 // Read rom and save to the SD card
+// MD 16-bit reader for the benchmark-gated CRC-checked 2 Mbps PC stream.
+static uint32_t md2mWordAddress = 0;
+static uint8_t md2mChecksumSlot = 0;
+static uint16_t md2mChecksum = 0;
+static uint16_t md2mBlockChecksums[16];
+static void beginMd2mBlock(uint32_t byteAddress) {
+  md2mChecksumSlot = (byteAddress >> 9) & 0x0F;
+  // If this 512-byte frame is retried, replace its previous checksum sum.
+  md2mChecksum -= md2mBlockChecksums[md2mChecksumSlot];
+  md2mBlockChecksums[md2mChecksumSlot] = 0;
+  md2mWordAddress = byteAddress >> 1;
+}
+static void md2mRoundStarted(uint8_t round) {
+  // A new 16-frame window starts at round zero. Keep accepted-frame sums
+  // during retries so a retransmitted frame replaces only its own sum.
+  if (round == 0) memset(md2mBlockChecksums, 0, sizeof(md2mBlockChecksums));
+}
+static void readMd2mWord(uint8_t* output) {
+  const uint32_t address = md2mWordAddress++;
+  PORTF = address & 0xFF;
+  PORTK = (address >> 8) & 0xFF;
+  PORTL = (address >> 16) & 0xFF;
+  NOP;
+  PORTH &= ~(1 << 3);
+  PORTH &= ~(1 << 6);
+  PORTJ &= ~(1 << 1);
+  PORTG &= ~(1 << 5);
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  NOP;
+  output[0] = PINA;
+  output[1] = PINC;
+  PORTH |= (1 << 3);
+  PORTH |= (1 << 6);
+  PORTJ |= (1 << 1);
+  PORTG |= (1 << 5);
+  // Legacy MD checksum skips the first 256 words (512 header bytes).
+  if (address >= 256UL) {
+    const uint16_t value = ((uint16_t)output[0] << 8) | output[1];
+    md2mBlockChecksums[md2mChecksumSlot] += value;
+    md2mChecksum += value;
+  }
+}
+
+// Read a 256-word block for ordinary standalone MD ROMs.
+// Keep the cartridge control-signal order and access NOPs unchanged.
+template <bool AccumulateChecksum>
+static inline __attribute__((always_inline)) uint16_t readMdSdBlock_MD(uint32_t address, uint16_t checksum, byte* buffer) {
+  for (uint16_t wordIndex = 0; wordIndex < 256; ++wordIndex, ++address) {
+    PORTF = address & 0xFF;
+    PORTK = (address >> 8) & 0xFF;
+    PORTL = (address >> 16) & 0xFF;
+
+    NOP;
+    PORTH &= ~(1 << 3);
+    PORTH &= ~(1 << 6);
+    PORTJ &= ~(1 << 1);
+    PORTG &= ~(1 << 5);
+
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+
+    *buffer++ = PINA;
+    *buffer++ = PINC;
+
+    PORTH |= (1 << 3);
+    PORTH |= (1 << 6);
+    PORTJ |= (1 << 1);
+    PORTG |= (1 << 5);
+
+    if (AccumulateChecksum) {
+      checksum += ((uint16_t)buffer[-2] << 8) | (uint16_t)buffer[-1];
+    }
+  }
+  return checksum;
+}
+
 void readROM_MD() {
   // Checksum
   uint16_t calcCKS = 0;
@@ -1478,6 +1562,62 @@ void readROM_MD() {
   if (SnKmode >= 2) totalProgressBar += (uint32_t)cartSizeLockon;
   if (SnKmode == 3) totalProgressBar += (uint32_t)cartSizeSonic2;
   draw_progressbar(0, totalProgressBar);
+
+  bool md2mTransferred = false;
+
+  // Only ordinary MD ROMs use the CRC-checked 2 Mbps retry stream.
+  // Mapper/clock-sensitive cartridges retain the original reader path.
+  const bool md2mEligible = PcLink::usingPcStorage() && myFile.isPc()
+                            && !is32x && !isSVP && SnKmode == 0
+                            && cartSize <= 0x400000;
+  if (md2mEligible) {
+    md2mChecksum = 0;
+    memset(md2mBlockChecksums, 0, sizeof(md2mBlockChecksums));
+    md2mTransferred = myFile.romRetry2M(cartSize, beginMd2mBlock, readMd2mWord,
+                                        PcLink::RETRY_PROFILE_MD, md2mRoundStarted);
+    if (md2mTransferred) calcCKS = md2mChecksum;
+  }
+
+  const bool useMdStandaloneFastPath = !PcLink::usingPcStorage() && !myFile.isPc()
+                                      && !is32x && !isSVP && SnKmode == 0
+                                      && cartSize <= 0x400000;
+
+  if (!md2mTransferred && useMdStandaloneFastPath) {
+    // Allocate the 1 KiB batching buffer only for this MD standalone SD dump.
+    // If allocation fails, retain the original 512-byte writes using sdBuffer.
+    byte* mdBatchBuffer = (byte*)malloc(1024);
+    if (!mdBatchBuffer) {
+      println_Msg(F("[MD SD] 1 KiB batch buffer allocation failed; using 512-byte writes"));
+    }
+
+    for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
+      if (currBuffer % 16384 == 0) blinkLED();
+
+      for (uint8_t half = 0; half < 2; ++half) {
+        const uint32_t blockAddress = currBuffer + ((uint32_t)half * 256UL);
+        byte* blockBuffer = mdBatchBuffer ? mdBatchBuffer + ((uint16_t)half * 512U) : sdBuffer;
+        if (currBuffer == 0 && half == 0) {
+          // Preserve the legacy rule: omit the first 256 header words.
+          readMdSdBlock_MD<false>(blockAddress, calcCKS, blockBuffer);
+        } else {
+          calcCKS = readMdSdBlock_MD<true>(blockAddress, calcCKS, blockBuffer);
+        }
+
+        if (!mdBatchBuffer) {
+          myFile.write(sdBuffer, 512);
+        }
+      }
+
+      if (mdBatchBuffer) {
+        myFile.write(mdBatchBuffer, 1024);
+      }
+
+      processedProgressBar += 1024;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+
+    free(mdBatchBuffer);
+  } else if (!md2mTransferred) {
 
   for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 512) {
     // Blink led
@@ -1717,7 +1857,7 @@ void readROM_MD() {
         calcCKSSonic2 += ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
         d += 2;
         if (d == 512) {
-          myFile.write(sdBuffer, 512);
+        myFile.write(sdBuffer, 512);
           d = 0;
         }
       }
@@ -1727,9 +1867,13 @@ void readROM_MD() {
       draw_progressbar(processedProgressBar, totalProgressBar);
     }
   }
-  // Close the file:
-  myFile.close();
+  } // End of the original reader path when the MD 2 Mbps profile is unavailable.
+  if (md2mTransferred) {
+    processedProgressBar = totalProgressBar;
+    draw_progressbar(processedProgressBar, totalProgressBar);
+  }
 
+  myFile.close();
   // Reset SSF2 Banks
   if (cartSize > 0x400000) {
     writeSSF2Map(0x50987E, 6);  // 0xA130FD

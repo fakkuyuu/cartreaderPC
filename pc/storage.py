@@ -445,13 +445,26 @@ class Storage:
 
     def close_handle(self, handle, complete=True):
         entry = self.handles[handle]
+        path = entry["path"]
+        n64_trace = entry["write"] and path.suffix.lower() in (".z64", ".n64", ".v64")
+        close_started = time.perf_counter()
         complete = complete and not entry.get("cancelled", False)
+
+        def trace_close(phase):
+            if n64_trace:
+                elapsed = time.perf_counter() - close_started
+                self.log(f"[N64 close] {phase} after {elapsed:.3f} s; finalize={complete}\n")
+
+        trace_close(f"begin handle={handle} path={path.name}")
         f = entry["file"]
         if f:
             if entry["write"]:
                 f.flush()
+                trace_close("file flush complete")
                 os.fsync(f.fileno())
+                trace_close("file fsync complete")
             f.close()
+            trace_close("file handle closed")
         if entry["write"] and complete:
             path = entry["path"]
             if path.relative_to(self.root).as_posix() == "__diagnostics__/tx-test.crpctest":
@@ -469,17 +482,23 @@ class Storage:
                 return 0
             with path.open("rb") as source:
                 digest = hashlib.file_digest(source, "sha256").hexdigest()
+            trace_close("SHA-256 complete")
             name = path.relative_to(self.root).as_posix()
             self.manifest[name] = {"state": "closed", "bytes": path.stat().st_size, "sha256": digest}
             self.record()
+            trace_close("manifest marked closed")
             self.log(f"\n[SAVED] {name} ({path.stat().st_size} bytes) SHA256={digest}\n")
             relative_parts = path.relative_to(self.root).parts
             is_msx_rom = (relative_parts and relative_parts[0].upper() == "MSX" and
                           path.suffix.lower() == ".bin")
+            trace_close("ROM database verification begin")
             verify_code = self.verify_msx(path) if is_msx_rom else self.verify_rom(path)
+            trace_close("ROM database verification complete")
             if path.suffix.lower() in ROM_DATABASES or is_msx_rom:
                 self.write_companion_log(path)
+                trace_close("companion log complete")
         else:
+            trace_close("file left incomplete")
             verify_code = 0
             if entry.get("cancelled", False) and entry["write"]:
                 path = entry["path"]
