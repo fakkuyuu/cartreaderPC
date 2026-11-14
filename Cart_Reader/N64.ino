@@ -2974,6 +2974,13 @@ void getFramType() {
 /******************************************
   Rom functions
 *****************************************/
+// Diagnostic A/B switch for N64 standalone-SD CRC profiling.
+// Keep at 0 for normal operation. Set to 1 only for the CRC-suppressed
+// benchmark; compareCRC() will then calculate CRC32 by reading the saved ROM.
+#ifndef N64_BENCHMARK_SKIP_CRC32
+#define N64_BENCHMARK_SKIP_CRC32 0
+#endif
+
 // Read rom and save to the SD card
 #ifndef OPTION_N64_FASTCRC
 // dumping rom slow
@@ -3055,7 +3062,13 @@ uint32_t readRom_N64() {
   uint32_t oldcrc32 = 0xFFFFFFFF;
   // The host verifies the completed PC file. Keep on-reader CRC32 for
   // standalone/physical-SD dumps, without changing the fast read sequence.
+#if N64_BENCHMARK_SKIP_CRC32
+  // Keep the FASTCRC direct-port read loop unchanged, but omit only the
+  // per-byte CRC update for a controlled A/B timing comparison.
+  const bool calculateOnReader = false;
+#else
   const bool calculateOnReader = !PcLink::usingPcStorage();
+#endif
   PcLink::profileBegin();
 
   // PC-only N64 retry transport. The validated host file supplies CRC32;
@@ -3154,7 +3167,13 @@ uint32_t readRom_N64() {
 
   // Return checksum
   PcLink::profileEnd();
+#if N64_BENCHMARK_SKIP_CRC32
+  // Zero tells compareCRC() to calculate CRC32 from the closed SD file.
+  // This validates the dump without charging the readback to the dump loop.
+  return 0;
+#else
   return oldcrc32;
+#endif
 }
 #endif
 
