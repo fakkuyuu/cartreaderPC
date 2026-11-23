@@ -525,24 +525,24 @@ void setROMSize_FAIRCHILD() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (fairchildhi - fairchildlo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(FAIRCHILD[i + fairchildlo]);
       PcConsole.println(F("K"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newfairchildsize = sizeROM.toInt() + fairchildlo;
     if (newfairchildsize > fairchildhi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(FAIRCHILD[newfairchildsize]);
   PcConsole.println(F("K"));
 #endif
@@ -568,7 +568,7 @@ void checkStatus_FAIRCHILD() {
   display_Update();
   wait();
 #else
-  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(FAIRCHILD[fairchildsize]);
   PcConsole.println(F("K"));
   PcConsole.println(FS(FSTRING_EMPTY));

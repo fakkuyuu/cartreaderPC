@@ -297,18 +297,18 @@ void readROM_5200() {
 void println_Mapper5200(byte mapper) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   if (mapper == 0)
-    println_Msg(F("STANDARD"));
+    println_Msg(FS(SharedFlashText::textSTANDARD));
   else if (mapper == 1)
-    println_Msg(F("TWO CHIP"));
+    println_Msg(FS(SharedFlashText::textTWOCHIP));
   else if (mapper == 2)
-    println_Msg(F("BOUNTY BOB"));
+    println_Msg(FS(SharedFlashText::textBOUNTYBOB));
 #else
   if (mapper == 0)
-    PcConsole.println(F("STANDARD"));
+    PcConsole.println(FS(SharedFlashText::textSTANDARD));
   else if (mapper == 1)
-    PcConsole.println(F("TWO CHIP"));
+    PcConsole.println(FS(SharedFlashText::textTWOCHIP));
   else if (mapper == 2)
-    PcConsole.println(F("BOUNTY BOB"));
+    PcConsole.println(FS(SharedFlashText::textBOUNTYBOB));
 #endif
 }
 
@@ -355,24 +355,24 @@ void setROMSize_5200() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (a5200hi - a5200lo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(a5200[i + a5200lo]);
       PcConsole.println(F("K"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     new5200size = sizeROM.toInt() + a5200lo;
     if (new5200size > a5200hi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(a5200[new5200size]);
   PcConsole.println(F("K"));
 #endif
@@ -467,19 +467,19 @@ void setMapper_5200() {
   new5200mapper = a5200mapselect;
 
   display.setCursor(0, 56);
-  print_Msg(F("MAPPER "));
+  print_Msg(FS(SharedFlashText::textMAPPER));
   print_Msg(new5200mapper);
-  println_Msg(F(" SELECTED"));
+  println_Msg(FS(SharedFlashText::textSELECTED));
   display_Update();
   delay(1000);
 #else
 setmapper:
   String newmap;
-  PcConsole.println(F("SUPPORTED MAPPERS:"));
+  PcConsole.println(FS(SharedFlashText::textSUPPORTEDMAPPERS));
   PcConsole.println(F("0 = Standard 4K/8K/16K/32K"));
   PcConsole.println(F("1 = Two Chip 16K"));
   PcConsole.println(F("2 = Bounty Bob Strikes Back 40K"));
-  PcConsole.print(F("Enter Mapper [0-2]: "));
+  PcConsole.print(FS(SharedFlashText::textEnterMapper02));
   while (PcConsole.available() == 0) {}
   newmap = PcConsole.readStringUntil('\n');
   PcConsole.println(newmap);

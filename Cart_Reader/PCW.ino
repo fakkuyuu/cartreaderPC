@@ -160,7 +160,7 @@ void pcwMenu()
       // Read SRAM
       sd.chdir("/");
       display_Clear();
-      println_Msg(F("Reading SRAM..."));
+      println_Msg(FS(SharedFlashText::textReadingSRAM));
       display_Update();
       readSRAM_PCW();
       sd.chdir("/");
@@ -174,13 +174,13 @@ void pcwMenu()
     case 2:
       // Write SRAM
       sd.chdir("/");
-      fileBrowser(F("Select SRM file"));
+      fileBrowser(FS(SharedFlashText::textSelectSRMFile));
       display_Clear();
       writeSRAM_PCW();
       display_Clear();
       writeErrors = verifySRAM_PCW();
       if (writeErrors == 0) {
-        println_Msg(F("SRAM verified OK"));
+        println_Msg(FS(SharedFlashText::textSRAMVerifiedOK));
         display_Update();
       } else {
         print_STR(error_STR, 0);
@@ -429,7 +429,7 @@ void readSingleROM_PCW()
   // Detect rom size
   uint32_t rom_size = detect_rom_size_PCW();
   display_Clear();
-  print_Msg(F("READING "));
+  print_Msg(FS(SharedFlashText::textREADING));
   print_Msg(rom_size / 1024 / 1024);
   print_Msg("MB SINGLE-PACK");
   println_Msg(FS(FSTRING_EMPTY));
@@ -561,7 +561,7 @@ void switchBank_PCW(int bank)
 
 void readMultiROM_PCW()
 {
-  print_Msg(F("READING "));
+  print_Msg(FS(SharedFlashText::textREADING));
   print_Msg(rom_size / 1024 / 1024);
   print_Msg("MB MULTI-PACK");
   println_Msg(FS(FSTRING_EMPTY));
@@ -644,7 +644,7 @@ void readSRAM_PCW()
   }
   myFile.flush();
   myFile.close();
-  print_Msg(F("Saved to "));
+  print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   println_Msg(F("/"));
   display_Update();
@@ -663,7 +663,7 @@ void writeSRAM_PCW()
     sd.chdir();
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
-    println_Msg(F("Writing File: "));
+    println_Msg(FS(SharedFlashText::textWritingFile));
     println_Msg(filePath);
     println_Msg(fileName);
     display_Update();

@@ -79,7 +79,7 @@ void setup_SuprAcan() {
   }
 #ifdef ENABLE_CLOCKGEN
   else {
-    print_FatalError(F("Clock Generator not found"));
+    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
   }
 #endif
 
@@ -226,7 +226,7 @@ static void readSRAM_Acan() {
 static void writeSRAM_Acan() {
   openFile_Acan();
 
-  print_Msg(F("Writing "));
+  print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath);
   println_Msg(F("..."));
   display_Update();
@@ -269,9 +269,9 @@ static void verifySRAM_Acan() {
   myFile.close();
 
   if (write_errors == 0) {
-    println_Msg(F("passed"));
+    println_Msg(FS(SharedFlashText::textPassed));
   } else {
-    println_Msg(F("failed"));
+    println_Msg(FS(SharedFlashText::textFailed));
     print_Msg(F("Error: "));
     print_Msg(write_errors);
     println_Msg(F(" bytes "));
@@ -319,13 +319,13 @@ static void verifyUM6650() {
   }
 
   if (write_errors) {
-    println_Msg(F("failed"));
+    println_Msg(FS(SharedFlashText::textFailed));
     print_Msg(F("Error: "));
     print_Msg(write_errors);
     println_Msg(F(" bytes "));
     print_Error(did_not_verify_STR);
   } else {
-    println_Msg(F("passed"));
+    println_Msg(FS(SharedFlashText::textPassed));
   }
 }
 
@@ -335,7 +335,7 @@ static void writeUM6650() {
   uint16_t len = myFile.read(sdBuffer, 256);
   myFile.close();
 
-  print_Msg(F("Writing "));
+  print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath);
   println_Msg(F("..."));
   display_Update();
@@ -357,7 +357,7 @@ static void flashCart_Acan() {
 
   openFile_Acan();
 
-  print_Msg(F("Writing "));
+  print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath + 1);
   println_Msg(F("..."));
   display_Update();

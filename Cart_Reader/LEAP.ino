@@ -538,24 +538,24 @@ void setROMSize_LEAP()
 setrom:
     String sizeROM;
     for (int i = 0; i < (leaphi - leaplo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(LEAPSTER[i + leaplo]);
       PcConsole.println(F("MB"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newleapsize = sizeROM.toInt() + leaplo;
     if (newleapsize > leaphi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(LEAPSTER[newleapsize]);
   PcConsole.println(F("MB"));
 #endif
@@ -576,9 +576,9 @@ void checkStatus_LEAP()
   println_Msg(F("LEAPSTER READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
   println_Msg(FS(FSTRING_EMPTY));
-  print_Msg(F("TITLE: "));
+  print_Msg(FS(SharedFlashText::textTITLE));
   println_Msg(ROMTitle);
-  print_Msg(F("VER: "));
+  print_Msg(FS(SharedFlashText::textVER));
   println_Msg(ROMVersion);
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(LEAPSTER[leapsize]);
@@ -586,9 +586,9 @@ void checkStatus_LEAP()
   display_Update();
   wait();
 #else
-  PcConsole.print(F("TITLE: "));
+  PcConsole.print(FS(SharedFlashText::textTITLE));
   PcConsole.println(ROMTitle);
-  PcConsole.print(F("VER: "));
+  PcConsole.print(FS(SharedFlashText::textVER));
   PcConsole.println(ROMVersion);
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(LEAPSTER[leapsize]);
@@ -635,7 +635,7 @@ void idFLASH_LEAP() // "BFD7" = 39VF040
   dataIn_LEAP();
   sprintf(flashid_str, "%02X%02X", ID1, ID2);
   display_Clear();
-  print_Msg(F("Flash ID: "));
+  print_Msg(FS(SharedFlashText::textFlashID));
   println_Msg(flashid_str);
   display_Update();
 }
@@ -711,12 +711,12 @@ void readFLASH_LEAP()
 
 void writeFLASH_LEAP()
 {
-  fileBrowser(F("Select FLASH File"));
+  fileBrowser(FS(SharedFlashText::textSelectFLASHFile));
   sd.chdir();
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   display_Clear();
-  println_Msg(F("Writing File: "));
+  println_Msg(FS(SharedFlashText::textWritingFile));
   println_Msg(filePath);
   println_Msg(fileName);
   display_Update();
@@ -742,11 +742,11 @@ void writeFLASH_LEAP()
     dataIn_LEAP();
     myFile.close();
     println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(F("FLASH FILE WRITTEN!"));
+    println_Msg(FS(SharedFlashText::textFLASHFILEWRITTEN));
     display_Update();
   }
   else {
-    println_Msg(F("SD ERROR"));
+    println_Msg(FS(SharedFlashText::textSDERROR));
     display_Update();
   }
   sd.chdir(); // root
@@ -993,7 +993,7 @@ void writeEEP_LEAP()
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   display_Clear();
-  println_Msg(F("Writing File: "));
+  println_Msg(FS(SharedFlashText::textWritingFile));
   //  println_Msg(filePath);
   println_Msg(fileName);
   display_Update();
@@ -1017,7 +1017,7 @@ void writeEEP_LEAP()
     display_Update();
   }
   else {
-    println_Msg(F("SD ERROR"));
+    println_Msg(FS(SharedFlashText::textSDERROR));
     display_Update();
   }
   sd.chdir(); // root

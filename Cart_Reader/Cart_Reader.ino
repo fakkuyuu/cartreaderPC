@@ -57,6 +57,7 @@
 
 **********************************************************************************/
 
+#include "SharedFlashText.h"
 #include "OSCR.h"
 #include "StandaloneAuto.h"
 #include "ConnectedReaderDisplay.h"
@@ -762,7 +763,7 @@ void createDbSaveFolder(const char* system, const char* suffix) {
 
 static void __attribute__((noinline)) finishDbSaveLog(uint32_t startedAt) {
   if (!myFile.open(fileName, O_READ)) {
-    print_Error(F("Cannot read saved file for CRC32"));
+    print_Error(FS(SharedFlashText::textCannotReadSavedFileForCRC32));
     return;
   }
   const uint32_t size = myFile.fileSize();
@@ -773,7 +774,7 @@ static void __attribute__((noinline)) finishDbSaveLog(uint32_t startedAt) {
     const int count = myFile.read(sdBuffer, wanted);
     if (count <= 0) {
       myFile.close();
-      print_Error(F("Cannot read saved file for CRC32"));
+      print_Error(FS(SharedFlashText::textCannotReadSavedFileForCRC32));
       return;
     }
     crc = updateCRC(sdBuffer, count, crc);
@@ -786,7 +787,7 @@ static void __attribute__((noinline)) finishDbSaveLog(uint32_t startedAt) {
   }
   char crcText[9];
   snprintf_P(crcText, sizeof(crcText), PSTR("%08lX"), ~crc);
-  print_Msg(F("Save CRC32: "));
+  print_Msg(FS(SharedFlashText::textSaveCRC32));
   println_Msg(crcText);
   display_Update();
 
@@ -800,12 +801,12 @@ static void __attribute__((noinline)) finishDbSaveLog(uint32_t startedAt) {
   }
   myFile.print(F("Save size: "));
   myFile.print(size);
-  myFile.println(F(" bytes"));
-  myFile.print(F("Save CRC32: "));
+  myFile.println(FS(SharedFlashText::textBytes));
+  myFile.print(FS(SharedFlashText::textSaveCRC32));
   myFile.println(crcText);
   const uint32_t finishedAt = PcLink::hostTime();
-  PcLink::writeDumpTimestamp(myFile, F("Dump started: "), startedAt);
-  PcLink::writeDumpTimestamp(myFile, F("Dump finished: "), finishedAt);
+  PcLink::writeDumpTimestamp(myFile, FS(SharedFlashText::textDumpStarted), startedAt);
+  PcLink::writeDumpTimestamp(myFile, FS(SharedFlashText::textDumpFinished), finishedAt);
 #ifdef ENABLE_GLOBAL_LOG
   if (loggingEnabled && !PcLink::usingPcStorage() && myLog) {
     PcLink::writeDumpTimestamp(myLog, F("Save dump started: "), startedAt);
@@ -836,7 +837,7 @@ void createFolder(const char* system, const char* subfolder, const char* gameNam
   }
 #ifdef ENABLE_GLOBAL_LOG
   if (subfolder && !strcmp(subfolder, "ROM") && loggingEnabled && !PcLink::usingPcStorage() && myLog)
-    PcLink::writeDumpTimestamp(myLog, F("Dump started: "), PcLink::hostTime());
+    PcLink::writeDumpTimestamp(myLog, FS(SharedFlashText::textDumpStarted), PcLink::hostTime());
 #endif
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -990,20 +991,20 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
 #if defined(ENABLE_OLED)
     print_STR(press_to_change_STR, 0);
     if (fastScrolling > 1)
-      println_Msg(F(" (fast)"));
+      println_Msg(FS(SharedFlashText::textFast));
     else
       println_Msg("");
     print_STR(right_to_select_STR, 1);
 #elif defined(ENABLE_LCD)
     print_STR(rotate_to_change_STR, 0);
     if (fastScrolling > 1)
-      println_Msg(F(" (fast)"));
+      println_Msg(FS(SharedFlashText::textFast));
     else
       println_Msg("");
     print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
-    println_Msg(F("U/D to Change"));
-    println_Msg(F("Space/Zero to Select"));
+    println_Msg(FS(SharedFlashText::textUDToChange));
+    println_Msg(FS(SharedFlashText::textSpaceZeroToSelect));
 #endif
     display_Update();
 
@@ -1122,8 +1123,8 @@ void printInstructions() {
   print_STR(rotate_to_change_STR, 1);
   print_STR(press_to_select_STR, 1);
 #elif defined(SERIAL_MONITOR)
-  println_Msg(F("U/D to Change"));
-  println_Msg(F("Space/Zero to Select"));
+  println_Msg(FS(SharedFlashText::textUDToChange));
+  println_Msg(FS(SharedFlashText::textSpaceZeroToSelect));
 #endif /* ENABLE_OLED | ENABLE_LCD | SERIAL_MONITOR */
   display_Update();
   pcPhysicalControlsReady();
@@ -1295,7 +1296,7 @@ byte starting_letter(const char* databaseName) {
         pcDirectDatabaseOffset = strtoul(encoded, NULL, 16);
         pcDirectDatabaseSelection = true;
         display_Clear();
-        println_Msg(F("Please wait..."));
+        println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
         break;
       } else if (direct == '?') {
@@ -1332,7 +1333,7 @@ byte starting_letter(const char* databaseName) {
     } else if (b == 3) {  // Long Press - Execute
       if ((selection + line * 7) != 27) {
         display_Clear();
-        println_Msg(F("Please wait..."));
+        println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
       }
       break;
@@ -1928,7 +1929,7 @@ void selfTest() {
   if (!digitalRead(7)) {
     rgbLed(red_color);
     errorLvl = 1;
-    println_Msg(F("Error"));
+    println_Msg(FS(SharedFlashText::textError));
     println_Msg(FS(FSTRING_EMPTY));
     print_STR(press_button_STR, 1);
     display_Update();
@@ -1952,7 +1953,7 @@ void selfTest() {
       if (!digitalRead(pinNumber)) {
         rgbLed(red_color);
         errorLvl = 1;
-        print_Msg(F("Error: Pin "));
+        print_Msg(FS(SharedFlashText::textErrorPin));
         if ((54 <= pinNumber) && (pinNumber <= 69)) {
           print_Msg(F("A"));
           println_Msg(pinNumber - 54);
@@ -1983,7 +1984,7 @@ void selfTest() {
           if (!digitalRead(pinNumber2)) {
             rgbLed(red_color);
             errorLvl = 1;
-            print_Msg(F("Error: Pin "));
+            print_Msg(FS(SharedFlashText::textErrorPin));
             if ((54 <= pinNumber) && (pinNumber <= 69)) {
               print_Msg(F("A"));
               print_Msg(pinNumber - 54);
@@ -2288,7 +2289,7 @@ void clkcal() {
 
   if (!i2c_found) {
     display_Clear();
-    print_FatalError(F("Clock Generator not found"));
+    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
   }
 
   //clockgen.set_correction(cal_factor, SI5351_PLL_INPUT_XO);
@@ -2855,7 +2856,7 @@ void wait() {
 // Copies the last part of the current log file to the dump folder
 void save_log() {
   if (PcLink::usingPcStorage() || !loggingEnabled || !myLog) return;
-  PcLink::writeDumpTimestamp(myLog, F("Dump finished: "), PcLink::hostTime());
+  PcLink::writeDumpTimestamp(myLog, FS(SharedFlashText::textDumpFinished), PcLink::hostTime());
   myLog.flush();
   // Last found position
   uint64_t lastPosition = 0;
@@ -3618,69 +3619,37 @@ redraw:
       }
     }
 
-    // if button is pressed twice or rotary encoder turned left/counter clockwise
-    if (b == 2) {
+    // Both directions erase the old cursor before changing pages or rows.
+    if (b == 1 || b == 2) {
       idleTime = millis();
-
-      // remove selection box
       display.setDrawColor(0);
       display.drawBox(1, 8 * choice + 11, 3, 3);
       display.setDrawColor(1);
       display.updateDisplay();
 
-      // If cursor on top list entry
-      if (choice == 0) {
-        // On 2nd, 3rd, ... page go back one page
-        if (currPage > 1) {
+      if (b == 2) {
+        if (choice > 0) {
+          choice--;
+        } else if (currPage > 1) {
           lastPage = currPage;
           currPage--;
           break;
-        }
-        // In file browser go to root dir
-        else if ((filebrowse == 1) && (root != 1)) {
+        } else if (filebrowse == 1 && root != 1) {
           root = 1;
           break;
-        }
-        // Else go to bottom of list as a shortcut
-        else {
+        } else {
           choice = num_answers - 1;
         }
-      }
-      // If not top entry go up/back one entry
-      else {
-        choice--;
-      }
-
-      // draw selection box
-      display.drawBox(1, 8 * choice + 11, 3, 3);
-      display.updateDisplay();
-
-      // change RGB led to the color of the current menu option
-      rgbLed(choice);
-    }
-
-    // go one down in the menu if the Cart Readers button is clicked shortly
-    if (b == 1) {
-      idleTime = millis();
-
-      // remove selection box
-      display.setDrawColor(0);
-      display.drawBox(1, 8 * choice + 11, 3, 3);
-      display.setDrawColor(1);
-      display.updateDisplay();
-
-      if ((choice == num_answers - 1) && (numPages > currPage)) {
+      } else if (choice == num_answers - 1 && numPages > currPage) {
         lastPage = currPage;
         currPage++;
         break;
-      } else
+      } else {
         choice = (choice + 1) % num_answers;
+      }
 
-      // draw selection box
       display.drawBox(1, 8 * choice + 11, 3, 3);
       display.updateDisplay();
-
-      // change RGB led to the color of the current menu option
       rgbLed(choice);
     }
 

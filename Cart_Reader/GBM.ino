@@ -39,7 +39,7 @@ void gbmMenu() {
       // Clear screen
       display_Clear();
       // Print warning
-      println_Msg(F("Attention"));
+      println_Msg(FS(SharedFlashText::textAttention));
       println_Msg(F("Always power cycle"));
       println_Msg(F("cartreader directly"));
       println_Msg(F("before reading"));
@@ -70,9 +70,9 @@ void gbmMenu() {
       // Clear screen
       display_Clear();
       // Print warning
-      println_Msg(F("Attention"));
-      println_Msg(F("This will erase your"));
-      println_Msg(F("NP Cartridge."));
+      println_Msg(FS(SharedFlashText::textAttention));
+      println_Msg(FS(SharedFlashText::textThisWillEraseYour));
+      println_Msg(FS(SharedFlashText::textNPCartridge));
       println_Msg("");
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
@@ -92,7 +92,7 @@ void gbmMenu() {
         println_Msg(FS(FSTRING_OK));
         display_Update();
       } else {
-        println_Msg(F("ERROR"));
+        println_Msg(FS(SharedFlashText::textERROR));
         display_Update();
       }
       break;
@@ -131,8 +131,8 @@ void gbmMenu() {
       display_Clear();
 
       // Print warning
-      println_Msg(F("Attention"));
-      println_Msg(F("This will erase your"));
+      println_Msg(FS(SharedFlashText::textAttention));
+      println_Msg(FS(SharedFlashText::textThisWillEraseYour));
       println_Msg(F("NP Cartridge's"));
       println_Msg(F("mapping data"));
       println_Msg("");
@@ -154,7 +154,7 @@ void gbmMenu() {
       sd.chdir("/");
 
       // Launch file browser
-      fileBrowser(F("Select MAP file"));
+      fileBrowser(FS(SharedFlashText::textSelectMAPFile));
       display_Clear();
       sprintf(filePath, "%s/%s", filePath, fileName);
       display_Update();
@@ -373,7 +373,7 @@ void readROM_GBM(word numBanks) {
     myFile.close();
 
     // Signal end of process
-    print_Msg(F("Saved to NP/"));
+    print_Msg(FS(SharedFlashText::textSavedToNP));
     println_Msg(fileName);
     display_Update();
   }
@@ -449,7 +449,7 @@ void send_GBM(byte myCommand) {
       break;
 
     default:
-      print_FatalError(F("Unknown Command"));
+      print_FatalError(FS(SharedFlashText::textUnknownCommand));
       break;
   }
 }
@@ -470,7 +470,7 @@ void send_GBM(byte myCommand, word myAddress, byte myData) {
       break;
 
     default:
-      print_FatalError(F("Unknown Command"));
+      print_FatalError(FS(SharedFlashText::textUnknownCommand));
       break;
   }
 }
@@ -517,22 +517,22 @@ boolean readFlashID_GBM() {
   flashid |= readByte_GBM(1);
   sprintf(flashid_str, "%04X", flashid);
   if (flashid == 0xC289) {
-    print_Msg(F("Flash ID: "));
+    print_Msg(FS(SharedFlashText::textFlashID));
     println_Msg(flashid_str);
     display_Update();
     resetFlash_GBM();
     return 1;
   } else {
-    print_Msg(F("Flash ID: "));
+    print_Msg(FS(SharedFlashText::textFlashID));
     println_Msg(flashid_str);
-    print_FatalError(F("Unknown Flash ID"));
+    print_FatalError(FS(SharedFlashText::textUnknownFlashID));
     resetFlash_GBM();
     return 0;
   }
 }
 
 void eraseFlash_GBM() {
-  println_Msg(F("Erasing..."));
+  println_Msg(FS(SharedFlashText::textErasing));
   display_Update();
 
   //enable access to ports 0120h
@@ -609,7 +609,7 @@ void writeFlash_GBM() {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if ((fileSize / 0x4000) > 64) {
-      print_FatalError(F("File is too big."));
+      print_FatalError(FS(SharedFlashText::textFileIsTooBig));
     }
 
     // Enable access to ports 0120h
@@ -753,7 +753,7 @@ void readMapping_GBM() {
     printSdBuffer(0, 20);
     printSdBuffer(102, 20);
     println_Msg("");
-    print_Msg(F("Saved to NP/"));
+    print_Msg(FS(SharedFlashText::textSavedToNP));
     println_Msg(fileName);
     display_Update();
   }
@@ -763,7 +763,7 @@ void readMapping_GBM() {
 }
 
 void eraseMapping_GBM() {
-  println_Msg(F("Erasing..."));
+  println_Msg(FS(SharedFlashText::textErasing));
   display_Update();
 
   //enable access to ports 0120h
@@ -838,7 +838,7 @@ void writeMapping_GBM() {
   if (myFile.open(filePath, O_READ)) {
     // Get map file size and check if it exceeds 128KByte
     if (myFile.fileSize() > 0x80) {
-      print_FatalError(F("File is too big."));
+      print_FatalError(FS(SharedFlashText::textFileIsTooBig));
     }
 
     // Enable access to ports 0120h

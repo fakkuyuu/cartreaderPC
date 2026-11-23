@@ -56,7 +56,7 @@ void gpcMenu() {
       unsigned long wrErrors;
       wrErrors = verifyRAM_GPC();
       if (wrErrors == 0) {
-        println_Msg(F("Verified OK"));
+        println_Msg(FS(SharedFlashText::textVerifiedOK));
         display_Update();
       } else {
         print_STR(error_STR, 0);
@@ -102,7 +102,7 @@ void setup_GPC() {
 #ifdef ENABLE_CLOCKGEN
   else {
     display_Clear();
-    print_FatalError(F("Clock Generator not found"));
+    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
   }
 #endif
 

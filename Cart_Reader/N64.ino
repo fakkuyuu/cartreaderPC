@@ -119,7 +119,7 @@ void n64Menu() {
   unsigned char n64Dev;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsN64, 6);
-  n64Dev = question_box(F("Select N64 device"), menuOptions, 6, 0);
+  n64Dev = question_box(FS(SharedFlashText::textSelectN64Device), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (n64Dev) {
@@ -260,7 +260,7 @@ void n64CartMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsN64Cart, 6);
-  mainMenu = question_box(F("N64 Cart Reader"), menuOptions, 6, 0);
+  mainMenu = question_box(FS(SharedFlashText::textN64CartReader), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -292,7 +292,7 @@ void n64CartMenu() {
       display_Clear();
 
       if (saveType == 1) {
-        println_Msg(F("Reading SRAM..."));
+        println_Msg(FS(SharedFlashText::textReadingSRAM));
         display_Update();
         readSram(32768, 1);
       } else if (saveType == 2) {
@@ -310,7 +310,7 @@ void n64CartMenu() {
         resetEeprom_N64();
         readEeprom_N64();
       } else {
-        print_Error(F("Savetype Error"));
+        print_Error(FS(SharedFlashText::textSavetypeError));
       }
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
@@ -330,7 +330,7 @@ void n64CartMenu() {
         writeSram(32768);
         writeErrors = verifySram(32768, 1);
         if (writeErrors == 0) {
-          println_Msg(F("SRAM verified OK"));
+          println_Msg(FS(SharedFlashText::textSRAMVerifiedOK));
           display_Update();
         } else {
           print_STR(error_STR, 0);
@@ -346,7 +346,7 @@ void n64CartMenu() {
         writeSram(98304);
         writeErrors = verifySram(98304, 1);
         if (writeErrors == 0) {
-          println_Msg(F("Sram verified OK"));
+          println_Msg(FS(SharedFlashText::textSramVerifiedOK));
           display_Update();
         } else {
           print_STR(error_STR, 0);
@@ -356,7 +356,7 @@ void n64CartMenu() {
         }
       } else if (saveType == 4) {
         // Launch file browser
-        fileBrowser(F("Select fla file"));
+        fileBrowser(FS(SharedFlashText::textSelectFlaFile));
         display_Clear();
         getFramType();
         writeFram(flashramType);
@@ -375,7 +375,7 @@ void n64CartMenu() {
         }
       } else if ((saveType == 5) || (saveType == 6)) {
         // Launch file browser
-        fileBrowser(F("Select eep file"));
+        fileBrowser(FS(SharedFlashText::textSelectEepFile));
         display_Clear();
         resetEeprom_N64();
         writeEeprom_N64();
@@ -406,7 +406,7 @@ void n64CartMenu() {
       unsigned char N64SaveMenu;
       // Copy menuOptions out of progmem
       convertPgm(saveOptionsN64, 5);
-      N64SaveMenu = question_box(F("Select save type"), menuOptions, 5, 0);
+      N64SaveMenu = question_box(FS(SharedFlashText::textSelectSaveType), menuOptions, 5, 0);
 
       // wait for user choice to come back from the question box menu
       switch (N64SaveMenu) {
@@ -534,7 +534,7 @@ void setup_N64_Cart() {
 
   if (!i2c_found) {
     display_Clear();
-    print_FatalError(F("Clock Generator not found"));
+    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
   }
 
   // Set Eeprom clock to 2Mhz
@@ -1691,8 +1691,8 @@ byte readBlock(byte* output, word myAddress) {
 
   if (error) {
     myFile.close();
-    println_Msg(F("Controller Pak was"));
-    println_Msg(F("not dumped due to a"));
+    println_Msg(FS(SharedFlashText::textControllerPakWas));
+    println_Msg(FS(SharedFlashText::textNotDumpedDueToA));
     print_FatalError(F("read timeout"));
   }
 
@@ -1701,8 +1701,8 @@ byte readBlock(byte* output, word myAddress) {
     display_Clear();
     // Close the file:
     myFile.close();
-    println_Msg(F("Controller Pak was"));
-    println_Msg(F("not dumped due to a"));
+    println_Msg(FS(SharedFlashText::textControllerPakWas));
+    println_Msg(FS(SharedFlashText::textNotDumpedDueToA));
     print_FatalError(F("protocol CRC error"));
   }
 
@@ -1908,10 +1908,10 @@ void validateMPK() {
   print_Msg(F("Consistency check "));
   if (failed) {
     errorLvl = 1;
-    print_Msg(F("failed"));
+    print_Msg(FS(SharedFlashText::textFailed));
   } else {
     errorLvl = 0;
-    print_Msg(F("passed"));
+    print_Msg(FS(SharedFlashText::textPassed));
   }
   display_Update();
 
@@ -1926,7 +1926,7 @@ void writeMPK() {
 
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  print_Msg(F("Writing "));
+  print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath);
   println_Msg(F("..."));
   display_Update();
@@ -2048,31 +2048,31 @@ void printCartInfo_N64() {
     print_Msg(FS(FSTRING_ROM_SIZE));
     print_Msg(cartSize);
     println_Msg(F(" MB"));
-    print_Msg(F("Save Type: "));
+    print_Msg(FS(SharedFlashText::textSaveType));
     switch (saveType) {
       case 1:
-        println_Msg(F("SRAM"));
+        println_Msg(FS(SharedFlashText::textSRAM));
         break;
       case 2:
         println_Msg(F("SRAM 768"));
         break;
       case 4:
-        println_Msg(F("FLASH"));
+        println_Msg(FS(SharedFlashText::textFLASH));
         break;
       case 5:
-        println_Msg(F("4K EEPROM"));
+        println_Msg(FS(SharedFlashText::text4KEEPROM));
         eepPages = 64;
         break;
       case 6:
-        println_Msg(F("16K EEPROM"));
+        println_Msg(FS(SharedFlashText::text16KEEPROM));
         eepPages = 256;
         break;
       default:
-        println_Msg(F("None/Unknown"));
+        println_Msg(FS(SharedFlashText::textNoneUnknown));
         break;
     }
 
-    print_Msg(F("CRC1: "));
+    print_Msg(FS(SharedFlashText::textCRC1));
     println_Msg(checksumStr);
 
     // Wait for user input
@@ -2084,13 +2084,13 @@ void printCartInfo_N64() {
   } else {
     // Display error
     display_Clear();
-    println_Msg(F("GAMEPAK ERROR"));
+    println_Msg(FS(SharedFlashText::textGAMEPAKERROR));
     println_Msg("");
     print_Msg(FS(FSTRING_NAME));
     println_Msg(romName);
     print_Msg(FS(FSTRING_SERIAL));
     println_Msg(cartID);
-    print_Msg(F("CRC1: "));
+    print_Msg(FS(SharedFlashText::textCRC1));
     println_Msg(checksumStr);
     display_Update();
 
@@ -2157,7 +2157,7 @@ void printCartInfo_N64() {
     return result;
   }
   else {
-    print_FatalError(F("n64.txt missing"));
+    print_FatalError(FS(SharedFlashText::textN64TxtMissing));
   }
   }*/
 
@@ -2175,7 +2175,7 @@ void getCartInfo_N64() {
   idCart();
 
   display_Clear();
-  println_Msg(F("Searching database..."));
+  println_Msg(FS(SharedFlashText::textSearchingDatabase));
   display_Update();
 #if defined(SERIAL_MONITOR)
   println_Msg(FS(FSTRING_EMPTY));
@@ -2224,17 +2224,17 @@ void getCartInfo_N64() {
     // Close the file:
     myFile.close();
   } else {
-    print_FatalError(F("n64.txt missing"));
+    print_FatalError(FS(SharedFlashText::textN64TxtMissing));
   }
 }
 
 void printSlotNumber(int index) {
   display_Clear();
-  print_Msg(F("Slot Number: "));
+  print_Msg(FS(SharedFlashText::textSlotNumber));
   if (index == 0)
-    println_Msg(F("Menu"));
+    println_Msg(FS(SharedFlashText::textMenu));
   else if (index == 21)
-    println_Msg(F("2nd half"));
+    println_Msg(FS(SharedFlashText::text2ndHalf));
   else
     println_Msg(index);
 }
@@ -2245,11 +2245,11 @@ byte selectSlotNumber() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);  // Display selection at bottom
 #endif
-  print_Msg(F("Slot Number: "));
+  print_Msg(FS(SharedFlashText::textSlotNumber));
   if (slotNumber == 0)
-    println_Msg(F("Menu"));
+    println_Msg(FS(SharedFlashText::textMenu));
   else if (slotNumber == 21)
-    println_Msg(F("2nd half"));
+    println_Msg(FS(SharedFlashText::text2ndHalf));
   else
     println_Msg(slotNumber);
   display_Update();
@@ -2420,7 +2420,7 @@ void writeEeprom_N64() {
       print_FatalError(sd_error_STR);
     }
   } else {
-    print_FatalError(F("Savetype Error"));
+    print_FatalError(FS(SharedFlashText::textSavetypeError));
   }
 }
 
@@ -2483,7 +2483,7 @@ void readEeprom_N64() {
     // Close the file:
     myFile.close();
   } else {
-    print_FatalError(F("Savetype Error"));
+    print_FatalError(FS(SharedFlashText::textSavetypeError));
   }
 }
 
@@ -2520,7 +2520,7 @@ unsigned long verifyEeprom_N64() {
     // Return 0 if verified ok, or number of errors
     return writeErrors;
   } else {
-    print_FatalError(F("Savetype Error"));
+    print_FatalError(FS(SharedFlashText::textSavetypeError));
     return 1;
   }
 }
@@ -2564,7 +2564,7 @@ void writeSram(unsigned long sramSize) {
     }
 
   } else {
-    print_FatalError(F("Savetype Error"));
+    print_FatalError(FS(SharedFlashText::textSavetypeError));
   }
 }
 
@@ -2588,7 +2588,7 @@ void readSram(unsigned long sramSize, byte flashramType) {
   } else if (saveType == 2) {
     suffix = "768";
   } else {
-    print_FatalError(F("Savetype Error"));
+    print_FatalError(FS(SharedFlashText::textSavetypeError));
   }
   createFolderAndOpenFile("N64", "SAVE", romName, suffix);
 
@@ -2699,7 +2699,7 @@ void writeFram(byte flashramType) {
 
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
-    print_Msg(F("Writing "));
+    print_Msg(FS(SharedFlashText::textWriting));
     println_Msg(filePath);
     display_Update();
 
@@ -2757,14 +2757,14 @@ void writeFram(byte flashramType) {
       print_FatalError(sd_error_STR);
     }
   } else {
-    print_FatalError(F("Savetype Error"));
+    print_FatalError(FS(SharedFlashText::textSavetypeError));
   }
 }
 
 // Delete all 8 flashram banks
 void eraseFram() {
   if (saveType == 4) {
-    print_Msg(F("Erasing..."));
+    print_Msg(FS(SharedFlashText::textErasing));
     display_Update();
 
     // Init fram
@@ -2785,7 +2785,7 @@ void eraseFram() {
       }
     }
   } else {
-    print_FatalError(F("Savetype Error"));
+    print_FatalError(FS(SharedFlashText::textSavetypeError));
   }
 }
 
@@ -2798,7 +2798,7 @@ void readFram(byte flashramType) {
     // Read Flashram
     readSram(131072, flashramType);
   } else {
-    print_FatalError(F("Savetype Error"));
+    print_FatalError(FS(SharedFlashText::textSavetypeError));
   }
 }
 
@@ -3187,19 +3187,19 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
 
   switch (saveType) {
     case 1:
-      myFile.println(F("SRAM"));
+      myFile.println(FS(SharedFlashText::textSRAM));
       break;
     case 4:
-      myFile.println(F("FLASH"));
+      myFile.println(FS(SharedFlashText::textFLASH));
       break;
     case 5:
-      myFile.println(F("4K EEPROM"));
+      myFile.println(FS(SharedFlashText::text4KEEPROM));
       break;
     case 6:
-      myFile.println(F("16K EEPROM"));
+      myFile.println(FS(SharedFlashText::text16KEEPROM));
       break;
     default:
-      myFile.println(F("None/Unknown"));
+      myFile.println(FS(SharedFlashText::textNoneUnknown));
       break;
   }
 
@@ -3220,7 +3220,7 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
 
   if (checkfound) {
     // Dump was a known good rom
-    // myFile.println(F("Checksum matches"));
+    // myFile.println(FS(SharedFlashText::textChecksumMatches));
     myFile.println(" [Match]");
   } else {
     // myFile.println(F("Checksum not found"));
@@ -3267,7 +3267,7 @@ void flashRepro_N64() {
       else
         println_Msg("");
     } else if (flashid == 0x8816)
-      println_Msg(F("Intel 4400L0ZDQ0"));
+      println_Msg(FS(SharedFlashText::textIntel4400L0ZDQ0));
     else if (flashid == 0x7E7E)
       println_Msg(F("Fujitsu MSP55LV100S"));
     else if ((flashid == 0x227E) && (strcmp(cartID, "2301") == 0))
@@ -3276,34 +3276,34 @@ void flashRepro_N64() {
       println_Msg(F("Intel 512M29EW"));
 
     // Print info
-    print_Msg(F("ID: "));
+    print_Msg(FS(SharedFlashText::textID));
     print_Msg(flashid_str);
-    print_Msg(F(" Size: "));
+    print_Msg(FS(SharedFlashText::textSize));
     print_Msg(cartSize);
     println_Msg(F("MB"));
     println_Msg("");
-    println_Msg(F("This will erase your"));
-    println_Msg(F("Repro Cartridge."));
-    println_Msg(F("Attention: Use 3.3V!"));
+    println_Msg(FS(SharedFlashText::textThisWillEraseYour));
+    println_Msg(FS(SharedFlashText::textReproCartridge));
+    println_Msg(FS(SharedFlashText::textAttentionUse33V));
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     display_Update();
     wait();
   } else {
-    println_Msg(F("Unknown flashrom"));
-    print_Msg(F("ID: "));
+    println_Msg(FS(SharedFlashText::textUnknownFlashrom));
+    print_Msg(FS(SharedFlashText::textID));
     print_Msg(vendorID);
     print_Msg(FS(FSTRING_SPACE));
     print_Msg(flashid_str);
     print_Msg(FS(FSTRING_SPACE));
     println_Msg(cartID);
     println_Msg(FS(FSTRING_SPACE));
-    println_Msg(F("Press button for"));
+    println_Msg(FS(SharedFlashText::textPressButtonFor));
     println_Msg(F("manual config"));
-    println_Msg(F("This will erase your"));
-    println_Msg(F("Repro Cartridge."));
-    println_Msg(F("Attention: Use 3.3V!"));
+    println_Msg(FS(SharedFlashText::textThisWillEraseYour));
+    println_Msg(FS(SharedFlashText::textReproCartridge));
+    println_Msg(FS(SharedFlashText::textAttentionUse33V));
     display_Update();
     wait();
 
@@ -3419,7 +3419,7 @@ void flashRepro_N64() {
   // Launch file browser
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser(F("Select z64 file"));
+  fileBrowser(FS(SharedFlashText::textSelectZ64File));
   display_Clear();
   display_Update();
 
@@ -3433,7 +3433,7 @@ void flashRepro_N64() {
     unsigned char n64FlashErase;
     // Copy menuOptions out of progmem
     convertPgm(menuOptionsN64FlashErase, 2);
-    n64FlashErase = question_box(F("Erase?"), menuOptions, 2, 0);
+    n64FlashErase = question_box(FS(SharedFlashText::textErase), menuOptions, 2, 0);
 
     // wait for user choice to come back from the question box menu
     switch (n64FlashErase) {
@@ -3449,7 +3449,7 @@ void flashRepro_N64() {
     display_Clear();
     // Get rom size from file
     fileSize = myFile.fileSize();
-    print_Msg(F("File size: "));
+    print_Msg(FS(SharedFlashText::textFileSize));
     print_Msg(fileSize / 1048576);
     println_Msg(F("MB"));
     display_Update();
@@ -3487,7 +3487,7 @@ void flashRepro_N64() {
     if (blankcheckFlashrom_N64()) {
       // Write flashrom
       println_Msg(FS(FSTRING_OK));
-      print_Msg(F("Writing "));
+      print_Msg(FS(SharedFlashText::textWriting));
       println_Msg(filePath);
       display_Update();
 
@@ -3536,7 +3536,7 @@ void flashRepro_N64() {
     } else {
       // Close the file
       myFile.close();
-      print_Error(F("failed"));
+      print_Error(FS(SharedFlashText::textFailed));
     }
   } else {
     print_Error(open_file_STR);
@@ -3738,7 +3738,7 @@ void idFlashrom_N64() {
 void eraseIntel4400_N64() {
   unsigned long flashBase = romBase;
 
-  print_Msg(F("Erasing..."));
+  print_Msg(FS(SharedFlashText::textErasing));
   display_Update();
 
   // If the game is smaller than 32Mbit only erase the needed blocks
@@ -3852,7 +3852,7 @@ void eraseMSP55LV100_N64() {
   unsigned long flashBase = romBase;
   unsigned long sectorSize = 0x20000;
 
-  print_Msg(F("Erasing..."));
+  print_Msg(FS(SharedFlashText::textErasing));
   display_Update();
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
@@ -4285,10 +4285,10 @@ void flashGameshark_N64() {
   if (flashid == 0x0808 || flashid == 0x0404 || flashid == 0x3535 || flashid == 0x0707) {
     backupGameshark_N64();
     println_Msg("");
-    println_Msg(F("This will erase your"));
+    println_Msg(FS(SharedFlashText::textThisWillEraseYour));
     println_Msg(F("Gameshark cartridge"));
-    println_Msg(F("Attention: Use 3.3V!"));
-    println_Msg(F("Power OFF if Unsure!"));
+    println_Msg(FS(SharedFlashText::textAttentionUse33V));
+    println_Msg(FS(SharedFlashText::textPowerOFFIfUnsure));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     display_Update();
@@ -4297,7 +4297,7 @@ void flashGameshark_N64() {
     // Launch file browser
     filePath[0] = '\0';
     sd.chdir("/");
-    fileBrowser(F("Select z64 file"));
+    fileBrowser(FS(SharedFlashText::textSelectZ64File));
     display_Update();
 
     // Create filepath
@@ -4308,7 +4308,7 @@ void flashGameshark_N64() {
       // Get rom size from file
       fileSize = myFile.fileSize();
       display_Clear();
-      print_Msg(F("File size: "));
+      print_Msg(FS(SharedFlashText::textFileSize));
       print_Msg(fileSize / 1024);
       println_Msg(F(" KB"));
       display_Update();
@@ -4328,7 +4328,7 @@ void flashGameshark_N64() {
       blankCheck_N64();
 
       // Write flashrom
-      print_Msg(F("Writing "));
+      print_Msg(FS(SharedFlashText::textWriting));
       println_Msg(filePath);
       display_Update();
       writeGameshark_N64();
@@ -4344,16 +4344,16 @@ void flashGameshark_N64() {
       if (writeErrors == 0) {
         display_Clear();
         display_Update();
-        println_Msg(F("Verfied OK"));
+        println_Msg(FS(SharedFlashText::textVerfiedOK));
         println_Msg(FS(FSTRING_EMPTY));
-        println_Msg(F("Turn Cart Reader off now"));
+        println_Msg(FS(SharedFlashText::textTurnCartReaderOffNow));
         display_Update();
         while (1)
           ;
       } else {
         display_Clear();
         display_Update();
-        println_Msg(F("Verification Failed"));
+        println_Msg(FS(SharedFlashText::textVerificationFailed));
         println_Msg(writeErrors);
         print_Msg(F(" bytes "));
         print_Error(did_not_verify_STR);
@@ -4396,8 +4396,8 @@ void idGameshark_N64() {
     //Set SST 28LF040 flashrom size
     flashSize = 1048574;
   } else {
-    println_Msg(F("Check cart connection"));
-    println_Msg(F("Unknown Flash ID"));
+    println_Msg(FS(SharedFlashText::textCheckCartConnection));
+    println_Msg(FS(SharedFlashText::textUnknownFlashID));
     sprintf(flashid_str, "%04X", flashid);
     print_STR(press_button_STR, 1);
     display_Update();
@@ -4450,7 +4450,7 @@ void backupGameshark_N64() {
 }
 
 void eraseGameshark_N64() {
-  println_Msg(F("Erasing..."));
+  println_Msg(FS(SharedFlashText::textErasing));
   display_Update();
 
   // Send chip erase to SST 29LE010 / AMTEL AT29LV010A / SST 29EE010
@@ -4501,8 +4501,8 @@ void blankCheck_N64() {
         setAddress_N64(romBase + 0xEC00000 + currSector + currSdBuffer + currByte);
         // Compare both
         if (readWord_N64() != 0xFFFF) {
-          println_Msg(F("Not empty"));
-          print_FatalError(F("Erase failed"));
+          println_Msg(FS(SharedFlashText::textNotEmpty));
+          print_FatalError(FS(SharedFlashText::textEraseFailed));
         }
       }
     }
@@ -4646,10 +4646,10 @@ void flashXplorer_N64() {
   if (flashid == 0x0808) {
     backupXplorer_N64();
     println_Msg("");
-    println_Msg(F("This will erase your"));
+    println_Msg(FS(SharedFlashText::textThisWillEraseYour));
     println_Msg(F("Xplorer64 cartridge"));
-    println_Msg(F("Attention: Use 3.3V!"));
-    println_Msg(F("Power OFF if Unsure!"));
+    println_Msg(FS(SharedFlashText::textAttentionUse33V));
+    println_Msg(FS(SharedFlashText::textPowerOFFIfUnsure));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     display_Update();
@@ -4669,7 +4669,7 @@ void flashXplorer_N64() {
       // Get rom size from file
       fileSize = myFile.fileSize();
       display_Clear();
-      print_Msg(F("File size: "));
+      print_Msg(FS(SharedFlashText::textFileSize));
       print_Msg(fileSize / 1024);
       println_Msg(F(" KB"));
       display_Update();
@@ -4685,7 +4685,7 @@ void flashXplorer_N64() {
 
       // Write flashrom
       display_Clear();
-      print_Msg(F("Writing "));
+      print_Msg(FS(SharedFlashText::textWriting));
       println_Msg(filePath);
       display_Update();
       writeXplorer_N64();
@@ -4701,16 +4701,16 @@ void flashXplorer_N64() {
       if (writeErrors == 0) {
         display_Clear();
         display_Update();
-        println_Msg(F("Verfied OK"));
+        println_Msg(FS(SharedFlashText::textVerfiedOK));
         println_Msg(FS(FSTRING_EMPTY));
-        println_Msg(F("Turn Cart Reader off now"));
+        println_Msg(FS(SharedFlashText::textTurnCartReaderOffNow));
         display_Update();
         while (1)
           ;
       } else {
         display_Clear();
         display_Update();
-        println_Msg(F("Verification Failed"));
+        println_Msg(FS(SharedFlashText::textVerificationFailed));
         println_Msg(writeErrors);
         print_Msg(F(" bytes "));
         print_Error(did_not_verify_STR);
@@ -4742,8 +4742,8 @@ void idXplorer_N64() {
   readWord_N64();
 
   if (flashid != 0x0808) {
-    println_Msg(F("Check cart connection"));
-    println_Msg(F("Unknown Flash ID"));
+    println_Msg(FS(SharedFlashText::textCheckCartConnection));
+    println_Msg(FS(SharedFlashText::textUnknownFlashID));
     sprintf(flashid_str, "%04X", flashid);
     print_STR(press_button_STR, 1);
     display_Update();
@@ -4832,7 +4832,7 @@ void evenXPaddrWrite(unsigned long addr, word data) {
 }
 
 void eraseXplorer_N64() {
-  println_Msg(F("Erasing..."));
+  println_Msg(FS(SharedFlashText::textErasing));
   display_Update();
 
   // Send chip erase to SST 29LE010
@@ -4856,8 +4856,8 @@ void blankCheck_XP64() {
         setAddress_N64(0x10400000 + currSector + currSdBuffer + currByte);
         // Compare both
         if (readWord_N64() != 0xFFFF) {
-          println_Msg(F("Not empty"));
-          print_FatalError(F("Erase failed"));
+          println_Msg(FS(SharedFlashText::textNotEmpty));
+          print_FatalError(FS(SharedFlashText::textEraseFailed));
         }
       }
     }

@@ -478,9 +478,9 @@ void setMapper_INTV() {
   newintvmapper = intvmapselect;
 
   display.setCursor(0, 56);
-  print_Msg(F("MAPPER "));
+  print_Msg(FS(SharedFlashText::textMAPPER));
   print_Msg(newintvmapper);
-  println_Msg(F(" SELECTED"));
+  println_Msg(FS(SharedFlashText::textSELECTED));
   display_Update();
   delay(1000);
 #else
@@ -499,7 +499,7 @@ setmapper:
       intvmapfound = true;
   }
   if (intvmapfound == false) {
-    PcConsole.println(F("MAPPER NOT SUPPORTED!"));
+    PcConsole.println(FS(SharedFlashText::textMAPPERNOTSUPPORTED));
     PcConsole.println(FS(FSTRING_EMPTY));
     newintvmapper = 0;
     goto setmapper;
@@ -552,24 +552,24 @@ void setROMSize_INTV() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (intvhi - intvlo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(pgm_read_byte(&(INTV[i + intvlo])));
       PcConsole.println(F("K"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newintvsize = sizeROM.toInt() + intvlo;
     if (newintvsize > intvhi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(pgm_read_byte(&(INTV[newintvsize])));
   PcConsole.println(F("K"));
 #endif
@@ -602,9 +602,9 @@ void checkStatus_INTV() {
   display_Update();
   wait();
 #else
-  PcConsole.print(F("CURRENT MAPPER:   "));
+  PcConsole.print(FS(SharedFlashText::textCURRENTMAPPER));
   PcConsole.println(intvmapper);
-  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(pgm_read_byte(&(INTV[intvsize])));
   PcConsole.println(F("K"));
   PcConsole.println(FS(FSTRING_EMPTY));

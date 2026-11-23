@@ -240,7 +240,7 @@ void FinishROMFolder_VIC20()
 void readROM_VIC20()
 {
   display_Clear();
-  print_Msg(F("Saving to "));
+  print_Msg(FS(SharedFlashText::textSavingTo));
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -263,7 +263,7 @@ void readROM_VIC20()
     snprintf(fileName, sizeof(fileName), "%s.%x", romName, rommap);
     // open file on sdcard
     if (!myFile.open(fileName, O_RDWR | O_CREAT))
-      print_FatalError(F("Can't create file on SD"));
+      print_FatalError(FS(SharedFlashText::textCanTCreateFileOnSD));
 
     if (rommap == 0x20) { // BLK1
       PORTH &= ~(1 << 3); // BLK1(PH3) LOW
@@ -342,8 +342,8 @@ void setROMSize_VIC20()
       print_Msg(F("ROM1 Size: "));
       println_Msg(VIC20SIZE[i] & 0x0F);
       println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
+      println_Msg(FS(SharedFlashText::textPressToChange));
+      println_Msg(FS(SharedFlashText::textHoldToSelect));
       display_Update();
       b = checkButton();
       if (b == 2) { // Previous (doubleclick)
@@ -382,7 +382,7 @@ void setROMSize_VIC20()
 setrom:
     String sizeROM;
     for (int i = 0; i < (vic20hi - vic20lo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print((VIC20SIZE[i + vic20lo] & 0xF0) >> 4);
@@ -390,13 +390,13 @@ setrom:
       PcConsole.print(VIC20SIZE[i + vic20lo] & 0x0F);
       PcConsole.println(F("KB"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newvic20size = sizeROM.toInt() + vic20lo;
     if (newvic20size > vic20hi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
@@ -485,7 +485,7 @@ void setROMMap_VIC20()
         break;
       }
       display_Clear();
-      print_Msg(F("ROM Map: "));
+      print_Msg(FS(SharedFlashText::textROMMap));
       vic20mapselect = VIC20MAP[i];
       println_Msg(vic20mapselect, HEX);
       if (i == (vic20mapcount - 1))
@@ -498,12 +498,12 @@ void setROMMap_VIC20()
   pcPhysicalControlsReady();
   while (1) {
     display_Clear();
-    print_Msg(F("ROM Map: "));
+    print_Msg(FS(SharedFlashText::textROMMap));
     vic20mapselect = VIC20MAP[i];
     println_Msg(vic20mapselect, HEX);
     println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(F("Press to Change"));
-    println_Msg(F("Hold to Select"));
+    println_Msg(FS(SharedFlashText::textPressToChange));
+    println_Msg(FS(SharedFlashText::textHoldToSelect));
     display_Update();
     b = checkButton();
     if (b == 2) { // Previous ROM Map (doubleclick)
@@ -528,7 +528,7 @@ void setROMMap_VIC20()
   display.setCursor(0, 56);
   print_Msg(F("ROM MAP "));
   print_Msg(vic20mapselect, HEX);
-  println_Msg(F(" SELECTED"));
+  println_Msg(FS(SharedFlashText::textSELECTED));
   display_Update();
   delay(1000);
 #else
@@ -543,7 +543,7 @@ void setROMMap_VIC20()
   PcConsole.println(F("6 = 0x7000"));
   PcConsole.println(F("7 = 0xA000"));
   PcConsole.println(F("8 = 0xB000"));
-  PcConsole.print(F("Enter Mapper [0-8]: "));
+  PcConsole.print(FS(SharedFlashText::textEnterMapper08));
   while (PcConsole.available() == 0) {}
   newmap = PcConsole.readStringUntil('\n');
   PcConsole.println(newmap);

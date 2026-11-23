@@ -409,24 +409,24 @@ void setROMSize_ATARI8()
 setrom:
     String sizeROM;
     for (int i = 0; i < (atari8hi - atari8lo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(ATARI8[i + atari8lo]);
       PcConsole.println(F("KB"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newatari8size = sizeROM.toInt() + atari8lo;
     if (newatari8size > atari8hi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(ATARI8[newatari8size]);
   PcConsole.println(F("KB"));
 #endif

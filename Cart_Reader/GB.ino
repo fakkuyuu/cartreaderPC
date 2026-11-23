@@ -239,7 +239,7 @@ void gbxMenu() {
             unsigned char gbFlashErase;
             // Copy menuOptions out of progmem
             convertPgm(menuOptionsGBFlashErase, 3);
-            gbFlashErase = question_box(F("Erase?"), menuOptions, 3, 0);
+            gbFlashErase = question_box(FS(SharedFlashText::textErase), menuOptions, 3, 0);
 
             // wait for user choice to come back from the question box menu
             switch (gbFlashErase) {
@@ -387,7 +387,7 @@ void gbxMenu() {
                   unsigned long wrErrors;
                   wrErrors = verifySRAM_GB();
                   if (wrErrors == 0) {
-                    println_Msg(F("Verified OK"));
+                    println_Msg(FS(SharedFlashText::textVerifiedOK));
                     display_Update();
                   } else {
                     print_STR(error_STR, 0);
@@ -457,7 +457,7 @@ void gbxMenu() {
       unsigned char gbPelican;
       // Copy menuOptions out of progmem
       convertPgm(menuOptionsGBPelican, 2);
-      gbPelican = question_box(F("Select operation:"), menuOptions, 2, 0);
+      gbPelican = question_box(FS(SharedFlashText::textSelectOperation), menuOptions, 2, 0);
 
       // wait for user choice to come back from the question box menu
       switch (gbPelican) {
@@ -487,7 +487,7 @@ void gbxMenu() {
       unsigned char gbDatel;
       // Copy menuOptions out of progmem
       convertPgm(menuOptionsGBDatel, 4);
-      gbDatel = question_box(F("Select operation:"), menuOptions, 4, 0);
+      gbDatel = question_box(FS(SharedFlashText::textSelectOperation), menuOptions, 4, 0);
 
       // wait for user choice to come back from the question box menu
       switch (gbDatel) {
@@ -527,7 +527,7 @@ void gbMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsGB, 4);
-  mainMenu = question_box(F("GB Cart Reader"), menuOptions, 4, 0);
+  mainMenu = question_box(FS(SharedFlashText::textGBCartReader), menuOptions, 4, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -555,7 +555,7 @@ void gbMenu() {
         else
           readSRAM_GB();
       } else {
-        print_Error(F("No save or unsupported type"));
+        print_Error(FS(SharedFlashText::textNoSaveOrUnsupportedType));
       }
       println_Msg(FS(FSTRING_EMPTY));
       break;
@@ -567,7 +567,7 @@ void gbMenu() {
         // Change working dir to root
         sd.chdir("/");
         filePath[0] = '\0';
-        fileBrowser(F("Select sav file"));
+        fileBrowser(FS(SharedFlashText::textSelectSavFile));
 
         if (romType == 32)
           writeSRAMFLASH_MBC6_GB();
@@ -578,7 +578,7 @@ void gbMenu() {
           unsigned long wrErrors;
           wrErrors = verifySRAM_GB();
           if (wrErrors == 0) {
-            println_Msg(F("Verified OK"));
+            println_Msg(FS(SharedFlashText::textVerifiedOK));
             display_Update();
           } else {
             print_STR(error_STR, 0);
@@ -588,7 +588,7 @@ void gbMenu() {
           }
         }
       } else {
-        print_Error(F("No save or unsupported type"));
+        print_Error(FS(SharedFlashText::textNoSaveOrUnsupportedType));
       }
       println_Msg(FS(FSTRING_EMPTY));
       break;
@@ -685,23 +685,23 @@ void showCartInfo_GB() {
     print_Msg(FS(FSTRING_ROM_SIZE));
     switch (romSize) {
       case 0:
-        print_Msg(F("32 KB"));
+        print_Msg(FS(SharedFlashText::text32KB));
         break;
 
       case 1:
-        print_Msg(F("64 KB"));
+        print_Msg(FS(SharedFlashText::text64KB));
         break;
 
       case 2:
-        print_Msg(F("128 KB"));
+        print_Msg(FS(SharedFlashText::text128KB));
         break;
 
       case 3:
-        print_Msg(F("256 KB"));
+        print_Msg(FS(SharedFlashText::text256KB));
         break;
 
       case 4:
-        print_Msg(F("512 KB"));
+        print_Msg(FS(SharedFlashText::text512KB));
         break;
 
       case 5:
@@ -722,10 +722,10 @@ void showCartInfo_GB() {
     }
 
     println_Msg(FS(FSTRING_EMPTY));
-    //print_Msg(F("Banks: "));
+    //print_Msg(FS(SharedFlashText::textBanks));
     //println_Msg(romBanks);
 
-    print_Msg(F("Save Size: "));
+    print_Msg(FS(SharedFlashText::textSaveSize));
     switch (sramSize) {
       case 0:
         if (romType == 6) {
@@ -736,7 +736,7 @@ void showCartInfo_GB() {
         } else if (romType == 0xFD) {
           print_Msg(F("32 Byte"));
         } else {
-          print_Msg(F("None"));
+          print_Msg(FS(SharedFlashText::textNone));
         }
         break;
       case 1:
@@ -751,19 +751,19 @@ void showCartInfo_GB() {
         if (romType == 0x20) {
           print_Msg(F("1.03 MB"));
         } else {
-          print_Msg(F("32 KB"));
+          print_Msg(FS(SharedFlashText::text32KB));
         }
         break;
 
       case 4:
-        print_Msg(F("128 KB"));
+        print_Msg(FS(SharedFlashText::text128KB));
         break;
 
       case 5:
-        print_Msg(F("64 KB"));
+        print_Msg(FS(SharedFlashText::text64KB));
         break;
 
-      default: print_Msg(F("None"));
+      default: print_Msg(FS(SharedFlashText::textNone));
     }
     println_Msg(FS(FSTRING_EMPTY));
     //print_Msg(F("Checksum: "));
@@ -777,7 +777,7 @@ void showCartInfo_GB() {
     display_Update();
     wait();
   } else {
-    print_FatalError(F("GAMEPAK ERROR"));
+    print_FatalError(FS(SharedFlashText::textGAMEPAKERROR));
   }
 }
 
@@ -997,9 +997,9 @@ void getCartInfo_GB() {
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(F("Press Button to"));
-    println_Msg(F("ignore or powercycle"));
-    println_Msg(F("to try again"));
+    println_Msg(FS(SharedFlashText::textPressButtonTo));
+    println_Msg(FS(SharedFlashText::textIgnoreOrPowercycle));
+    println_Msg(FS(SharedFlashText::textToTryAgain));
     display_Update();
     wait();
     }
@@ -1028,7 +1028,7 @@ void getCartInfo_GB() {
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(F("Press Button to"));
+    println_Msg(FS(SharedFlashText::textPressButtonTo));
     println_Msg(F("ignore or clean"));
     println_Msg(F("cart and try again"));
     display_Update();
@@ -1327,7 +1327,7 @@ unsigned int calc_checksum_GB(char* fileName) {
   }
   // Else show error
   else {
-    print_Error(F("DUMP ROM 1ST"));
+    print_Error(FS(SharedFlashText::textDUMPROM1ST));
     return 0;
   }
 }
@@ -1351,11 +1351,11 @@ void compare_checksums_GB() {
   print_Msg(FS(FSTRING_CHECKSUM));
   print_Msg(calcsumStr);
   if (strcmp(calcsumStr, checksumStr) == 0) {
-    println_Msg(F(" -> OK"));
+    println_Msg(FS(SharedFlashText::textOK));
   } else {
     print_Msg(F(" != "));
     println_Msg(checksumStr);
-    print_Error(F("Invalid Checksum"));
+    print_Error(FS(SharedFlashText::textInvalidChecksum));
   }
   compareCRC("gb.txt", 0, 1, 0);
   display_Update();
@@ -1421,12 +1421,12 @@ void readSRAM_GB() {
     myFile.close();
 
     // Signal end of process
-    print_Msg(F("Saved to "));
+    print_Msg(FS(SharedFlashText::textSavedTo));
     print_Msg(folder);
     println_Msg(F("/"));
     display_Update();
   } else {
-    print_Error(F("Cart has no SRAM"));
+    print_Error(FS(SharedFlashText::textCartHasNoSRAM));
   }
 }
 
@@ -1465,14 +1465,14 @@ void writeSRAM_GB() {
       // Close the file:
       myFile.close();
       display_Clear();
-      println_Msg(F("SRAM writing finished"));
+      println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
       display_Update();
 
     } else {
       print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     }
   } else {
-    print_Error(F("Cart has no SRAM"));
+    print_Error(FS(SharedFlashText::textCartHasNoSRAM));
   }
 }
 
@@ -1822,7 +1822,7 @@ void writeEEPROM_MBC7_GB() {
     writeByte_GB(0xa080, 0xc0);
   } while ((readByte_GB(0xa080) & 0x01) == 0);
 
-  println_Msg(F("Writing EEPROM..."));
+  println_Msg(FS(SharedFlashText::textWritingEEPROM));
   display_Update();
 
   // write data to EEPROM by sending WRITE instruction word by word
@@ -1941,7 +1941,7 @@ void busyCheck_GB(unsigned long address, byte data) {
       count++;
       if (count > 250) {
       println_Msg("");
-      print_Msg(F("Bank: "));
+      print_Msg(FS(SharedFlashText::textBank));
       print_Msg(currBank);
       print_Msg(F(" Addr: "));
       println_Msg(currAddr + currByte);
@@ -2001,64 +2001,64 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
 
     if (flashid == 0x04D4) {
       println_Msg(F("MBM29F033C"));
-      print_Msg(F("Banks: "));
+      print_Msg(FS(SharedFlashText::textBanks));
       print_Msg(romBanks);
       println_Msg(F("/256"));
       display_Update();
     } else if (flashid == 0x0141) {
       println_Msg(F("AM29F032B"));
-      print_Msg(F("Banks: "));
+      print_Msg(FS(SharedFlashText::textBanks));
       print_Msg(romBanks);
       println_Msg(F("/256"));
       display_Update();
     } else if (flashid == 0x01AD) {
       println_Msg(F("AM29F016B"));
-      print_Msg(F("Banks: "));
+      print_Msg(FS(SharedFlashText::textBanks));
       print_Msg(romBanks);
       println_Msg(F("/128"));
       display_Update();
     } else if (flashid == 0x04AD) {
       println_Msg(F("AM29F016D"));
-      print_Msg(F("Banks: "));
+      print_Msg(FS(SharedFlashText::textBanks));
       print_Msg(romBanks);
       println_Msg(F("/128"));
       display_Update();
     } else if (flashid == 0x01D5) {
       println_Msg(F("AM29F080B"));
-      print_Msg(F("Banks: "));
+      print_Msg(FS(SharedFlashText::textBanks));
       print_Msg(romBanks);
       println_Msg(F("/64"));
       display_Update();
     } else if (flashid == 0xBFB7) {
       println_Msg(F("SST 39SF040"));
-      print_Msg(F("Banks: "));
+      print_Msg(FS(SharedFlashText::textBanks));
       print_Msg(romBanks);
       println_Msg(F("/32"));
       display_Update();
     } else if (flashid == 0xBFB6) {
       println_Msg(F("SST 39SF020"));
-      print_Msg(F("Banks: "));
+      print_Msg(FS(SharedFlashText::textBanks));
       print_Msg(romBanks);
       println_Msg(F("/16"));
       display_Update();
     } else if (flashid == 0xBFB5) {
-      println_Msg(F("SST 39SF010"));
-      print_Msg(F("Banks: "));
+      println_Msg(FS(SharedFlashText::textSST39SF010));
+      print_Msg(FS(SharedFlashText::textBanks));
       print_Msg(romBanks);
       println_Msg(F("/8"));
       display_Update();
     } else if ((flashid == 0x01D2) || (flashid == 0x01D8)) {
       println_Msg(F("Micron M29F160FB/T"));
-      print_Msg(F("Banks: "));
+      print_Msg(FS(SharedFlashText::textBanks));
       print_Msg(romBanks);
       println_Msg(F("/128"));
       display_Update();
     } else {
-      print_Msg(F("Flash ID: "));
+      print_Msg(FS(SharedFlashText::textFlashID));
       sprintf(flashid_str, "%04X", flashid);
       println_Msg(flashid_str);
       display_Update();
-      print_FatalError(F("Unknown flashrom"));
+      print_FatalError(FS(SharedFlashText::textUnknownFlashrom));
     }
 
     // Reset flash
@@ -2067,7 +2067,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
     delay(100);
 
     if (flashErase) {
-      println_Msg(F("Erasing flash"));
+      println_Msg(FS(SharedFlashText::textErasingFlash));
       display_Update();
 
       // Erase flash
@@ -2078,7 +2078,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
       busyCheck_GB(0, 0x80);
 
       // Blankcheck
-      println_Msg(F("Blankcheck"));
+      println_Msg(FS(SharedFlashText::textBlankcheck));
       display_Update();
 
       // Read x number of banks
@@ -2096,8 +2096,8 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
           }
           for (int j = 0; j < 512; j++) {
             if (sdBuffer[j] != 0xFF) {
-              println_Msg(F("Not empty"));
-              print_FatalError(F("Erase failed"));
+              println_Msg(FS(SharedFlashText::textNotEmpty));
+              print_FatalError(FS(SharedFlashText::textEraseFailed));
             }
           }
         }
@@ -2395,7 +2395,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
       println_Msg(FS(FSTRING_OK));
       display_Update();
     } else {
-      println_Msg(F("Error"));
+      println_Msg(FS(SharedFlashText::textError));
       print_Msg(writeErrors);
       print_STR(_bytes_STR, 1);
       print_FatalError(did_not_verify_STR);
@@ -2480,34 +2480,34 @@ void identifyCFI_GB() {
   sprintf(cfiQRYx8, "%02X%02X%02X", readByte_GB(0x20), readByte_GB(0x22), readByte_GB(0x24));
   sprintf(cfiQRYx16, "%02X%02X%02X", readByte_GB(0x10), readByte_GB(0x11), readByte_GB(0x12));  // some devices use x8-style CFI Query command even though they are in x16 command mode
   if (strcmp(cfiQRYx8, "515259") == 0) {                                                        // QRY in x8 mode
-    println_Msg(F("Normal CFI x8 Mode"));
+    println_Msg(FS(SharedFlashText::textNormalCFIX8Mode));
     flashX16Mode = false;
     flashSwitchLastBits = false;
   } else if (strcmp(cfiQRYx8, "52515A") == 0) {  // QRY in x8 mode with switched last bit
-    println_Msg(F("Switched CFI x8 Mode"));
+    println_Msg(FS(SharedFlashText::textSwitchedCFIX8Mode));
     flashX16Mode = false;
     flashSwitchLastBits = true;
   } else if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
-    println_Msg(F("Normal CFI x16 Mode"));
+    println_Msg(FS(SharedFlashText::textNormalCFIX16Mode));
     flashX16Mode = true;
     flashSwitchLastBits = false;
   } else if (strcmp(cfiQRYx16, "52515A") == 0) {  // QRY in x16 mode with switched last bit
-    println_Msg(F("Switched CFI x16 Mode"));
+    println_Msg(FS(SharedFlashText::textSwitchedCFIX16Mode));
     flashX16Mode = true;
     flashSwitchLastBits = true;
   } else {
     startCFIMode(true);  // Try x16 mode next
     sprintf(cfiQRYx16, "%02X%02X%02X", readByte_GB(0x10), readByte_GB(0x11), readByte_GB(0x12));
     if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
-      println_Msg(F("Normal CFI x16 Mode"));
+      println_Msg(FS(SharedFlashText::textNormalCFIX16Mode));
       flashX16Mode = true;
       flashSwitchLastBits = false;
     } else if (strcmp(cfiQRYx16, "52515A") == 0) {  // QRY in x16 mode with switched last bit
-      println_Msg(F("Switched CFI x16 Mode"));
+      println_Msg(FS(SharedFlashText::textSwitchedCFIX16Mode));
       flashX16Mode = true;
       flashSwitchLastBits = true;
     } else {
-      println_Msg(F("CFI Query failed!"));
+      println_Msg(FS(SharedFlashText::textCFIQueryFailed));
       display_Update();
       wait();
       return;
@@ -2575,7 +2575,7 @@ bool writeCFI_GB() {
     writeByte_GB(0x555, 0xf0);
 
     delay(100);
-    println_Msg(F("Erasing flash"));
+    println_Msg(FS(SharedFlashText::textErasingFlash));
     display_Update();
 
     // Erase flash
@@ -2595,7 +2595,7 @@ bool writeCFI_GB() {
     }
 
     // Blankcheck
-    println_Msg(F("Blankcheck"));
+    println_Msg(FS(SharedFlashText::textBlankcheck));
     display_Update();
 
     // Read x number of banks
@@ -2612,8 +2612,8 @@ bool writeCFI_GB() {
         }
         for (int j = 0; j < 512; j++) {
           if (sdBuffer[j] != 0xFF) {
-            println_Msg(F("Not empty"));
-            print_FatalError(F("Erase failed"));
+            println_Msg(FS(SharedFlashText::textNotEmpty));
+            print_FatalError(FS(SharedFlashText::textEraseFailed));
           }
         }
       }
@@ -2781,10 +2781,10 @@ void readPelican_GB() {
   delay(100);
 
   if (flashid == 0xDA45 || flashid == 0xBF10) {
-    println_Msg(F("29EE020 / W29C020"));
-    println_Msg(F("Banks Used: 32/64"));
+    println_Msg(FS(SharedFlashText::text29EE020W29C020));
+    println_Msg(FS(SharedFlashText::textBanksUsed3264));
     print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(F("256 KB"));
+    println_Msg(FS(SharedFlashText::text256KB));
     romBanks = 32;
     display_Update();
   } else {
@@ -2800,7 +2800,7 @@ void readPelican_GB() {
     writeByte_GB(0x3555, 0xFF);
     delay(100);
     if (flashid != 0xBF04) {
-      println_Msg(F("Unknown Flash ID"));
+      println_Msg(FS(SharedFlashText::textUnknownFlashID));
       println_Msg(flashid);
       print_STR(press_button_STR, 1);
       display_Update();
@@ -2810,10 +2810,10 @@ void readPelican_GB() {
   }
 
   if (flashid == 0xBF04) {
-    println_Msg(F("SST 28LF040"));
-    println_Msg(F("Banks Used: 64/64"));
+    println_Msg(FS(SharedFlashText::textSST28LF040));
+    println_Msg(FS(SharedFlashText::textBanksUsed6464));
     print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(F("512 KB"));
+    println_Msg(FS(SharedFlashText::text512KB));
     romBanks = 64;
     display_Update();
   }
@@ -2892,8 +2892,8 @@ void writePelican_GB() {
     delay(100);
 
     if (flashid == 0xDA45 || flashid == 0xBF10) {
-      println_Msg(F("29EE020 / W29C020"));
-      println_Msg(F("Banks Used: 32/64"));
+      println_Msg(FS(SharedFlashText::text29EE020W29C020));
+      println_Msg(FS(SharedFlashText::textBanksUsed3264));
       romBanks = 32;
       display_Update();
       println_Msg(F("Erasing flash..."));
@@ -2925,7 +2925,7 @@ void writePelican_GB() {
       writeByte_GB(0x3555, 0xFF);
       delay(100);
       if (flashid != 0xBF04) {
-        println_Msg(F("Unknown Flash ID"));
+        println_Msg(FS(SharedFlashText::textUnknownFlashID));
         println_Msg(flashid);
         print_STR(press_button_STR, 1);
         display_Update();
@@ -2935,8 +2935,8 @@ void writePelican_GB() {
     }
 
     if (flashid == 0xBF04) {
-      println_Msg(F("SST 28LF040"));
-      println_Msg(F("Banks Used: 64/64"));
+      println_Msg(FS(SharedFlashText::textSST28LF040));
+      println_Msg(FS(SharedFlashText::textBanksUsed6464));
       romBanks = 64;
       display_Update();
       println_Msg(F("Erasing flash..."));
@@ -2975,15 +2975,15 @@ void writePelican_GB() {
         }
         for (int j = 0; j < 512; j++) {
           if (sdBuffer[j] != 0xFF) {
-            println_Msg(F("Not empty"));
-            print_FatalError(F("Erase failed"));
+            println_Msg(FS(SharedFlashText::textNotEmpty));
+            print_FatalError(FS(SharedFlashText::textEraseFailed));
           }
         }
       }
     }
   }
 
-  println_Msg(F("Writing flash..."));
+  println_Msg(FS(SharedFlashText::textWritingFlash));
   display_Update();
 
   // Write flash
@@ -3110,10 +3110,10 @@ void writePelican_GB() {
 
   if (writeErrors == 0) {
     println_Msg(FS(FSTRING_OK));
-    println_Msg(F("Please turn off the power."));
+    println_Msg(FS(SharedFlashText::textPleaseTurnOffThePower));
     display_Update();
   } else {
-    println_Msg(F("Error"));
+    println_Msg(FS(SharedFlashText::textError));
     print_Msg(writeErrors);
     print_STR(_bytes_STR, 1);
     print_FatalError(did_not_verify_STR);
@@ -3253,7 +3253,7 @@ void writeMegaMem_GB() {
     writeByte_GB(0x5555, 0xFF);
     delay(100);
     if (flashid != 0xBF04) {
-      println_Msg(F("Unknown Flash ID"));
+      println_Msg(FS(SharedFlashText::textUnknownFlashID));
       println_Msg(flashid);
       print_STR(press_button_STR, 1);
       display_Update();
@@ -3263,7 +3263,7 @@ void writeMegaMem_GB() {
   }
 
   if (flashid == 0xBF04) {
-    println_Msg(F("SST 28LF040"));
+    println_Msg(FS(SharedFlashText::textSST28LF040));
     romBanks = 32;
     display_Update();
     println_Msg(F("Erasing flash..."));
@@ -3309,14 +3309,14 @@ void writeMegaMem_GB() {
       }
       for (int j = 0; j < 512; j++) {
         if (sdBuffer[j] != 0xFF) {
-          println_Msg(F("Not empty"));
-          print_FatalError(F("Erase failed"));
+          println_Msg(FS(SharedFlashText::textNotEmpty));
+          print_FatalError(FS(SharedFlashText::textEraseFailed));
         }
       }
     }
   }
 
-  println_Msg(F("Writing flash..."));
+  println_Msg(FS(SharedFlashText::textWritingFlash));
   display_Update();
 
   // Write flash
@@ -3435,10 +3435,10 @@ void writeMegaMem_GB() {
 
   if (writeErrors == 0) {
     println_Msg(FS(FSTRING_OK));
-    println_Msg(F("Please turn off the power."));
+    println_Msg(FS(SharedFlashText::textPleaseTurnOffThePower));
     display_Update();
   } else {
-    println_Msg(F("Error"));
+    println_Msg(FS(SharedFlashText::textError));
     print_Msg(writeErrors);
     print_STR(_bytes_STR, 1);
     print_FatalError(did_not_verify_STR);
@@ -3483,14 +3483,14 @@ void readGameshark_GB() {
 
   if (flashid == 0xBFB5) {
     display_Clear();
-    println_Msg(F("SST 39SF010"));
+    println_Msg(FS(SharedFlashText::textSST39SF010));
     print_Msg(FS(FSTRING_ROM_SIZE));
-    println_Msg(F("128 KB"));
+    println_Msg(FS(SharedFlashText::text128KB));
     display_Update();
   } else {
     display_Clear();
-    println_Msg(F("Unknown Flash ID"));
-    println_Msg(F("Check Cartridge Connection"));
+    println_Msg(FS(SharedFlashText::textUnknownFlashID));
+    println_Msg(FS(SharedFlashText::textCheckCartridgeConnection));
     print_STR(press_button_STR, 1);
     display_Update();
     wait();
@@ -3559,8 +3559,8 @@ void writeGameshark_GB() {
 
   if (flashid != 0xBFB5) {
     display_Clear();
-    println_Msg(F("Unknown Flash ID"));
-    println_Msg(F("Check Cartridge Connection"));
+    println_Msg(FS(SharedFlashText::textUnknownFlashID));
+    println_Msg(FS(SharedFlashText::textCheckCartridgeConnection));
     print_STR(press_button_STR, 1);
     display_Update();
     wait();
@@ -3583,7 +3583,7 @@ void writeGameshark_GB() {
   myFile.open(filePath, O_READ);
 
   if (flashid == 0xBFB5) {
-    println_Msg(F("SST 39SF010"));
+    println_Msg(FS(SharedFlashText::textSST39SF010));
     romBanks = 16;
     display_Update();
     println_Msg(F("Erasing flash..."));
@@ -3613,14 +3613,14 @@ void writeGameshark_GB() {
       }
       for (int j = 0; j < 512; j++) {
         if (sdBuffer[j] != 0xFF) {
-          println_Msg(F("Not empty"));
-          print_FatalError(F("Erase failed"));
+          println_Msg(FS(SharedFlashText::textNotEmpty));
+          print_FatalError(FS(SharedFlashText::textEraseFailed));
         }
       }
     }
   }
 
-  println_Msg(F("Writing flash..."));
+  println_Msg(FS(SharedFlashText::textWritingFlash));
   display_Update();
 
   // Write flash
@@ -3703,10 +3703,10 @@ void writeGameshark_GB() {
 
   if (writeErrors == 0) {
     println_Msg(FS(FSTRING_OK));
-    println_Msg(F("Please turn off the power."));
+    println_Msg(FS(SharedFlashText::textPleaseTurnOffThePower));
     display_Update();
   } else {
-    println_Msg(F("Error"));
+    println_Msg(FS(SharedFlashText::textError));
     print_Msg(writeErrors);
     print_STR(_bytes_STR, 1);
     print_FatalError(did_not_verify_STR);

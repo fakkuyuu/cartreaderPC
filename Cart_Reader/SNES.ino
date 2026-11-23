@@ -395,7 +395,7 @@ void snesMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsSNES, 7);
-  mainMenu = question_box(F("SNES Cart Reader"), menuOptions, 7, 0);
+  mainMenu = question_box(FS(SharedFlashText::textSNESCartReader), menuOptions, 7, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -430,7 +430,7 @@ void snesMenu() {
         readSRAM();
       } else {
         display_Clear();
-        print_Error(F("Does not have SRAM"));
+        print_Error(FS(SharedFlashText::textDoesNotHaveSRAM));
       }
       break;
 
@@ -443,7 +443,7 @@ void snesMenu() {
         unsigned long wrErrors;
         wrErrors = verifySRAM();
         if (wrErrors == 0) {
-          println_Msg(F("Verified OK"));
+          println_Msg(FS(SharedFlashText::textVerifiedOK));
           display_Update();
         } else {
           print_STR(error_STR, 0);
@@ -453,7 +453,7 @@ void snesMenu() {
         }
       } else {
         display_Clear();
-        print_Error(F("Does not have SRAM"));
+        print_Error(FS(SharedFlashText::textDoesNotHaveSRAM));
       }
       break;
 
@@ -488,7 +488,7 @@ void snesMenu() {
         }
       } else {
         display_Clear();
-        print_Error(F("Does not have SRAM"));
+        print_Error(FS(SharedFlashText::textDoesNotHaveSRAM));
       }
       break;
 
@@ -504,7 +504,7 @@ void snesMenu() {
       // stopSnesClocks_resetCic_resetCart();
 
       display_Clear();
-      print_Msg(F("Resetting..."));
+      print_Msg(FS(SharedFlashText::textResetting));
       display_Update();
       delay(3000);  // wait 3 secs to switch to next game
       resetArduino();
@@ -669,7 +669,7 @@ void setup_Snes() {
 #ifdef ENABLE_CLOCKGEN
   else {
     display_Clear();
-    print_FatalError(F("Clock Generator not found"));
+    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
   }
 #endif
 
@@ -927,12 +927,12 @@ void getCartInfo_SNES() {
     rgbLed(red_color);
 
     display_Clear();
-    println_Msg(F("ERROR"));
-    println_Msg(F("Rom header corrupt"));
-    println_Msg(F("or missing"));
+    println_Msg(FS(SharedFlashText::textERROR));
+    println_Msg(FS(SharedFlashText::textRomHeaderCorrupt));
+    println_Msg(FS(SharedFlashText::textOrMissing));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(F("Press button for"));
+    println_Msg(FS(SharedFlashText::textPressButtonFor));
     println_Msg(F("manual configuration"));
     println_Msg(F("or powercycle if SA1"));
     display_Update();
@@ -948,20 +948,20 @@ void getCartInfo_SNES() {
   print_Msg(FS(FSTRING_REVISION));
   println_Msg(romVersion);
 
-  print_Msg(F("Type: "));
+  print_Msg(FS(SharedFlashText::textType));
   if (romType == HI)
-    print_Msg(F("HiROM"));
+    print_Msg(FS(SharedFlashText::textHiROM));
   else if (romType == LO)
-    print_Msg(F("LoROM"));
+    print_Msg(FS(SharedFlashText::textLoROM));
   else if (romType == EX)
     print_Msg(F("ExHiRom"));
   else
     print_Msg(romType);
   print_Msg(FS(FSTRING_SPACE));
   if (romSpeed == 0)
-    println_Msg(F("SlowROM"));
+    println_Msg(FS(SharedFlashText::textSlowROM));
   else if (romSpeed == 2)
-    println_Msg(F("SlowROM"));
+    println_Msg(FS(SharedFlashText::textSlowROM));
   else if (romSpeed == 3)
     println_Msg(F("FastROM"));
   else
@@ -1023,7 +1023,7 @@ void getCartInfo_SNES() {
   //print_Msg(F("Chips: "));
   //println_Msg(romChips);
 
-  print_Msg(F("Save Size: "));
+  print_Msg(FS(SharedFlashText::textSaveSize));
   print_Msg(sramSize >> 3);
   println_Msg(F(" KB"));
 
@@ -1082,7 +1082,7 @@ void checkAltConf(char crcStr[9]) {
   if (myFile.open("snes.txt", O_READ)) {
     // Get cart info
     display_Clear();
-    println_Msg(F("Searching database..."));
+    println_Msg(FS(SharedFlashText::textSearchingDatabase));
     print_Msg(FS(FSTRING_CHECKSUM));
     println_Msg(checksumStr);
     display_Update();
@@ -1157,7 +1157,7 @@ void checkAltConf(char crcStr[9]) {
             print_Msg(F(" -> "));
             print_Msg(romSize2);
             println_Msg(F("Mbit"));
-            print_Msg(F("Banks: "));
+            print_Msg(FS(SharedFlashText::textBanks));
             print_Msg(numBanks);
             print_Msg(F(" -> "));
             println_Msg(numBanks2);
@@ -1472,7 +1472,7 @@ unsigned int calc_checksum(char* fileName, char* folder) {
     return (calcChecksum);
   } else {
     // Else show error
-    print_Error(F("DUMP ROM 1ST"));
+    print_Error(FS(SharedFlashText::textDUMPROM1ST));
     return 0;
   }
 }
@@ -1486,13 +1486,13 @@ boolean compare_checksum() {
   print_Msg(calcsumStr);
 
   if (strcmp(calcsumStr, checksumStr) == 0) {
-    println_Msg(F(" -> OK"));
+    println_Msg(FS(SharedFlashText::textOK));
     display_Update();
     return 1;
   } else {
     print_Msg(F(" != "));
     println_Msg(checksumStr);
-    print_Error(F("Invalid Checksum"));
+    print_Error(FS(SharedFlashText::textInvalidChecksum));
     display_Update();
     return 0;
   }
@@ -1983,7 +1983,7 @@ void readROM_SNES() {
 
   // Dump standard High-type ROM
   else if ((romType == HI) || (romType == SA) || (romType == EX)) {
-    println_Msg(F("Dumping HiRom..."));
+    println_Msg(FS(SharedFlashText::textDumpingHiRom));
     display_Update();
 
     if (romChips == 85) {
@@ -2007,7 +2007,7 @@ void writeSRAM(boolean browseFile) {
   if (browseFile) {
     filePath[0] = '\0';
     sd.chdir("/");
-    fileBrowser(F("Select srm file"));
+    fileBrowser(FS(SharedFlashText::textSelectSrmFile));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
@@ -2173,7 +2173,7 @@ void writeSRAM(boolean browseFile) {
 
     // Close the file:
     myFile.close();
-    println_Msg(F("SRAM writing finished"));
+    println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
     display_Update();
 
   } else {
@@ -2299,7 +2299,7 @@ void readSRAM() {
 
   // Signal end of process
   display_Clear();
-  showDbSaveFolder(F("Saved to "));
+  showDbSaveFolder(FS(SharedFlashText::textSavedTo));
   finishDbSaveLog(startedAt);
 }
 
@@ -2486,7 +2486,7 @@ unsigned long verifySRAM() {
       // Close the file:
       myFile.close();
       if (writeErrors == 0) {
-        println_Msg(F("Verified OK"));
+        println_Msg(FS(SharedFlashText::textVerifiedOK));
       } else {
         print_STR(error_STR, 0);
         print_Msg(writeErrors);
@@ -2499,7 +2499,7 @@ unsigned long verifySRAM() {
       stopSnesClocks_resetCic_resetCart();
 
       display_Clear();
-      print_Msg(F("Resetting..."));
+      print_Msg(FS(SharedFlashText::textResetting));
       display_Update();
       delay(3000);  // wait 3 secs
       resetArduino();
@@ -2820,7 +2820,7 @@ boolean eraseSRAM(byte b) {
     println_Msg(FS(FSTRING_OK));
     return 1;
   } else {
-    println_Msg(F("ERROR"));
+    println_Msg(FS(SharedFlashText::textERROR));
     return 0;
   }
   display_Update();

@@ -27,8 +27,8 @@ static bool standaloneIs(const __FlashStringHelper* value, const __FlashStringHe
 }
 static const __FlashStringHelper* standaloneName(uint8_t target) {
   switch(target) {
-    case 1: return F("Game Boy (Color)");
-    case 2: return F("GB Advance (3V)");
+    case 1: return FS(SharedFlashText::textGameBoyColor);
+    case 2: return FS(SharedFlashText::textGBAdvance3V);
     case 3: return F("NES/Famicom");
     case 4: return F("Super Nintendo/SFC");
     case 5: return F("Nintendo 64 (3V)");
@@ -143,22 +143,26 @@ bool standaloneWait() {
   }
   return false; // Keep the final result until the user acknowledges it.
 }
+static const char standaloneMainTitle[] PROGMEM = "OPEN SOURCE CART READER";
+static const char standaloneGameBoyTitle[] PROGMEM = "Select Game Boy";
+static const char standaloneDeviceTitle[] PROGMEM = "Select device";
+static const char standaloneBootLabel[] PROGMEM = "BootDump: ";
+
 uint8_t standaloneTarget(const __FlashStringHelper* title, const char* answer, bool resolving) {
-  if(standaloneIs(title,F("OPEN SOURCE CART READER"))) {
-    if(!strcmp_P(answer,PSTR("Game Boy"))) return resolving && standalonePreset<=2 ? standalonePreset : 0;
-    if(!strcmp_P(answer,PSTR("NES/Famicom"))) return 3;
-    if(!strcmp_P(answer,PSTR("Super Nintendo/SFC"))) return 4;
-    if(!strcmp_P(answer,PSTR("Nintendo 64 (3V)"))) return 5;
-    if(!strcmp_P(answer,PSTR("Mega Drive/Genesis"))) return 6;
-    if(!strcmp_P(answer,PSTR("PC Engine/TG16"))) return resolving && (standalonePreset==7 || standalonePreset==8) ? standalonePreset : 0;
+  if(standaloneIs(title,FS(standaloneMainTitle))) {
+    if(!strcmp_P(answer,modeItem1)) return resolving && standalonePreset<=2 ? standalonePreset : 0;
+    if(!strcmp_P(answer,modeItem2)) return 3;
+    if(!strcmp_P(answer,modeItem3)) return 4;
+    if(!strcmp_P(answer,modeItem4)) return 5;
+    if(!strcmp_P(answer,modeItem5)) return 6;
+    if(!strcmp_P(answer,modeItem7)) return resolving && (standalonePreset==7 || standalonePreset==8) ? standalonePreset : 0;
+    if(!strcmp_P(answer,modeItem8)) return 9;
   }
-  if(standaloneIs(title,F("OPEN SOURCE CART READER")) &&
-      !strcmp_P(answer,PSTR("WonderSwan (3V)"))) return 9;
-  if(standaloneIs(title,F("Select Game Boy"))) {
-    if(!strcmp_P(answer,PSTR("Game Boy (Color)"))) return 1;
-    if(!strcmp_P(answer,PSTR("GB Advance (3V)"))) return 2;
+  if(standaloneIs(title,FS(standaloneGameBoyTitle))) {
+    if(!strcmp_P(answer,SharedFlashText::textGameBoyColor)) return 1;
+    if(!strcmp_P(answer,SharedFlashText::textGBAdvance3V)) return 2;
   }
-  if(standaloneIs(title,F("Select device"))) {
+  if(standaloneIs(title,FS(standaloneDeviceTitle))) {
     if(!strcmp_P(answer,PSTR("HuCARD(swapped)"))) return 7;
     if(!strcmp_P(answer,PSTR("HuCARD(not swapped)"))) return 8;
   }
@@ -166,14 +170,14 @@ uint8_t standaloneTarget(const __FlashStringHelper* title, const char* answer, b
 }
 static bool standaloneReadMenu(const __FlashStringHelper* title) {
   switch(standaloneRun) {
-    case 1:return standaloneIs(title,F("GB Cart Reader"));
-    case 2:return standaloneIs(title,F("GBA Cart Reader"));
-    case 3:return standaloneIs(title,F("NES CART READER"));
-    case 4:return standaloneIs(title,F("SNES Cart Reader"));
-    case 5:return standaloneIs(title,F("N64 Cart Reader"));
-    case 6:return standaloneIs(title,F("MEGA DRIVE Reader"));
-    case 7:case 8:return standaloneIs(title,F("PCE HuCARD menu"));
-    case 9:return standaloneIs(title,F("WS Menu"));
+    case 1:return standaloneIs(title,FS(SharedFlashText::textGBCartReader));
+    case 2:return standaloneIs(title,FS(SharedFlashText::textGBACartReader));
+    case 3:return standaloneIs(title,FS(SharedFlashText::textNESCARTREADER));
+    case 4:return standaloneIs(title,FS(SharedFlashText::textSNESCartReader));
+    case 5:return standaloneIs(title,FS(SharedFlashText::textN64CartReader));
+    case 6:return standaloneIs(title,FS(SharedFlashText::textMEGADRIVEReader));
+    case 7:case 8:return standaloneIs(title,FS(SharedFlashText::textPCEHuCARDMenu));
+    case 9:return standaloneIs(title,FS(SharedFlashText::textWSMenu));
   }
   return false;
 }
@@ -181,7 +185,7 @@ int8_t standaloneMenu(const __FlashStringHelper* title, char answers[7][20], uin
   if(!standaloneStage) return -1;
   if(PcLink::connected()) { standaloneError(); return -1; }
   if(standaloneReadMenu(title)) {
-    const char* wanted=standaloneStage==4 ? PSTR("Read Save") : (standaloneRun==3 ? PSTR("Read iNES Rom") : PSTR("Read ROM"));
+    const char* wanted=standaloneStage==4 ? FSTRING_READ_SAVE : (standaloneRun==3 ? PSTR("Read iNES Rom") : FSTRING_READ_ROM);
     if(standaloneStage!=1 && standaloneStage!=4) { standaloneError(); return -1; }
     for(uint8_t i=0;i<count;i++) if(!strcmp_P(answers[i],wanted)) {
       standaloneStage=standaloneStage==4 ? 3 : 2; standaloneFlags=0; return i;
@@ -191,19 +195,19 @@ int8_t standaloneMenu(const __FlashStringHelper* title, char answers[7][20], uin
   if(standaloneStage!=1) { standaloneError();return -1; }
   for(uint8_t i=0;i<count;i++) {
     uint8_t target=standaloneTarget(title,answers[i],false);
-    if(standaloneIs(title,F("OPEN SOURCE CART READER"))) {
-      if((standaloneRun<=2 && !strcmp_P(answers[i],PSTR("Game Boy")))
-         || ((standaloneRun==7 || standaloneRun==8) && !strcmp_P(answers[i],PSTR("PC Engine/TG16")))
+    if(standaloneIs(title,FS(standaloneMainTitle))) {
+      if((standaloneRun<=2 && !strcmp_P(answers[i],modeItem1))
+         || ((standaloneRun==7 || standaloneRun==8) && !strcmp_P(answers[i],modeItem7))
          || target==standaloneRun) return i;
     } else if(target==standaloneRun) return i;
-    if((standaloneRun==6 && standaloneIs(title,F("Select MD device")))
-        || (standaloneRun==5 && standaloneIs(title,F("Select N64 device")))) {
+    if((standaloneRun==6 && standaloneIs(title,FS(SharedFlashText::textSelectMDDevice)))
+        || (standaloneRun==5 && standaloneIs(title,FS(SharedFlashText::textSelectN64Device)))) {
       if(!strcmp_P(answers[i],PSTR("Game Cartridge"))) return i;
     }
     if(standaloneRun==4 && standaloneIs(title,FS(FSTRING_SELECT_CART_TYPE))
         && !strcmp_P(answers[i],PSTR("SNES/SFC cartridge"))) return i;
   }
-  if(standaloneIs(title,F("OPEN SOURCE CART READER")) && currPage<numPages) {
+  if(standaloneIs(title,FS(standaloneMainTitle)) && currPage<numPages) {
     lastPage=currPage;currPage++;return -2;
   }
   standaloneError();return -1;
@@ -241,7 +245,7 @@ bool standaloneHold(uint8_t target, bool& presetChanged, bool allowAuto) {
       if(state==1 && allowAuto) {
         display.print(F("Auto: ")); display.print(standaloneDisplayName(target));
       } else if(state==1 || state==2) {
-        display.print(F("BootDump: "));
+        display.print(FS(standaloneBootLabel));
         display.print(target==standalonePreset ? F("OFF") : standaloneDisplayName(target));
       }
       display.updateDisplay();
@@ -261,10 +265,10 @@ bool standaloneHold(uint8_t target, bool& presetChanged, bool allowAuto) {
 
 void standaloneTitle(const __FlashStringHelper* title) {
 #if defined(ENABLE_LCD) || defined(ENABLE_OLED)
-  if(standalonePreset && (standaloneIs(title,F("OPEN SOURCE CART READER"))
-      || standaloneIs(title,F("Select Game Boy")) || standaloneIs(title,F("Select device")))) {
+  if(standalonePreset && (standaloneIs(title,FS(standaloneMainTitle))
+      || standaloneIs(title,FS(standaloneGameBoyTitle)) || standaloneIs(title,FS(standaloneDeviceTitle)))) {
     display.setCursor(6,8);
-    display.print(F("BootDump: ")); display.println(standaloneDisplayName(standalonePreset));
+    display.print(FS(standaloneBootLabel)); display.println(standaloneDisplayName(standalonePreset));
   } else display.println(title);
 #endif
 }
@@ -274,8 +278,8 @@ bool standaloneFileTracking() { return standaloneStage==2 || standaloneStage==3;
 
 bool standaloneHeaderSelectable(const __FlashStringHelper* title) {
   return standalonePreset && (
-      standaloneIs(title,F("OPEN SOURCE CART READER"))
-      || standaloneIs(title,F("Select Game Boy")) || standaloneIs(title,F("Select device")));
+      standaloneIs(title,FS(standaloneMainTitle))
+      || standaloneIs(title,FS(standaloneGameBoyTitle)) || standaloneIs(title,FS(standaloneDeviceTitle)));
 }
 void standaloneDisablePreset() {
   if(standalonePreset) standaloneSetPreset(standalonePreset);

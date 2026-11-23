@@ -78,7 +78,7 @@ void svMenu() {
       unsigned long wrErrors;
       wrErrors = verifySRAM_SV();
       if (wrErrors == 0) {
-        println_Msg(F("Verified OK"));
+        println_Msg(FS(SharedFlashText::textVerifiedOK));
         display_Update();
       } else {
         print_STR(error_STR, 0);
@@ -124,7 +124,7 @@ void setup_SV() {
 #ifdef ENABLE_CLOCKGEN
   else {
     display_Clear();
-    print_FatalError(F("Clock Generator not found"));
+    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
   }
 #endif
 
@@ -316,7 +316,7 @@ void readSRAM_SV() {
 
   // Signal end of process
   display_Clear();
-  print_Msg(F("Saved to "));
+  print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -326,7 +326,7 @@ void readSRAM_SV() {
 void writeSRAM_SV() {
   filePath[0] = '\0';
   sd.chdir("/");
-  fileBrowser(F("Select srm file"));
+  fileBrowser(FS(SharedFlashText::textSelectSrmFile));
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
   //clear the screen
@@ -364,7 +364,7 @@ void writeSRAM_SV() {
     // Close the file:
     myFile.close();
     println_Msg("");
-    println_Msg(F("SRAM writing finished"));
+    println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
     display_Update();
   } else {
     print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
@@ -489,7 +489,7 @@ void writeROM_SV(void) {
       for (long currByte = 0; currByte < 65536; currByte++) {
         if (0xFF != readBank_SV(currBank, currByte)) {
           println_Msg(FS(FSTRING_EMPTY));
-          println_Msg(F("Erase failed"));
+          println_Msg(FS(SharedFlashText::textEraseFailed));
           display_Update();
           myFile.close();
           wait();

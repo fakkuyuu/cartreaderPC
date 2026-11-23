@@ -202,7 +202,7 @@ void setup_C64() {
 
   if (!i2c_found) {
     display_Clear();
-    print_FatalError(F("Clock Generator not found"));
+    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
   }
 
   // Set Eeprom clock to 1Mhz
@@ -439,7 +439,7 @@ void readROM_C64() {
         ROML_DISABLE;
         if ((c64size == 8) && ((checkOcean == 0x75) || (checkOcean == 0x83))) {  // Two Chip 256K
           // Robocop 2 + Shadow of the Beast
-          println_Msg(F("TWO CHIP"));
+          println_Msg(FS(SharedFlashText::textTWOCHIP));
           display_Update();
           readSegmentBankD0D5_C64(16, 0x8000, 0); // 8K * 16 = 128K
           readSegmentBankD0D5_C64(16, 0xA000, 1); // 8K * 16 = +128K = 256K
@@ -578,9 +578,9 @@ void setMapper_C64() {
   newc64mapper = c64mapselect;
 
   display.setCursor(0, 56);
-  print_Msg(F("MAPPER "));
+  print_Msg(FS(SharedFlashText::textMAPPER));
   print_Msg(newc64mapper);
-  println_Msg(F(" SELECTED"));
+  println_Msg(FS(SharedFlashText::textSELECTED));
   display_Update();
   delay(1000);
 #else
@@ -588,7 +588,7 @@ setmapper:
   String newmap;
   boolean c64mapfound = false;
   printMapper_C64(0);
-  PcConsole.print(F("Enter Mapper [0-22]: "));
+  PcConsole.print(FS(SharedFlashText::textEnterMapper022));
   while (PcConsole.available() == 0) {}
   newmap = PcConsole.readStringUntil('\n');
   PcConsole.println(newmap);
@@ -600,7 +600,7 @@ setmapper:
       c64mapfound = true;
   }
   if (c64mapfound == false) {
-    PcConsole.println(F("MAPPER NOT SUPPORTED!"));
+    PcConsole.println(FS(SharedFlashText::textMAPPERNOTSUPPORTED));
     PcConsole.println(FS(FSTRING_EMPTY));
     newc64mapper = 0;
     goto setmapper;
@@ -657,24 +657,24 @@ void setROMSize_C64() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (c64hi - c64lo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(C64[i + c64lo]);
       PcConsole.println(F("K"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newc64size = sizeROM.toInt() + c64lo;
     if (newc64size > c64hi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(C64[newc64size]);
   PcConsole.println(F("K"));
 #endif
@@ -705,7 +705,7 @@ void checkStatus_C64() {
   print_Msg(F("MAPPER:     "));
   println_Msg(c64mapper);
   printMapper_C64(c64mapper);
-  print_Msg(F("ROM SIZE:   "));
+  print_Msg(FS(SharedFlashText::textROMSIZE));
   print_Msg(C64[c64size]);
   println_Msg(F("K"));
   display_Update();

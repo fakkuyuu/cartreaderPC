@@ -126,12 +126,12 @@ void vboyMenu() {
       if (sramSize) {
         sd.chdir("/");
         display_Clear();
-        println_Msg(F("Reading SRAM..."));
+        println_Msg(FS(SharedFlashText::textReadingSRAM));
         display_Update();
         readSRAM_VB();
         sd.chdir("/");
       } else {
-        print_Error(F("Cart has no SRAM"));
+        print_Error(FS(SharedFlashText::textCartHasNoSRAM));
       }
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
       // Wait for user input
@@ -147,12 +147,12 @@ void vboyMenu() {
       if (sramSize) {
         // Change working dir to root
         sd.chdir("/");
-        fileBrowser(F("Select SRM file"));
+        fileBrowser(FS(SharedFlashText::textSelectSRMFile));
         display_Clear();
         writeSRAM_VB();
         writeErrors = verifySRAM_VB();
         if (writeErrors == 0) {
-          println_Msg(F("SRAM verified OK"));
+          println_Msg(FS(SharedFlashText::textSRAMVerifiedOK));
           display_Update();
         } else {
           print_STR(error_STR, 0);
@@ -161,7 +161,7 @@ void vboyMenu() {
           print_Error(did_not_verify_STR);
         }
       } else {
-        print_Error(F("Cart has no SRAM"));
+        print_Error(FS(SharedFlashText::textCartHasNoSRAM));
       }
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
       // Wait for user input
@@ -399,7 +399,7 @@ void getCartInfo_VB() {
   }
 
   display_Clear();
-  println_Msg(F("Cart Info"));
+  println_Msg(FS(SharedFlashText::textCartInfo));
   println_Msg(FS(FSTRING_SPACE));
   print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
@@ -410,18 +410,18 @@ void getCartInfo_VB() {
   }
   else if (cartSize < 0x100000) {
     print_Msg(cartSize / 1024);
-    println_Msg(F(" KBit"));
+    println_Msg(FS(SharedFlashText::textKBit));
   } else {
     print_Msg(cartSize * 8 / 1024 / 1024);
-    println_Msg(F(" MBit"));
+    println_Msg(FS(SharedFlashText::textMBit));
   }
 
-  print_Msg(F("Sram: "));
+  print_Msg(FS(SharedFlashText::textSram));
   if (sramSize > 0) {
     print_Msg(sramSize * 8 / 1024);
-    println_Msg(F(" KBit"));
+    println_Msg(FS(SharedFlashText::textKBit));
   } else
-    println_Msg(F("None"));
+    println_Msg(FS(SharedFlashText::textNone));
   println_Msg(FS(FSTRING_SPACE));
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -540,7 +540,7 @@ void readSRAM_VB() {
     myFile.write(sdBuffer, 512);
   }
   myFile.close();
-  print_Msg(F("Saved to "));
+  print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   println_Msg(F("/"));
   display_Update();

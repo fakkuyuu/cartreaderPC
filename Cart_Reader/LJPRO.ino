@@ -282,19 +282,19 @@ void readSerialID_U1()
   else if (strcmp(deviceID_str, "2015") == 0) { // MX25L1605
     ljproflash1found = 1;
     ljproflash1size = 2;
-    println_Msg(F("U1 MX25L1605 FOUND"));
+    println_Msg(FS(SharedFlashText::textU1MX25L1605FOUND));
     display_Update();
   }
   else if (strcmp(deviceID_str, "2016") == 0) { // MX25L3205
     ljproflash1found = 1;
     ljproflash1size = 4;
-    println_Msg(F("U1 MX25L3205 FOUND"));
+    println_Msg(FS(SharedFlashText::textU1MX25L3205FOUND));
     display_Update();
   }
   else if (strcmp(deviceID_str, "2017") == 0) { // MX25L6405
     ljproflash1found = 1;
     ljproflash1size = 8;
-    println_Msg(F("U1 MX25L6405 FOUND"));
+    println_Msg(FS(SharedFlashText::textU1MX25L6405FOUND));
     display_Update();
   }
 }
@@ -322,19 +322,19 @@ void readSerialID_U2()
   else if (strcmp(deviceID_str, "2015") == 0) { // MX25L1605
     ljproflash2found = 1;
     ljproflash2size = 2;
-    println_Msg(F("U2 MX25L1605 FOUND"));
+    println_Msg(FS(SharedFlashText::textU2MX25L1605FOUND));
     display_Update();
   }
   else if (strcmp(deviceID_str, "2016") == 0) { // MX25L3205
     ljproflash2found = 1;
     ljproflash2size = 4;
-    println_Msg(F("U2 MX25L3205 FOUND"));
+    println_Msg(FS(SharedFlashText::textU2MX25L3205FOUND));
     display_Update();
   }
   else if (strcmp(deviceID_str, "2017") == 0) { // MX25L6405
     ljproflash2found = 1;
     ljproflash2size = 8;
-    println_Msg(F("U2 MX25L6405 FOUND"));
+    println_Msg(FS(SharedFlashText::textU2MX25L6405FOUND));
     display_Update();
   }
 }
@@ -440,21 +440,21 @@ void readID_U1() // Parallel Mode
     ljproflash1found = 1;
     ljproflash1size = 2;
     display_Clear();
-    println_Msg(F("U1 MX25L1605 FOUND"));
+    println_Msg(FS(SharedFlashText::textU1MX25L1605FOUND));
     display_Update();
   }
   else if (strcmp(deviceID_str, "2016") == 0) { // MX25L3205
     ljproflash1found = 1;
     ljproflash1size = 4;
     display_Clear();
-    println_Msg(F("U1 MX25L3205 FOUND"));
+    println_Msg(FS(SharedFlashText::textU1MX25L3205FOUND));
     display_Update();
   }
   else if (strcmp(deviceID_str, "2017") == 0) { // MX25L6405
     ljproflash1found = 1;
     ljproflash1size = 8;
     display_Clear();
-    println_Msg(F("U1 MX25L6405 FOUND"));
+    println_Msg(FS(SharedFlashText::textU1MX25L6405FOUND));
     display_Update();
   }
 }
@@ -477,19 +477,19 @@ void readID_U2() // Parallel Mode
   if (strcmp(deviceID_str, "2015") == 0) { // MX25L1605
     ljproflash2found = 1;
     ljproflash2size = 2;
-    println_Msg(F("U2 MX25L1605 FOUND"));
+    println_Msg(FS(SharedFlashText::textU2MX25L1605FOUND));
     display_Update();
   }
   else if (strcmp(deviceID_str, "2016") == 0) { // MX25L3205
     ljproflash2found = 1;
     ljproflash2size = 4;
-    println_Msg(F("U2 MX25L3205 FOUND"));
+    println_Msg(FS(SharedFlashText::textU2MX25L3205FOUND));
     display_Update();
   }
   else if (strcmp(deviceID_str, "2017") == 0) { // MX25L6405
     ljproflash2found = 1;
     ljproflash2size = 8;
-    println_Msg(F("U2 MX25L6405 FOUND"));
+    println_Msg(FS(SharedFlashText::textU2MX25L6405FOUND));
     display_Update();
   }
 }

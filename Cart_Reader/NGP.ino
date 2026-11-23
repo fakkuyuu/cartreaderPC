@@ -42,7 +42,7 @@ void setup_NGP() {
 
   PORTH |= ((1 << 0) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6));
 
-  println_Msg(F("Initializing..."));
+  println_Msg(FS(SharedFlashText::textInitializing));
   display_Update();
 
   if (getCartInfo_NGP())
@@ -186,11 +186,11 @@ void printCartInfo_NGP() {
   else if (ngpSystemType == 0x10)
     println_Msg(F("NGPColor"));
   else
-    println_Msg(F("Unknown"));
+    println_Msg(FS(SharedFlashText::textUnknown));
 
   print_Msg(FS(FSTRING_ROM_SIZE));
   if (cartSize == 0) {
-    println_Msg(F("Unknown"));
+    println_Msg(FS(SharedFlashText::textUnknown));
   } else {
     print_Msg((cartSize >> 17));
     println_Msg(F(" Mbits"));

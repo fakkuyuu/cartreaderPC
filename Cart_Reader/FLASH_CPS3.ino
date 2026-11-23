@@ -112,7 +112,7 @@ void flashromCPS_Cartridge() {
   switch (mainMenu) {
     case 0:
       display_Clear();
-      println_Msg(F("Blankcheck"));
+      println_Msg(FS(SharedFlashText::textBlankcheck));
       display_Update();
       time = millis();
       resetFlash8();
@@ -122,14 +122,14 @@ void flashromCPS_Cartridge() {
     case 1:
       if (flashromType != 0) {
         display_Clear();
-        println_Msg(F("Warning: This will erase"));
+        println_Msg(FS(SharedFlashText::textWarningThisWillErase));
         println_Msg(F("your CPS3 Cartdrige BIOS"));
         print_STR(press_button_STR, 1);
         display_Update();
         wait();
         rgbLed(black_color);
         println_Msg(FS(FSTRING_EMPTY));
-        println_Msg(F("Please wait..."));
+        println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
         time = millis();
 
@@ -163,7 +163,7 @@ void flashromCPS_Cartridge() {
         display_Clear();
         println_Msg("Looking BIOS patch");
         println_Msg(FS(FSTRING_EMPTY));
-        println_Msg(F("Please wait..."));
+        println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
         char crcStr[9];
         sprintf(crcStr, "%08lX", calculateCRC(fileName, filePath, 0));
@@ -200,7 +200,7 @@ void flashromCPS_Cartridge() {
       time = 0;
       display_Clear();
       resetFlash8();
-      println_Msg(F("ID Flashrom"));
+      println_Msg(FS(SharedFlashText::textIDFlashrom));
       switch (flashromType) {
         case 0: break;
         case 1: idFlash29F032(); break;
@@ -217,7 +217,7 @@ void flashromCPS_Cartridge() {
     case 5:
       time = 0;
       display_Clear();
-      println_Msg(F("Print first 70Bytes"));
+      println_Msg(FS(SharedFlashText::textPrintFirst70Bytes));
       display_Update();
       resetFlash8();
       printFlash(70);
@@ -232,7 +232,7 @@ void flashromCPS_Cartridge() {
       break;
   }
   if (time != 0) {
-    print_Msg(F("Operation took : "));
+    print_Msg(FS(SharedFlashText::textOperationTook));
     print_Msg((millis() - time) / 1000, DEC);
     println_Msg(F("s"));
     display_Update();
@@ -289,7 +289,7 @@ void flashromCPS_SIMM2x8() {
   switch (mainMenu) {
     case 0:
       display_Clear();
-      println_Msg(F("Blankcheck"));
+      println_Msg(FS(SharedFlashText::textBlankcheck));
       display_Update();
       time = millis();
       resetSIMM2x8();
@@ -299,14 +299,14 @@ void flashromCPS_SIMM2x8() {
     case 1:
       if (flashromType != 0) {
         display_Clear();
-        println_Msg(F("Warning: This will erase"));
+        println_Msg(FS(SharedFlashText::textWarningThisWillErase));
         println_Msg(F("your CPS3 SIMM 2x8bit"));
         print_STR(press_button_STR, 1);
         display_Update();
         wait();
         rgbLed(black_color);
         println_Msg(FS(FSTRING_EMPTY));
-        println_Msg(F("Please wait..."));
+        println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
         time = millis();
 
@@ -366,7 +366,7 @@ void flashromCPS_SIMM2x8() {
       time = 0;
       display_Clear();
       resetFlash8();
-      println_Msg(F("ID Flashrom"));
+      println_Msg(FS(SharedFlashText::textIDFlashrom));
       switch (flashromType) {
         case 0: break;
         case 1: idFlash2x8(0x0); break;
@@ -383,7 +383,7 @@ void flashromCPS_SIMM2x8() {
     case 5:
       time = 0;
       display_Clear();
-      println_Msg(F("Print first 70Bytes"));
+      println_Msg(FS(SharedFlashText::textPrintFirst70Bytes));
       display_Update();
       resetSIMM2x8();
       printFlash16(70);
@@ -398,7 +398,7 @@ void flashromCPS_SIMM2x8() {
       break;
   }
   if (time != 0) {
-    print_Msg(F("Operation took : "));
+    print_Msg(FS(SharedFlashText::textOperationTook));
     print_Msg((millis() - time) / 1000, DEC);
     println_Msg(F("s"));
     display_Update();
@@ -421,7 +421,7 @@ void flashromCPS_SIMM4x8() {
   switch (mainMenu) {
     case 0:
       display_Clear();
-      println_Msg(F("Blankcheck"));
+      println_Msg(FS(SharedFlashText::textBlankcheck));
       display_Update();
       time = millis();
       resetSIMM4x8();
@@ -431,14 +431,14 @@ void flashromCPS_SIMM4x8() {
     case 1:
       if (flashromType != 0) {
         display_Clear();
-        println_Msg(F("Warning: This will erase"));
+        println_Msg(FS(SharedFlashText::textWarningThisWillErase));
         println_Msg(F("your CPS3 SIMM 4x8bit"));
         print_STR(press_button_STR, 1);
         display_Update();
         wait();
         rgbLed(black_color);
         println_Msg(FS(FSTRING_EMPTY));
-        println_Msg(F("Please wait..."));
+        println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
         time = millis();
 
@@ -498,7 +498,7 @@ void flashromCPS_SIMM4x8() {
       time = 0;
       display_Clear();
       resetFlash8();
-      println_Msg(F("ID Flashrom"));
+      println_Msg(FS(SharedFlashText::textIDFlashrom));
       switch (flashromType) {
         case 0: break;
         case 1:
@@ -520,7 +520,7 @@ void flashromCPS_SIMM4x8() {
     case 5:
       time = 0;
       display_Clear();
-      println_Msg(F("Print first 70Bytes"));
+      println_Msg(FS(SharedFlashText::textPrintFirst70Bytes));
       display_Update();
       resetSIMM4x8();
       enable64MSB();
@@ -536,7 +536,7 @@ void flashromCPS_SIMM4x8() {
       break;
   }
   if (time != 0) {
-    print_Msg(F("Operation took : "));
+    print_Msg(FS(SharedFlashText::textOperationTook));
     print_Msg((millis() - time) / 1000, DEC);
     println_Msg(F("s"));
     display_Update();
@@ -676,7 +676,7 @@ void readCartridge() {
   myFile.close();
   // Compare dump CRC with db values
   compareCRC("cps3.txt", 0, 1, 0);
-  println_Msg(F("Finished reading"));
+  println_Msg(FS(SharedFlashText::textFinishedReading));
   display_Update();
 }
 
@@ -897,10 +897,10 @@ void id_SIMM2x8() {
   // Print start screen
   display_Clear();
   display_Update();
-  println_Msg(F("SIMM Writer 2x8bit"));
+  println_Msg(FS(SharedFlashText::textSIMMWriter2x8bit));
   println_Msg("");
   println_Msg("");
-  print_Msg(F("Flash ID: "));
+  print_Msg(FS(SharedFlashText::textFlashID));
   println_Msg(flashid_str);
   if (flashid == 0x04AD && okFlash == 2 && ngFlash == 6) {
     println_Msg(F("32 Mbit Fujitsu SIMM detected"));
@@ -912,7 +912,7 @@ void id_SIMM2x8() {
     flashromType = 1;
   } else if (flashid == 0x04AD && okFlash > 2) {
     println_Msg(F("?? Mbit Fujitsu SIMM detected"));
-    println_Msg(F("With some bad flash"));
+    println_Msg(FS(SharedFlashText::textWithSomeBadFlash));
     flashSize = 0x1000000;
     flashromType = 0;
   } else {
@@ -920,14 +920,14 @@ void id_SIMM2x8() {
     flashSize = 0x1000000;
     flashromType = 0;
     display_Clear();
-    println_Msg(F("SIMM Writer 2x8bit"));
+    println_Msg(FS(SharedFlashText::textSIMMWriter2x8bit));
     println_Msg("");
-    print_Msg(F("ID Type 1: "));
+    print_Msg(FS(SharedFlashText::textIDType1));
     println_Msg(vendorID);
-    print_Msg(F("ID Type 2: "));
+    print_Msg(FS(SharedFlashText::textIDType2));
     println_Msg(flashid_str);
     println_Msg("");
-    println_Msg(F("UNKNOWN FLASHROM"));
+    println_Msg(FS(SharedFlashText::textUNKNOWNFLASHROM));
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     print_Error(press_button_STR);
@@ -935,7 +935,7 @@ void id_SIMM2x8() {
     wait();
     // print first 40 bytes of flash
     display_Clear();
-    println_Msg(F("First 40 bytes:"));
+    println_Msg(FS(SharedFlashText::textFirst40Bytes));
     println_Msg(FS(FSTRING_EMPTY));
     printFlash16(40);
     resetSIMM2x8();
@@ -994,11 +994,11 @@ void blankcheckSIMM2x8() {
       blinkLED();
   }
   if (blank) {
-    println_Msg(F("SIMM is empty"));
+    println_Msg(FS(SharedFlashText::textSIMMIsEmpty));
     display_Update();
   } else {
     println_Msg(FS(FSTRING_EMPTY));
-    print_Error(F("Error: Not blank"));
+    print_Error(FS(SharedFlashText::textErrorNotBlank));
   }
 }
 
@@ -1041,7 +1041,7 @@ void readSIMM2x8() {
 
   // Close the file:
   myFile.close();
-  println_Msg(F("Finished reading"));
+  println_Msg(FS(SharedFlashText::textFinishedReading));
   display_Update();
 }
 
@@ -1176,7 +1176,7 @@ void verifySIMM2x8() {
         blinkLED();
     }
     if (blank == 0) {
-      println_Msg(F("SIMM verified OK"));
+      println_Msg(FS(SharedFlashText::textSIMMVerifiedOK));
       display_Update();
     } else {
       print_STR(error_STR, 0);
@@ -1213,10 +1213,10 @@ void id_SIMM4x8() {
   // Print start screen
   display_Clear();
   display_Update();
-  println_Msg(F("SIMM Writer 4x8bit"));
+  println_Msg(FS(SharedFlashText::textSIMMWriter4x8bit));
   println_Msg("");
   println_Msg("");
-  print_Msg(F("Flash ID: "));
+  print_Msg(FS(SharedFlashText::textFlashID));
   println_Msg(flashid_str);
   if (flashid == 0x04AD && okFlash == 4) {
     println_Msg(F("64 Mbit Fujitsu SIMM detected"));
@@ -1224,20 +1224,20 @@ void id_SIMM4x8() {
     flashromType = 1;
   } else if (flashid == 0x04AD && okFlash < 4) {
     println_Msg(F("Fujitsu SIMM detected"));
-    println_Msg(F("With some bad flash"));
+    println_Msg(FS(SharedFlashText::textWithSomeBadFlash));
     flashSize = 0x800000;
     flashromType = 0;
   } else {
     // ID not found
     display_Clear();
-    println_Msg(F("SIMM Writer 4x8bit"));
+    println_Msg(FS(SharedFlashText::textSIMMWriter4x8bit));
     println_Msg("");
-    print_Msg(F("ID Type 1: "));
+    print_Msg(FS(SharedFlashText::textIDType1));
     println_Msg(vendorID);
-    print_Msg(F("ID Type 2: "));
+    print_Msg(FS(SharedFlashText::textIDType2));
     println_Msg(flashid_str);
     println_Msg("");
-    println_Msg(F("UNKNOWN FLASHROM"));
+    println_Msg(FS(SharedFlashText::textUNKNOWNFLASHROM));
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     print_Error(press_button_STR);
@@ -1245,7 +1245,7 @@ void id_SIMM4x8() {
     wait();
     // print first 40 bytes of flash
     display_Clear();
-    println_Msg(F("First 40 bytes:"));
+    println_Msg(FS(SharedFlashText::textFirst40Bytes));
     println_Msg(FS(FSTRING_EMPTY));
     printFlash16(40);
     resetSIMM4x8();
@@ -1309,11 +1309,11 @@ void blankcheckSIMM4x8() {
       blinkLED();
   }
   if (blank) {
-    println_Msg(F("SIMM is empty"));
+    println_Msg(FS(SharedFlashText::textSIMMIsEmpty));
     display_Update();
   } else {
     println_Msg(FS(FSTRING_EMPTY));
-    print_Error(F("Error: Not blank"));
+    print_Error(FS(SharedFlashText::textErrorNotBlank));
   }
 }
 
@@ -1460,7 +1460,7 @@ void verifySIMM4x8() {
     }
 
     if (blank == 0) {
-      println_Msg(F("SIMM verified OK"));
+      println_Msg(FS(SharedFlashText::textSIMMVerifiedOK));
       display_Update();
     } else {
       print_STR(error_STR, 0);

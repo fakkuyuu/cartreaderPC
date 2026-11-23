@@ -434,7 +434,7 @@ void getCartInfo_SMS() {
       romNameBuf[8] = '\0';
 
       // Debug info:
-      // print_Msg(F("Bank: "));
+      // print_Msg(FS(SharedFlashText::textBank));
       // println_Msg(bank);
       // print_Msg(F("Parsed ROM name: "));
       // println_Msg(romNameBuf);

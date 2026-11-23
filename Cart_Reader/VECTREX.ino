@@ -279,24 +279,24 @@ void setROMSize_VECTREX()
 setrom:
     String sizeROM;
     for (int i = 0; i < (vectrexhi - vectrexlo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(VECTREX[i + vectrexlo]);
       PcConsole.println(F("KB"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newvectrexsize = sizeROM.toInt() + vectrexlo;
     if (newvectrexsize > vectrexhi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(VECTREX[newvectrexsize]);
   PcConsole.println(F("KB"));
 #endif

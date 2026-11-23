@@ -61,15 +61,15 @@ boolean compare_checksum_GBS() {
   sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName));
 
   if (strcmp(calcsumStr, checksumStr) == 0) {
-    print_Msg(F("Result: "));
+    print_Msg(FS(SharedFlashText::textResult));
     println_Msg(calcsumStr);
-    println_Msg(F("Checksum matches"));
+    println_Msg(FS(SharedFlashText::textChecksumMatches));
     display_Update();
     return 1;
   } else {
-    print_Msg(F("Result: "));
+    print_Msg(FS(SharedFlashText::textResult));
     println_Msg(calcsumStr);
-    print_Error(F("Checksum Error"));
+    print_Error(FS(SharedFlashText::textChecksumError));
     return 0;
   }
 }
@@ -200,12 +200,12 @@ void gbSmartGameOptions() {
         writeSRAM_GB();
         uint32_t wrErrors = verifySRAM_GB();
         if (wrErrors == 0) {
-          println_Msg(F("Verified OK"));
+          println_Msg(FS(SharedFlashText::textVerifiedOK));
           display_Update();
         } else {
           print_STR(error_STR, 0);
           print_Msg(wrErrors);
-          println_Msg(F(" bytes"));
+          println_Msg(FS(SharedFlashText::textBytes));
           print_Error(did_not_verify_STR);
         }
         break;
@@ -250,7 +250,7 @@ gb_smart_load_more_games:
       strncpy(menuOptionsGBSmartGames[i], gbSmartGames[i].title, 16);
 
     strncpy(menuOptionsGBSmartGames[i], "...", 16);
-    gameSubMenu = question_box(F("Select Game"), menuOptionsGBSmartGames, i + 1, 0);
+    gameSubMenu = question_box(FS(SharedFlashText::textSelectGame), menuOptionsGBSmartGames, i + 1, 0);
 
     if (gameSubMenu >= i)
       goto gb_smart_load_more_games;
@@ -297,8 +297,8 @@ void gbSmartFlashMenu() {
         // write flash
         display_Clear();
 
-        println_Msg(F("Attention"));
-        println_Msg(F("This will erase your"));
+        println_Msg(FS(SharedFlashText::textAttention));
+        println_Msg(FS(SharedFlashText::textThisWillEraseYour));
         println_Msg(F("GB Smart Cartridge."));
         println_Msg(FS(FSTRING_EMPTY));
         // Prints string out of the common strings array either with or without newline
@@ -309,7 +309,7 @@ void gbSmartFlashMenu() {
         display_Clear();
         filePath[0] = '\0';
         sd.chdir("/");
-        fileBrowser(F("Select 4MB file"));
+        fileBrowser(FS(SharedFlashText::textSelect4MBFile));
 
         sprintf(filePath, "%s/%s", filePath, fileName);
         gbSmartWriteFlash();
@@ -437,7 +437,7 @@ void gbSmartReadFlash() {
 
   myFile.close();
   println_Msg("");
-  println_Msg(F("Finished reading"));
+  println_Msg(FS(SharedFlashText::textFinishedReading));
   display_Update();
 }
 
@@ -445,7 +445,7 @@ void gbSmartWriteFlash() {
   for (uint16_t bank = 0x00; bank < gbSmartBanks; bank += gbSmartBanksPerFlashChip) {
     display_Clear();
 
-    print_Msg(F("Erasing..."));
+    print_Msg(FS(SharedFlashText::textErasing));
     display_Update();
 
     gbSmartEraseFlash(bank);
@@ -456,7 +456,7 @@ void gbSmartWriteFlash() {
     display_Update();
 
     if (!gbSmartBlankCheckingFlash(bank))
-      print_FatalError(F("Could not erase flash"));
+      print_FatalError(FS(SharedFlashText::textCouldNotEraseFlash));
 
     println_Msg(F("Passed"));
     display_Update();
@@ -492,7 +492,7 @@ void gbSmartWriteFlash(uint32_t start_bank) {
 
   myFile.seekCur((start_bank << 14));
 
-  print_Msg(F("Writing Bank 0x"));
+  print_Msg(FS(SharedFlashText::textWritingBank0x));
   print_Msg(start_bank, HEX);
   print_Msg(F("..."));
   display_Update();
@@ -546,7 +546,7 @@ uint32_t gbSmartVerifyFlash() {
 
   if (!myFile.open(filePath, O_READ)) {
     verified = 0xffffffff;
-    print_Error(F("Can't open file on SD"));
+    print_Error(FS(SharedFlashText::textCanTOpenFileOnSD));
   } else {
     // remaps mmc to full access
     gbSmartRemapStartBank(0x00, gbSmartRomSizeGB, gbSmartSramSizeGB);

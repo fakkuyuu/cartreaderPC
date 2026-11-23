@@ -172,9 +172,9 @@ static bool detectCart_LYNX() {
     wait();
     resetArduino();
   }
-  print_Msg(F("AUDIN="));
+  print_Msg(FS(SharedFlashText::textAUDIN));
   print_Msg(lynxUseAudin);
-  print_Msg(F(" BLOCK="));
+  print_Msg(FS(SharedFlashText::textBLOCK));
   println_Msg(lynxBlockSize);
   display_Update();
 }
@@ -285,9 +285,9 @@ static bool readHeader_LYNX() {
     romSize = fileSize;
   }
 
-  print_Msg(F("AUDIN="));
+  print_Msg(FS(SharedFlashText::textAUDIN));
   print_Msg(lynxUseAudin);
-  print_Msg(F(" BLOCK="));
+  print_Msg(FS(SharedFlashText::textBLOCK));
   println_Msg(lynxBlockSize);
 
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -380,7 +380,7 @@ static bool detectFlash_LYNX() {
 }
 
 static void eraseFlash_LYNX() {
-  print_Msg(F("Erasing..."));
+  print_Msg(FS(SharedFlashText::textErasing));
   display_Update();
 
   // CHIP ERASE PROGRAM

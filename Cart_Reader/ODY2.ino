@@ -285,24 +285,24 @@ void setROMSize_ODY2() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (ody2hi - ody2lo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(ODY2[i + ody2lo]);
       PcConsole.println(F("K"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newody2size = sizeROM.toInt() + ody2lo;
     if (newody2size > ody2hi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(ODY2[newody2size]);
   PcConsole.println(F("K"));
 #endif
@@ -335,9 +335,9 @@ void checkStatus_ODY2() {
   display_Update();
   wait();
 #else
-  PcConsole.print(F("CURRENT MAPPER:   "));
+  PcConsole.print(FS(SharedFlashText::textCURRENTMAPPER));
   PcConsole.println(ody2mapper);
-  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(ODY2[ody2size]);
   PcConsole.println(F("K"));
   PcConsole.println(FS(FSTRING_EMPTY));

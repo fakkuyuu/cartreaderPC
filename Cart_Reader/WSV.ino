@@ -250,24 +250,24 @@ void setROMSize_WSV() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (wsvhi - wsvlo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(pgm_read_word(&(WSV[i + wsvlo])));
       PcConsole.println(F("K"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newwsvsize = sizeROM.toInt() + wsvlo;
     if (newwsvsize > wsvhi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(pgm_read_word(&(WSV[newwsvsize])));
   PcConsole.println(F("K"));
 #endif
@@ -293,7 +293,7 @@ void checkStatus_WSV() {
   display_Update();
   wait();
 #else
-  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(pgm_read_word(&(WSV[wsvsize])));
   PcConsole.println(F("K"));
   PcConsole.println(FS(FSTRING_EMPTY));

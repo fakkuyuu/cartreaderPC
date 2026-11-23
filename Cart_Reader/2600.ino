@@ -564,11 +564,11 @@ void readROM_2600() {
 void println_Mapper2600(byte mapper) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   if (mapper == 0x04)
-    println_Msg(F("F4SC"));
+    println_Msg(FS(SharedFlashText::textF4SC));
   else if (mapper == 0x06)
-    println_Msg(F("F6SC"));
+    println_Msg(FS(SharedFlashText::textF6SC));
   else if (mapper == 0x08)
-    println_Msg(F("F8SC"));
+    println_Msg(FS(SharedFlashText::textF8SC));
   else if (mapper == 0x20)
     println_Msg(F("2K"));
   else if (mapper == 0x40)
@@ -584,20 +584,20 @@ void println_Mapper2600(byte mapper) {
   else if (mapper == 0x07)
     println_Msg(F("X07"));
   else if (mapper == 0xDF)
-    println_Msg(F("DFSC"));
+    println_Msg(FS(SharedFlashText::textDFSC));
   else if (mapper == 0xBA)
-    println_Msg(F("SB 128K"));
+    println_Msg(FS(SharedFlashText::textSB128K));
   else if (mapper == 0xBB)
-    println_Msg(F("SB 256K"));
+    println_Msg(FS(SharedFlashText::textSB256K));
   else
     println_Msg(mapper, HEX);
 #else
   if (mapper == 0x04)
-    PcConsole.println(F("F4SC"));
+    PcConsole.println(FS(SharedFlashText::textF4SC));
   else if (mapper == 0x06)
-    PcConsole.println(F("F6SC"));
+    PcConsole.println(FS(SharedFlashText::textF6SC));
   else if (mapper == 0x08)
-    PcConsole.println(F("F8SC"));
+    PcConsole.println(FS(SharedFlashText::textF8SC));
   else if (mapper == 0x20)
     PcConsole.println(F("2K"));
   else if (mapper == 0x40)
@@ -613,11 +613,11 @@ void println_Mapper2600(byte mapper) {
   else if (mapper == 0x07)
     PcConsole.println(F("X07"));
   else if (mapper == 0xDF)
-    PcConsole.println(F("DFSC"));
+    PcConsole.println(FS(SharedFlashText::textDFSC));
   else if (mapper == 0xBA)
-    PcConsole.println(F("SB 128K"));
+    PcConsole.println(FS(SharedFlashText::textSB128K));
   else if (mapper == 0xBB)
-    PcConsole.println(F("SB 256K"));
+    PcConsole.println(FS(SharedFlashText::textSB256K));
   else
     PcConsole.println(mapper, HEX);
 #endif
@@ -681,15 +681,15 @@ void setMapper_2600() {
   new2600mapper = a2600mapselect;
 
   display.setCursor(0, 56);
-  print_Msg(F("MAPPER "));
+  print_Msg(FS(SharedFlashText::textMAPPER));
   println_Mapper2600(new2600mapper);
-  println_Msg(F(" SELECTED"));
+  println_Msg(FS(SharedFlashText::textSELECTED));
   display_Update();
   delay(1000);
 #else
 setmapper:
   String newmap;
-  PcConsole.println(F("SUPPORTED MAPPERS:"));
+  PcConsole.println(FS(SharedFlashText::textSUPPORTEDMAPPERS));
   PcConsole.println(F("0 = F4SC [Atari 32K \w RAM]"));
   PcConsole.println(F("1 = F6SC [Atari 16K \w RAM]"));
   PcConsole.println(F("2 = F8SC [Atari 8K \w RAM]"));
@@ -713,7 +713,7 @@ setmapper:
   PcConsole.println(F("20 = DFSC [Penult 128K]"));
   PcConsole.println(F("21 = SB [SuperBank Casey's Gold 128K]"));
   PcConsole.println(F("22 = SB [SuperBank 256K]"));
-  PcConsole.print(F("Enter Mapper [0-22]: "));
+  PcConsole.print(FS(SharedFlashText::textEnterMapper022));
   while (PcConsole.available() == 0) {}
   newmap = PcConsole.readStringUntil('\n');
   PcConsole.println(newmap);

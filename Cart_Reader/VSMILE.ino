@@ -286,24 +286,24 @@ void setROMSize_VSMILE()
 setrom:
     String sizeROM;
     for (int i = 0; i < (vsmilehi - vsmilelo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(VSMILE[i + vsmilelo]);
       PcConsole.println(F("MB"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newvsmilesize = sizeROM.toInt() + vsmilelo;
     if (newvsmilesize > vsmilehi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(VSMILE[newvsmilesize]);
   PcConsole.println(F("MB"));
 #endif

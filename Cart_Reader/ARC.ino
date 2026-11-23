@@ -208,24 +208,24 @@ void setROMSize_ARC() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (archi - arclo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(ARC[i + arclo]);
       PcConsole.println(F("K"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newarcsize = sizeROM.toInt() + arclo;
     if (newarcsize > archi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(ARC[newarcsize]);
   PcConsole.println(F("K"));
 #endif
@@ -251,7 +251,7 @@ void checkStatus_ARC() {
   display_Update();
   wait();
 #else
-  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(ARC[arcsize]);
   PcConsole.println(F("K"));
   PcConsole.println(FS(FSTRING_EMPTY));

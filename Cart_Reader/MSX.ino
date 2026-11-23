@@ -147,21 +147,21 @@ static void pcMSXMapperReady() {
     PcConsole.print(mapper);
     PcConsole.print(F("  "));
     switch (mapper) {
-      case 0: PcConsole.print(F("NONE")); break;
-      case 1: PcConsole.print(F("ASCII8")); break;
-      case 2: PcConsole.print(F("ASCII16")); break;
-      case 3: PcConsole.print(F("CROSS BLAIM")); break;
-      case 4: PcConsole.print(F("GAME MASTER 2")); break;
-      case 5: PcConsole.print(F("HAL NOTE")); break;
-      case 6: PcConsole.print(F("HARRY FOX YUKI")); break;
-      case 7: PcConsole.print(F("KOEI")); break;
-      case 8: PcConsole.print(F("KONAMI")); break;
-      case 9: PcConsole.print(F("KONAMI SCC")); break;
-      case 10: PcConsole.print(F("MSX-DOS2")); break;
-      case 11: PcConsole.print(F("PAC/FM-PAC")); break;
-      case 12: PcConsole.print(F("R-TYPE")); break;
-      case 13: PcConsole.print(F("SUPER LODE RUNNER")); break;
-      case 14: PcConsole.print(F("HUDSON SOFT BEE PACK")); break;
+      case 0: PcConsole.print(FS(SharedFlashText::textNONE)); break;
+      case 1: PcConsole.print(FS(SharedFlashText::textASCII8)); break;
+      case 2: PcConsole.print(FS(SharedFlashText::textASCII16)); break;
+      case 3: PcConsole.print(FS(SharedFlashText::textCROSSBLAIM)); break;
+      case 4: PcConsole.print(FS(SharedFlashText::textGAMEMASTER2)); break;
+      case 5: PcConsole.print(FS(SharedFlashText::textHALNOTE)); break;
+      case 6: PcConsole.print(FS(SharedFlashText::textHARRYFOXYUKI)); break;
+      case 7: PcConsole.print(FS(SharedFlashText::textKOEI)); break;
+      case 8: PcConsole.print(FS(SharedFlashText::textKONAMI)); break;
+      case 9: PcConsole.print(FS(SharedFlashText::textKONAMISCC)); break;
+      case 10: PcConsole.print(FS(SharedFlashText::textMSXDOS2)); break;
+      case 11: PcConsole.print(FS(SharedFlashText::textPACFMPAC)); break;
+      case 12: PcConsole.print(FS(SharedFlashText::textRTYPE)); break;
+      case 13: PcConsole.print(FS(SharedFlashText::textSUPERLODERUNNER)); break;
+      case 14: PcConsole.print(FS(SharedFlashText::textHUDSONSOFTBEEPACK)); break;
     }
   }
   PcConsole.println();
@@ -413,7 +413,7 @@ void disableCS() {
 void readROM_MSX() {
   if (msxsize == 0) {
     display_Clear();
-    println_Msg(F("ROM SIZE 0K"));
+    println_Msg(FS(SharedFlashText::textROMSIZE0K));
     display_Update();
   } else {
     createFolderAndOpenFile("MSX", "ROM", romName, "bin");
@@ -655,7 +655,7 @@ void checkRAM() {
 void readRAM_MSX() {
   if (msxramsize == 0) {
     display_Clear();
-    println_Msg(F("RAM SIZE 0K"));
+    println_Msg(FS(SharedFlashText::textRAMSIZE0K));
     display_Update();
   } else {
     strcpy(fileName, romName);
@@ -777,13 +777,13 @@ void writeRAM_MSX() {
   display_Clear();
 
   if (msxramsize == 0) {
-    print_Error(F("RAM SIZE 0K"));
+    print_Error(FS(SharedFlashText::textRAMSIZE0K));
   } else {
-    fileBrowser(F("Select RAM File"));
+    fileBrowser(FS(SharedFlashText::textSelectRAMFile));
     sd.chdir();
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
-    println_Msg(F("Writing File: "));
+    println_Msg(FS(SharedFlashText::textWritingFile));
     println_Msg(filePath);
     println_Msg(fileName);
     display_Update();
@@ -887,7 +887,7 @@ void writeRAM_MSX() {
       myFile.close();
 
       println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(F("RAM FILE WRITTEN!"));
+      println_Msg(FS(SharedFlashText::textRAMFILEWRITTEN));
       display_Update();
 
     } else {
@@ -929,9 +929,9 @@ void setMapper_MSX() {
 #endif
 
   display.setCursor(0, 56);
-  print_Msg(F("MAPPER "));
+  print_Msg(FS(SharedFlashText::textMAPPER));
   print_Msg(newmsxmapper);
-  println_Msg(F(" SELECTED"));
+  println_Msg(FS(SharedFlashText::textSELECTED));
   display_Update();
   delay(1000);
 #else
@@ -951,7 +951,7 @@ setmapper:
       msxmapfound = true;
   }
   if (msxmapfound == false) {
-    PcConsole.println(F("MAPPER NOT SUPPORTED!"));
+    PcConsole.println(FS(SharedFlashText::textMAPPERNOTSUPPORTED));
     PcConsole.println(FS(FSTRING_EMPTY));
     newmsxmapper = 0;
     goto setmapper;
@@ -1077,7 +1077,7 @@ void setROMSize_MSX() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (msxhi - msxlo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       if (msxmapper == 12)  // R-Type
@@ -1086,25 +1086,25 @@ setrom:
         PcConsole.print(MSX[i + msxlo]);
       PcConsole.println(F("K"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newmsxsize = sizeROM.toInt() + msxlo;
     if (msxmapper == 11) {  // PAC/FM-PAC 0K/64K
       if ((newmsxsize > 0) && (newmsxsize < 4)) {
-        PcConsole.println(F("SIZE NOT SUPPORTED"));
+        PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
         PcConsole.println(FS(FSTRING_EMPTY));
         goto setrom;
       }
     }
     if (newmsxsize > msxhi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   if (msxmapper == 12)  // R-Type
     PcConsole.print(F("384"));
   else
@@ -1195,7 +1195,7 @@ void setRAMSize_MSX() {
 #endif
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("RAM SIZE "));
+  print_Msg(FS(SharedFlashText::textRAMSIZE));
   print_Msg(MSXRAM[newmsxramsize]);
   println_Msg(F("K"));
   display_Update();
@@ -1207,31 +1207,31 @@ void setRAMSize_MSX() {
 setram:
     String sizeRAM;
     for (int i = 0; i < (msxramhi - msxramlo + 1); i++) {
-      PcConsole.print(F("Select RAM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectRAMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(MSXRAM[i + msxramlo]);
       PcConsole.println(F("K"));
     }
-    PcConsole.print(F("Enter RAM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterRAMSize));
     while (PcConsole.available() == 0) {}
     sizeRAM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeRAM);
     newmsxramsize = sizeRAM.toInt() + msxramlo;
     if (msxmapper == 7) {        // Koei 8K/32K
       if (newmsxramsize == 3) {  // 16K
-        PcConsole.println(F("SIZE NOT SUPPORTED"));
+        PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
         PcConsole.println(FS(FSTRING_EMPTY));
         goto setram;
       }
     }
     if (newmsxramsize > msxramhi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setram;
     }
   }
-  PcConsole.print(F("RAM Size = "));
+  PcConsole.print(FS(SharedFlashText::textRAMSize));
   PcConsole.print(MSXRAM[newmsxramsize]);
   PcConsole.println(F("K"));
 #endif
@@ -1279,9 +1279,9 @@ void checkStatus_MSX() {
   display_Update();
   wait();
 #else
-  PcConsole.print(F("CURRENT MAPPER:   "));
+  PcConsole.print(FS(SharedFlashText::textCURRENTMAPPER));
   PcConsole.println(msxmapper);
-  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   if (msxmapper == 12)  // R-Type
     PcConsole.print(F("384"));
   else
@@ -1298,49 +1298,49 @@ void printMapper(byte msxmaplabel) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   switch (msxmaplabel) {
     case 0:
-      println_Msg(F("NONE"));
+      println_Msg(FS(SharedFlashText::textNONE));
       break;
     case 1:
-      println_Msg(F("ASCII8"));
+      println_Msg(FS(SharedFlashText::textASCII8));
       break;
     case 2:
-      println_Msg(F("ASCII16"));
+      println_Msg(FS(SharedFlashText::textASCII16));
       break;
     case 3:
-      println_Msg(F("CROSS BLAIM"));
+      println_Msg(FS(SharedFlashText::textCROSSBLAIM));
       break;
     case 4:
-      println_Msg(F("GAME MASTER 2"));
+      println_Msg(FS(SharedFlashText::textGAMEMASTER2));
       break;
     case 5:
-      println_Msg(F("HAL NOTE"));
+      println_Msg(FS(SharedFlashText::textHALNOTE));
       break;
     case 6:
-      println_Msg(F("HARRY FOX YUKI"));
+      println_Msg(FS(SharedFlashText::textHARRYFOXYUKI));
       break;
     case 7:
-      println_Msg(F("KOEI"));
+      println_Msg(FS(SharedFlashText::textKOEI));
       break;
     case 8:
-      println_Msg(F("KONAMI"));
+      println_Msg(FS(SharedFlashText::textKONAMI));
       break;
     case 9:
-      println_Msg(F("KONAMI SCC"));
+      println_Msg(FS(SharedFlashText::textKONAMISCC));
       break;
     case 10:
-      println_Msg(F("MSX-DOS2"));
+      println_Msg(FS(SharedFlashText::textMSXDOS2));
       break;
     case 11:
-      println_Msg(F("PAC/FM-PAC"));
+      println_Msg(FS(SharedFlashText::textPACFMPAC));
       break;
     case 12:
-      println_Msg(F("R-TYPE"));
+      println_Msg(FS(SharedFlashText::textRTYPE));
       break;
     case 13:
-      println_Msg(F("SUPER LODE RUNNER"));
+      println_Msg(FS(SharedFlashText::textSUPERLODERUNNER));
       break;
     case 14:
-      println_Msg(F("HUDSON SOFT BEE PACK"));
+      println_Msg(FS(SharedFlashText::textHUDSONSOFTBEEPACK));
       break;
   }
 #else

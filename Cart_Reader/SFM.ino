@@ -89,7 +89,7 @@ void sfmGameMenu() {
       // Create menu with title and numGames options to choose from
       unsigned char gameSubMenu;
       // wait for user choice to come back from the question box menu
-      gameSubMenu = question_box(F("Select Game"), menuOptionsSFMGames, numGames, 0);
+      gameSubMenu = question_box(FS(SharedFlashText::textSelectGame), menuOptionsSFMGames, numGames, 0);
 
       // Switch to game
       send_SFM(gameSubMenu + 0x80);
@@ -110,7 +110,7 @@ void sfmGameMenu() {
           println_Msg(F(" Timeout"));
           println_Msg(readBank_SFM(0, 0x2400), HEX);
           println_Msg(FS(FSTRING_EMPTY));
-          print_FatalError(F("Powercycle SFM cart"));
+          print_FatalError(FS(SharedFlashText::textPowercycleSFMCart));
         }
       }
       // Copy gameCode to romName in case of japanese chars in romName
@@ -133,7 +133,7 @@ void sfmGameMenu() {
       mode = CORE_SFM_GAME;
     }
   } else {
-    print_Error(F("Switch to HiRom failed"));
+    print_Error(FS(SharedFlashText::textSwitchToHiRomFailed));
   }
 }
 
@@ -175,7 +175,7 @@ void sfmGameOptions() {
       unsigned long wrErrors;
       wrErrors = verifySRAM();
       if (wrErrors == 0) {
-        println_Msg(F("Verified OK"));
+        println_Msg(FS(SharedFlashText::textVerifiedOK));
         display_Update();
       } else {
         print_STR(error_STR, 0);
@@ -224,7 +224,7 @@ void sfmFlashMenu() {
 
       // Reset to HIROM ALL
       romType = 1;
-      print_Msg(F("Switch to HiRom..."));
+      print_Msg(FS(SharedFlashText::textSwitchToHiRom));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
         println_Msg(FS(FSTRING_OK));
@@ -250,7 +250,7 @@ void sfmFlashMenu() {
         // Read flash
         readFlash_SFM();
       } else {
-        print_Error(F("Switch to HiRom failed"));
+        print_Error(FS(SharedFlashText::textSwitchToHiRomFailed));
       }
       break;
 
@@ -260,9 +260,9 @@ void sfmFlashMenu() {
       display_Clear();
 
       // Print warning
-      println_Msg(F("Attention"));
-      println_Msg(F("This will erase your"));
-      println_Msg(F("NP Cartridge."));
+      println_Msg(FS(SharedFlashText::textAttention));
+      println_Msg(FS(SharedFlashText::textThisWillEraseYour));
+      println_Msg(FS(SharedFlashText::textNPCartridge));
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
@@ -275,7 +275,7 @@ void sfmFlashMenu() {
       filePath[0] = '\0';
       sd.chdir("/");
       // Launch file browser
-      fileBrowser(F("Select 4MB file"));
+      fileBrowser(FS(SharedFlashText::textSelect4MBFile));
       display_Clear();
       sprintf(filePath, "%s/%s", filePath, fileName);
       flashSize = 2097152;
@@ -301,7 +301,7 @@ void sfmFlashMenu() {
 
       // Reset to HIROM ALL
       romType = 1;
-      print_Msg(F("Switch to HiRom..."));
+      print_Msg(FS(SharedFlashText::textSwitchToHiRom));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
         println_Msg(FS(FSTRING_OK));
@@ -320,13 +320,13 @@ void sfmFlashMenu() {
             resetFlash_SFM(0xC0);
             resetFlash_SFM(0xE0);
           } else {
-            print_FatalError(F("Error: Wrong Flash ID"));
+            print_FatalError(FS(SharedFlashText::textErrorWrongFlashID));
           }
         } else {
-          print_FatalError(F("Error: Wrong Flash ID"));
+          print_FatalError(FS(SharedFlashText::textErrorWrongFlashID));
         }
       } else {
-        print_Error(F("failed"));
+        print_Error(FS(SharedFlashText::textFailed));
       }
       break;
 
@@ -340,7 +340,7 @@ void sfmFlashMenu() {
 
       // Reset to HIROM ALL
       romType = 1;
-      print_Msg(F("Switch to HiRom..."));
+      print_Msg(FS(SharedFlashText::textSwitchToHiRom));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
         println_Msg(FS(FSTRING_OK));
@@ -357,13 +357,13 @@ void sfmFlashMenu() {
             resetFlash_SFM(0xC0);
             resetFlash_SFM(0xE0);
           } else {
-            print_FatalError(F("Error: Wrong Flash ID"));
+            print_FatalError(FS(SharedFlashText::textErrorWrongFlashID));
           }
         } else {
-          print_FatalError(F("Error: Wrong Flash ID"));
+          print_FatalError(FS(SharedFlashText::textErrorWrongFlashID));
         }
       } else {
-        print_Error(F("failed"));
+        print_Error(FS(SharedFlashText::textFailed));
       }
       break;
 
@@ -373,9 +373,9 @@ void sfmFlashMenu() {
       display_Clear();
 
       // Print warning
-      println_Msg(F("Attention"));
-      println_Msg(F("This will erase your"));
-      println_Msg(F("NP Cartridge."));
+      println_Msg(FS(SharedFlashText::textAttention));
+      println_Msg(FS(SharedFlashText::textThisWillEraseYour));
+      println_Msg(FS(SharedFlashText::textNPCartridge));
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
@@ -397,7 +397,7 @@ void sfmFlashMenu() {
         println_Msg(FS(FSTRING_OK));
         display_Update();
       } else {
-        println_Msg(F("Nope"));
+        println_Msg(FS(SharedFlashText::textNope));
         break;
       }
 
@@ -411,7 +411,7 @@ void sfmFlashMenu() {
       sd.chdir("/");
 
       // Launch file browser
-      fileBrowser(F("Select MAP file"));
+      fileBrowser(FS(SharedFlashText::textSelectMAPFile));
       display_Clear();
       sprintf(filePath, "%s/%s", filePath, fileName);
       display_Update();
@@ -583,7 +583,7 @@ void setup_SFM() {
 #ifdef ENABLE_CLOCKGEN
   else {
     display_Clear();
-    print_FatalError(F("Clock Generator not found"));
+    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
   }
 #endif
 
@@ -605,7 +605,7 @@ void setup_SFM() {
       println_Msg(F("Hirom All Timeout"));
       println_Msg(FS(FSTRING_EMPTY));
       println_Msg(FS(FSTRING_EMPTY));
-      print_FatalError(F("Powercycle SFM cart"));
+      print_FatalError(FS(SharedFlashText::textPowercycleSFMCart));
     }
   }
 }
@@ -732,9 +732,9 @@ void getCartInfo_SFM() {
     errorLvl = 1;
     rgbLed(red_color);
     display_Clear();
-    println_Msg(F("ERROR"));
-    println_Msg(F("Rom header corrupt"));
-    println_Msg(F("or missing"));
+    println_Msg(FS(SharedFlashText::textERROR));
+    println_Msg(FS(SharedFlashText::textRomHeaderCorrupt));
+    println_Msg(FS(SharedFlashText::textOrMissing));
     display_Update();
     wait();
     // Wait() clears errors but in this case we still have an error
@@ -746,7 +746,7 @@ void getCartInfo_SFM() {
   println_Msg(romName);
   println_Msg(FS(FSTRING_SPACE));
 
-  print_Msg(F("Version: 1."));
+  print_Msg(FS(SharedFlashText::textVersion1));
   println_Msg(romVersion);
 
   print_Msg(FS(FSTRING_CHECKSUM));
@@ -756,18 +756,18 @@ void getCartInfo_SFM() {
   print_Msg(romSize);
   println_Msg(F("Mbit "));
 
-  print_Msg(F("Type: "));
+  print_Msg(FS(SharedFlashText::textType));
   if (romType == 1)
-    println_Msg(F("HiROM"));
+    println_Msg(FS(SharedFlashText::textHiROM));
   else if (romType == 0)
-    println_Msg(F("LoROM"));
+    println_Msg(FS(SharedFlashText::textLoROM));
   else
     println_Msg(romType);
 
-  print_Msg(F("Banks: "));
+  print_Msg(FS(SharedFlashText::textBanks));
   println_Msg(numBanks);
 
-  print_Msg(F("Sram: "));
+  print_Msg(FS(SharedFlashText::textSram));
   print_Msg(sramSize);
   println_Msg(F("Kbit"));
   // Prints string out of the common strings array either with or without newline
@@ -924,7 +924,7 @@ void readROM_SFM() {
   }
   // Dump High-type ROM
   else {
-    println_Msg(F("Dumping HiRom..."));
+    println_Msg(FS(SharedFlashText::textDumpingHiRom));
     display_Update();
 
     for (word currBank = 192; currBank < (numBanks + 192); currBank++) {
@@ -1008,7 +1008,7 @@ void idFlash_SFM(int startBank) {
 // Write the flashroms by reading a file from the SD card, pos defines where in the file the reading/writing should start
 void writeFlash_SFM(int startBank, uint32_t pos) {
   display_Clear();
-  print_Msg(F("Writing Bank 0x"));
+  print_Msg(FS(SharedFlashText::textWritingBank0x));
   println_Msg(startBank, HEX);
   display_Update();
 
@@ -1236,7 +1236,7 @@ unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
   } else {
     // SD Error
     verified = 999999;
-    print_Error(F("Can't open file on SD"));
+    print_Error(FS(SharedFlashText::textCanTOpenFileOnSD));
   }
   // Return 0 if verified ok, or number of errors
   return verified;
@@ -1280,7 +1280,7 @@ void readFlash_SFM() {
   // Close the file:
   myFile.close();
   println_Msg("");
-  println_Msg(F("Finished reading"));
+  println_Msg(FS(SharedFlashText::textFinishedReading));
   display_Update();
 }
 
@@ -1453,7 +1453,7 @@ void readMapping() {
   controlIn_SFM();
 
   // Signal end of process
-  print_Msg(F("Saved to NP/"));
+  print_Msg(FS(SharedFlashText::textSavedToNP));
   println_Msg(fileName);
   display_Update();
 }
@@ -1486,10 +1486,10 @@ void eraseMapping(byte startBank) {
       dataIn();
       controlIn_SFM();
     } else {
-      print_FatalError(F("Error: Wrong Flash ID"));
+      print_FatalError(FS(SharedFlashText::textErrorWrongFlashID));
     }
   } else {
-    print_FatalError(F("Unlock failed"));
+    print_FatalError(FS(SharedFlashText::textUnlockFailed));
   }
 }
 
@@ -1614,17 +1614,17 @@ void writeMapping_SFM(byte startBank, uint32_t pos) {
         myFile.close();
         println_Msg("");
       } else {
-        print_Error(F("Can't open file on SD"));
+        print_Error(FS(SharedFlashText::textCanTOpenFileOnSD));
       }
 
       // Switch to read
       dataIn();
       controlIn_SFM();
     } else {
-      print_FatalError(F("Error: Wrong Flash ID"));
+      print_FatalError(FS(SharedFlashText::textErrorWrongFlashID));
     }
   } else {
-    print_FatalError(F("Unlock failed"));
+    print_FatalError(FS(SharedFlashText::textUnlockFailed));
   }
 }
 
@@ -1634,7 +1634,7 @@ void writeMapping_SFM(byte startBank, uint32_t pos) {
 // Switch to HiRom All and unlock Write Protection
 boolean unlockHirom() {
   romType = 1;
-  print_Msg(F("Switch to HiRom..."));
+  print_Msg(FS(SharedFlashText::textSwitchToHiRom));
   display_Update();
   if (send_SFM(0x04) == 0x2A) {
     println_Msg(FS(FSTRING_OK));
@@ -1648,12 +1648,12 @@ boolean unlockHirom() {
       display_Update();
       return 1;
     } else {
-      println_Msg(F("failed"));
+      println_Msg(FS(SharedFlashText::textFailed));
       display_Update();
       return 0;
     }
   } else {
-    println_Msg(F("failed"));
+    println_Msg(FS(SharedFlashText::textFailed));
     display_Update();
     return 0;
   }
@@ -1707,7 +1707,7 @@ void write_SFM(int startBank, uint32_t pos) {
     // Get ID
     idFlash_SFM(startBank);
     if (flashid == 0xc2f3) {
-      print_Msg(F("Flash ID: "));
+      print_Msg(FS(SharedFlashText::textFlashID));
       println_Msg(flashid_str);
       display_Update();
       resetFlash_SFM(startBank);
@@ -1719,9 +1719,9 @@ void write_SFM(int startBank, uint32_t pos) {
         println_Msg(FS(FSTRING_OK));
         display_Update();
       } else {
-        println_Msg(F("Nope"));
+        println_Msg(FS(SharedFlashText::textNope));
         display_Clear();
-        print_Msg(F("Erasing..."));
+        print_Msg(FS(SharedFlashText::textErasing));
         display_Update();
         eraseFlash_SFM(startBank);
         resetFlash_SFM(startBank);
@@ -1732,7 +1732,7 @@ void write_SFM(int startBank, uint32_t pos) {
           println_Msg(FS(FSTRING_OK));
           display_Update();
         } else {
-          print_FatalError(F("Could not erase flash"));
+          print_FatalError(FS(SharedFlashText::textCouldNotEraseFlash));
         }
       }
       // Write flash
@@ -1755,10 +1755,10 @@ void write_SFM(int startBank, uint32_t pos) {
         print_FatalError(did_not_verify_STR);
       }
     } else {
-      print_FatalError(F("Error: Wrong Flash ID"));
+      print_FatalError(FS(SharedFlashText::textErrorWrongFlashID));
     }
   } else {
-    print_FatalError(F("Unlock failed"));
+    print_FatalError(FS(SharedFlashText::textUnlockFailed));
   }
 }
 

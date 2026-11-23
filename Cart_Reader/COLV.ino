@@ -233,24 +233,24 @@ void setROMSize_COL() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (colhi - collo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(pgm_read_byte(&(COL[i + collo])));
       PcConsole.println(F("K"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newcolsize = sizeROM.toInt() + collo;
     if (newcolsize > colhi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(pgm_read_byte(&(COL[newcolsize])));
   PcConsole.println(F("K"));
 #endif
@@ -279,7 +279,7 @@ void checkStatus_COL() {
   display_Update();
   wait();
 #else
-  PcConsole.print(F("CURRENT ROM SIZE: "));
+  PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(pgm_read_byte(&(COL[colsize])));
   PcConsole.println(F("K"));
   PcConsole.println(FS(FSTRING_EMPTY));

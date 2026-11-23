@@ -125,7 +125,7 @@ void setup_7800() {
 
   if (!i2c_found) {
     display_Clear();
-    print_FatalError(F("Clock Generator not found"));
+    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
   }
 
   // Set Eeprom clock to 1Mhz
@@ -481,7 +481,7 @@ void checkMapperSize_7800() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void println_Mapper7800(byte mapper) {
   if (mapper == 0)
-    println_Msg(F("STANDARD"));
+    println_Msg(FS(SharedFlashText::textSTANDARD));
   else if (mapper == 1)
     println_Msg(F("SUPERGAME 128K/256K"));
   else if (mapper == 2)
@@ -531,24 +531,24 @@ void setROMSize_7800() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (a7800hi - a7800lo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(a7800[i + a7800lo]);
       PcConsole.println(F("K"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     new7800size = sizeROM.toInt() + a7800lo;
     if (new7800size > a7800hi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(a7800[new7800size]);
   PcConsole.println(F("K"));
 #endif
@@ -631,15 +631,15 @@ void setMapper_7800() {
   new7800mapper = a7800mapselect;
 
   display.setCursor(0, 56);
-  print_Msg(F("MAPPER "));
+  print_Msg(FS(SharedFlashText::textMAPPER));
   print_Msg(new7800mapper);
-  println_Msg(F(" SELECTED"));
+  println_Msg(FS(SharedFlashText::textSELECTED));
   display_Update();
   delay(1000);
 #else
 setmapper:
   String newmap;
-  PcConsole.println(F("SUPPORTED MAPPERS:"));
+  PcConsole.println(FS(SharedFlashText::textSUPPORTEDMAPPERS));
   PcConsole.println(F("0 = Standard [7816/7832/7848]"));
   PcConsole.println(F("1 = SuperGame 128K [78SG]"));
   PcConsole.println(F("2 = SuperGame 144K [78S9] - Alien Brigade/Crossbow"));
@@ -649,7 +649,7 @@ setmapper:
   PcConsole.println(F("6 = Karateka (PAL) [78S4 Variant]"));
   PcConsole.println(F("7 = Bankset"));
   PcConsole.println(F("8 = Bentley Bears Crystal Quest/Bounty Bob Strikes Back"));
-  PcConsole.print(F("Enter Mapper [0-8]: "));
+  PcConsole.print(FS(SharedFlashText::textEnterMapper08));
   while (PcConsole.available() == 0) {}
   newmap = PcConsole.readStringUntil('\n');
   PcConsole.println(newmap);

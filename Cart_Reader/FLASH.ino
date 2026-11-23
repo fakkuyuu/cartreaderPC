@@ -202,7 +202,7 @@ void flashromMenu8() {
   switch (mainMenu) {
     case 0:
       display_Clear();
-      println_Msg(F("Blankcheck"));
+      println_Msg(FS(SharedFlashText::textBlankcheck));
       display_Update();
       time = millis();
       resetFlash8();
@@ -212,14 +212,14 @@ void flashromMenu8() {
     case 1:
       if (flashromType != 0) {
         display_Clear();
-        println_Msg(F("Warning: This will erase"));
+        println_Msg(FS(SharedFlashText::textWarningThisWillErase));
         println_Msg(F("your flashrom/repro"));
         print_STR(press_button_STR, 1);
         display_Update();
         wait();
         rgbLed(black_color);
         println_Msg(FS(FSTRING_EMPTY));
-        println_Msg(F("Please wait..."));
+        println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
         time = millis();
 
@@ -290,7 +290,7 @@ void flashromMenu8() {
       time = 0;
       display_Clear();
       resetFlash8();
-      println_Msg(F("ID Flashrom"));
+      println_Msg(FS(SharedFlashText::textIDFlashrom));
       switch (flashromType) {
         case 0: break;
         case 1: idFlash29F032(); break;
@@ -307,7 +307,7 @@ void flashromMenu8() {
     case 5:
       time = 0;
       display_Clear();
-      println_Msg(F("Print first 70Bytes"));
+      println_Msg(FS(SharedFlashText::textPrintFirst70Bytes));
       display_Update();
       resetFlash8();
       printFlash(70);
@@ -322,7 +322,7 @@ void flashromMenu8() {
       break;
   }
   if (time != 0) {
-    print_Msg(F("Operation took : "));
+    print_Msg(FS(SharedFlashText::textOperationTook));
     print_Msg((millis() - time) / 1000, DEC);
     println_Msg(F("s"));
     display_Update();
@@ -345,7 +345,7 @@ void flashromMenu16() {
   switch (mainMenu) {
     case 0:
       display_Clear();
-      println_Msg(F("Blankcheck"));
+      println_Msg(FS(SharedFlashText::textBlankcheck));
       display_Update();
       time = millis();
       resetFlash16();
@@ -392,7 +392,7 @@ void flashromMenu16() {
     case 4:
       time = 0;
       display_Clear();
-      println_Msg(F("ID Flashrom"));
+      println_Msg(FS(SharedFlashText::textIDFlashrom));
       idFlash16();
       println_Msg(FS(FSTRING_EMPTY));
       printFlash16(40);
@@ -404,7 +404,7 @@ void flashromMenu16() {
     case 5:
       time = 0;
       display_Clear();
-      println_Msg(F("Print first 70Bytes"));
+      println_Msg(FS(SharedFlashText::textPrintFirst70Bytes));
       display_Update();
       resetFlash16();
       printFlash16(70);
@@ -438,7 +438,7 @@ void epromMenu() {
   switch (mainMenu) {
     case 0:
       display_Clear();
-      println_Msg(F("Blankcheck"));
+      println_Msg(FS(SharedFlashText::textBlankcheck));
       display_Update();
       time = millis();
       blankcheck_Eprom();
@@ -552,52 +552,52 @@ void id_Flash8() {
 idtheflash:
   display_Clear();
   display_Update();
-  println_Msg(F("Flashrom Writer 8bit"));
+  println_Msg(FS(SharedFlashText::textFlashromWriter8bit));
   println_Msg("");
   println_Msg("");
-  print_Msg(F("Flash ID: "));
+  print_Msg(FS(SharedFlashText::textFlashID));
   println_Msg(flashid_str);
 
   if (flashid == 0xC2F1) {
-    println_Msg(F("MX29F1610 detected"));
+    println_Msg(FS(SharedFlashText::textMX29F1610Detected));
     flashSize = 2097152;
     flashromType = 2;
   } else if (flashid == 0xC2F3) {
-    println_Msg(F("MX29F1601 detected"));
+    println_Msg(FS(SharedFlashText::textMX29F1601Detected));
     flashSize = 2097152;
     flashromType = 2;
   } else if (flashid == 0xC2F9) {
-    println_Msg(F("MX29L3211 detected"));
+    println_Msg(FS(SharedFlashText::textMX29L3211Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 4194304;
     flashromType = 2;
   } else if ((flashid == 0xC2C4) || (flashid == 0xC249)) {
-    println_Msg(F("MX29LV160 detected"));
+    println_Msg(FS(SharedFlashText::textMX29LV160Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 2097152;
     flashromType = 2;
   } else if ((flashid == 0xC2A7) || (flashid == 0xC2A8)) {
-    println_Msg(F("MX29LV320 detected"));
+    println_Msg(FS(SharedFlashText::textMX29LV320Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 4194304;
     flashromType = 2;
   } else if ((flashid == 0xC2C9) || (flashid == 0xC2CB)) {
-    println_Msg(F("MX29LV640 detected"));
+    println_Msg(FS(SharedFlashText::textMX29LV640Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 8388608;
     flashromType = 2;
   } else if ((flashid == 0x0149) || (flashid == 0x01C4)) {
-    println_Msg(F("AM29LV160 detected"));
+    println_Msg(FS(SharedFlashText::textAM29LV160Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 2097152;
     flashromType = 2;
   } else if ((flashid == 0x01F9) || (flashid == 0x01F6)) {
-    println_Msg(F("AM29LV320 detected"));
+    println_Msg(FS(SharedFlashText::textAM29LV320Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 4194304;
     flashromType = 2;
   } else if (flashid == 0x01D7) {
-    println_Msg(F("AM29LV640 detected"));
+    println_Msg(FS(SharedFlashText::textAM29LV640Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 8388608;
     flashromType = 2;
@@ -735,14 +735,14 @@ idtheflash:
   } else {
     // ID not found
     display_Clear();
-    println_Msg(F("Flashrom Writer 8bit"));
+    println_Msg(FS(SharedFlashText::textFlashromWriter8bit));
     println_Msg("");
-    print_Msg(F("ID Type 1: "));
+    print_Msg(FS(SharedFlashText::textIDType1));
     println_Msg(vendorID);
-    print_Msg(F("ID Type 2: "));
+    print_Msg(FS(SharedFlashText::textIDType2));
     println_Msg(flashid_str);
     println_Msg("");
-    println_Msg(F("UNKNOWN FLASHROM"));
+    println_Msg(FS(SharedFlashText::textUNKNOWNFLASHROM));
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     print_Error(press_button_STR);
@@ -757,7 +757,7 @@ idtheflash:
 
     // print first 40 bytes of flash
     display_Clear();
-    println_Msg(F("First 40 bytes:"));
+    println_Msg(FS(SharedFlashText::textFirst40Bytes));
     println_Msg(FS(FSTRING_EMPTY));
     printFlash(40);
     resetFlash8();
@@ -779,49 +779,49 @@ void id_Flash16() {
   display_Update();
   println_Msg(F("Flashrom Writer 16bit"));
   println_Msg("");
-  print_Msg(F("Flash ID: "));
+  print_Msg(FS(SharedFlashText::textFlashID));
   println_Msg(flashid_str);
   if (flashid == 0xC2F1) {
-    println_Msg(F("MX29F1610 detected"));
+    println_Msg(FS(SharedFlashText::textMX29F1610Detected));
     println_Msg("");
     flashSize = 2097152;
     flashromType = 2;
   } else if (flashid == 0xC2F3) {
-    println_Msg(F("MX29F1601 detected"));
+    println_Msg(FS(SharedFlashText::textMX29F1601Detected));
     flashSize = 2097152;
     flashromType = 2;
   } else if (flashid == 0xC2F9) {
-    println_Msg(F("MX29L3211 detected"));
+    println_Msg(FS(SharedFlashText::textMX29L3211Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 4194304;
     flashromType = 2;
   } else if ((flashid == 0xC2C4) || (flashid == 0xC249)) {
-    println_Msg(F("MX29LV160 detected"));
+    println_Msg(FS(SharedFlashText::textMX29LV160Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 2097152;
     flashromType = 2;
   } else if ((flashid == 0xC2A7) || (flashid == 0xC2A8)) {
-    println_Msg(F("MX29LV320 detected"));
+    println_Msg(FS(SharedFlashText::textMX29LV320Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 4194304;
     flashromType = 2;
   } else if ((flashid == 0xC2C9) || (flashid == 0xC2CB)) {
-    println_Msg(F("MX29LV640 detected"));
+    println_Msg(FS(SharedFlashText::textMX29LV640Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 8388608;
     flashromType = 2;
   } else if ((flashid == 0x0149) || (flashid == 0x01C4)) {
-    println_Msg(F("AM29LV160 detected"));
+    println_Msg(FS(SharedFlashText::textAM29LV160Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 2097152;
     flashromType = 2;
   } else if ((flashid == 0x01F9) || (flashid == 0x01F6)) {
-    println_Msg(F("AM29LV320 detected"));
+    println_Msg(FS(SharedFlashText::textAM29LV320Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 4194304;
     flashromType = 2;
   } else if (flashid == 0x01D7) {
-    println_Msg(F("AM29LV640 detected"));
+    println_Msg(FS(SharedFlashText::textAM29LV640Detected));
     println_Msg(FS(ATTENTION_3_3V));
     flashSize = 8388608;
     flashromType = 2;
@@ -831,7 +831,7 @@ void id_Flash16() {
     flashSize = 8388608;
     flashromType = 2;
   } else {
-    print_FatalError(F("Unknown flashrom"));
+    print_FatalError(FS(SharedFlashText::textUnknownFlashrom));
     println_Msg("");
   }
   println_Msg("");
@@ -2247,7 +2247,7 @@ void blankcheck_Flash() {
     display_Update();
   } else {
     println_Msg(FS(FSTRING_EMPTY));
-    print_Error(F("Error: Not blank"));
+    print_Error(FS(SharedFlashText::textErrorNotBlank));
   }
 }
 
@@ -2292,7 +2292,7 @@ void verifyFlash(byte currChip, byte totalChips, boolean reversed) {
         blinkLED();
     }
     if (blank == 0) {
-      println_Msg(F("Flashrom verified OK"));
+      println_Msg(FS(SharedFlashText::textFlashromVerifiedOK));
       display_Update();
     } else {
       print_STR(error_STR, 0);
@@ -2331,7 +2331,7 @@ void readFlash() {
 
   // Close the file:
   myFile.close();
-  println_Msg(F("Finished reading"));
+  println_Msg(FS(SharedFlashText::textFinishedReading));
   display_Update();
 }
 
@@ -2509,7 +2509,7 @@ void eraseFlash16() {
 
 void blankcheck16() {
 
-  println_Msg(F("Please wait..."));
+  println_Msg(FS(SharedFlashText::textPleaseWait));
   display_Update();
 
   blank = 1;
@@ -2520,10 +2520,10 @@ void blankcheck16() {
     }
   }
   if (blank) {
-    println_Msg(F("Flashrom is empty."));
+    println_Msg(FS(SharedFlashText::textFlashromIsEmpty));
     display_Update();
   } else {
-    print_Error(F("Error: Not blank"));
+    print_Error(FS(SharedFlashText::textErrorNotBlank));
   }
 }
 
@@ -2545,10 +2545,10 @@ void verifyFlash16() {
       d = 0;
     }
     if (blank == 0) {
-      println_Msg(F("Flashrom verified OK"));
+      println_Msg(FS(SharedFlashText::textFlashromVerifiedOK));
       display_Update();
     } else {
-      println_Msg(F("Verification ERROR!"));
+      println_Msg(FS(SharedFlashText::textVerificationERROR));
       print_Msg(blank);
       print_Error(F("B did not verify."));
       display_Update();
@@ -2795,7 +2795,7 @@ word readWord_Eprom(unsigned long myAddress) {
 }
 
 void blankcheck_Eprom() {
-  println_Msg(F("Please wait..."));
+  println_Msg(FS(SharedFlashText::textPleaseWait));
   display_Update();
 
   blank = 1;
@@ -2806,10 +2806,10 @@ void blankcheck_Eprom() {
     }
   }
   if (blank) {
-    println_Msg(F("Flashrom is empty."));
+    println_Msg(FS(SharedFlashText::textFlashromIsEmpty));
     display_Update();
   } else {
-    print_Error(F("Error: Not blank"));
+    print_Error(FS(SharedFlashText::textErrorNotBlank));
   }
 }
 
@@ -2908,7 +2908,7 @@ void verify_Eprom() {
       println_Msg(F("Eprom verified OK"));
       display_Update();
     } else {
-      println_Msg(F("Verification ERROR!"));
+      println_Msg(FS(SharedFlashText::textVerificationERROR));
       print_Msg(blank);
       print_Error(F(" words did not verify."));
       display_Update();
@@ -3004,19 +3004,19 @@ void identifyCFI_Flash() {
   sprintf(cfiQRYx16, "%02X%02X%02X", readByte_Flash(0x10), readByte_Flash(0x11), readByte_Flash(0x12));
 
   if (strcmp(cfiQRYx8, "515259") == 0) {
-    println_Msg(F("Normal CFI x8 Mode"));
+    println_Msg(FS(SharedFlashText::textNormalCFIX8Mode));
     flashX16Mode = false;
     flashSwitchLastBits = false;
   } else if (strcmp(cfiQRYx8, "52515A") == 0) {  // QRY in x8 mode with switched last bit
-    println_Msg(F("Switched CFI x8 Mode"));
+    println_Msg(FS(SharedFlashText::textSwitchedCFIX8Mode));
     flashX16Mode = false;
     flashSwitchLastBits = true;
   } else if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
-    println_Msg(F("Normal CFI x16 Mode"));
+    println_Msg(FS(SharedFlashText::textNormalCFIX16Mode));
     flashX16Mode = true;
     flashSwitchLastBits = false;
   } else if (strcmp(cfiQRYx16, "52515A") == 0) {  // QRY in x16 mode with switched last bit
-    println_Msg(F("Switched CFI x16 Mode"));
+    println_Msg(FS(SharedFlashText::textSwitchedCFIX16Mode));
     flashX16Mode = true;
     flashSwitchLastBits = true;
   } else {
@@ -3024,15 +3024,15 @@ void identifyCFI_Flash() {
     startCFIMode_Flash(true);
     sprintf(cfiQRYx16, "%02X%02X%02X", readByte_Flash(0x10), readByte_Flash(0x11), readByte_Flash(0x12));
     if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
-      println_Msg(F("Normal CFI x16 Mode"));
+      println_Msg(FS(SharedFlashText::textNormalCFIX16Mode));
       flashX16Mode = true;
       flashSwitchLastBits = false;
     } else if (strcmp(cfiQRYx16, "52515A") == 0) {  // QRY in x16 mode with switched last bit
-      println_Msg(F("Switched CFI x16 Mode"));
+      println_Msg(FS(SharedFlashText::textSwitchedCFIX16Mode));
       flashX16Mode = true;
       flashSwitchLastBits = true;
     } else {
-      println_Msg(F("CFI Query failed!"));
+      println_Msg(FS(SharedFlashText::textCFIQueryFailed));
       print_STR(press_button_STR, 0);
       display_Update();
       wait();
@@ -3165,7 +3165,7 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
     dataIn8();
 
     delay(100);
-    println_Msg(F("Erasing..."));
+    println_Msg(FS(SharedFlashText::textErasing));
     display_Update();
 
     // Erase flash

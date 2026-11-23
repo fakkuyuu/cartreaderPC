@@ -520,7 +520,7 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((u
         if (strcmp(crc_search, crc_file) == 0) {
           print_Msg(F("Chksum OK "));
           println_Msg(crc_file);
-          print_Msg(F("Saved to "));
+          print_Msg(FS(SharedFlashText::textSavedTo));
           print_Msg(folder_p);
           print_Msg(F("/"));
           print_Msg(gamename);
@@ -534,14 +534,14 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((u
   }
 
   if (flag == CHKSUM_SKIP) {
-    print_Msg(F("Saved to "));
+    print_Msg(FS(SharedFlashText::textSavedTo));
     print_Msg(folder_p);
     print_Msg(F("/"));
     print_Msg(file_p);
   } else if (flag == CHKSUM_ERROR) {
     print_Msg(F("Chksum Error "));
     println_Msg(crc_file);
-    print_Msg(F("Saved to "));
+    print_Msg(FS(SharedFlashText::textSavedTo));
     print_Msg(folder_p);
     print_Msg(F("/"));
     print_Msg(file_p);
@@ -932,7 +932,7 @@ void flash_PCE() {
 
   if (openFlashFile()) {
 
-    println_Msg(F("Erasing..."));
+    println_Msg(FS(SharedFlashText::textErasing));
     display_Update();
 
     // CHIP ERASE PROGRAM
@@ -1001,7 +1001,7 @@ void pceMenu() {
       sprintf_P(menuOptions[5], menuOptionspceCart_5, FORCED_SIZE);
     }
     strcpy_P(menuOptions[6], FSTRING_RESET);
-    mainMenu = question_box(F("PCE HuCARD menu"), menuOptions, 7, 0);
+    mainMenu = question_box(FS(SharedFlashText::textPCEHuCARDMenu), menuOptions, 7, 0);
 
     // wait for user choice to come back from the question box menu
     switch (mainMenu) {

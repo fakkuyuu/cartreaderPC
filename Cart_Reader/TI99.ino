@@ -444,16 +444,16 @@ void readGROM_TI99()
   display_Clear();
   if (gromsize == 0) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    println_Msg(F("GROM SIZE 0K"));
+    println_Msg(FS(SharedFlashText::textGROMSIZE0K));
     display_Update();
 #else
-    PcConsole.println(F("GROM SIZE 0K"));
+    PcConsole.println(FS(SharedFlashText::textGROMSIZE0K));
 #endif
   }
   else {
     //    println_Msg(F("USE GOOD POWER SUPPLY"));
     //    println_Msg(FS(FSTRING_EMPTY));
-    print_Msg(F("Saving to "));
+    print_Msg(FS(SharedFlashText::textSavingTo));
     print_Msg(folder);
     println_Msg(F("/..."));
     display_Update();
@@ -464,7 +464,7 @@ void readGROM_TI99()
         snprintf(fileName, sizeof(fileName), "%s.g%d.bin", romName, x);
         // open file on sdcard
         if (!myFile.open(fileName, O_RDWR | O_CREAT))
-          print_Error(F("Can't create file on SD"));
+          print_Error(FS(SharedFlashText::textCanTCreateFileOnSD));
 
         display_Clear();
         print_Msg(F("Reading GROM "));
@@ -508,14 +508,14 @@ void readCROM_TI99()
   display_Clear();
   if (cromsize == 0) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-    println_Msg(F("ROM SIZE 0K"));
+    println_Msg(FS(SharedFlashText::textROMSIZE0K));
     display_Update();
 #else
-    PcConsole.println(F("ROM SIZE 0K"));
+    PcConsole.println(FS(SharedFlashText::textROMSIZE0K));
 #endif
   }
   else {
-    print_Msg(F("Saving to "));
+    print_Msg(FS(SharedFlashText::textSavingTo));
     print_Msg(folder);
     println_Msg(F("/..."));
     display_Update();
@@ -523,7 +523,7 @@ void readCROM_TI99()
     snprintf(fileName, sizeof(fileName), "%s.c.bin", romName);
     // open file on sdcard
     if (!myFile.open(fileName, O_RDWR | O_CREAT))
-      print_Error(F("Can't create file on SD"));
+      print_Error(FS(SharedFlashText::textCanTCreateFileOnSD));
 
     if (ti99mapper == 1) { // MBX
       // MBX Cart ROM 16K
@@ -621,7 +621,7 @@ void checkStatus_TI99()
   print_Msg(F("GROM SIZE:  "));
   print_Msg(GROM[gromsize]);
   println_Msg(F("KB"));
-  print_Msg(F("ROM SIZE:   "));
+  print_Msg(FS(SharedFlashText::textROMSIZE));
   print_Msg(CROM[cromsize]);
   println_Msg(F("KB"));
   print_Msg(F("GROM MAP:   "));
@@ -688,9 +688,9 @@ void setMapper_TI99()
   newti99mapper = ti99mapselect;
 
   display.setCursor(0, 56);
-  print_Msg(F("MAPPER "));
+  print_Msg(FS(SharedFlashText::textMAPPER));
   print_Msg(newti99mapper);
-  println_Msg(F(" SELECTED"));
+  println_Msg(FS(SharedFlashText::textSELECTED));
   display_Update();
   delay(1000);
 #else
@@ -698,7 +698,7 @@ setmapper:
   String newmap;
   ti99mapfound = false;
   printMapper_TI99(0);
-  PcConsole.print(F("Enter Mapper [0-2]: "));
+  PcConsole.print(FS(SharedFlashText::textEnterMapper02));
   while (PcConsole.available() == 0) {}
   newmap = PcConsole.readStringUntil('\n');
   PcConsole.println(newmap);
@@ -710,7 +710,7 @@ setmapper:
       ti99mapfound = true;
   }
   if (ti99mapfound == false) {
-    PcConsole.println(F("MAPPER NOT SUPPORTED!"));
+    PcConsole.println(FS(SharedFlashText::textMAPPERNOTSUPPORTED));
     PcConsole.println(F(""));
     newti99mapper = 0;
     goto setmapper;
@@ -754,8 +754,8 @@ void setGROMSize_TI99()
       print_Msg(F("GROM Size: "));
       println_Msg(GROM[i]);
       println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(F("Press to Change"));
-      println_Msg(F("Hold to Select"));
+      println_Msg(FS(SharedFlashText::textPressToChange));
+      println_Msg(FS(SharedFlashText::textHoldToSelect));
       display_Update();
       b = checkButton();
       if (b == 2) { // Previous
@@ -779,7 +779,7 @@ void setGROMSize_TI99()
     }
     display.setCursor(0, 48); // Display selection at bottom
   }
-  print_Msg(F("GROM SIZE "));
+  print_Msg(FS(SharedFlashText::textGROMSIZE));
   print_Msg(GROM[newgromsize]);
   println_Msg(F("KB"));
   display_Update();
@@ -792,7 +792,7 @@ void setGROMSize_TI99()
   }
   EEPROM_writeAnything(13, newgrommap);
   grommap = newgrommap;
-  print_Msg(F("GROM MAP  "));
+  print_Msg(FS(SharedFlashText::textGROMMAP));
   display_Update();
   readGROMMap();
   wait();
@@ -815,12 +815,12 @@ setgrom:
     PcConsole.println(sizeGROM);
     newgromsize = sizeGROM.toInt() + gromlo;
     if (newgromsize > gromhi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setgrom;
     }
   }
-  PcConsole.print(F("GROM SIZE "));
+  PcConsole.print(FS(SharedFlashText::textGROMSIZE));
   PcConsole.print(GROM[newgromsize]);
   PcConsole.println(F("KB"));
   EEPROM_writeAnything(8, newgromsize);
@@ -832,7 +832,7 @@ setgrom:
   }
   EEPROM_writeAnything(13, newgrommap);
   grommap = newgrommap;
-  PcConsole.print(F("GROM MAP  "));
+  PcConsole.print(FS(SharedFlashText::textGROMMAP));
   readGROMMap();
 #endif
 }
@@ -880,7 +880,7 @@ void setGROMMap_TI99()
   int b = 0;
   for (int i = 3; i < 8; i++) {
     display_Clear();
-    print_Msg(F("Enable GROM "));
+    print_Msg(FS(SharedFlashText::textEnableGROM));
     println_Msg(i);
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("Press to Skip GROM"));
@@ -918,7 +918,7 @@ void setGROMMap_TI99()
 #else
   String mapGROM;
   for (int i = 3; i < 8; i++) {
-    PcConsole.print(F("Enable GROM "));
+    PcConsole.print(FS(SharedFlashText::textEnableGROM));
     PcConsole.println(i);
     PcConsole.println(F("0 = NO"));
     PcConsole.println(F("1 = YES"));
@@ -972,24 +972,24 @@ void setCROMSize_TI99()
 setrom:
     String sizeROM;
     for (int i = 0; i < (cromhi - cromlo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(CROM[i + cromlo]);
       PcConsole.println(F("KB"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newcromsize = sizeROM.toInt() + cromlo;
     if (newcromsize > cromhi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(CROM[newcromsize]);
   PcConsole.println(F("KB"));
 #endif

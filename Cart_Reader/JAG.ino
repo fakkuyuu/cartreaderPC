@@ -116,7 +116,7 @@ void jagMenu() {
       if (jagSaveType == 0)
         readJagEEP();
       else {
-        println_Msg(F("Cart has no EEPROM"));
+        println_Msg(FS(SharedFlashText::textCartHasNoEEPROM));
         display_Update();
       }
       break;
@@ -130,7 +130,7 @@ void jagMenu() {
         display_Clear();
         writeJagEEP();
       } else {
-        println_Msg(F("Cart has no EEPROM"));
+        println_Msg(FS(SharedFlashText::textCartHasNoEEPROM));
         display_Update();
       }
       break;
@@ -141,7 +141,7 @@ void jagMenu() {
       if (jagSaveType == 1)
         readJagFLASH();
       else {
-        println_Msg(F("Cart has no FLASH"));
+        println_Msg(FS(SharedFlashText::textCartHasNoFLASH));
         display_Update();
       }
       break;
@@ -157,7 +157,7 @@ void jagMenu() {
         writeJagFLASH();
         verifyJagFLASH();
       } else {
-        println_Msg(F("Cart has no FLASH"));
+        println_Msg(FS(SharedFlashText::textCartHasNoFLASH));
         display_Update();
       }
       break;
@@ -461,7 +461,7 @@ void getJagCartInfo() {
   }
   display_Update();
 
-  println_Msg(F("Press Button..."));
+  println_Msg(FS(SharedFlashText::textPressButton));
 
   wait();
 }
@@ -595,7 +595,7 @@ void readJagROM() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving ROM to "));
+  print_Msg(FS(SharedFlashText::textSavingROMTo));
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -606,8 +606,8 @@ void readJagROM() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    println_Msg(F("SD ERROR"));
-    println_Msg(F("Press Button to Reset"));
+    println_Msg(FS(SharedFlashText::textSDERROR));
+    println_Msg(FS(SharedFlashText::textPressButtonToReset));
     display_Update();
     wait();
     resetArduino();
@@ -643,7 +643,7 @@ void readJagROM() {
 
   compareCRC("jag.txt", 0, 1, 0);
 
-  println_Msg(F("Press Button..."));
+  println_Msg(FS(SharedFlashText::textPressButton));
   display_Update();
   wait();
 }
@@ -916,7 +916,7 @@ void readJagEEP() {
   // Get name, add extension and convert to char array for sd lib
   strcpy(fileName, romName);
   strcat(fileName, ".eep");
-  println_Msg(F("Reading..."));
+  println_Msg(FS(SharedFlashText::textReading));
 
   // create a new folder for the save file
   EEPROM_readAnything(0, foldern);
@@ -932,9 +932,9 @@ void readJagEEP() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    println_Msg(F("SD ERROR"));
+    println_Msg(FS(SharedFlashText::textSDERROR));
 
-    println_Msg(F("Press Button to Reset"));
+    println_Msg(FS(SharedFlashText::textPressButtonToReset));
     display_Update();
     wait();
     resetArduino();
@@ -961,7 +961,7 @@ void readJagEEP() {
   // Close the file:
   myFile.close();
   println_Msg(F(""));
-  print_Msg(F("Saved to "));
+  print_Msg(FS(SharedFlashText::textSavedTo));
   println_Msg(folder);
   display_Update();
   wait();
@@ -1008,8 +1008,8 @@ void writeJagEEP() {
     println_Msg(F("DONE"));
     display_Update();
   } else {
-    println_Msg(F("SD ERROR"));
-    println_Msg(F("Press Button to Reset"));
+    println_Msg(FS(SharedFlashText::textSDERROR));
+    println_Msg(FS(SharedFlashText::textPressButtonToReset));
     display_Update();
     wait();
     resetArduino();
@@ -1041,7 +1041,7 @@ void eraseFLASH() {  // Chip Erase (NOT NEEDED FOR WRITES)
   // Switch to write
   dataOut_Jag();
 
-  println_Msg(F("Erasing..."));
+  println_Msg(FS(SharedFlashText::textErasing));
   display_Update();
 
   // Erase command sequence
@@ -1322,7 +1322,7 @@ void readJagMEMORY() {
   sd.chdir(folder);
 
   display_Clear();
-  print_Msg(F("Saving ROM to "));
+  print_Msg(FS(SharedFlashText::textSavingROMTo));
   print_Msg(folder);
   println_Msg(F("/..."));
   display_Update();
@@ -1333,8 +1333,8 @@ void readJagMEMORY() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    println_Msg(F("SD ERROR"));
-    println_Msg(F("Press Button to Reset"));
+    println_Msg(FS(SharedFlashText::textSDERROR));
+    println_Msg(FS(SharedFlashText::textPressButtonToReset));
     display_Update();
     wait();
     resetArduino();
@@ -1358,7 +1358,7 @@ void readJagMEMORY() {
   // Close the file:
   myFile.close();
 
-  println_Msg(F("Press Button..."));
+  println_Msg(FS(SharedFlashText::textPressButton));
   wait();
 }
 
@@ -1395,8 +1395,8 @@ void readJagFLASH() {
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    println_Msg(F("SD ERROR"));
-    println_Msg(F("Press Button to Reset"));
+    println_Msg(FS(SharedFlashText::textSDERROR));
+    println_Msg(FS(SharedFlashText::textPressButtonToReset));
     display_Update();
     wait();
     resetArduino();
@@ -1418,11 +1418,11 @@ void readJagFLASH() {
   }
   // Close the file:
   myFile.close();
-  print_Msg(F("Saved to "));
+  print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   println_Msg(F("/"));
 
-  println_Msg(F("Press Button..."));
+  println_Msg(FS(SharedFlashText::textPressButton));
   display_Update();
   wait();
 }
@@ -1461,8 +1461,8 @@ void writeJagFLASH() {
     println_Msg(F("WRITE COMPLETE"));
     display_Update();
   } else {
-    println_Msg(F("SD ERROR"));
-    println_Msg(F("Press Button to Reset"));
+    println_Msg(FS(SharedFlashText::textSDERROR));
+    println_Msg(FS(SharedFlashText::textPressButtonToReset));
     display_Update();
     wait();
     resetArduino();
@@ -1475,7 +1475,7 @@ unsigned long verifyJagFLASH() {
   writeErrors = 0;
 
   println_Msg(F(""));
-  println_Msg(F("Verifying..."));
+  println_Msg(FS(SharedFlashText::textVerifying));
   display_Update();
 
   // Open file on sd card
@@ -1494,8 +1494,8 @@ unsigned long verifyJagFLASH() {
     // Close the file:
     myFile.close();
   } else {
-    println_Msg(F("SD ERROR"));
-    println_Msg(F("Press Button to Reset"));
+    println_Msg(FS(SharedFlashText::textSDERROR));
+    println_Msg(FS(SharedFlashText::textPressButtonToReset));
     display_Update();
     wait();
     resetArduino();
@@ -1505,7 +1505,7 @@ unsigned long verifyJagFLASH() {
   else
     println_Msg(F("WRITE ERROR"));
   display_Update();
-  println_Msg(F("Press Button..."));
+  println_Msg(FS(SharedFlashText::textPressButton));
   display_Update();
   wait();
   // Return 0 if verified ok, or number of errors
@@ -1529,7 +1529,7 @@ void writeConfirm() {
     case 0:
       return;
     case 1:
-      println_Msg(F("Press Button to Reset"));
+      println_Msg(FS(SharedFlashText::textPressButtonToReset));
       wait();
       resetArduino();
   }

@@ -248,24 +248,24 @@ void setROMSize_PYUUTA()
 setrom:
     String sizeROM;
     for (int i = 0; i < (pyuutahi - pyuutalo + 1); i++) {
-      PcConsole.print(F("Select ROM Size:  "));
+      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
       PcConsole.print(F(" = "));
       PcConsole.print(PYUUTA[i + pyuutalo]);
       PcConsole.println(F("KB"));
     }
-    PcConsole.print(F("Enter ROM Size: "));
+    PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
     sizeROM = PcConsole.readStringUntil('\n');
     PcConsole.println(sizeROM);
     newpyuutasize = sizeROM.toInt() + pyuutalo;
     if (newpyuutasize > pyuutahi) {
-      PcConsole.println(F("SIZE NOT SUPPORTED"));
+      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
-  PcConsole.print(F("ROM Size = "));
+  PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(PYUUTA[newpyuutasize]);
   PcConsole.println(F("KB"));
 #endif

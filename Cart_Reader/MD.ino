@@ -240,7 +240,7 @@ void mdMenu() {
   unsigned char mdDev;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsMD, 5);
-  mdDev = question_box(F("Select MD device"), menuOptions, 5, 0);
+  mdDev = question_box(FS(SharedFlashText::textSelectMDDevice), menuOptions, 5, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mdDev) {
@@ -277,13 +277,13 @@ void mdMenu() {
       idFlash_MD();
       resetFlash_MD();
       if (flashid == 0xC2F1) {
-        println_Msg(F("MX29F1610 detected"));
+        println_Msg(FS(SharedFlashText::textMX29F1610Detected));
         flashSize = 2097152;
       } else if (flashid == 0x017E) {
         println_Msg(F("S29GL064N detected"));
         flashSize = 4194304;
       } else {
-        print_Msg(F("Flash ID: "));
+        print_Msg(FS(SharedFlashText::textFlashID));
         println_Msg(flashid_str);
         print_FatalError(F("Error: Unknown flashrom"));
       }
@@ -332,7 +332,7 @@ void mdMenu() {
       resetFlashCFI_MD();
       delay(1000);
       display_Clear();
-      println_Msg(F("Verifying..."));
+      println_Msg(FS(SharedFlashText::textVerifying));
       verifyFlashCFI_MD();
       // Set CS(PH3) HIGH
       PORTH |= (1 << 3);
@@ -358,7 +358,7 @@ void mdCartMenu() {
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsMDCart, 6);
-  mainMenu = question_box(F("MEGA DRIVE Reader"), menuOptions, 6, 0);
+  mainMenu = question_box(FS(SharedFlashText::textMEGADRIVEReader), menuOptions, 6, 0);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -403,7 +403,7 @@ void mdCartMenu() {
       } else if (saveType == 4) {
         readEEP_MD();
       } else {
-        print_Error(F("Cart has no Save"));
+        print_Error(FS(SharedFlashText::textCartHasNoSave));
       }
       break;
 
@@ -414,14 +414,14 @@ void mdCartMenu() {
         // Change working dir to root
         sd.chdir("/");
         // Launch file browser
-        fileBrowser(F("Select srm file"));
+        fileBrowser(FS(SharedFlashText::textSelectSrmFile));
         display_Clear();
         enableSram_MD(1);
         writeSram_MD();
         writeErrors = verifySram_MD();
         enableSram_MD(0);
         if (writeErrors == 0) {
-          println_Msg(F("Sram verified OK"));
+          println_Msg(FS(SharedFlashText::textSramVerifiedOK));
           display_Update();
         } else {
           print_STR(error_STR, 0);
@@ -431,11 +431,11 @@ void mdCartMenu() {
         }
       } else if (saveType == 4) {
         // Launch file browser
-        fileBrowser(F("Select eep file"));
+        fileBrowser(FS(SharedFlashText::textSelectEepFile));
         display_Clear();
         writeEEP_MD();
       } else {
-        print_Error(F("Cart has no Save"));
+        print_Error(FS(SharedFlashText::textCartHasNoSave));
       }
       break;
 
@@ -452,7 +452,7 @@ void mdCartMenu() {
       PORTH &= ~(1 << 0);
 
       display_Clear();
-      print_Msg(F("Resetting..."));
+      print_Msg(FS(SharedFlashText::textResetting));
       display_Update();
       delay(3000);  // wait 3 secs to switch to next game
       resetArduino();
@@ -483,7 +483,7 @@ void segaCDMenu() {
       if (bramSize > 0)
         readBram_MD();
       else {
-        print_Error(F("Not CD Backup RAM Cart"));
+        print_Error(FS(SharedFlashText::textNotCDBackupRAMCart));
       }
       break;
 
@@ -495,7 +495,7 @@ void segaCDMenu() {
         display_Clear();
         writeBram_MD();
       } else {
-        print_Error(F("Not CD Backup RAM Cart"));
+        print_Error(FS(SharedFlashText::textNotCDBackupRAMCart));
       }
       break;
 
@@ -1195,7 +1195,7 @@ void getCartInfo_MD() {
           print_Msg(("sramEnd: "));
           print_Msg_PaddedHex32(sramEnd);
           println_Msg(FS(FSTRING_EMPTY));
-          print_FatalError(F("Unknown Sram Base"));
+          print_FatalError(FS(SharedFlashText::textUnknownSramBase));
         }
       } else if (sramType == 0xE020) {  // SRAM BOTH BYTES
         // Get sram start and end
@@ -1223,7 +1223,7 @@ void getCartInfo_MD() {
           print_Msg(("sramEnd: "));
           print_Msg_PaddedHex32(sramEnd);
           println_Msg(FS(FSTRING_EMPTY));
-          print_FatalError(F("Unknown Sram Base"));
+          print_FatalError(FS(SharedFlashText::textUnknownSramBase));
         }
       }
     } else {
@@ -1326,7 +1326,7 @@ void getCartInfo_MD() {
   }
 
   display_Clear();
-  println_Msg(F("Cart Info"));
+  println_Msg(FS(SharedFlashText::textCartInfo));
   println_Msg(FS(FSTRING_SPACE));
   print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
@@ -1355,7 +1355,7 @@ void getCartInfo_MD() {
       print_Msg(cartSizeSonic2 * 8 / 1024 / 1024);
       break;
   }
-  println_Msg(F(" MBit"));
+  println_Msg(FS(SharedFlashText::textMBit));
   print_Msg(F("ChkS: "));
   print_Msg_PaddedHexByte((chksum >> 8));
   print_Msg_PaddedHexByte((chksum & 0x00ff));
@@ -1380,14 +1380,14 @@ void getCartInfo_MD() {
   if (saveType == 4) {
     print_Msg(F("PcConsole EEPROM: "));
     print_Msg(eepSize * 8 / 1024);
-    println_Msg(F(" KBit"));
+    println_Msg(FS(SharedFlashText::textKBit));
   } else {
-    print_Msg(F("Sram: "));
+    print_Msg(FS(SharedFlashText::textSram));
     if (sramSize > 0) {
       print_Msg(sramSize * 8 / 1024);
-      println_Msg(F(" KBit"));
+      println_Msg(FS(SharedFlashText::textKBit));
     } else
-      println_Msg(F("None"));
+      println_Msg(FS(SharedFlashText::textNone));
   }
   println_Msg(FS(FSTRING_SPACE));
 
@@ -1887,7 +1887,7 @@ void readROM_MD() {
     println_Msg(FS(FSTRING_OK));
     display_Update();
   } else {
-    println_Msg(F("Error"));
+    println_Msg(FS(SharedFlashText::textError));
     char calcsumStr[5];
     sprintf(calcsumStr, "%04X", calcCKS);
     println_Msg(calcsumStr);
@@ -1902,7 +1902,7 @@ void readROM_MD() {
       println_Msg(FS(FSTRING_OK));
       display_Update();
     } else {
-      print_Msg(F("Error"));
+      print_Msg(FS(SharedFlashText::textError));
       char calcsumStr[5];
       sprintf(calcsumStr, "%04X", calcCKSLockon);
       println_Msg(calcsumStr);
@@ -1916,7 +1916,7 @@ void readROM_MD() {
       println_Msg(FS(FSTRING_OK));
       display_Update();
     } else {
-      print_Msg(F("Error"));
+      print_Msg(FS(SharedFlashText::textError));
       char calcsumStr[5];
       sprintf(calcsumStr, "%04X", calcCKSSonic2);
       println_Msg(calcsumStr);
@@ -1998,7 +1998,7 @@ void writeSram_MD() {
         writeWord_MD(currByte, data);
       }
     } else
-      print_Error(F("Unknown save type"));
+      print_Error(FS(SharedFlashText::textUnknownSaveType));
 
     // Close the file:
     myFile.close();
@@ -2069,7 +2069,7 @@ void readSram_MD() {
   }
   // Close the file:
   myFile.close();
-  print_Msg(F("Saved to "));
+  print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   println_Msg(F("/"));
   display_Update();
@@ -2351,7 +2351,7 @@ void blankcheck_MD() {
     }
   }
   if (!blank) {
-    print_Error(F("Error: Not blank"));
+    print_Error(FS(SharedFlashText::textErrorNotBlank));
   }
 }
 
@@ -2383,7 +2383,7 @@ void verifyFlash_MD() {
       d = 0;
     }
     if (blank == 0) {
-      println_Msg(F("Flashrom verified OK"));
+      println_Msg(FS(SharedFlashText::textFlashromVerifiedOK));
       display_Update();
     } else {
       print_STR(error_STR, 0);
@@ -2964,7 +2964,7 @@ void readEEP_MD() {
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
 
-  println_Msg(F("Reading..."));
+  println_Msg(FS(SharedFlashText::textReading));
   display_Update();
 
   // Open file on sd card
@@ -2994,7 +2994,7 @@ void readEEP_MD() {
   myFile.close();
   println_Msg(FS(FSTRING_EMPTY));
   display_Clear();
-  print_Msg(F("Saved to "));
+  print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
 
   display_Update();
@@ -3056,7 +3056,7 @@ void readBram_MD() {
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
 
-  println_Msg(F("Reading..."));
+  println_Msg(FS(SharedFlashText::textReading));
   display_Update();
 
   // Open file on sd card
@@ -3075,7 +3075,7 @@ void readBram_MD() {
   myFile.close();
   println_Msg(FS(FSTRING_EMPTY));
   display_Clear();
-  print_Msg(F("Saved to "));
+  print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
 
   display_Update();
@@ -3174,7 +3174,7 @@ void printRomSize_MD(int index) {
   display_Clear();
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(MDSize[index])));
-  println_Msg(F(" Mbit"));
+  println_Msg(FS(SharedFlashText::textMbit));
 #ifdef ENABLE_GLOBAL_LOG
   dont_log = false;
 #endif
@@ -3188,7 +3188,7 @@ void force_cartSize_MD() {
 #endif
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(cartSize / 131072);
-  println_Msg(F(" Mbit"));
+  println_Msg(FS(SharedFlashText::textMbit));
   display_Update();
   delay(1000);
 }
@@ -3350,7 +3350,7 @@ void verifyFlashCFIChip_MD(byte currChip, unsigned long toVerify) {
   }
 
   if (blank == 0) {
-    println_Msg(F("Flashrom verified OK"));
+    println_Msg(FS(SharedFlashText::textFlashromVerifiedOK));
     display_Update();
   } else {
     print_STR(error_STR, 0);
@@ -3367,7 +3367,7 @@ void identifyFlashCFI_MD() {
   if (identifyFlashCFIChip_MD(0) || identifyCFI_29F800_MD(0)) {
     totalFlashSizeCFI += flashSizeCFI[0];
   } else {
-    println_Msg(F("CFI Query failed!"));
+    println_Msg(FS(SharedFlashText::textCFIQueryFailed));
     resetFlashCFIChip_MD(0);
     print_STR(press_button_STR, 0);
     display_Update();
@@ -3440,7 +3440,7 @@ bool identifyFlashCFIChip_MD(byte currChip) {
 
   totalChipsCFI++;
   flashSizeCFI[currChip] = size;
-  print_Msg(F("Chip"));
+  print_Msg(FS(SharedFlashText::textChip));
   print_Msg(currChip);
   print_Msg(F(" CFI "));
   print_Msg(size >> 17);
@@ -3467,7 +3467,7 @@ bool identifyCFI_29F800_MD(byte currChip) {
   if (deviceId == 0x2258) {
     totalChipsCFI++;
     flashSizeCFI[currChip] = 1048576;
-    print_Msg(F("Chip"));
+    print_Msg(FS(SharedFlashText::textChip));
     print_Msg(currChip);
     println_Msg(F(" 8MBit 29F800"));
     display_Update();

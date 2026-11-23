@@ -79,7 +79,7 @@ bool setup_WS() {
   //  if (getCartInfo_WS() != 0xea)
   //    print_FatalError(F("Rom header read error"));
 
-  println_Msg(F("Initializing..."));
+  println_Msg(FS(SharedFlashText::textInitializing));
   display_Update();
 
   const bool bounded = standaloneCandidate(9) || PcLink::connected();
@@ -128,7 +128,7 @@ void wsMenu() {
   uint8_t mainMenu = (wsWitch ? 5 : 4);
 
   convertPgm(menuOptionsWS, mainMenu);
-  mainMenu = question_box(F("WS Menu"), menuOptions, mainMenu, 0);
+  mainMenu = question_box(FS(SharedFlashText::textWSMenu), menuOptions, mainMenu, 0);
 
   switch (mainMenu) {
     case 0:
@@ -144,10 +144,10 @@ void wsMenu() {
         // Read Save
         sd.chdir("/");
         switch (saveType) {
-          case 0: println_Msg(F("No save for this game")); break;
+          case 0: println_Msg(FS(SharedFlashText::textNoSaveForThisGame)); break;
           case 1: readSRAM_WS(); break;
           case 2: readEEPROM_WS(); break;
-          default: println_Msg(F("Unknown save type")); break;
+          default: println_Msg(FS(SharedFlashText::textUnknownSaveType)); break;
         }
 
         break;
@@ -157,7 +157,7 @@ void wsMenu() {
         // Write Save
         sd.chdir("/");
         switch (saveType) {
-          case 0: println_Msg(F("No save for this game")); break;
+          case 0: println_Msg(FS(SharedFlashText::textNoSaveForThisGame)); break;
           case 1:
             {
               writeSRAM_WS();
@@ -170,7 +170,7 @@ void wsMenu() {
               verifyEEPROM_WS();
               break;
             }
-          default: println_Msg(F("Unknown save type")); break;
+          default: println_Msg(FS(SharedFlashText::textUnknownSaveType)); break;
         }
 
         break;
@@ -380,9 +380,9 @@ static uint8_t getCartInfo_WS() {
 static void showCartInfo_WS() {
   display_Clear();
 
-  println_Msg(F("Cart Info"));
+  println_Msg(FS(SharedFlashText::textCartInfo));
 
-  print_Msg(F("Game: "));
+  print_Msg(FS(SharedFlashText::textGame));
   println_Msg(romName);
 
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -395,7 +395,7 @@ static void showCartInfo_WS() {
 
   print_Msg(F("Save: "));
   switch (saveType) {
-    case 0: println_Msg(F("None")); break;
+    case 0: println_Msg(FS(SharedFlashText::textNone)); break;
     case 1:
       print_Msg(F("Sram "));
       print_Msg(sramSize);
@@ -409,7 +409,7 @@ static void showCartInfo_WS() {
     default: println_Msg(sramSize, HEX); break;
   }
 
-  print_Msg(F("Version: 1."));
+  print_Msg(FS(SharedFlashText::textVersion1));
   println_Msg(romVersion, HEX);
 
   print_Msg(FS(FSTRING_CHECKSUM));
@@ -628,9 +628,9 @@ static void verifySRAM_WS() {
     myFile.close();
 
     if (write_errors == 0) {
-      println_Msg(F("passed"));
+      println_Msg(FS(SharedFlashText::textPassed));
     } else {
-      println_Msg(F("failed"));
+      println_Msg(FS(SharedFlashText::textFailed));
       print_STR(error_STR, 0);
       print_Msg(write_errors);
       print_STR(_bytes_STR, 1);
@@ -644,11 +644,11 @@ static void verifySRAM_WS() {
 static void writeSRAM_WS() {
   filePath[0] = 0;
   sd.chdir("/");
-  fileBrowser(F("Select sav file"));
+  fileBrowser(FS(SharedFlashText::textSelectSavFile));
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
   display_Clear();
-  print_Msg(F("Writing "));
+  print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath);
   println_Msg(F("..."));
   display_Update();
@@ -764,9 +764,9 @@ static void verifyEEPROM_WS() {
     myFile.close();
 
     if (write_errors == 0) {
-      println_Msg(F("passed"));
+      println_Msg(FS(SharedFlashText::textPassed));
     } else {
-      println_Msg(F("failed"));
+      println_Msg(FS(SharedFlashText::textFailed));
       print_STR(error_STR, 0);
       print_Msg(write_errors);
       print_STR(_bytes_STR, 1);
@@ -780,11 +780,11 @@ static void verifyEEPROM_WS() {
 static void writeEEPROM_WS() {
   filePath[0] = 0;
   sd.chdir("/");
-  fileBrowser(F("Select eep file"));
+  fileBrowser(FS(SharedFlashText::textSelectEepFile));
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
   display_Clear();
-  print_Msg(F("Writing "));
+  print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath);
   println_Msg(F("..."));
   display_Update();
@@ -952,7 +952,7 @@ static void eraseWitchFlashSector_WS(uint32_t sector_addr) {
 static boolean compareChecksum_WS(uint16_t checksum) {
   char result[11];
   snprintf(result, 11, "%04X(%04X)", wsGameChecksum, checksum);
-  print_Msg(F("Result: "));
+  print_Msg(FS(SharedFlashText::textResult));
   print_Msg(result);
 
   if (checksum == wsGameChecksum) {
@@ -965,7 +965,7 @@ static boolean compareChecksum_WS(uint16_t checksum) {
     return 1;
   } else {
     println_Msg(FS(FSTRING_EMPTY));
-    print_Error(F("Checksum Error"));
+    print_Error(FS(SharedFlashText::textChecksumError));
     return 0;
   }
 }

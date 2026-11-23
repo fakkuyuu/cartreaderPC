@@ -143,7 +143,7 @@ void loopyMenu() {
     case 2:
       // Read SRAM
       sd.chdir("/");
-      println_Msg(F("Reading SRAM..."));
+      println_Msg(FS(SharedFlashText::textReadingSRAM));
       display_Update();
       readSRAM_LOOPY();
       sd.chdir("/");
@@ -159,7 +159,7 @@ void loopyMenu() {
       writeSRAM_LOOPY();
       writeErrors = verifySRAM_LOOPY();
       if (writeErrors == 0) {
-        println_Msg(F("SRAM verified OK"));
+        println_Msg(FS(SharedFlashText::textSRAMVerifiedOK));
         display_Update();
       } else {
         print_STR(error_STR, 0);
@@ -492,7 +492,7 @@ void getCartInfo_LOOPY() {
   strcpy(romName, loopyRomNameLong);
   setRomName_LOOPY("loopy.txt", checksumStr);
 
-  println_Msg(F("Cart Info"));
+  println_Msg(FS(SharedFlashText::textCartInfo));
   println_Msg(FS(FSTRING_SPACE));
   print_Msg(FS(FSTRING_NAME));
   println_Msg(loopyRomNameLong);
@@ -500,10 +500,10 @@ void getCartInfo_LOOPY() {
   println_Msg(checksumStr);
   print_Msg(FS(FSTRING_SIZE));
   print_Msg(cartSize * 8 / 1024 / 1024);
-  println_Msg(F(" MBit"));
-  print_Msg(F("Sram: "));
+  println_Msg(FS(SharedFlashText::textMBit));
+  print_Msg(FS(SharedFlashText::textSram));
   print_Msg(sramSize * 8 / 1024);
-  println_Msg(F(" KBit"));
+  println_Msg(FS(SharedFlashText::textKBit));
   println_Msg(FS(FSTRING_SPACE));
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -666,7 +666,7 @@ void readSRAM_LOOPY() {
   digitalWrite(LOOPY_RAMCS1, HIGH);
 
   myFile.close();
-  print_Msg(F("Saved to "));
+  print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   display_Update();
 }
