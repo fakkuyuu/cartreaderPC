@@ -453,9 +453,7 @@ void readROM_FAIRCHILD() {
   printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 void read16K_FAIRCHILD() { // Read 16K Bytes
@@ -485,9 +483,7 @@ void read16K_FAIRCHILD() { // Read 16K Bytes
   printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 //******************************************
@@ -565,8 +561,7 @@ void checkStatus_FAIRCHILD() {
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(FAIRCHILD[fairchildsize]);
   println_Msg(F("K"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(FAIRCHILD[fairchildsize]);

@@ -319,8 +319,7 @@ void readSRAM_SV() {
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   println_Msg(F("/..."));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 void writeSRAM_SV() {
@@ -431,8 +430,7 @@ void readROM_SV() {
   // Close the file:
   myFile.close();
   println_Msg(F("Read pack completed"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 void writeROM_SV(void) {
@@ -545,8 +543,7 @@ void writeROM_SV(void) {
     myFile.close();
     draw_progressbar(0x100000, 0x100000);
     println_Msg(F("Finished successfully"));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
 
   } else {
     print_Error(FS(FSTRING_FILE_DOESNT_EXIST));

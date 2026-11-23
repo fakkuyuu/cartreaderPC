@@ -158,8 +158,7 @@ void operationsMenu() {
     }
   }
 
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 //********************************
@@ -495,8 +494,7 @@ void getCartInfo_SMS() {
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #endif
 
   // Turn off LED

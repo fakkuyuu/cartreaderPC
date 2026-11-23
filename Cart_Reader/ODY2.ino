@@ -245,9 +245,7 @@ void readROM_ODY2() {
   printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 //******************************************
@@ -332,8 +330,7 @@ void checkStatus_ODY2() {
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ODY2[ody2size]);
   println_Msg(F("K"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTMAPPER));
   PcConsole.println(ody2mapper);

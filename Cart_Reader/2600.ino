@@ -552,9 +552,7 @@ void readROM_2600() {
   printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 //******************************************
@@ -644,8 +642,7 @@ void checkStatus_2600() {
   else
     print_Msg(a2600[a2600size]);
   println_Msg(F("K"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(F("MAPPER:   "));
   println_Mapper2600(a2600mapper);

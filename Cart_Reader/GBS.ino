@@ -227,8 +227,7 @@ void gbSmartGameOptions() {
     println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   }
 }
 
@@ -303,8 +302,7 @@ void gbSmartFlashMenu() {
         println_Msg(FS(FSTRING_EMPTY));
         // Prints string out of the common strings array either with or without newline
         print_STR(press_button_STR, 1);
-        display_Update();
-        wait();
+        updateDisplayAndWait();
 
         display_Clear();
         filePath[0] = '\0';
@@ -325,8 +323,7 @@ void gbSmartFlashMenu() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 void gbSmartGetOneGame(struct GBSmartGameInfo *gbSmartGames, byte bank, word base) {

@@ -75,8 +75,7 @@ void gbaMenu() {
 #endif
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     case 1:
@@ -129,8 +128,7 @@ void gbaMenu() {
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     case 2:
@@ -244,8 +242,7 @@ void gbaMenu() {
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     case 3:
@@ -270,8 +267,7 @@ void GBAReproMenu() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
   resetArduino();
 }
 
@@ -285,9 +281,7 @@ void repro369in1Menu() {
   println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("(Ignore if no battery)"));
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 
   // create menu with title and 5 options to choose from
   unsigned char menu369;
@@ -326,9 +320,7 @@ void repro369in1Menu() {
       break;
   }
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
   resetArduino();
 }
 #endif
@@ -393,8 +385,7 @@ void setup_GBA() {
   println_Msg("");
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 #if defined(ENABLE_FLASH)
@@ -432,8 +423,7 @@ static void printFlashTypeAndWait(const __FlashStringHelper* caption) {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
   display_Clear();
   display_Update();
 }
@@ -706,8 +696,7 @@ void getCartInfo_GBA() {
     println_Msg(FS(SharedFlashText::textPressButtonTo));
     println_Msg(FS(SharedFlashText::textIgnoreOrPowercycle));
     println_Msg(FS(SharedFlashText::textToTryAgain));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   } else {
     char tempStr[5];
     tempStr[4] = 0;
@@ -895,8 +884,7 @@ void getCartInfo_GBA() {
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
     }
 
     /* Convert saveTypeStr to saveType
@@ -2991,8 +2979,7 @@ void flashRepro_GBA(boolean option) {
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
 
     // Launch file browser
     filePath[0] = '\0';

@@ -190,8 +190,7 @@ void loopyMenu() {
     println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   }
 #endif
 }
@@ -510,8 +509,7 @@ void getCartInfo_LOOPY() {
   // Wait for user input
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #endif
 }
 

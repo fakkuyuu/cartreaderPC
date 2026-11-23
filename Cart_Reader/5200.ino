@@ -286,8 +286,7 @@ void readROM_5200() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 //******************************************
@@ -403,8 +402,7 @@ void checkStatus_5200() {
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a5200[a5200size]);
   println_Msg(F("K"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(F("MAPPER:   "));
   PcConsole.println(a5200mapper);

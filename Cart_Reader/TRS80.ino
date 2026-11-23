@@ -277,9 +277,7 @@ void readROM_TRS80()
   printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 //******************************************
@@ -360,8 +358,7 @@ void checkStatus_TRS80()
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(TRS80[trs80size]);
   println_Msg(F("KB"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(TRS80[trs80size]);

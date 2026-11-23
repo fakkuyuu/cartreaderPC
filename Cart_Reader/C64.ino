@@ -551,8 +551,7 @@ void readROM_C64() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 //******************************************
@@ -708,8 +707,7 @@ void checkStatus_C64() {
   print_Msg(FS(SharedFlashText::textROMSIZE));
   print_Msg(C64[c64size]);
   println_Msg(F("K"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(F("CURRENT MAPPER:     "));
   PcConsole.println(c64mapper);

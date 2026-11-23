@@ -116,8 +116,7 @@ static uint8_t readByte_LYNX(uint32_t addr) {
 
 static bool waitPressButton_LYNX(bool ret = false) {
   print_STR(press_button_STR, true);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
   return ret;
 }
 
@@ -168,8 +167,7 @@ static bool detectCart_LYNX() {
 
   if (lynxBlockSize == 0) {
     print_STR(error_STR, false);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
   }
   print_Msg(FS(SharedFlashText::textAUDIN));

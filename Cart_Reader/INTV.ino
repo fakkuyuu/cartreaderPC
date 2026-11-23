@@ -404,8 +404,7 @@ void readROM_INTV() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 // ECS BANKSWITCH FOR WSML BASEBALL
@@ -599,8 +598,7 @@ void checkStatus_INTV() {
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(INTV[intvsize])));
   println_Msg(F("K"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTMAPPER));
   PcConsole.println(intvmapper);

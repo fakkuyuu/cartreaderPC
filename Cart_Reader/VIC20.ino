@@ -316,9 +316,7 @@ void readROM_VIC20()
     printCRC(fileName, NULL, 0);
   }
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 //******************************************
@@ -438,8 +436,7 @@ void checkStatus_VIC20()
   print_Msg(F("ROM1 SIZE: "));
   print_Msg(VIC20SIZE[vic20size] & 0x0F);
   println_Msg(F("KB"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(F("CURRENT ROM MAP:   "));
   PcConsole.println(VIC20MAP[vic20map]);

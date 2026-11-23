@@ -199,8 +199,7 @@ void sfmGameOptions() {
     println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   }
 }
 
@@ -266,8 +265,7 @@ void sfmFlashMenu() {
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
 
       // Clear screen
       display_Clear();
@@ -379,8 +377,7 @@ void sfmFlashMenu() {
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
 
       // Clear screen
       display_Clear();
@@ -430,8 +427,7 @@ void sfmFlashMenu() {
     println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   }
 }
 #endif
@@ -735,8 +731,7 @@ void getCartInfo_SFM() {
     println_Msg(FS(SharedFlashText::textERROR));
     println_Msg(FS(SharedFlashText::textRomHeaderCorrupt));
     println_Msg(FS(SharedFlashText::textOrMissing));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     // Wait() clears errors but in this case we still have an error
     errorLvl = 1;
   }

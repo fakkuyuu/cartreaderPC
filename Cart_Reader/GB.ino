@@ -105,8 +105,7 @@ bool gbxFlashCFI() {
 void feedbackPressAndReset() {
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
   resetArduino();
 }
 
@@ -295,8 +294,7 @@ void gbxMenu() {
               writeFlash_GB(3, 0, 1);
               // Prints string out of the common strings array either with or without newline
               print_STR(press_button_STR, 1);
-              display_Update();
-              wait();
+              updateDisplayAndWait();
 
               display_Clear();
               println_Msg(F("Please change the"));
@@ -307,8 +305,7 @@ void gbxMenu() {
               println_Msg(FS(FSTRING_EMPTY));
               // Prints string out of the common strings array either with or without newline
               print_STR(press_button_STR, 1);
-              display_Update();
-              wait();
+              updateDisplayAndWait();
 
               // Flash second bank without erase
               // Change working dir to root
@@ -599,8 +596,7 @@ void gbMenu() {
   }
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 /******************************************
@@ -774,8 +770,7 @@ void showCartInfo_GB() {
     println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   } else {
     print_FatalError(FS(SharedFlashText::textGAMEPAKERROR));
   }
@@ -1000,8 +995,7 @@ void getCartInfo_GB() {
     println_Msg(FS(SharedFlashText::textPressButtonTo));
     println_Msg(FS(SharedFlashText::textIgnoreOrPowercycle));
     println_Msg(FS(SharedFlashText::textToTryAgain));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     }
   */
 
@@ -1031,8 +1025,7 @@ void getCartInfo_GB() {
     println_Msg(FS(SharedFlashText::textPressButtonTo));
     println_Msg(F("ignore or clean"));
     println_Msg(F("cart and try again"));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   }
 
   romType = sdBuffer[0x147];
@@ -1945,8 +1938,7 @@ void busyCheck_GB(unsigned long address, byte data) {
       print_Msg(currBank);
       print_Msg(F(" Addr: "));
       println_Msg(currAddr + currByte);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       }
     */
   }
@@ -2508,8 +2500,7 @@ void identifyCFI_GB() {
       flashSwitchLastBits = true;
     } else {
       println_Msg(FS(SharedFlashText::textCFIQueryFailed));
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       return;
     }
   }
@@ -2802,9 +2793,7 @@ void readPelican_GB() {
     if (flashid != 0xBF04) {
       println_Msg(FS(SharedFlashText::textUnknownFlashID));
       println_Msg(flashid);
-      print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      promptAndWaitForButton();
       mainMenu();
     }
   }
@@ -2927,9 +2916,7 @@ void writePelican_GB() {
       if (flashid != 0xBF04) {
         println_Msg(FS(SharedFlashText::textUnknownFlashID));
         println_Msg(flashid);
-        print_STR(press_button_STR, 1);
-        display_Update();
-        wait();
+        promptAndWaitForButton();
         mainMenu();
       }
     }
@@ -3255,9 +3242,7 @@ void writeMegaMem_GB() {
     if (flashid != 0xBF04) {
       println_Msg(FS(SharedFlashText::textUnknownFlashID));
       println_Msg(flashid);
-      print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      promptAndWaitForButton();
       mainMenu();
     }
   }
@@ -3491,9 +3476,7 @@ void readGameshark_GB() {
     display_Clear();
     println_Msg(FS(SharedFlashText::textUnknownFlashID));
     println_Msg(FS(SharedFlashText::textCheckCartridgeConnection));
-    print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    promptAndWaitForButton();
     mainMenu();
   }
 
@@ -3561,9 +3544,7 @@ void writeGameshark_GB() {
     display_Clear();
     println_Msg(FS(SharedFlashText::textUnknownFlashID));
     println_Msg(FS(SharedFlashText::textCheckCartridgeConnection));
-    print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    promptAndWaitForButton();
     mainMenu();
   }
 

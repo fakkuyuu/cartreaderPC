@@ -443,8 +443,7 @@ void readROM_7800() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 void setHalt_7800(byte on) {
@@ -579,8 +578,7 @@ void checkStatus_7800() {
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a7800[a7800size]);
   println_Msg(F("K"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(F("MAPPER:   "));
   PcConsole.println(a7800mapper);

@@ -192,8 +192,7 @@ void wsMenu() {
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
 
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 static uint8_t getCartInfo_WS() {
@@ -417,8 +416,7 @@ static void showCartInfo_WS() {
 
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 static void getDeveloperName_WS(uint8_t id, char *buf, size_t length) {

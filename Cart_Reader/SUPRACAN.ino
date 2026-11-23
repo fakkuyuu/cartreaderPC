@@ -138,9 +138,7 @@ void suprAcanMenu() {
   }
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 // Switch data pins to write

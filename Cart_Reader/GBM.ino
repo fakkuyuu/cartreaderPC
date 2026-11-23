@@ -46,8 +46,7 @@ void gbmMenu() {
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       // Clear screen
       display_Clear();
 
@@ -77,8 +76,7 @@ void gbmMenu() {
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       // Clear screen
       display_Clear();
       eraseFlash_GBM();
@@ -138,8 +136,7 @@ void gbmMenu() {
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
 
       // Reset to root directory
       sd.chdir("/");
@@ -183,8 +180,7 @@ void gbmMenu() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 /******************************************

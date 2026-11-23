@@ -168,9 +168,7 @@ void n64Menu() {
       setup_N64_Cart();
       flashXplorer_N64();
       mode = CORE_N64_CART;
-      print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      promptAndWaitForButton();
       resetArduino();
       break;
 
@@ -219,8 +217,7 @@ void n64ControllerMenu() {
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     case 2:
@@ -241,8 +238,7 @@ void n64ControllerMenu() {
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     case 3:
@@ -283,8 +279,7 @@ void n64CartMenu() {
 
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     case 1:
@@ -315,8 +310,7 @@ void n64CartMenu() {
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     case 2:
@@ -397,8 +391,7 @@ void n64CartMenu() {
       }
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     case 3:
@@ -2079,8 +2072,7 @@ void printCartInfo_N64() {
     println_Msg(FS(FSTRING_SPACE));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   } else {
     // Display error
     display_Clear();
@@ -2099,8 +2091,7 @@ void printCartInfo_N64() {
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     cartSize = 2;
   }
 }
@@ -3288,8 +3279,7 @@ void flashRepro_N64() {
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   } else {
     println_Msg(FS(SharedFlashText::textUnknownFlashrom));
     print_Msg(FS(SharedFlashText::textID));
@@ -3304,8 +3294,7 @@ void flashRepro_N64() {
     println_Msg(FS(SharedFlashText::textThisWillEraseYour));
     println_Msg(FS(SharedFlashText::textReproCartridge));
     println_Msg(FS(SharedFlashText::textAttentionUse33V));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
 
     // clear IDs
     sprintf(vendorID, "%s", "CONF");
@@ -3544,8 +3533,7 @@ void flashRepro_N64() {
 
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
   display_Clear();
   display_Update();
 }
@@ -4291,8 +4279,7 @@ void flashGameshark_N64() {
     println_Msg(FS(SharedFlashText::textPowerOFFIfUnsure));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
 
     // Launch file browser
     filePath[0] = '\0';
@@ -4365,8 +4352,7 @@ void flashGameshark_N64() {
 
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
   display_Clear();
   display_Update();
 }
@@ -4399,9 +4385,7 @@ void idGameshark_N64() {
     println_Msg(FS(SharedFlashText::textCheckCartConnection));
     println_Msg(FS(SharedFlashText::textUnknownFlashID));
     sprintf(flashid_str, "%04X", flashid);
-    print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    promptAndWaitForButton();
     mainMenu();
   }
   sprintf(flashid_str, "%04X", flashid);
@@ -4652,8 +4636,7 @@ void flashXplorer_N64() {
     println_Msg(FS(SharedFlashText::textPowerOFFIfUnsure));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
 
     // Launch file browser
     filePath[0] = '\0';
@@ -4722,8 +4705,7 @@ void flashXplorer_N64() {
 
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
   display_Clear();
   display_Update();
 }
@@ -4745,9 +4727,7 @@ void idXplorer_N64() {
     println_Msg(FS(SharedFlashText::textCheckCartConnection));
     println_Msg(FS(SharedFlashText::textUnknownFlashID));
     sprintf(flashid_str, "%04X", flashid);
-    print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    promptAndWaitForButton();
     mainMenu();
   }
   sprintf(flashid_str, "%04X", flashid);

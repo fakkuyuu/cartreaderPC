@@ -495,9 +495,7 @@ void readGROM_TI99()
     }
   }
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 // CARTRIDGE ROM
@@ -582,9 +580,7 @@ void readCROM_TI99()
     printCRC(fileName, NULL, 0);
   }
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 //******************************************

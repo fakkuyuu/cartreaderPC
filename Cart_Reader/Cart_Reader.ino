@@ -1916,9 +1916,7 @@ void selfTest() {
 #endif
   println_Msg(FS(FSTRING_EMPTY));
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
   display_Clear();
 
   // Test if pin 7 is held high by 1K resistor
@@ -1931,9 +1929,7 @@ void selfTest() {
     errorLvl = 1;
     println_Msg(FS(SharedFlashText::textError));
     println_Msg(FS(FSTRING_EMPTY));
-    print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    promptAndWaitForButton();
     resetArduino();
   }
 
@@ -1962,9 +1958,7 @@ void selfTest() {
           println_Msg(pinNumber);
         }
         println_Msg(FS(FSTRING_EMPTY));
-        print_STR(press_button_STR, 1);
-        display_Update();
-        wait();
+        promptAndWaitForButton();
         resetArduino();
       }
     }
@@ -2001,9 +1995,7 @@ void selfTest() {
               println_Msg(pinNumber2);
             }
             println_Msg(FS(FSTRING_EMPTY));
-            print_STR(press_button_STR, 1);
-            display_Update();
-            wait();
+            promptAndWaitForButton();
             resetArduino();
           }
         }
@@ -2020,9 +2012,7 @@ void selfTest() {
     println_Msg(F("Error: Clock Generator"));
     println_Msg(F("not found"));
     println_Msg(FS(FSTRING_EMPTY));
-    print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    promptAndWaitForButton();
     resetArduino();
   } else {
     //clockgen.set_correction(cal_factor, SI5351_PLL_INPUT_XO);
@@ -2041,9 +2031,7 @@ void selfTest() {
   println_Msg(FS(FSTRING_EMPTY));
   println_Msg(F("All tests passed."));
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
   resetArduino();
 }
 #endif
@@ -2621,16 +2609,14 @@ void setup() {
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("Press button to enable 5V for"));
     println_Msg(F("  updating firmware..."));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     display_Clear();
     setVoltage(VOLTS_SET_5V);  // Set voltage high for flashing
     println_Msg(F(" ======== UPDATE MODE ======== "));
     println_Msg(F("Waiting for update..."));
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("Press button to cancel/restart."));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
 #else  /* !ENABLE_VSELECT */
     println_Msg(F("SD INIT"));
@@ -2823,9 +2809,7 @@ void print_Error(int errorMessage) {
 
 void _print_FatalError(void) {
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
   resetArduino();
 }
 
@@ -3161,6 +3145,16 @@ static void updateDisplay(bool waitForSerial) {
 #ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.flush();
 #endif
+}
+
+void updateDisplayAndWait() {
+  display_Update();
+  wait();
+}
+
+void promptAndWaitForButton() {
+  print_STR(press_button_STR, 1);
+  updateDisplayAndWait();
 }
 
 void display_Update() {

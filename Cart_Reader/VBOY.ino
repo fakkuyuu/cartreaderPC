@@ -137,8 +137,7 @@ void vboyMenu() {
       // Wait for user input
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
 #endif
       break;
 
@@ -167,8 +166,7 @@ void vboyMenu() {
       // Wait for user input
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
 #endif
       break;
 
@@ -428,8 +426,7 @@ void getCartInfo_VB() {
   // Wait for user input
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #endif
 }
 
@@ -490,8 +487,7 @@ void readROM_VB() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #endif
 }
 

@@ -193,8 +193,7 @@ void readROM_COL() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 //******************************************
@@ -276,8 +275,7 @@ void checkStatus_COL() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(pgm_read_byte(&(COL[colsize])));

@@ -78,8 +78,7 @@ void flashMenu() {
       writeCFI_Flash(1, 1, 0);
       verifyFlash();
       print_STR(press_button_STR, 0);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       resetArduino();
       break;
 
@@ -138,8 +137,7 @@ void flashMenu() {
       writeCFI_Flash(1, 1, 0);
       verifyFlash();
       print_STR(press_button_STR, 0);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       resetArduino();
       break;
 
@@ -214,9 +212,7 @@ void flashromMenu8() {
         display_Clear();
         println_Msg(FS(SharedFlashText::textWarningThisWillErase));
         println_Msg(F("your flashrom/repro"));
-        print_STR(press_button_STR, 1);
-        display_Update();
-        wait();
+        promptAndWaitForButton();
         rgbLed(black_color);
         println_Msg(FS(FSTRING_EMPTY));
         println_Msg(FS(SharedFlashText::textPleaseWait));
@@ -329,8 +325,7 @@ void flashromMenu8() {
   }
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 0);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 #ifdef ENABLE_FLASH16
@@ -746,8 +741,7 @@ idtheflash:
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     print_Error(press_button_STR);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
 
     // Select flashrom config manually
     flashSize = selectFlashtype(0) * 1024UL * 1024UL;
@@ -3034,8 +3028,7 @@ void identifyCFI_Flash() {
     } else {
       println_Msg(FS(SharedFlashText::textCFIQueryFailed));
       print_STR(press_button_STR, 0);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       resetArduino();
       return;
     }

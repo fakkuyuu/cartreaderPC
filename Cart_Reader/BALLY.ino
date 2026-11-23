@@ -200,9 +200,7 @@ void readROM_BALLY()
   printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 //******************************************
@@ -283,8 +281,7 @@ void checkStatus_BALLY()
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(BALLY[ballysize]);
   println_Msg(F("KB"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(BALLY[ballysize]);

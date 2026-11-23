@@ -235,8 +235,7 @@ void reproCFIMenu() {
 
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 0);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
   resetArduino();
 }
 
@@ -467,8 +466,7 @@ void snesMenu() {
         println_Msg(FS(FSTRING_EMPTY));
         println_Msg(F("Press any button to"));
         println_Msg(F("start sram testing"));
-        display_Update();
-        wait();
+        updateDisplayAndWait();
         display_Clear();
         // Change working dir to root
         sd.chdir("/");
@@ -524,8 +522,7 @@ void snesMenu() {
   //println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 // Menu for manual configuration
@@ -935,8 +932,7 @@ void getCartInfo_SNES() {
     println_Msg(FS(SharedFlashText::textPressButtonFor));
     println_Msg(F("manual configuration"));
     println_Msg(F("or powercycle if SA1"));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     // Wait() clears errors but in this case we still have an error
     errorLvl = 1;
   }
@@ -1035,8 +1031,7 @@ void getCartInfo_SNES() {
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #endif
 #ifdef ENABLE_SERIAL
   println_Msg(FS(FSTRING_SPACE));
@@ -2493,8 +2488,7 @@ unsigned long verifySRAM() {
         print_STR(_bytes_STR, 1);
         print_Error(did_not_verify_STR);
       }
-      display_Update();
-      wait();
+      updateDisplayAndWait();
 
       stopSnesClocks_resetCic_resetCart();
 

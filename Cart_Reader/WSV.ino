@@ -211,8 +211,7 @@ void readROM_WSV() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 //******************************************
@@ -290,8 +289,7 @@ void checkStatus_WSV() {
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_word(&(WSV[wsvsize])));
   println_Msg(F("K"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(pgm_read_word(&(WSV[wsvsize])));

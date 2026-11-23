@@ -238,8 +238,7 @@ void readROM_VECTREX()
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 //******************************************
@@ -320,8 +319,7 @@ void checkStatus_VECTREX()
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(VECTREX[vectrexsize]);
   println_Msg(F("KB"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(VECTREX[vectrexsize]);

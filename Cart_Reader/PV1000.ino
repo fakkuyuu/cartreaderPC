@@ -203,9 +203,7 @@ void readROM_PV1000()
   printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 //******************************************
@@ -286,8 +284,7 @@ void checkStatus_PV1000()
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(PV1000[pv1000size]);
   println_Msg(F("KB"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(PV1000[pv1000size]);

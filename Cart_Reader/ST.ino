@@ -91,8 +91,7 @@ void setup_ST() {
     display_Clear();
     println_Msg(F("Sufami Turbo adapter"));
     println_Msg(F("was not found."));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
   }
 }
@@ -145,8 +144,7 @@ void readSlot(bool cartSlot) {
     }
     else {
       println_Msg(F("No cart detected in Slot A"));
-      display_Update();
-      wait();
+      updateDisplayAndWait();
     }
   }
   else {                      // Slot B was selected
@@ -158,8 +156,7 @@ void readSlot(bool cartSlot) {
     }
     else {
       println_Msg(F("No cart detected in Slot B"));
-      display_Update();
-      wait();
+      updateDisplayAndWait();
     }
   }
 }
@@ -179,9 +176,7 @@ void readRom_ST(unsigned int bankStart, unsigned int bankEnd) {
   compareCRC("st.txt", 0, 1, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 #endif
 

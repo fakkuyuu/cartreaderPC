@@ -124,9 +124,7 @@ void flashromCPS_Cartridge() {
         display_Clear();
         println_Msg(FS(SharedFlashText::textWarningThisWillErase));
         println_Msg(F("your CPS3 Cartdrige BIOS"));
-        print_STR(press_button_STR, 1);
-        display_Update();
-        wait();
+        promptAndWaitForButton();
         rgbLed(black_color);
         println_Msg(FS(FSTRING_EMPTY));
         println_Msg(FS(SharedFlashText::textPleaseWait));
@@ -239,8 +237,7 @@ void flashromCPS_Cartridge() {
   }
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 0);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 // CPS3 Cartridge region patch menu
@@ -301,9 +298,7 @@ void flashromCPS_SIMM2x8() {
         display_Clear();
         println_Msg(FS(SharedFlashText::textWarningThisWillErase));
         println_Msg(F("your CPS3 SIMM 2x8bit"));
-        print_STR(press_button_STR, 1);
-        display_Update();
-        wait();
+        promptAndWaitForButton();
         rgbLed(black_color);
         println_Msg(FS(FSTRING_EMPTY));
         println_Msg(FS(SharedFlashText::textPleaseWait));
@@ -405,8 +400,7 @@ void flashromCPS_SIMM2x8() {
   }
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 0);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 // CPS3 32/128 SIMM menu
@@ -433,9 +427,7 @@ void flashromCPS_SIMM4x8() {
         display_Clear();
         println_Msg(FS(SharedFlashText::textWarningThisWillErase));
         println_Msg(F("your CPS3 SIMM 4x8bit"));
-        print_STR(press_button_STR, 1);
-        display_Update();
-        wait();
+        promptAndWaitForButton();
         rgbLed(black_color);
         println_Msg(FS(FSTRING_EMPTY));
         println_Msg(FS(SharedFlashText::textPleaseWait));
@@ -543,8 +535,7 @@ void flashromCPS_SIMM4x8() {
   }
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 0);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 /******************************************
@@ -931,8 +922,7 @@ void id_SIMM2x8() {
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     print_Error(press_button_STR);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     // print first 40 bytes of flash
     display_Clear();
     println_Msg(FS(SharedFlashText::textFirst40Bytes));
@@ -1241,8 +1231,7 @@ void id_SIMM4x8() {
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     print_Error(press_button_STR);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     // print first 40 bytes of flash
     display_Clear();
     println_Msg(FS(SharedFlashText::textFirst40Bytes));

@@ -651,9 +651,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
   myFile.close();
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 void write_tennokoe_bank_PCE(int bank_index) {
@@ -751,9 +749,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
   }
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 void read_rom_PCE(void) {
@@ -827,8 +823,7 @@ void read_rom_PCE(void) {
 
   println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, true);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 #ifdef ENABLE_FLASH
@@ -913,16 +908,14 @@ void flash_PCE() {
   if (flashSize <= 0) {
     print_Msg(F("UNKNOWN "));
     println_Msg(deviceId);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
     return;
   } else {
     print_Msg(FS(FSTRING_SIZE));
     print_Msg(flashSize / 131072UL);
     println_Msg(F("Mbit"));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   }
 
   filePath[0] = '\0';
@@ -979,8 +972,7 @@ void flash_PCE() {
     pin_init_PCE();
     print_STR(done_STR, true);
   }
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 #endif
 

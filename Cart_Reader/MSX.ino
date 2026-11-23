@@ -234,8 +234,7 @@ void msxMenu() {
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     case 4:
@@ -606,8 +605,7 @@ void readROM_MSX() {
     println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   }
 }
 
@@ -765,8 +763,7 @@ void readRAM_MSX() {
     println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   }
 }
 
@@ -1276,8 +1273,7 @@ void checkStatus_MSX() {
   print_Msg(F("RAM SIZE: "));
   print_Msg(MSXRAM[msxramsize]);
   println_Msg(F("K"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTMAPPER));
   PcConsole.println(msxmapper);

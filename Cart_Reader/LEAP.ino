@@ -496,9 +496,7 @@ void readROM_LEAP()
   printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 //******************************************
@@ -583,8 +581,7 @@ void checkStatus_LEAP()
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(LEAPSTER[leapsize]);
   println_Msg(F("MB"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textTITLE));
   PcConsole.println(ROMTitle);
@@ -704,9 +701,7 @@ void readFLASH_LEAP()
     printCRC(fileName, NULL, 0); // 512K
   }
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 void writeFLASH_LEAP()
@@ -981,9 +976,7 @@ void readEEP_LEAP()
     printCRC(fileName, NULL, 0); // 2048
   }
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 void writeEEP_LEAP()

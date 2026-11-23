@@ -608,8 +608,7 @@ void readJagROM() {
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     println_Msg(FS(SharedFlashText::textSDERROR));
     println_Msg(FS(SharedFlashText::textPressButtonToReset));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
   }
 
@@ -644,8 +643,7 @@ void readJagROM() {
   compareCRC("jag.txt", 0, 1, 0);
 
   println_Msg(FS(SharedFlashText::textPressButton));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 
@@ -935,8 +933,7 @@ void readJagEEP() {
     println_Msg(FS(SharedFlashText::textSDERROR));
 
     println_Msg(FS(SharedFlashText::textPressButtonToReset));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
   }
   word eepEnd = int_pow(2, jagEepSize) * 64;  // WORDS
@@ -963,8 +960,7 @@ void readJagEEP() {
   println_Msg(F(""));
   print_Msg(FS(SharedFlashText::textSavedTo));
   println_Msg(folder);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 // NOTE:  TO WRITE TO 93C76 & 93C86, MUST TIE PE (PROGRAM ENABLE) PIN 7 TO VCC
@@ -1010,8 +1006,7 @@ void writeJagEEP() {
   } else {
     println_Msg(FS(SharedFlashText::textSDERROR));
     println_Msg(FS(SharedFlashText::textPressButtonToReset));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
   }
 }
@@ -1335,8 +1330,7 @@ void readJagMEMORY() {
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     println_Msg(FS(SharedFlashText::textSDERROR));
     println_Msg(FS(SharedFlashText::textPressButtonToReset));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
   }
   // Memory Track ROM Size 0x20000
@@ -1397,8 +1391,7 @@ void readJagFLASH() {
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
     println_Msg(FS(SharedFlashText::textSDERROR));
     println_Msg(FS(SharedFlashText::textPressButtonToReset));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
   }
   //Initialize progress bar
@@ -1423,8 +1416,7 @@ void readJagFLASH() {
   println_Msg(F("/"));
 
   println_Msg(FS(SharedFlashText::textPressButton));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 // AT29C010 - Write in 128 BYTE Secrors
@@ -1463,8 +1455,7 @@ void writeJagFLASH() {
   } else {
     println_Msg(FS(SharedFlashText::textSDERROR));
     println_Msg(FS(SharedFlashText::textPressButtonToReset));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
   }
   dataIn_Jag();
@@ -1496,8 +1487,7 @@ unsigned long verifyJagFLASH() {
   } else {
     println_Msg(FS(SharedFlashText::textSDERROR));
     println_Msg(FS(SharedFlashText::textPressButtonToReset));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
   }
   if (!writeErrors)
@@ -1506,8 +1496,7 @@ unsigned long verifyJagFLASH() {
     println_Msg(F("WRITE ERROR"));
   display_Update();
   println_Msg(FS(SharedFlashText::textPressButton));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
   // Return 0 if verified ok, or number of errors
   return writeErrors;
 }

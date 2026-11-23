@@ -367,9 +367,7 @@ void readROM_ATARI8()
   printCRC(fileName, NULL, 0);
 
   println_Msg(FS(FSTRING_EMPTY));
-  print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  promptAndWaitForButton();
 }
 
 //******************************************
@@ -460,8 +458,7 @@ void checkStatus_ATARI8()
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ATARI8[atari8size]);
   println_Msg(F("KB"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #else
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(ATARI8[atari8size]);

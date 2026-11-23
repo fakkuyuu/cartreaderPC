@@ -466,8 +466,7 @@ void nesMenu() {
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     // Write RAM
@@ -477,8 +476,7 @@ void nesMenu() {
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     // Change Mapper
@@ -540,8 +538,7 @@ void nesChipMenu() {
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     // Read CHR
@@ -552,8 +549,7 @@ void nesChipMenu() {
       println_Msg(FS(FSTRING_EMPTY));
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     // Return to Main Menu
@@ -590,8 +586,7 @@ void nesFlashMenu() {
       if (mapper == 0) {
         display_Clear();
         A29040B_writeFLASH();
-        display_Update();
-        wait();
+        updateDisplayAndWait();
       } else {
         display_Clear();
         println_Msg(FS(string_error5));
@@ -599,8 +594,7 @@ void nesFlashMenu() {
         println_Msg(mapper);
         // Prints string out of the common strings array either with or without newline
         print_STR(press_button_STR, 1);
-        display_Update();
-        wait();
+        updateDisplayAndWait();
       }
 
       break;
@@ -785,6 +779,23 @@ void printDataLine_NES(void* entry) {
 
 uint32_t oldcrc32 = 0xFFFFFFFF;
 uint32_t oldcrc32MMC3 = 0xFFFFFFFF;
+
+static const uint32_t nesSmallPrgCrcs[] PROGMEM = {
+  0xE37A6AA8, 0x90046A48, 0xCBA2352F, 0x56DA99FA
+};
+static const uint32_t nesQuattroCrcs[] PROGMEM = {
+  0x2B50A29C, 0x9DF7D376, 0x596EC6E6, 0xD003AFCA,
+  0x5004C6CF, 0x59D7D89D, 0x017D903E, 0xC1E6A786,
+  0xD43AC4BE, 0x3E54E71D, 0x3D8497EA
+};
+
+static bool matchesNesHeaderCrc(const uint32_t* table, uint8_t count) {
+  for (uint8_t i = 0; i < count; ++i) {
+    uint32_t crc = pgm_read_dword(table + i);
+    if (crc == oldcrc32 || crc == oldcrc32MMC3) return true;
+  }
+  return false;
+}
 
 void getMapping() {
   standaloneCandidateAllowed(false);
@@ -2051,8 +2062,7 @@ void checkStatus_NES() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 static void printNESSettings(void) {
@@ -2192,7 +2202,7 @@ void readPRG(bool readrom) {
       case 122:
       case 184:  // 32K
       case 185:  // 16K/32K
-        if (oldcrc32 == 0xE37A6AA8 || oldcrc32 == 0x90046A48 || oldcrc32 == 0xCBA2352F || oldcrc32 == 0x56DA99FA || oldcrc32MMC3 == 0xE37A6AA8 || oldcrc32MMC3 == 0x90046A48 || oldcrc32MMC3 == 0xCBA2352F || oldcrc32MMC3 == 0x56DA99FA) {
+        if (matchesNesHeaderCrc(nesSmallPrgCrcs, sizeof(nesSmallPrgCrcs) / sizeof(uint32_t))) {
           println_Msg(F("DUMPING 8KiB PRG"));
           display_Update();
           dumpBankPRG(0x0, 0x2000, base);
@@ -3223,7 +3233,7 @@ void readPRG(bool readrom) {
         break;
 
       case 232:
-        if (oldcrc32 == 0x2B50A29C || oldcrc32 == 0x9DF7D376 || oldcrc32 == 0x596EC6E6 || oldcrc32 == 0xD003AFCA || oldcrc32 == 0x5004C6CF || oldcrc32 == 0x59D7D89D || oldcrc32 == 0x017D903E || oldcrc32 == 0xC1E6A786 || oldcrc32 == 0xD43AC4BE || oldcrc32 == 0x3E54E71D || oldcrc32 == 0x3D8497EA || oldcrc32MMC3 == 0x2B50A29C || oldcrc32MMC3 == 0x9DF7D376 || oldcrc32MMC3 == 0x596EC6E6 || oldcrc32MMC3 == 0xD003AFCA || oldcrc32MMC3 == 0x5004C6CF || oldcrc32MMC3 == 0x59D7D89D || oldcrc32MMC3 == 0x017D903E || oldcrc32MMC3 == 0xC1E6A786 || oldcrc32MMC3 == 0xD43AC4BE || oldcrc32MMC3 == 0x3E54E71D || oldcrc32MMC3 == 0x3D8497EA) {
+        if (matchesNesHeaderCrc(nesQuattroCrcs, sizeof(nesQuattroCrcs) / sizeof(uint32_t))) {
           println_Msg(F("DUMPING QUATTRO CART"));
           display_Update();
           for (size_t i = 0; i < 16; i++) {
@@ -5342,8 +5352,7 @@ void A29040B_writeFLASH() {
     println_Msg(flashid_str);
     println_Msg(FS(FSTRING_EMPTY));
     println_Msg(F("FLASH NOT FOUND"));
-    display_Update();
-    wait();
+    updateDisplayAndWait();
   } else {
     println_Msg(F(A29040B_TITLE));
     println_Msg(FS(FSTRING_EMPTY));

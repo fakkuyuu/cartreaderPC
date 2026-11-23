@@ -306,8 +306,7 @@ void mdMenu() {
       PORTH |= (1 << 3);
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
     case 3:
@@ -338,8 +337,7 @@ void mdMenu() {
       PORTH |= (1 << 3);
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
-      display_Update();
-      wait();
+      updateDisplayAndWait();
       break;
 
 #endif
@@ -465,8 +463,7 @@ void mdCartMenu() {
   }
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 void segaCDMenu() {
@@ -507,8 +504,7 @@ void segaCDMenu() {
   println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 /******************************************
@@ -1395,8 +1391,7 @@ void getCartInfo_MD() {
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 #endif
 }
 
@@ -3370,8 +3365,7 @@ void identifyFlashCFI_MD() {
     println_Msg(FS(SharedFlashText::textCFIQueryFailed));
     resetFlashCFIChip_MD(0);
     print_STR(press_button_STR, 0);
-    display_Update();
-    wait();
+    updateDisplayAndWait();
     resetArduino();
     return;
   }

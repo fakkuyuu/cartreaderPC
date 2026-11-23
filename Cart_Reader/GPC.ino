@@ -305,8 +305,7 @@ void readRAM_GPC() {
   // Close the file:
   myFile.close();
   println_Msg(F("Read ram completed"));
-  display_Update();
-  wait();
+  updateDisplayAndWait();
 }
 
 void writeRAM_GPC(void) {
