@@ -1584,8 +1584,7 @@ void mainMenu() {
 #ifdef ENABLE_NES
     case SYSTEM_MENU_NES:
       mode = CORE_NES;
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_NES();
       // Wait for MMC3
       for (size_t c = 0; c < 512; c++) {
@@ -1625,8 +1624,7 @@ void mainMenu() {
 
 #ifdef ENABLE_WS
     case SYSTEM_MENU_WS:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       if (!setup_WS()) return;
       mode = CORE_WS;
       return wsMenu();
@@ -1634,8 +1632,7 @@ void mainMenu() {
 
 #ifdef ENABLE_NGP
     case SYSTEM_MENU_NGP:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_NGP();
       mode = CORE_NGP;
       break;
@@ -1928,9 +1925,7 @@ void selfTest() {
     rgbLed(red_color);
     errorLvl = 1;
     println_Msg(FS(SharedFlashText::textError));
-    printBlankLine();
-    promptAndWaitForButton();
-    resetArduino();
+    promptAndResetArduino();
   }
 
   println_Msg(F("Testing short to GND"));
@@ -1957,9 +1952,7 @@ void selfTest() {
           print_Msg(F("D"));
           println_Msg(pinNumber);
         }
-        printBlankLine();
-        promptAndWaitForButton();
-        resetArduino();
+        promptAndResetArduino();
       }
     }
   }
@@ -1994,9 +1987,7 @@ void selfTest() {
               print_Msg(F("D"));
               println_Msg(pinNumber2);
             }
-            printBlankLine();
-            promptAndWaitForButton();
-            resetArduino();
+            promptAndResetArduino();
           }
         }
       }
@@ -2011,9 +2002,7 @@ void selfTest() {
     errorLvl = 1;
     println_Msg(F("Error: Clock Generator"));
     println_Msg(F("not found"));
-    printBlankLine();
-    promptAndWaitForButton();
-    resetArduino();
+    promptAndResetArduino();
   } else {
     //clockgen.set_correction(cal_factor, SI5351_PLL_INPUT_XO);
     clockgen.set_pll(SI5351_PLL_FIXED, SI5351_PLLA);
@@ -2030,9 +2019,7 @@ void selfTest() {
 
   printBlankLine();
   println_Msg(F("All tests passed."));
-  printBlankLine();
-  promptAndWaitForButton();
-  resetArduino();
+  promptAndResetArduino();
 }
 #endif
 
@@ -2051,8 +2038,7 @@ void aboutScreen() {
   printBlankLine();
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  display_Update();
+  showPressButtonAndUpdate();
 #ifdef PC_MENU
   PcConsole.println(F("[Control] about"));
   PcLink::menuReady();
@@ -2434,9 +2420,7 @@ void savetofile() {
   myFile.print(cal_factor);
 
   // Close the file:
-  closeCurrentFile();
-  printDoneLine();
-  display_Update();
+  closeAndShowDone();
   delay(1000);
   resetArduino();
 }
@@ -2808,9 +2792,7 @@ void print_Error(int errorMessage) {
 }
 
 void _print_FatalError(void) {
-  printBlankLine();
-  promptAndWaitForButton();
-  resetArduino();
+  promptAndResetArduino();
 }
 
 void print_FatalError(const __FlashStringHelper* errorMessage) {
@@ -3221,6 +3203,106 @@ bool openNamedOutputFile() {
 
 void printBlankLine() {
   println_Msg(FS(FSTRING_EMPTY));
+}
+
+
+/* Compact shared UI/storage sequences. Keep operation order unchanged. */
+void __attribute__((noinline)) showVerificationErrorCount(unsigned long errors) {
+  print_STR(error_STR, 0);
+  print_Msg(errors);
+  printBytesLine();
+  reportVerificationError();
+}
+
+void __attribute__((noinline)) browseRootFileAndClear() {
+  filePath[0] = '\0';
+  changeToStorageRoot();
+  fileBrowser(FS(FSTRING_SELECT_FILE));
+  display_Clear();
+}
+
+void __attribute__((noinline)) closeAndShowDone() {
+  closeCurrentFile();
+  printDoneLine();
+  display_Update();
+}
+
+void __attribute__((noinline)) showWritingFilePath() {
+  print_Msg(FS(SharedFlashText::textWriting));
+  println_Msg(filePath);
+  display_Update();
+}
+
+void __attribute__((noinline)) showWritingProgressFilePath() {
+  println_Msg(FS(SharedFlashText::writingProgress));
+  println_Msg(filePath);
+  display_Update();
+}
+
+void __attribute__((noinline)) clearAndUpdateDisplay() {
+  display_Clear();
+  display_Update();
+}
+
+void __attribute__((noinline)) showDoneAndUpdate() {
+  printDoneLine();
+  display_Update();
+}
+
+void __attribute__((noinline)) showOkAndUpdate() {
+  printOkLine();
+  display_Update();
+}
+
+void __attribute__((noinline)) showOpenFileErrorAndUpdate() {
+  print_STR(open_file_STR, 1);
+  display_Update();
+}
+
+void __attribute__((noinline)) showVerifyingAndUpdate() {
+  print_STR(verifying_STR, 0);
+  display_Update();
+}
+
+void __attribute__((noinline)) showEraseFailed() {
+  println_Msg(FS(SharedFlashText::textNotEmpty));
+  print_FatalError(FS(SharedFlashText::textEraseFailed));
+}
+
+void __attribute__((noinline)) showErasingAndUpdate() {
+  println_Msg(FS(SharedFlashText::textErasing));
+  display_Update();
+}
+
+void __attribute__((noinline)) showPressButtonAndUpdate() {
+  printPressButtonPrompt();
+  display_Update();
+}
+
+void __attribute__((noinline)) showVerifiedAndUpdate() {
+  println_Msg(FS(SharedFlashText::textVerifiedOK));
+  display_Update();
+}
+
+void __attribute__((noinline)) showBlankCheckAndUpdate() {
+  println_Msg(FS(SharedFlashText::blankCheckProgress));
+  display_Update();
+}
+
+void __attribute__((noinline)) promptAndResetArduino() {
+  printBlankLine();
+  promptAndWaitForButton();
+  resetArduino();
+}
+
+void __attribute__((noinline)) resetFileBrowserToRoot() {
+  filePath[0] = '\0';
+  changeToStorageRoot();
+}
+
+void __attribute__((noinline)) showFilePathAndUpdate() {
+  println_Msg(filePath);
+  display_Update();
 }
 
 void readerConnectionDisplayRefresh() {

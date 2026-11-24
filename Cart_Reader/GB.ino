@@ -77,8 +77,7 @@ static const char* const menuOptionsGBDatel[] PROGMEM = { MegaMemRead, MegaMemWr
 #if defined(ENABLE_FLASH)
 bool gbxFlashCFI() {
   // Flash CFI
-  display_Clear();
-  display_Update();
+  clearAndUpdateDisplay();
   setup_GB();
   mode = CORE_GB;
 
@@ -94,8 +93,7 @@ bool gbxFlashCFI() {
     display_Clear();
     println_Msg(F("Flashing failed, time out!"));
     // Prints string out of the common strings array either with or without newline
-    printPressButtonPrompt();
-    display_Update();
+    showPressButtonAndUpdate();
     return false;
   }
   return true;
@@ -104,8 +102,7 @@ bool gbxFlashCFI() {
 
 void feedbackPressAndReset() {
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  promptAndWaitForButton();
   resetArduino();
 }
 
@@ -149,15 +146,13 @@ void gbxMenu() {
   // wait for user choice to come back from the question box menu
   switch (gbType) {
     case 0:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_GB();
       mode = CORE_GB;
       break;
 
     case 1:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_GBA();
       mode = CORE_GBA;
       break;
@@ -276,8 +271,7 @@ void gbxMenu() {
 
             if (selectedMBC == 30) {
               //Flash GB Camera
-              display_Clear();
-              display_Update();
+              clearAndUpdateDisplay();
               setup_GB();
               mode = CORE_GB;
 
@@ -287,8 +281,7 @@ void gbxMenu() {
               //MBC3, standard command set, with erase
               writeFlash_GB(3, 0, 1);
               // Prints string out of the common strings array either with or without newline
-              printPressButtonPrompt();
-              updateDisplayAndWait();
+              promptAndWaitForButton();
 
               display_Clear();
               println_Msg(F("Please change the"));
@@ -298,8 +291,7 @@ void gbxMenu() {
               println_Msg(F("a second game"));
               printBlankLine();
               // Prints string out of the common strings array either with or without newline
-              printPressButtonPrompt();
-              updateDisplayAndWait();
+              promptAndWaitForButton();
 
               // Flash second bank without erase
               // Change working dir to root
@@ -314,8 +306,7 @@ void gbxMenu() {
             }
             else {
               //Flash repro
-              display_Clear();
-              display_Update();
+              clearAndUpdateDisplay();
               setup_GB();
               mode = CORE_GB;
 
@@ -378,13 +369,9 @@ void gbxMenu() {
                   unsigned long wrErrors;
                   wrErrors = verifySRAM_GB();
                   if (wrErrors == 0) {
-                    println_Msg(FS(SharedFlashText::textVerifiedOK));
-                    display_Update();
+                    showVerifiedAndUpdate();
                   } else {
-                    print_STR(error_STR, 0);
-                    print_Msg(wrErrors);
-                    printBytesLine();
-                    reportVerificationError();
+                    showVerificationErrorCount(wrErrors);
                   }
                   break;
                 }
@@ -403,8 +390,7 @@ void gbxMenu() {
 
         case 3:
           // Flash GB Smart
-          display_Clear();
-          display_Update();
+          clearAndUpdateDisplay();
           setup_GBSmart();
           mode = CORE_GB_GBSMART;
           break;
@@ -428,8 +414,7 @@ void gbxMenu() {
 
     case 3:
       // Flash GB Memory
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_GBM();
       mode = CORE_GBM;
       break;
@@ -443,8 +428,7 @@ void gbxMenu() {
       // RST(PH0) to H
       PORTH |= (1 << 0);
       mode = CORE_GB;
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       unsigned char gbPelican;
       // Copy menuOptions out of progmem
       gbPelican = chooseFlashMenuOption(FS(SharedFlashText::textSelectOperation), menuOptionsGBPelican, 2);
@@ -472,8 +456,7 @@ void gbxMenu() {
       // RST(PH0) to H
       PORTH |= (1 << 0);
       mode = CORE_GB;
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       unsigned char gbDatel;
       // Copy menuOptions out of progmem
       gbDatel = chooseFlashMenuOption(FS(SharedFlashText::textSelectOperation), menuOptionsGBDatel, 4);
@@ -566,13 +549,9 @@ void gbMenu() {
           unsigned long wrErrors;
           wrErrors = verifySRAM_GB();
           if (wrErrors == 0) {
-            println_Msg(FS(SharedFlashText::textVerifiedOK));
-            display_Update();
+            showVerifiedAndUpdate();
           } else {
-            print_STR(error_STR, 0);
-            print_Msg(wrErrors);
-            printBytesLine();
-            reportVerificationError();
+            showVerificationErrorCount(wrErrors);
           }
         }
       } else {
@@ -586,8 +565,7 @@ void gbMenu() {
       break;
   }
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  promptAndWaitForButton();
 }
 
 /******************************************
@@ -760,8 +738,7 @@ void showCartInfo_GB() {
     // Wait for user input
     printBlankLine();
     // Prints string out of the common strings array either with or without newline
-    printPressButtonPrompt();
-    updateDisplayAndWait();
+    promptAndWaitForButton();
   } else {
     print_FatalError(FS(SharedFlashText::textGAMEPAKERROR));
   }
@@ -1572,8 +1549,7 @@ void readSRAMFLASH_MBC6_GB() {
   closeCurrentFile();
 
   // Signal end of process
-  printOkLine();
-  display_Update();
+  showOkAndUpdate();
 }
 
 // Write RAM
@@ -1754,8 +1730,7 @@ void readEEPROM_MBC7_GB() {
   myFile.write(sdBuffer, lastByte);
   closeCurrentFile();
 
-  printDoneLine();
-  display_Update();
+  showDoneAndUpdate();
 }
 
 void writeEEPROM_MBC7_GB() {
@@ -1837,8 +1812,7 @@ void writeEEPROM_MBC7_GB() {
   writeByte_GB(0x4000, 0x00);
 
   // done
-  printDoneLine();
-  display_Update();
+  showDoneAndUpdate();
 }
 
 void sendMBC7EEPROM_Inst_GB(uint8_t op, uint8_t addr, uint16_t data) {
@@ -1940,10 +1914,7 @@ void busyCheck_GB(unsigned long address, byte data) {
 // A14-A21 connected to MBC5
 void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
   // Launch filebrowser
-  filePath[0] = '\0';
-  changeToStorageRoot();
-  fileBrowser(FS(FSTRING_SELECT_FILE));
-  display_Clear();
+  browseRootFileAndClear();
 
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
@@ -2079,8 +2050,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
           }
           for (int j = 0; j < 512; j++) {
             if (sdBuffer[j] != 0xFF) {
-              println_Msg(FS(SharedFlashText::textNotEmpty));
-              print_FatalError(FS(SharedFlashText::textEraseFailed));
+              showEraseFailed();
             }
           }
         }
@@ -2291,8 +2261,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
     }
 
     // Verify flashrom
-    print_STR(verifying_STR, 0);
-    display_Update();
+    showVerifyingAndUpdate();
 
     // Go back to file beginning
     rewindCurrentFile();
@@ -2375,8 +2344,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
     closeCurrentFile();
 
     if (writeErrors == 0) {
-      printOkLine();
-      display_Update();
+      showOkAndUpdate();
     } else {
       println_Msg(FS(SharedFlashText::textError));
       print_Msg(writeErrors);
@@ -2384,8 +2352,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
       print_FatalError(did_not_verify_STR);
     }
   } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
+    showOpenFileErrorAndUpdate();
   }
 }
 
@@ -2594,8 +2561,7 @@ bool writeCFI_GB() {
         }
         for (int j = 0; j < 512; j++) {
           if (sdBuffer[j] != 0xFF) {
-            println_Msg(FS(SharedFlashText::textNotEmpty));
-            print_FatalError(FS(SharedFlashText::textEraseFailed));
+            showEraseFailed();
           }
         }
       }
@@ -2704,17 +2670,12 @@ bool writeCFI_GB() {
     closeCurrentFile();
 
     if (writeErrors == 0) {
-      printOkLine();
-      display_Update();
+      showOkAndUpdate();
     } else {
-      print_STR(error_STR, 0);
-      print_Msg(writeErrors);
-      printBytesLine();
-      reportVerificationError();
+      showVerificationErrorCount(writeErrors);
     }
   } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
+    showOpenFileErrorAndUpdate();
   }
   return true;
 }
@@ -2842,10 +2803,7 @@ void send28LF040Potection_GB(bool enable) {
 // Write Pelican GBC Device - All Brainboys, MonsterBrains, Codebreakers
 void writePelican_GB() {
   // Launch filebrowser
-  filePath[0] = '\0';
-  changeToStorageRoot();
-  fileBrowser(FS(FSTRING_SELECT_FILE));
-  display_Clear();
+  browseRootFileAndClear();
 
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
@@ -2936,8 +2894,7 @@ void writePelican_GB() {
     }
 
     // Blankcheck
-    println_Msg(FS(SharedFlashText::blankCheckProgress));
-    display_Update();
+    showBlankCheckAndUpdate();
 
     // Read x number of banks
     for (word currBank = 0; currBank < romBanks; currBank++) {
@@ -2953,8 +2910,7 @@ void writePelican_GB() {
         }
         for (int j = 0; j < 512; j++) {
           if (sdBuffer[j] != 0xFF) {
-            println_Msg(FS(SharedFlashText::textNotEmpty));
-            print_FatalError(FS(SharedFlashText::textEraseFailed));
+            showEraseFailed();
           }
         }
       }
@@ -3051,8 +3007,7 @@ void writePelican_GB() {
   }
 
   display_Clear();
-  print_STR(verifying_STR, 0);
-  display_Update();
+  showVerifyingAndUpdate();
 
   // Go back to file beginning
   rewindCurrentFile();
@@ -3207,10 +3162,7 @@ void readMegaMem_GB() {
 // Read Mega Memory Card Rom and Save Backup Data
 void writeMegaMem_GB() {
   // Write Datel Mega Memory Card Save Storage Chip SST28LF040
-  filePath[0] = '\0';
-  changeToStorageRoot();
-  fileBrowser(FS(FSTRING_SELECT_FILE));
-  display_Clear();
+  browseRootFileAndClear();
 
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
@@ -3268,8 +3220,7 @@ void writeMegaMem_GB() {
   }
 
   // Blankcheck
-  println_Msg(FS(SharedFlashText::blankCheckProgress));
-  display_Update();
+  showBlankCheckAndUpdate();
 
   // Read x number of banks
   for (word currBank = 0; currBank < romBanks; currBank++) {
@@ -3285,8 +3236,7 @@ void writeMegaMem_GB() {
       }
       for (int j = 0; j < 512; j++) {
         if (sdBuffer[j] != 0xFF) {
-          println_Msg(FS(SharedFlashText::textNotEmpty));
-          print_FatalError(FS(SharedFlashText::textEraseFailed));
+          showEraseFailed();
         }
       }
     }
@@ -3374,8 +3324,7 @@ void writeMegaMem_GB() {
   }
 
   display_Clear();
-  print_STR(verifying_STR, 0);
-  display_Update();
+  showVerifyingAndUpdate();
 
   // Go back to file beginning
   rewindCurrentFile();
@@ -3540,10 +3489,7 @@ void writeGameshark_GB() {
   }
 
   // Launch filebrowser
-  filePath[0] = '\0';
-  changeToStorageRoot();
-  fileBrowser(FS(FSTRING_SELECT_FILE));
-  display_Clear();
+  browseRootFileAndClear();
 
   byte byte1;
   bool toggle = true;
@@ -3568,8 +3514,7 @@ void writeGameshark_GB() {
   }
 
   // Blankcheck
-  println_Msg(FS(SharedFlashText::blankCheckProgress));
-  display_Update();
+  showBlankCheckAndUpdate();
 
   // Read x number of banks
   for (word currBank = 0; currBank < romBanks; currBank++) {
@@ -3585,8 +3530,7 @@ void writeGameshark_GB() {
       }
       for (int j = 0; j < 512; j++) {
         if (sdBuffer[j] != 0xFF) {
-          println_Msg(FS(SharedFlashText::textNotEmpty));
-          print_FatalError(FS(SharedFlashText::textEraseFailed));
+          showEraseFailed();
         }
       }
     }
@@ -3638,8 +3582,7 @@ void writeGameshark_GB() {
   }
 
   display_Clear();
-  print_STR(verifying_STR, 0);
-  display_Update();
+  showVerifyingAndUpdate();
 
   // Go back to file beginning
   rewindCurrentFile();

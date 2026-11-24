@@ -72,8 +72,7 @@ void gbaMenu() {
       save_log();
 #endif
       // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-      updateDisplayAndWait();
+      promptAndWaitForButton();
       break;
 
     case 1:
@@ -125,8 +124,7 @@ void gbaMenu() {
       }
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-      updateDisplayAndWait();
+      promptAndWaitForButton();
       break;
 
     case 2:
@@ -239,8 +237,7 @@ void gbaMenu() {
       setROM_GBA();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-      updateDisplayAndWait();
+      promptAndWaitForButton();
       break;
 
     case 3:
@@ -264,8 +261,7 @@ void GBAReproMenu() {
   flashRepro_GBA(0);
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  promptAndWaitForButton();
   resetArduino();
 }
 
@@ -316,9 +312,7 @@ void repro369in1Menu() {
       resetArduino();
       break;
   }
-  printBlankLine();
-  promptAndWaitForButton();
-  resetArduino();
+  promptAndResetArduino();
 }
 #endif
 
@@ -381,8 +375,7 @@ void setup_GBA() {
   // Wait for user input
   println_Msg("");
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  promptAndWaitForButton();
 }
 
 #if defined(ENABLE_FLASH)
@@ -418,10 +411,8 @@ static void printFlashTypeAndWait(const __FlashStringHelper* caption) {
   println_Msg(caption);
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
-  display_Clear();
-  display_Update();
+  promptAndWaitForButton();
+  clearAndUpdateDisplay();
 }
 
 void setROM_GBA() {
@@ -879,8 +870,7 @@ void getCartInfo_GBA() {
       print_Error(FS(SharedFlashText::textChecksumError));
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-      updateDisplayAndWait();
+      promptAndWaitForButton();
     }
 
     /* Convert saveTypeStr to saveType
@@ -1203,14 +1193,12 @@ void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   closeCurrentFile();
 
   // Signal end of process
-  printDoneLine();
-  display_Update();
+  showDoneAndUpdate();
 }
 
 void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
-    filePath[0] = '\0';
-    changeToStorageRoot();
+    resetFileBrowserToRoot();
     fileBrowser(FS(SharedFlashText::textSelectSrmFile));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
@@ -1268,13 +1256,9 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
     closeCurrentFile();
 
     if (writeErrors == 0) {
-      println_Msg(FS(SharedFlashText::textVerifiedOK));
-      display_Update();
+      showVerifiedAndUpdate();
     } else {
-      print_STR(error_STR, 0);
-      print_Msg(writeErrors);
-      printBytesLine();
-      reportVerificationError();
+      showVerificationErrorCount(writeErrors);
     }
 
     return writeErrors;
@@ -1341,8 +1325,7 @@ void readFRAM_GBA(unsigned long framSize) {
   closeCurrentFile();
 
   // Signal end of process
-  printDoneLine();
-  display_Update();
+  showDoneAndUpdate();
 }
 
 // Write file to SRAM
@@ -1361,8 +1344,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
   PORTH &= ~((1 << 0) | (1 << 5));
 
   if (browseFile) {
-    filePath[0] = '\0';
-    changeToStorageRoot();
+    resetFileBrowserToRoot();
     fileBrowser(FS(SharedFlashText::textSelectSrmFile));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
@@ -1725,8 +1707,7 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, bool cl
   PORTH |= (1 << 0);
 
   // Signal end of process
-  printDoneLine();
-  display_Update();
+  showDoneAndUpdate();
 }
 
 void busyCheck_GBA(uint16_t currByte) {
@@ -1753,8 +1734,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
   DDRC = 0xFF;
 
   if (browseFile) {
-    filePath[0] = '\0';
-    changeToStorageRoot();
+    resetFileBrowserToRoot();
     fileBrowser(FS(SharedFlashText::textSelectFlaFile));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
@@ -1810,9 +1790,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
     PORTH |= (1 << 0);
 
     // Close the file:
-    closeCurrentFile();
-    printDoneLine();
-    display_Update();
+    closeAndShowDone();
 
   } else {
     println_Msg(FS(SharedFlashText::textError));
@@ -1881,8 +1859,7 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
 // Write eeprom from file
 void writeEeprom_GBA(word eepSize) {
   // Launch Filebrowser
-  filePath[0] = '\0';
-  changeToStorageRoot();
+  resetFileBrowserToRoot();
   fileBrowser(FS(SharedFlashText::textSelectEepFile));
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
@@ -1907,9 +1884,7 @@ void writeEeprom_GBA(word eepSize) {
     }
 
     // Close the file:
-    closeCurrentFile();
-    printDoneLine();
-    display_Update();
+    closeAndShowDone();
   } else {
     println_Msg(FS(SharedFlashText::textError));
     reportMissingFile();
@@ -2186,13 +2161,9 @@ unsigned long verifyEEP_GBA(word eepSize) {
   closeCurrentFile();
 
   if (wrError == 0) {
-    println_Msg(FS(SharedFlashText::textVerifiedOK));
-    display_Update();
+    showVerifiedAndUpdate();
   } else {
-    print_STR(error_STR, 0);
-    print_Msg(wrError);
-    printBytesLine();
-    reportVerificationError();
+    showVerificationErrorCount(wrError);
   }
 
   return wrError;
@@ -2974,15 +2945,12 @@ void flashRepro_GBA(boolean option) {
     printBlankLine();
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
-    printPressButtonPrompt();
-    updateDisplayAndWait();
+    promptAndWaitForButton();
 
     // Launch file browser
-    filePath[0] = '\0';
-    changeToStorageRoot();
+    resetFileBrowserToRoot();
     fileBrowser(F("Select gba file"));
-    display_Clear();
-    display_Update();
+    clearAndUpdateDisplay();
 
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
@@ -2998,25 +2966,21 @@ void flashRepro_GBA(boolean option) {
 
       // Erase needed sectors
       if (flashid == 0x8802) {
-        println_Msg(FS(SharedFlashText::textErasing));
-        display_Update();
+        showErasingAndUpdate();
         eraseIntel4000_GBA();
         resetIntel_GBA(0x200000);
       } else if (flashid == 0x8816) {
-        println_Msg(FS(SharedFlashText::textErasing));
-        display_Update();
+        showErasingAndUpdate();
         eraseIntel4400_GBA();
         resetIntel_GBA(0x200000);
       } else if (flashid == 0x8812) {
         if (option) {
           blockNum = selectBlockNumber(1);
           display_Clear();
-          println_Msg(FS(SharedFlashText::textErasing));
-          display_Update();
+          showErasingAndUpdate();
           erase369in1(blockNum);
         } else {
-          println_Msg(FS(SharedFlashText::textErasing));
-          display_Update();
+          showErasingAndUpdate();
           erase369in1(0);
         }
         // Reset or blankcheck will fail
@@ -3026,8 +2990,7 @@ void flashRepro_GBA(boolean option) {
         //print_FatalError(F("Sector Protected"));
         //}
         //else {
-        println_Msg(FS(SharedFlashText::textErasing));
-        display_Update();
+        showErasingAndUpdate();
         if ((romType == 0xC2) || (romType == 0x89) || (romType == 0x20)) {
           //MX29GL128E
           //PC28F256M29 (0x89)
@@ -3044,9 +3007,7 @@ void flashRepro_GBA(boolean option) {
       //if (blankcheckFlashrom_GBA()) {
       //println_Msg(FS(FSTRING_OK));
       //Write flashrom
-      print_Msg(FS(SharedFlashText::textWriting));
-      println_Msg(filePath);
-      display_Update();
+      showWritingFilePath();
 
       if ((flashid == 0x8802) || (flashid == 0x8816)) {
         writeIntel4000_GBA();
@@ -3073,8 +3034,7 @@ void flashRepro_GBA(boolean option) {
       closeCurrentFile();
       if (flashid != 0x8812) {
         // Verify
-        print_STR(verifying_STR, 0);
-        display_Update();
+        showVerifyingAndUpdate();
         if (flashid == 0x8802) {
           // Don't know the correct size so just take some guesses
           resetIntel_GBA(0x8000);
@@ -3094,8 +3054,7 @@ void flashRepro_GBA(boolean option) {
           delay(1000);
         }
         if (verifyFlashrom_GBA() == 1) {
-          printOkLine();
-          display_Update();
+          showOkAndUpdate();
         } else {
           print_FatalError(FS(SharedFlashText::textERROR));
         }

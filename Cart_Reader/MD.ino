@@ -244,30 +244,24 @@ void mdMenu() {
   // wait for user choice to come back from the question box menu
   switch (mdDev) {
     case 0:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_MD();
       mode = CORE_MD_CART;
       break;
 
     case 1:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_MD();
       mode = CORE_SEGA_CD;
       break;
 
 #ifdef ENABLE_FLASH
     case 2:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_MD();
       mode = CORE_MD_CART;
       // Change working dir to root
-      filePath[0] = '\0';
-      changeToStorageRoot();
-      fileBrowser(FS(FSTRING_SELECT_FILE));
-      display_Clear();
+      browseRootFileAndClear();
       // Setting CS(PH3) LOW
       PORTH &= ~(1 << 3);
 
@@ -304,20 +298,15 @@ void mdMenu() {
       // Set CS(PH3) HIGH
       PORTH |= (1 << 3);
       // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-      updateDisplayAndWait();
+      promptAndWaitForButton();
       break;
 
     case 3:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_MD();
       mode = CORE_MD_CART;
       // Change working dir to root
-      filePath[0] = '\0';
-      changeToStorageRoot();
-      fileBrowser(FS(FSTRING_SELECT_FILE));
-      display_Clear();
+      browseRootFileAndClear();
       sprintf(filePath, "%s/%s", filePath, fileName);
       // Setting CS(PH3) LOW
       PORTH &= ~(1 << 3);
@@ -335,8 +324,7 @@ void mdMenu() {
       // Set CS(PH3) HIGH
       PORTH |= (1 << 3);
       // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-      updateDisplayAndWait();
+      promptAndWaitForButton();
       break;
 
 #endif
@@ -420,10 +408,7 @@ void mdCartMenu() {
           println_Msg(FS(SharedFlashText::textSramVerifiedOK));
           display_Update();
         } else {
-          print_STR(error_STR, 0);
-          print_Msg(writeErrors);
-          printBytesLine();
-          reportVerificationError();
+          showVerificationErrorCount(writeErrors);
         }
       } else if (saveType == 4) {
         // Launch file browser
@@ -460,8 +445,7 @@ void mdCartMenu() {
       break;
   }
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  promptAndWaitForButton();
 }
 
 void segaCDMenu() {
@@ -500,8 +484,7 @@ void segaCDMenu() {
   }
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  promptAndWaitForButton();
 }
 
 /******************************************
@@ -1272,8 +1255,7 @@ void getCartInfo_MD() {
   // Wait for user input
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  promptAndWaitForButton();
 #endif
 }
 
@@ -1761,8 +1743,7 @@ void readROM_MD() {
   print_Msg(F("Internal checksum..."));
   display_Update();
   if (chksum == calcCKS) {
-    printOkLine();
-    display_Update();
+    showOkAndUpdate();
   } else {
     println_Msg(FS(SharedFlashText::textError));
     char calcsumStr[5];
@@ -1776,8 +1757,7 @@ void readROM_MD() {
   if (SnKmode >= 2) {
     print_Msg(F("Lock-on checksum..."));
     if (chksumLockon == calcCKSLockon) {
-      printOkLine();
-      display_Update();
+      showOkAndUpdate();
     } else {
       print_Msg(FS(SharedFlashText::textError));
       char calcsumStr[5];
@@ -1790,8 +1770,7 @@ void readROM_MD() {
   if (SnKmode == 3) {
     print_Msg(F("Adittional checksum..."));
     if (chksumSonic2 == calcCKSSonic2) {
-      printOkLine();
-      display_Update();
+      showOkAndUpdate();
     } else {
       print_Msg(FS(SharedFlashText::textError));
       char calcsumStr[5];
@@ -1839,9 +1818,7 @@ void writeSram_MD() {
 
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(FS(SharedFlashText::writingProgress));
-  println_Msg(filePath);
-  display_Update();
+  showWritingProgressFilePath();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -1878,9 +1855,7 @@ void writeSram_MD() {
       print_Error(FS(SharedFlashText::textUnknownSaveType));
 
     // Close the file:
-    closeCurrentFile();
-    printDoneLine();
-    display_Update();
+    closeAndShowDone();
   } else {
     fatalSdError();
   }
@@ -2078,8 +2053,7 @@ void write29F1610_MD() {
     // Close the file:
     closeCurrentFile();
   } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
+    showOpenFileErrorAndUpdate();
   }
 }
 
@@ -2158,8 +2132,7 @@ void write29GL_MD() {
     // Close the file:
     closeCurrentFile();
   } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
+    showOpenFileErrorAndUpdate();
   }
 }
 
@@ -2263,16 +2236,12 @@ void verifyFlash_MD() {
       println_Msg(FS(SharedFlashText::textFlashromVerifiedOK));
       display_Update();
     } else {
-      print_STR(error_STR, 0);
-      print_Msg(blank);
-      printBytesLine();
-      reportVerificationError();
+      showVerificationErrorCount(blank);
     }
     // Close the file:
     closeCurrentFile();
   } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
+    showOpenFileErrorAndUpdate();
   }
 }
 
@@ -2882,9 +2851,7 @@ void writeEEP_MD() {
 
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(FS(SharedFlashText::writingProgress));
-  println_Msg(filePath);
-  display_Update();
+  showWritingProgressFilePath();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -2912,8 +2879,7 @@ void writeEEP_MD() {
     closeCurrentFile();
     printBlankLine();
     display_Clear();
-    printDoneLine();
-    display_Update();
+    showDoneAndUpdate();
   } else {
     fatalSdError();
   }
@@ -2963,9 +2929,7 @@ void writeBram_MD() {
 
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(FS(SharedFlashText::writingProgress));
-  println_Msg(filePath);
-  display_Update();
+  showWritingProgressFilePath();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -2984,8 +2948,7 @@ void writeBram_MD() {
     closeCurrentFile();
     printBlankLine();
     display_Clear();
-    printDoneLine();
-    display_Update();
+    showDoneAndUpdate();
   } else {
     fatalSdError();
   }
@@ -3201,8 +3164,7 @@ void verifyFlashCFI_MD() {
 
     closeCurrentFile();
   } else {
-    print_STR(open_file_STR, 1);
-    display_Update();
+    showOpenFileErrorAndUpdate();
   }
 }
 
@@ -3230,10 +3192,7 @@ void verifyFlashCFIChip_MD(byte currChip, unsigned long toVerify) {
     println_Msg(FS(SharedFlashText::textFlashromVerifiedOK));
     display_Update();
   } else {
-    print_STR(error_STR, 0);
-    print_Msg(blank);
-    printBytesLine();
-    reportVerificationError();
+    showVerificationErrorCount(blank);
   }
 }
 

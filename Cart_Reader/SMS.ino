@@ -491,8 +491,7 @@ void getCartInfo_SMS() {
   // Wait for user input
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  promptAndWaitForButton();
 #endif
 
   // Turn off LED
@@ -690,8 +689,7 @@ void readSRAM_SMS() {
   }
   // Close file
   closeCurrentFile();
-  printPressButtonPrompt();
-  display_Update();
+  showPressButtonAndUpdate();
 }
 
 //**********************************************
@@ -708,8 +706,7 @@ void writeSRAM_SMS() {
 
     display_Clear();
     println_Msg(F("Restoring from "));
-    println_Msg(filePath);
-    display_Update();
+    showFilePathAndUpdate();
 
     if (openSelectedFileForRead()) {
       // Get SRAM size from file, with a maximum of 32KB
@@ -735,8 +732,7 @@ void writeSRAM_SMS() {
 
       // Close file
       closeCurrentFile();
-      printPressButtonPrompt();
-      display_Update();
+      showPressButtonAndUpdate();
     } else {
       fatalSdError();
     }

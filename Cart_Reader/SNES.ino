@@ -260,8 +260,7 @@ void reproMenu() {
 
     case 2:
       // LoRom
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       mapping = 1;
       setup_Flash8();
       id_Flash8();
@@ -271,8 +270,7 @@ void reproMenu() {
 
     case 3:
       // HiRom
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       mapping = 2;
       setup_Flash8();
       id_Flash8();
@@ -282,8 +280,7 @@ void reproMenu() {
 
     case 4:
       // ExLoRom
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       mapping = 124;
       setup_Flash8();
       id_Flash8();
@@ -293,8 +290,7 @@ void reproMenu() {
 
     case 5:
       // ExHiRom
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       mapping = 224;
       setup_Flash8();
       id_Flash8();
@@ -320,16 +316,14 @@ void snsMenu() {
   // wait for user choice to come back from the question box menu
   switch (snsCart) {
     case 0:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_Snes();
       mode = CORE_SNES;
       break;
 
 #ifdef ENABLE_SFM
     case 1:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_SFM();
       mode = CORE_SFM;
       break;
@@ -337,8 +331,7 @@ void snsMenu() {
 
 #ifdef ENABLE_SV
     case 2:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_SV();
       mode = CORE_SV;
       break;
@@ -346,8 +339,7 @@ void snsMenu() {
 
 #ifdef ENABLE_ST
     case 3:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_ST();
       mode = CORE_ST;
       break;
@@ -355,8 +347,7 @@ void snsMenu() {
 
 #ifdef ENABLE_GPC
     case 4:
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       setup_GPC();
       mode = CORE_GPC;
       break;
@@ -437,13 +428,9 @@ void snesMenu() {
         unsigned long wrErrors;
         wrErrors = verifySRAM();
         if (wrErrors == 0) {
-          println_Msg(FS(SharedFlashText::textVerifiedOK));
-          display_Update();
+          showVerifiedAndUpdate();
         } else {
-          print_STR(error_STR, 0);
-          print_Msg(wrErrors);
-          printBytesLine();
-          reportVerificationError();
+          showVerificationErrorCount(wrErrors);
         }
       } else {
         display_Clear();
@@ -474,10 +461,7 @@ void snesMenu() {
           println_Msg(F("Restored OK"));
           display_Update();
         } else {
-          print_STR(error_STR, 0);
-          print_Msg(wrErrors);
-          printBytesLine();
-          reportVerificationError();
+          showVerificationErrorCount(wrErrors);
         }
       } else {
         display_Clear();
@@ -505,8 +489,7 @@ void snesMenu() {
 
     case 5:
       confMenuManual();
-      display_Clear();
-      display_Update();
+      clearAndUpdateDisplay();
       break;
 
     case 6:
@@ -516,8 +499,7 @@ void snesMenu() {
   }
   //printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  promptAndWaitForButton();
 }
 
 // Menu for manual configuration
@@ -1024,8 +1006,7 @@ void getCartInfo_SNES() {
   // Wait for user input
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  promptAndWaitForButton();
 #endif
 #ifdef ENABLE_SERIAL
   println_Msg(FS(FSTRING_SPACE));
@@ -2019,8 +2000,7 @@ void visitSramBanks_SNES(byte bank, long start, long capacity, long size,
 
 void writeSRAM(boolean browseFile) {
   if (browseFile) {
-    filePath[0] = '\0';
-    changeToStorageRoot();
+    resetFileBrowserToRoot();
     fileBrowser(FS(SharedFlashText::textSelectSrmFile));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
@@ -2288,10 +2268,7 @@ unsigned long verifySRAM() {
       if (writeErrors == 0) {
         println_Msg(FS(SharedFlashText::textVerifiedOK));
       } else {
-        print_STR(error_STR, 0);
-        print_Msg(writeErrors);
-        printBytesLine();
-        reportVerificationError();
+        showVerificationErrorCount(writeErrors);
       }
       updateDisplayAndWait();
 

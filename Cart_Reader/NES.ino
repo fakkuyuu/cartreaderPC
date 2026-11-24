@@ -465,8 +465,7 @@ void nesMenu() {
       resetROM();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-      updateDisplayAndWait();
+      promptAndWaitForButton();
       break;
 
     // Write RAM
@@ -475,8 +474,7 @@ void nesMenu() {
       resetROM();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-      updateDisplayAndWait();
+      promptAndWaitForButton();
       break;
 
     // Change Mapper
@@ -536,8 +534,7 @@ void nesChipMenu() {
       resetROM();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-      updateDisplayAndWait();
+      promptAndWaitForButton();
       break;
 
     // Read CHR
@@ -547,8 +544,7 @@ void nesChipMenu() {
       resetROM();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-      updateDisplayAndWait();
+      promptAndWaitForButton();
       break;
 
     // Return to Main Menu
@@ -575,8 +571,7 @@ void nesFlashMenu() {
         println_Msg(FS(SharedFlashText::textCanTWriteToThisCartridge));
         printBlankLine();
         // Prints string out of the common strings array either with or without newline
-        printPressButtonPrompt();
-        display_Update();
+        showPressButtonAndUpdate();
       }
       wait();
       break;
@@ -591,8 +586,7 @@ void nesFlashMenu() {
         println_Msg(FS(SharedFlashText::textCanTWriteToThisCartridge));
         println_Msg(mapper);
         // Prints string out of the common strings array either with or without newline
-        printPressButtonPrompt();
-        updateDisplayAndWait();
+        promptAndWaitForButton();
       }
 
       break;
@@ -2059,8 +2053,7 @@ void checkStatus_NES() {
   printNESSettings();
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  promptAndWaitForButton();
 }
 
 static void printNESSettings(void) {
@@ -2202,8 +2195,7 @@ static void dumpSequentialCHRBanks(uint16_t count, uint16_t reg, uint8_t shift,
 
 void readPRG(bool readrom) {
   if (!readrom) {
-    display_Clear();
-    display_Update();
+    clearAndUpdateDisplay();
 
     rgbLed(blue_color);
     set_address(0);
@@ -3548,8 +3540,7 @@ void readPRG(bool readrom) {
 
 void readCHR(bool readrom) {
   if (!readrom) {
-    display_Clear();
-    display_Update();
+    clearAndUpdateDisplay();
   }
 
   uint16_t banks;
@@ -4531,8 +4522,7 @@ static void writeNesSaveLog(uint32_t saveSize, uint32_t saveCrc) {
 }
 
 void readRAM() {
-  display_Clear();
-  display_Update();
+  clearAndUpdateDisplay();
 
   uint16_t banks;
 
