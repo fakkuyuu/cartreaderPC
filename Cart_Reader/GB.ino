@@ -2670,6 +2670,34 @@ static void dumpAccessoryRange_GB(word& startAddress, word finalAddress, uint32_
   }
 }
 
+static void identifyPelicanSstFlash_GB() __attribute__((noinline));
+static void identifyPelicanSstFlash_GB() {
+  writeByteSRAM_GB(0xA000, 0x2);
+  writeByte_GB(0x3555, 0xFF);
+  delay(100);
+  writeByteSRAM_GB(0xA000, 0x2);
+  writeByte_GB(0x3555, 0x90);
+  delay(100);
+  flashid = readByte_GB(0) << 8;
+  flashid |= readByte_GB(1);
+  writeByteSRAM_GB(0xA000, 0x2);
+  writeByte_GB(0x3555, 0xFF);
+  delay(100);
+  if (flashid != 0xBF04) {
+    showUnknownFlashIdAndWait();
+    mainMenu();
+  }
+}
+
+static void showAccessoryVerifyResult_GB() __attribute__((noinline));
+static void showAccessoryVerifyResult_GB() {
+  if (writeErrors == 0) {
+    showTurnOffPowerAndUpdate();
+  } else {
+    showFatalWriteVerification();
+  }
+}
+
 void readPelican_GB() {
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("GB", "ROM", "Pelican", "GB");
@@ -2703,21 +2731,7 @@ void readPelican_GB() {
     romBanks = 32;
     display_Update();
   } else {
-    writeByteSRAM_GB(0xA000, 0x2);
-    writeByte_GB(0x3555, 0xFF);
-    delay(100);
-    writeByteSRAM_GB(0xA000, 0x2);
-    writeByte_GB(0x3555, 0x90);
-    delay(100);
-    flashid = readByte_GB(0) << 8;
-    flashid |= readByte_GB(1);
-    writeByteSRAM_GB(0xA000, 0x2);
-    writeByte_GB(0x3555, 0xFF);
-    delay(100);
-    if (flashid != 0xBF04) {
-      showUnknownFlashIdAndWait();
-      mainMenu();
-    }
+    identifyPelicanSstFlash_GB();
   }
 
   if (flashid == 0xBF04) {
@@ -2811,21 +2825,7 @@ void writePelican_GB() {
       sendW29C020CommandSufix_GB(0x10);
       delay(1000);
     } else {
-      writeByteSRAM_GB(0xA000, 0x2);
-      writeByte_GB(0x3555, 0xFF);
-      delay(100);
-      writeByteSRAM_GB(0xA000, 0x2);
-      writeByte_GB(0x3555, 0x90);
-      delay(100);
-      flashid = readByte_GB(0) << 8;
-      flashid |= readByte_GB(1);
-      writeByteSRAM_GB(0xA000, 0x2);
-      writeByte_GB(0x3555, 0xFF);
-      delay(100);
-      if (flashid != 0xBF04) {
-        showUnknownFlashIdAndWait();
-        mainMenu();
-      }
+      identifyPelicanSstFlash_GB();
     }
 
     if (flashid == 0xBF04) {
@@ -2976,11 +2976,7 @@ void writePelican_GB() {
   // Close the file:
   closeCurrentFile();
 
-  if (writeErrors == 0) {
-    showTurnOffPowerAndUpdate();
-  } else {
-    showFatalWriteVerification();
-  }
+  showAccessoryVerifyResult_GB();
 }
 
 bool isToggle(byte byte1, byte byte2) {
@@ -3241,11 +3237,7 @@ void writeMegaMem_GB() {
   // Close the file:
   closeCurrentFile();
 
-  if (writeErrors == 0) {
-    showTurnOffPowerAndUpdate();
-  } else {
-    showFatalWriteVerification();
-  }
+  showAccessoryVerifyResult_GB();
 }
 
 /***************************************************
@@ -3463,11 +3455,7 @@ void writeGameshark_GB() {
   // Close the file:
   closeCurrentFile();
 
-  if (writeErrors == 0) {
-    showTurnOffPowerAndUpdate();
-  } else {
-    showFatalWriteVerification();
-  }
+  showAccessoryVerifyResult_GB();
 }
 
 #endif

@@ -3636,6 +3636,29 @@ void idFlashrom_N64() {
 }
 
 // Erase Intel flashrom
+// Keep the identical unlock, erase and ready-poll sequence for each block.
+static void eraseIntel4400Block_N64(unsigned long blockAddress) __attribute__((noinline));
+static void eraseIntel4400Block_N64(unsigned long blockAddress) {
+  // Unlock block command
+  setAddress_N64(blockAddress);
+  writeWord_N64(0x60);
+  setAddress_N64(blockAddress);
+  writeWord_N64(0xD0);
+  // Erase command
+  setAddress_N64(blockAddress);
+  writeWord_N64(0x20);
+  setAddress_N64(blockAddress);
+  writeWord_N64(0xD0);
+
+  // Read the status register
+  setAddress_N64(blockAddress);
+  word statusReg = readWord_N64();
+  while ((statusReg | 0xFF7F) != 0xFFFF) {
+    setAddress_N64(blockAddress);
+    statusReg = readWord_N64();
+  }
+}
+
 void eraseIntel4400_N64() {
   unsigned long flashBase = romBase;
 
@@ -3648,46 +3671,12 @@ void eraseIntel4400_N64() {
 
   // Erase 4 blocks with 16kwords each
   for (unsigned long currBlock = 0x0; currBlock < 0x1FFFF; currBlock += 0x8000) {
-    // Unlock block command
-    setAddress_N64(flashBase + currBlock);
-    writeWord_N64(0x60);
-    setAddress_N64(flashBase + currBlock);
-    writeWord_N64(0xD0);
-    // Erase command
-    setAddress_N64(flashBase + currBlock);
-    writeWord_N64(0x20);
-    setAddress_N64(flashBase + currBlock);
-    writeWord_N64(0xD0);
-
-    // Read the status register
-    setAddress_N64(flashBase + currBlock);
-    word statusReg = readWord_N64();
-    while ((statusReg | 0xFF7F) != 0xFFFF) {
-      setAddress_N64(flashBase + currBlock);
-      statusReg = readWord_N64();
-    }
+    eraseIntel4400Block_N64(flashBase + currBlock);
   }
 
   // Erase up to 255 blocks with 64kwords each
   for (unsigned long currBlock = 0x20000; currBlock < lastBlock; currBlock += 0x1FFFF) {
-    // Unlock block command
-    setAddress_N64(flashBase + currBlock);
-    writeWord_N64(0x60);
-    setAddress_N64(flashBase + currBlock);
-    writeWord_N64(0xD0);
-    // Erase command
-    setAddress_N64(flashBase + currBlock);
-    writeWord_N64(0x20);
-    setAddress_N64(flashBase + currBlock);
-    writeWord_N64(0xD0);
-
-    // Read the status register
-    setAddress_N64(flashBase + currBlock);
-    word statusReg = readWord_N64();
-    while ((statusReg | 0xFF7F) != 0xFFFF) {
-      setAddress_N64(flashBase + currBlock);
-      statusReg = readWord_N64();
-    }
+    eraseIntel4400Block_N64(flashBase + currBlock);
 
     // Blink led
     blinkLED();
@@ -3700,24 +3689,7 @@ void eraseIntel4400_N64() {
 
     // 255 blocks with 64kwords each
     for (unsigned long currBlock = 0x0; currBlock < 0x1FDFFFF; currBlock += 0x1FFFF) {
-      // Unlock block command
-      setAddress_N64(flashBase + currBlock);
-      writeWord_N64(0x60);
-      setAddress_N64(flashBase + currBlock);
-      writeWord_N64(0xD0);
-      // Erase command
-      setAddress_N64(flashBase + currBlock);
-      writeWord_N64(0x20);
-      setAddress_N64(flashBase + currBlock);
-      writeWord_N64(0xD0);
-
-      // Read the status register
-      setAddress_N64(flashBase + currBlock);
-      word statusReg = readWord_N64();
-      while ((statusReg | 0xFF7F) != 0xFFFF) {
-        setAddress_N64(flashBase + currBlock);
-        statusReg = readWord_N64();
-      }
+      eraseIntel4400Block_N64(flashBase + currBlock);
 
       // Blink led
       blinkLED();
@@ -3725,24 +3697,7 @@ void eraseIntel4400_N64() {
 
     // 4 blocks with 16kword each
     for (unsigned long currBlock = 0x1FE0000; currBlock < 0x1FFFFFF; currBlock += 0x8000) {
-      // Unlock block command
-      setAddress_N64(flashBase + currBlock);
-      writeWord_N64(0x60);
-      setAddress_N64(flashBase + currBlock);
-      writeWord_N64(0xD0);
-      // Erase command
-      setAddress_N64(flashBase + currBlock);
-      writeWord_N64(0x20);
-      setAddress_N64(flashBase + currBlock);
-      writeWord_N64(0xD0);
-
-      // Read the status register
-      setAddress_N64(flashBase + currBlock);
-      word statusReg = readWord_N64();
-      while ((statusReg | 0xFF7F) != 0xFFFF) {
-        setAddress_N64(flashBase + currBlock);
-        statusReg = readWord_N64();
-      }
+      eraseIntel4400Block_N64(flashBase + currBlock);
     }
   }
 }
