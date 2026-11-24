@@ -1,0 +1,28 @@
+{
+  "id": "parallel-001",
+  "base": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
+  "expected_base_flash": 214982,
+  "expected_base_ram": 6281,
+  "candidates": [
+    {
+      "id": "gb-mbc7-bits",
+      "head": "c881ea917367250530f4d64fe0b15965f644931b",
+      "path": "Cart_Reader/GB.ino"
+    },
+    {
+      "id": "md-eeprom-address",
+      "head": "3479a69a1d502fccfdac30be685278bcd630e10b",
+      "path": "Cart_Reader/MD.ino"
+    },
+    {
+      "id": "snes-special-lorom",
+      "head": "932f394570716d0fb17848772ca801f99e5f4c33",
+      "path": "Cart_Reader/SNES.ino"
+    },
+    {
+      "id": "n64-sram-verify",
+      "head": "5fbde3cf288764cf2b40421fd6cf1fbb99595337",
+      "path": "Cart_Reader/N64.ino"
+    }
+  ]
+}
