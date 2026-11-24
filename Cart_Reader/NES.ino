@@ -4469,6 +4469,13 @@ static void visitMmc1Sram_NES(word base, bool writing) {
   }
 }
 
+static void setMapper82SramAccess_NES(bool enabled) __attribute__((noinline));
+static void setMapper82SramAccess_NES(bool enabled) {
+  write_prg_byte(0x7EF7, enabled ? 0xCA : 0xFF);
+  write_prg_byte(0x7EF8, enabled ? 0x69 : 0xFF);
+  write_prg_byte(0x7EF9, enabled ? 0x84 : 0xFF);
+}
+
 void readRAM() {
   clearAndUpdateDisplay();
 
@@ -4558,15 +4565,11 @@ void readRAM() {
           break;
 
         case 82:                                                          // 5K
-          write_prg_byte(0x7EF7, 0xCA);                                   // PRG RAM ENABLE 0 ($6000-$67FF)
-          write_prg_byte(0x7EF8, 0x69);                                   // PRG RAM ENABLE 1 ($6800-$6FFF)
-          write_prg_byte(0x7EF9, 0x84);                                   // PRG RAM ENABLE 2 ($7000-$73FF)
+          setMapper82SramAccess_NES(true);
           for (size_t address = 0x0; address < 0x1400; address += 512) {  // PRG RAM 5K ($6000-$73FF)
             dumpMMC5RAM(base, address);
           }
-          write_prg_byte(0x7EF7, 0xFF);  // PRG RAM DISABLE 0 ($6000-$67FF)
-          write_prg_byte(0x7EF8, 0xFF);  // PRG RAM DISABLE 1 ($6800-$6FFF)
-          write_prg_byte(0x7EF9, 0xFF);  // PRG RAM DISABLE 2 ($7000-$73FF)
+          setMapper82SramAccess_NES(false);
           break;
 
         default:
@@ -4727,9 +4730,7 @@ void writeRAM() {
           break;
 
         case 82:                                                           // 5K
-          write_prg_byte(0x7EF7, 0xCA);                                    // PRG RAM ENABLE 0 ($6000-$67FF)
-          write_prg_byte(0x7EF8, 0x69);                                    // PRG RAM ENABLE 1 ($6800-$6FFF)
-          write_prg_byte(0x7EF9, 0x84);                                    // PRG RAM ENABLE 2 ($7000-$73FF)
+          setMapper82SramAccess_NES(true);
           for (size_t address = 0x0; address < 0x1400; address += 1024) {  // PRG RAM 5K ($6000-$73FF)
             readSdBufferBlock();
             uint8_t firstbyte = sdBuffer[0];
@@ -4740,9 +4741,7 @@ void writeRAM() {
               write_prg_byte(base + address + x + 512, sdBuffer[x]);
             write_prg_byte(base + address, firstbyte);  // REWRITE 1ST BYTE
           }
-          write_prg_byte(0x7EF7, 0xFF);  // PRG RAM DISABLE 0 ($6000-$67FF)
-          write_prg_byte(0x7EF8, 0xFF);  // PRG RAM DISABLE 1 ($6800-$6FFF)
-          write_prg_byte(0x7EF9, 0xFF);  // PRG RAM DISABLE 2 ($7000-$73FF)
+          setMapper82SramAccess_NES(false);
           break;
 
         default:
