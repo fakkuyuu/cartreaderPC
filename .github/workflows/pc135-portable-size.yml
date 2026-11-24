@@ -1,0 +1,81 @@
+name: Experimental Portable firmware size comparison
+
+on:
+  push:
+    branches: [experiment/pc135-size-reduction]
+    paths:
+      - '.github/workflows/pc135-portable-size.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Compare PC135 and experimental firmware using the bundled AVR tools
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $repo = $env:GITHUB_WORKSPACE
+          $temp = Join-Path $env:RUNNER_TEMP 'pc135-size'
+          New-Item -ItemType Directory -Path $temp | Out-Null
+          $archive = Join-Path $temp 'upstream.zip'
+          curl.exe --fail --location --retry 3 --output $archive 'https://github.com/sanni/cartreader/releases/download/V15.5/V15.5_Portable.zip'
+          if ((Get-FileHash -LiteralPath $archive).Hash -ne 'e39b323226cb4dc668e69a3e678926f3a9ad4ec7d2c5e48301bc55b5b293eab4') { throw 'Upstream archive hash mismatch' }
+          & "$env:ProgramFiles/7-Zip/7z.exe" x $archive "-o$temp" -y | Out-Host
+          $ide = Join-Path $temp 'V15.5_Portable/Arduino IDE'
+          $sketchbook = Join-Path $ide 'portable/sketchbook'
+          $gcc = @(Get-ChildItem -LiteralPath "$ide/hardware" -Filter avr-gcc.exe -Recurse -File)
+          if ($gcc.Count -ne 1) { throw "Expected one bundled avr-gcc, got $($gcc.Count)" }
+          $version = & $gcc[0].FullName --version
+          $version | Out-Host
+          if (($version -join ' ') -notmatch '15\.2') { throw 'Expected AVR GCC 15.2' }
+          $sizeTool = Join-Path $gcc[0].DirectoryName 'avr-size.exe'
+          $base = '3f86deb7cbdbc105c7070b8d3787f114651b363a'
+          $results = @()
+          foreach ($ref in @($base, $env:GITHUB_SHA)) {
+            $short = $ref.Substring(0,7)
+            $src = Join-Path $temp "src-$short"
+            $build = Join-Path $temp "build-$short"
+            $zip = Join-Path $temp "$short.zip"
+            New-Item -ItemType Directory -Path $src,$build | Out-Null
+            git -C $repo archive --format=zip "--output=$zip" $ref Cart_Reader
+            Expand-Archive -LiteralPath $zip -DestinationPath $src
+            $config = Join-Path $src 'Cart_Reader/Config.h'
+            $cfg = [IO.File]::ReadAllText($config)
+            $pattern = '(?m)^([ \t]*)//[ \t]*(#define[ \t]+HW3\b)'
+            if ([regex]::Matches($cfg,$pattern).Count -ne 1) { throw 'Expected one commented HW3 definition' }
+            [IO.File]::WriteAllText($config, ($cfg -replace $pattern, '$1$2'))
+            Write-Host "=== Config: $short ==="
+            Get-Content $config | Select-String '^\s*#define\s+(HW\d|ENABLE_|OPTION_|PC_)'
+            $log = Join-Path $temp "$short-build.log"
+            $args = @('-compile','-verbose','-hardware',"$ide/hardware",'-tools',"$ide/tools-builder",'-tools',"$ide/hardware/tools/avr",'-built-in-libraries',"$ide/libraries",'-libraries',"$sketchbook/libraries",'-fqbn','arduino:avr:mega:cpu=atmega2560','-build-path',$build,"$src/Cart_Reader/Cart_Reader.ino")
+            & "$ide/arduino-builder.exe" @args 2>&1 | Tee-Object -FilePath $log | Out-Host
+            $logText = Get-Content -LiteralPath $log -Raw
+            foreach ($flag in @('-Os','-mcall-prologues','--relax','-flto-partition=none')) {
+              if (!$logText.Contains($flag)) { throw "Missing expected compiler/linker flag $flag" }
+            }
+            $elf = Join-Path $build 'Cart_Reader.ino.elf'
+            $sections = & $sizeTool -A $elf
+            $sections | Out-Host
+            $sizes = @{}
+            foreach ($line in $sections) {
+              if ($line -match '^\s*(\.[\w.]+)\s+(\d+)\s+') { $sizes[$Matches[1]] = [int]$Matches[2] }
+            }
+            if (!$sizes.ContainsKey('.text') -or !$sizes.ContainsKey('.data') -or !$sizes.ContainsKey('.bss')) { throw 'Missing ELF size sections' }
+            $flash = $sizes['.text'] + $sizes['.data']
+            $ram = $sizes['.data'] + $sizes['.bss'] + $sizes['.noinit']
+            $results += [pscustomobject]@{commit=$ref;flash=$flash;ram=$ram}
+          }
+          $results | Format-Table | Out-Host
+          $delta = $results[0].flash - $results[1].flash
+          Write-Host "PORTABLE_SIZE_RESULT base=$($results[0].flash) candidate=$($results[1].flash) reduction=$delta bytes; baseline_matches_local=$($results[0].flash -eq 224844 -and $results[0].ram -eq 6267)"
+          $results | ConvertTo-Json | Set-Content (Join-Path $temp 'results.json')
+          Add-Content $env:GITHUB_STEP_SUMMARY "Portable build: baseline $($results[0].flash) B, candidate $($results[1].flash) B, reduction $delta B."
