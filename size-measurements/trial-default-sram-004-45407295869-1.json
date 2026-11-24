@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "run_id": "45407295869",
+  "run_attempt": "1",
+  "workflow_commit": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
+  "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+  "status": "ok",
+  "request": {
+    "id": "trial-default-sram-004",
+    "base": "88ea37c9fcd61f5d5b087d45f6eeaca97537f903",
+    "head": "ed9268cb1ba2507fd42107cbe21ee8ab07712400",
+    "expected_base_flash": 215044,
+    "expected_base_ram": 6281
+  },
+  "baseline_matches_local": true,
+  "head_matches_local": null,
+  "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+  "results": [
+    {
+      "commit": "88ea37c9fcd61f5d5b087d45f6eeaca97537f903",
+      "subject": "Measure mapper 82 SRAM access change",
+      "status": "ok",
+      "flash": 215044,
+      "ram": 6281,
+      "delta_previous": null,
+      "delta_base": 0,
+      "classification": "baseline",
+      "error": null
+    },
+    {
+      "commit": "ed9268cb1ba2507fd42107cbe21ee8ab07712400",
+      "subject": "Share default NES SRAM mapper enable register sequences",
+      "status": "ok",
+      "flash": 214982,
+      "ram": 6281,
+      "delta_previous": -62,
+      "delta_base": -62,
+      "classification": "reduced",
+      "error": null
+    }
+  ],
+  "fatal_error": null
+}
