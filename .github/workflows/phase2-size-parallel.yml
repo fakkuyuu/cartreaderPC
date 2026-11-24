@@ -1,0 +1,273 @@
+name: Phase 2 parallel independent size candidates
+
+on:
+  push:
+    branches: [experiment/size-reduction-phase2]
+    paths:
+      - '.github/size-parallel-request.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase2-size-measurement
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      candidates: ${{ steps.prepare.outputs.candidates }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: prepare
+        shell: python
+        run: |
+          import json, os, re
+          from pathlib import Path
+          request = json.loads(Path('.github/size-parallel-request.json').read_text())
+          assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}', request['id'])
+          assert re.fullmatch(r'[0-9a-f]{40}', request['base'])
+          assert 1 <= len(request['candidates']) <= 4
+          assert len({x['id'] for x in request['candidates']}) == len(request['candidates'])
+          assert len({x['head'] for x in request['candidates']}) == len(request['candidates'])
+          matrix = []
+          for candidate in request['candidates']:
+              assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}', candidate['id'])
+              assert re.fullmatch(r'[0-9a-f]{40}', candidate['head'])
+              matrix.append(dict(candidate, base=request['base'], expected_base_flash=request['expected_base_flash'], expected_base_ram=request['expected_base_ram']))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              print('candidates=' + json.dumps(matrix, separators=(',', ':')), file=f)
+  measure:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        candidate: ${{ fromJSON(needs.prepare.outputs.candidates) }}
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build each commit separately (HW3 FLASH OFF)
+        shell: pwsh
+        env:
+          SIZE_CANDIDATE: ${{ toJSON(matrix.candidate) }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $repo = $env:GITHUB_WORKSPACE
+          $temp = Join-Path $env:RUNNER_TEMP 'phase2-size'
+          $out = Join-Path $repo 'size-measurement-output'
+          New-Item -ItemType Directory -Force -Path $temp,$out | Out-Null
+          $request = $env:SIZE_CANDIDATE | ConvertFrom-Json
+          $report = [ordered]@{
+            schema = 1; run_id = $env:GITHUB_RUN_ID; run_attempt = $env:GITHUB_RUN_ATTEMPT
+            workflow_commit = $env:GITHUB_SHA
+            config = 'HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2'
+            status = 'running'; request = $null; baseline_matches_local = $null
+            head_matches_local = $null; compiler_version = $null; results = @(); fatal_error = $null
+          }
+          function Save-Report {
+            $report | ConvertTo-Json -Depth 12 | Set-Content -Encoding utf8 (Join-Path $out 'results.json')
+          }
+          try {
+            $report.request = $request
+            if ($request.id -notmatch '^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$') { throw 'Invalid request id' }
+            foreach ($ref in @($request.base, $request.head)) {
+              if ($ref -notmatch '^[0-9a-f]{40}$') { throw 'Use full 40-character commit SHAs' }
+            }
+            $base = [string]$request.base
+            $head = [string]$request.head
+            $lineage = @(git -C $repo rev-list --first-parent $head)
+            if ($lineage -notcontains $base) { throw 'Base must lie on the head first-parent history' }
+            $refs = @($base) + @(git -C $repo rev-list --first-parent --reverse "$base..$head")
+            if ($refs.Count -gt 41) { throw 'At most 40 candidate commits per request' }
+            Save-Report
+            $archive = Join-Path $temp 'upstream.zip'
+            curl.exe --fail --location --retry 3 --output $archive 'https://github.com/sanni/cartreader/releases/download/V15.5/V15.5_Portable.zip'
+            if ((Get-FileHash -LiteralPath $archive).Hash -ne 'e39b323226cb4dc668e69a3e678926f3a9ad4ec7d2c5e48301bc55b5b293eab4') { throw 'Upstream archive hash mismatch' }
+            & "$env:ProgramFiles/7-Zip/7z.exe" x $archive "-o$temp" -y | Out-Host
+            $ide = Join-Path $temp 'V15.5_Portable/Arduino IDE'
+            $sketchbook = Join-Path $ide 'portable/sketchbook'
+            $gcc = @(Get-ChildItem -LiteralPath "$ide/hardware" -Filter avr-gcc.exe -Recurse -File)
+            if ($gcc.Count -ne 1) { throw "Expected one bundled avr-gcc, got $($gcc.Count)" }
+            $version = & $gcc[0].FullName --version
+            $version | Out-Host
+            if (($version -join ' ') -notmatch '15\.2') { throw 'Expected AVR GCC 15.2' }
+            $sizeTool = Join-Path $gcc[0].DirectoryName 'avr-size.exe'
+            $report.compiler_version = ($version -join ' ')
+            $previousFlash = $null
+            foreach ($ref in $refs) {
+              $short = $ref.Substring(0,7)
+              $row = [ordered]@{commit=$ref; subject=''; status='failed'; flash=$null; ram=$null; delta_previous=$null; delta_base=$null; classification='unavailable'; error=$null}
+              try {
+                $row.subject = (git -C $repo show -s --format=%s $ref)
+                $src = Join-Path $temp "src-$short"
+                $build = Join-Path $temp "build-$short"
+                $zip = Join-Path $temp "$short.zip"
+                New-Item -ItemType Directory -Path $src,$build | Out-Null
+                git -C $repo archive --format=zip "--output=$zip" $ref Cart_Reader
+                Expand-Archive -LiteralPath $zip -DestinationPath $src
+                $config = Join-Path $src 'Cart_Reader/Config.h'
+                $cfg = [IO.File]::ReadAllText($config)
+                $pattern = '(?m)^([ \t]*)//[ \t]*(#define[ \t]+HW3\b)'
+                if ([regex]::Matches($cfg,$pattern).Count -ne 1) { throw 'Expected one commented HW3 definition' }
+                $cfg = $cfg -replace $pattern, '$1$2'
+                # Explicitly enable the additional HW3 cartridge cores used in the local test profile.
+                foreach ($core in @('ENABLE_NGP','ENABLE_MSX','ENABLE_PCE','ENABLE_POKE','ENABLE_SFM','ENABLE_SV','ENABLE_ST','ENABLE_VBOY','ENABLE_WS')) {
+                  $corePattern = '(?m)^([ \t]*)//[ \t]*(#define[ \t]+' + $core + '\b)'
+                  if ([regex]::Matches($cfg,$corePattern).Count -ne 1) { throw "Unexpected core configuration: $core" }
+                  $cfg = $cfg -replace $corePattern, '$1$2'
+                }
+                $active = [regex]::Replace($cfg, '(?s)/\*.*?\*/', '')
+                $active = [regex]::Replace($active, '(?m)//.*$', '')
+                if ($active -match '(?m)^\s*#define\s+HW[1245]\b') { throw 'Unexpected board define' }
+                if ($active -match '(?m)^\s*#define\s+ENABLE_FLASH(?:8|16)?\b') { throw 'FLASH configuration not OFF' }
+                [IO.File]::WriteAllText($config, $cfg)
+                Write-Host "=== Config: $short (comments excluded; conditional defines still listed) ==="
+                $active -split "`n" | Select-String '^\s*#define\s+(HW\d|ENABLE_|OPTION_|PC_)'
+                $log = Join-Path $out "$short-build.log"
+                $args = @('-compile','-verbose','-hardware',"$ide/hardware",'-tools',"$ide/tools-builder",'-tools',"$ide/hardware/tools/avr",'-built-in-libraries',"$ide/libraries",'-libraries',"$sketchbook/libraries",'-fqbn','arduino:avr:mega:cpu=atmega2560','-prefs','compiler.c.elf.extra_flags=-Wl,--relax -flto-partition=none','-build-path',$build,"$src/Cart_Reader/Cart_Reader.ino")
+                & "$ide/arduino-builder.exe" @args 2>&1 | Tee-Object -FilePath $log | Out-Host
+                $logText = Get-Content -LiteralPath $log -Raw
+                foreach ($flag in @('-Os','-mcall-prologues','--relax','-flto-partition=none')) {
+                  if (!$logText.Contains($flag)) { throw "Missing expected compiler/linker flag $flag" }
+                }
+                $elf = Join-Path $build 'Cart_Reader.ino.elf'
+                $sections = & $sizeTool -A $elf
+                $sections | Out-Host
+                $sizes = @{}
+                foreach ($line in $sections) {
+                  if ($line -match '^\s*(\.[\w.]+)\s+(\d+)\s+') { $sizes[$Matches[1]] = [int]$Matches[2] }
+                }
+                if (!$sizes.ContainsKey('.text') -or !$sizes.ContainsKey('.data') -or !$sizes.ContainsKey('.bss')) { throw 'Missing ELF size sections' }
+                $flash = $sizes['.text'] + $sizes['.data']
+                $ram = $sizes['.data'] + $sizes['.bss'] + $sizes['.noinit']
+                $row.flash = [int]$flash
+                $row.ram = [int]$ram
+                $row.status = 'ok'
+                if ($ref -eq $base) {
+                  $row.classification = 'baseline'
+                  $row.delta_base = 0
+                  if ($null -ne $request.expected_base_flash) {
+                    $report.baseline_matches_local = ($row.flash -eq $request.expected_base_flash -and ($null -eq $request.expected_base_ram -or $row.ram -eq $request.expected_base_ram))
+                  }
+                } else {
+                  if ($null -ne $previousFlash) {
+                    $row.delta_previous = $row.flash - $previousFlash
+                    $row.classification = if ($row.delta_previous -lt 0) { 'reduced' } elseif ($row.delta_previous -gt 0) { 'increased' } else { 'unchanged' }
+                  }
+                  if ($report.results[0].status -eq 'ok') { $row.delta_base = $row.flash - $report.results[0].flash }
+                }
+                if ($ref -eq $head -and $null -ne $request.expected_head_flash) {
+                  $report.head_matches_local = ($row.flash -eq $request.expected_head_flash)
+                }
+              } catch {
+                $row.error = $_.Exception.Message
+                Write-Warning "$short build failed: $($row.error)"
+              }
+              $previousFlash = if ($row.status -eq 'ok') { $row.flash } else { $null }
+              $report.results += [pscustomobject]$row
+              Write-Host ("SIZE_RESULT " + ($row | ConvertTo-Json -Compress))
+              Save-Report
+            }
+            $report.status = if (@($report.results | Where-Object status -ne 'ok').Count) { 'build_failed' } elseif ($report.baseline_matches_local -eq $false -or $report.head_matches_local -eq $false) { 'calibration_mismatch' } else { 'ok' }
+          } catch {
+            $report.status = 'error'
+            $report.fatal_error = $_.Exception.Message
+            Write-Warning $report.fatal_error
+          } finally {
+            Save-Report
+            $report.results | Format-Table commit,status,flash,ram,delta_previous,classification | Out-Host
+            Add-Content $env:GITHUB_STEP_SUMMARY "Status: $($report.status); calibration baseline: $($report.baseline_matches_local); head: $($report.head_matches_local)"
+            Add-Content $env:GITHUB_STEP_SUMMARY '| Commit | Build | Flash B | RAM B | Delta B |'
+            Add-Content $env:GITHUB_STEP_SUMMARY '| --- | --- | ---: | ---: | ---: |'
+            foreach ($row in $report.results) {
+              Add-Content $env:GITHUB_STEP_SUMMARY "| $($row.commit.Substring(0,7)) | $($row.status) | $($row.flash) | $($row.ram) | $($row.delta_previous) |"
+            }
+          }
+          if ($report.status -ne 'ok') { throw "Measurement status: $($report.status)" }
+      - name: Upload candidate result and build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: size-candidate-${{ matrix.candidate.id }}
+          path: size-measurement-output/
+          if-no-files-found: warn
+  aggregate:
+    needs: [prepare, measure]
+    if: always() && needs.prepare.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: size-candidate-*
+          path: candidate-reports
+      - name: Collect candidate reports
+        if: always()
+        shell: python
+        run: |
+          import json, os
+          from pathlib import Path
+          request = json.loads(Path('.github/size-parallel-request.json').read_text())
+          report = dict(schema=2, mode='parallel-independent', run_id=os.environ['GITHUB_RUN_ID'], run_attempt=os.environ['GITHUB_RUN_ATTEMPT'], workflow_commit=os.environ['GITHUB_SHA'], request=request, status='ok', candidates=[])
+          for candidate in request['candidates']:
+              p = Path('candidate-reports') / ('size-candidate-' + candidate['id']) / 'results.json'
+              try:
+                  r = json.loads(p.read_text(encoding='utf-8-sig'))
+                  assert r['request']['base'] == request['base'] and r['request']['head'] == candidate['head']
+                  assert r['request']['id'] == candidate['id'] and r['run_id'] == report['run_id']
+                  assert len(r['results']) == 2 and r['results'][0]['commit'] == request['base'] and r['results'][1]['commit'] == candidate['head']
+                  r['candidate'] = candidate
+              except Exception as e:
+                  r = dict(candidate=candidate, status='missing_or_invalid', error=str(e), results=[])
+              if r['status'] != 'ok' or r.get('baseline_matches_local') is not True:
+                  report['status'] = 'partial_or_failed'
+              report['candidates'].append(r)
+          out = Path('size-measurement-output')
+          out.mkdir(exist_ok=True)
+          (out / 'results.json').write_text(json.dumps(report, indent=2) + '\n')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
+              print('| Candidate | Status | Flash B | Delta B |', '| --- | --- | ---: | ---: |', sep='\n', file=f)
+              for r in report['candidates']:
+                  row = r['results'][-1] if r['results'] else {}
+                  print(f"| {r['candidate']['id']} | {r['status']} | {row.get('flash', '')} | {row.get('delta_base', '')} |", file=f)
+      - name: Publish machine-readable report to dedicated results branch
+        if: always()
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $repo = $env:GITHUB_WORKSPACE
+          $file = Join-Path $repo 'size-measurement-output/results.json'
+          if (!(Test-Path -LiteralPath $file)) { throw 'No measurement report was generated' }
+          $resultBranch = 'experiment/size-measurement-results'
+          git -C $repo fetch origin "refs/heads/$($resultBranch):refs/remotes/origin/$resultBranch"
+          $worktree = Join-Path $env:RUNNER_TEMP 'phase2-size-results'
+          git -C $repo worktree add --detach $worktree "origin/$resultBranch"
+          $dest = Join-Path $worktree 'size-measurements'
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          $report = Get-Content -LiteralPath $file -Raw | ConvertFrom-Json
+          $id = [string]$report.request.id
+          if ($id -notmatch '^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$') { $id = 'invalid-request' }
+          Copy-Item -LiteralPath $file -Destination (Join-Path $dest "$id-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT).json")
+          Copy-Item -LiteralPath $file -Destination (Join-Path $dest 'latest.json') -Force
+          git -C $worktree config user.name 'github-actions[bot]'
+          git -C $worktree config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C $worktree add -- size-measurements
+          git -C $worktree commit -m "Size measurement $id run $env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT"
+          git -C $worktree push origin "HEAD:refs/heads/$resultBranch"
+      - name: Fail if any measurement is invalid
+        if: always()
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+          assert json.loads(Path('size-measurement-output/results.json').read_text())['status'] == 'ok'
