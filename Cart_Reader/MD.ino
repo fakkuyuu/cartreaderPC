@@ -3222,8 +3222,7 @@ bool identifyFlashCFIChip_MD(byte currChip) {
         | readFlashCFI_MD(currChip, 0x62);
   unsigned long chipIdLow = (long(readFlashCFI_MD(currChip, 0x63)) << 16)
         | readFlashCFI_MD(currChip, 0x64);
-  formatFixedHex(cfiID, chipIdHigh, 8);
-  formatFixedHex(cfiID + 8, chipIdLow, 8);
+  sprintf(cfiID, "%08lX%08lX", chipIdHigh, chipIdLow);
   chipIdLowCFI[currChip] = chipIdLow;
   chipIdHighCFI[currChip] = chipIdHigh;
 
