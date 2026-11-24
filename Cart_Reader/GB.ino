@@ -1344,6 +1344,15 @@ static void openGbSaveOutput() {
   }
 }
 
+static void enableGbSram_GB() __attribute__((noinline));
+static void enableGbSram_GB() {
+  readByte_GB(0x0134);  // MBC2 fix
+  if (romType <= 4 || (romType >= 11 && romType <= 13)) {
+    writeByte_GB(0x6000, 1);
+  }
+  writeByte_GB(0x0000, 0x0A);
+}
+
 void readSRAM_GB() {
   // Does cartridge have RAM
   if (lastByte > 0) {
@@ -1351,15 +1360,7 @@ void readSRAM_GB() {
     // Get name, add extension and convert to char array for sd lib
     openGbSaveOutput();
 
-    // MBC2 Fix
-    readByte_GB(0x0134);
-
-    if (romType <= 4 || (romType >= 11 && romType <= 13)) {
-      writeByte_GB(0x6000, 1);
-    }
-
-    // Initialise MBC
-    writeByte_GB(0x0000, 0x0A);
+    enableGbSram_GB();
 
     // Switch SRAM banks
     for (byte currBank = 0; currBank < sramBanks; currBank++) {
@@ -1398,16 +1399,7 @@ void writeSRAM_GB() {
 
     //open file on sd card
     if (openSelectedFileForRead()) {
-      // MBC2 Fix
-      readByte_GB(0x0134);
-
-      // Enable SRAM for MBC1
-      if (romType <= 4 || (romType >= 11 && romType <= 13)) {
-        writeByte_GB(0x6000, 1);
-      }
-
-      // Initialise MBC
-      writeByte_GB(0x0000, 0x0A);
+      enableGbSram_GB();
 
       // Switch RAM banks
       for (byte currBank = 0; currBank < sramBanks; currBank++) {
