@@ -65,6 +65,25 @@
 
 void pcVerificationResult(uint8_t code);
 
+void showVerificationErrorCount(unsigned long errors) __attribute__((noinline));
+void browseRootFileAndClear() __attribute__((noinline));
+void closeAndShowDone() __attribute__((noinline));
+void showWritingFilePath() __attribute__((noinline));
+void showWritingProgressFilePath() __attribute__((noinline));
+void clearAndUpdateDisplay() __attribute__((noinline));
+void showDoneAndUpdate() __attribute__((noinline));
+void showOkAndUpdate() __attribute__((noinline));
+void showOpenFileErrorAndUpdate() __attribute__((noinline));
+void showVerifyingAndUpdate() __attribute__((noinline));
+void showEraseFailed() __attribute__((noinline, noreturn));
+void showErasingAndUpdate() __attribute__((noinline));
+void showPressButtonAndUpdate() __attribute__((noinline));
+void showVerifiedAndUpdate() __attribute__((noinline));
+void showBlankCheckAndUpdate() __attribute__((noinline));
+void promptAndResetArduino() __attribute__((noinline, noreturn));
+void resetFileBrowserToRoot() __attribute__((noinline));
+void showFilePathAndUpdate() __attribute__((noinline));
+
 /******************************************
    Libraries
  *****************************************/
