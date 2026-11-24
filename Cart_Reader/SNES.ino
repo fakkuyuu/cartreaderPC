@@ -1614,6 +1614,24 @@ static void readSpc7110RetryWord_SNES(uint8_t* output) {
   }
 }
 
+static void writeCx4Mapping_SNES(byte value) __attribute__((noinline));
+static void writeCx4Mapping_SNES(byte value) {
+  dataOut();
+  controlOut_SNES();
+  writeBank_SNES(0, 32594, value);
+  dataIn();
+  controlIn_SNES();
+}
+static void prepareCx4Mapping_SNES() __attribute__((noinline));
+static void prepareCx4Mapping_SNES() {
+  cx4Map = readBank_SNES(0, 32594);
+  if ((cx4Type == 2) && (cx4Map != 0)) {
+    writeCx4Mapping_SNES(0);
+  } else if ((cx4Type == 3) && (cx4Map == 0)) {
+    writeCx4Mapping_SNES(1);
+  }
+}
+
 void readROM_SNES() {
   // Set control
   dataIn();
@@ -1652,20 +1670,7 @@ void readROM_SNES() {
       (numBanks > 64 || romChips == 243)) {
     const bool isCx4 = (romChips == 243);
     if (isCx4) {
-      cx4Map = readBank_SNES(0, 32594);  // $7F52
-      if ((cx4Type == 2) && (cx4Map != 0)) {
-        dataOut();
-        controlOut_SNES();
-        writeBank_SNES(0, 32594, 0);
-        dataIn();
-        controlIn_SNES();
-      } else if ((cx4Type == 3) && (cx4Map == 0)) {
-        dataOut();
-        controlOut_SNES();
-        writeBank_SNES(0, 32594, 1);
-        dataIn();
-        controlIn_SNES();
-      }
+      prepareCx4Mapping_SNES();
     }
 
     if (numBanks == 96 &&
@@ -1685,11 +1690,7 @@ void readROM_SNES() {
 
     if (isCx4) {
       // Restore the mapping register exactly as the legacy CX4 path does.
-      dataOut();
-      controlOut_SNES();
-      writeBank_SNES(0, 32594, cx4Map);
-      dataIn();
-      controlIn_SNES();
+      writeCx4Mapping_SNES(cx4Map);
     }
     if (transferred) {
       closeCurrentFile();
@@ -1732,20 +1733,7 @@ void readROM_SNES() {
   //Dump Low-type ROM
   else if (romType == LO) {
     if (romChips == 243) {                    //0xF3
-      cx4Map = readBank_SNES(0, 32594);       //0x7F52
-      if ((cx4Type == 2) && (cx4Map != 0)) {  //X2
-        dataOut();
-        controlOut_SNES();
-        writeBank_SNES(0, 32594, 0);  // Set 0x7F52 to 0
-        dataIn();
-        controlIn_SNES();
-      } else if ((cx4Type == 3) && (cx4Map == 0)) {  //X3
-        dataOut();
-        controlOut_SNES();
-        writeBank_SNES(0, 32594, 1);  // Set 0x7F52 to 1
-        dataIn();
-        controlIn_SNES();
-      }
+      prepareCx4Mapping_SNES();
     }
     if (romSize > 24) {
       // ROM > 96 banks (up to 128 banks)
@@ -1756,11 +1744,7 @@ void readROM_SNES() {
     }
     if (romChips == 243) {  //0xF3
       // Restore CX4 Mapping Register
-      dataOut();
-      controlOut_SNES();
-      writeBank_SNES(0, 32594, cx4Map);  // 0x7F52
-      dataIn();
-      controlIn_SNES();
+      writeCx4Mapping_SNES(cx4Map);
     }
   }
 

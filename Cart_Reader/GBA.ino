@@ -2241,6 +2241,18 @@ boolean blankcheckFlashrom_GBA() {
   }
 }
 
+static void eraseIntelBlock_GBA(unsigned long currBlock) __attribute__((noinline));
+static void eraseIntelBlock_GBA(unsigned long currBlock) {
+  writeWord_GBA(currBlock, 0x60);
+  writeWord_GBA(currBlock, 0xD0);
+  writeWord_GBA(currBlock, 0x20);
+  writeWord_GBA(currBlock, 0xD0);
+  word statusReg = readWord_GBA(currBlock);
+  while ((statusReg | 0xFF7F) != 0xFFFF) {
+    statusReg = readWord_GBA(currBlock);
+  }
+}
+
 void eraseIntel4000_GBA() {
   // If the game is smaller than 16Mbit only erase the needed blocks
   unsigned long lastBlock = 0xFFFFFF;
@@ -2249,36 +2261,12 @@ void eraseIntel4000_GBA() {
 
   // Erase 4 blocks with 16kwords each
   for (unsigned long currBlock = 0x0; currBlock < 0x1FFFF; currBlock += 0x8000) {
-    // Unlock Block
-    writeWord_GBA(currBlock, 0x60);
-    writeWord_GBA(currBlock, 0xD0);
-
-    // Erase Command
-    writeWord_GBA(currBlock, 0x20);
-    writeWord_GBA(currBlock, 0xD0);
-
-    // Read the status register
-    word statusReg = readWord_GBA(currBlock);
-    while ((statusReg | 0xFF7F) != 0xFFFF) {
-      statusReg = readWord_GBA(currBlock);
-    }
+    eraseIntelBlock_GBA(currBlock);
   }
 
   // Erase 126 blocks with 64kwords each
   for (unsigned long currBlock = 0x20000; currBlock < lastBlock; currBlock += 0x1FFFF) {
-    // Unlock Block
-    writeWord_GBA(currBlock, 0x60);
-    writeWord_GBA(currBlock, 0xD0);
-
-    // Erase Command
-    writeWord_GBA(currBlock, 0x20);
-    writeWord_GBA(currBlock, 0xD0);
-
-    // Read the status register
-    word statusReg = readWord_GBA(currBlock);
-    while ((statusReg | 0xFF7F) != 0xFFFF) {
-      statusReg = readWord_GBA(currBlock);
-    }
+    eraseIntelBlock_GBA(currBlock);
     // Blink led
     blinkLED();
   }
@@ -2287,38 +2275,14 @@ void eraseIntel4000_GBA() {
   if (fileSize > 0xFFFFFF) {
     // 126 blocks with 64kwords each
     for (unsigned long currBlock = 0x1000000; currBlock < 0x1FDFFFF; currBlock += 0x1FFFF) {
-      // Unlock Block
-      writeWord_GBA(currBlock, 0x60);
-      writeWord_GBA(currBlock, 0xD0);
-
-      // Erase Command
-      writeWord_GBA(currBlock, 0x20);
-      writeWord_GBA(currBlock, 0xD0);
-
-      // Read the status register
-      word statusReg = readWord_GBA(currBlock);
-      while ((statusReg | 0xFF7F) != 0xFFFF) {
-        statusReg = readWord_GBA(currBlock);
-      }
+      eraseIntelBlock_GBA(currBlock);
       // Blink led
       blinkLED();
     }
 
     // 4 blocks with 16kword each
     for (unsigned long currBlock = 0x1FE0000; currBlock < 0x1FFFFFF; currBlock += 0x8000) {
-      // Unlock Block
-      writeWord_GBA(currBlock, 0x60);
-      writeWord_GBA(currBlock, 0xD0);
-
-      // Erase Command
-      writeWord_GBA(currBlock, 0x20);
-      writeWord_GBA(currBlock, 0xD0);
-
-      // Read the status register
-      word statusReg = readWord_GBA(currBlock);
-      while ((statusReg | 0xFF7F) != 0xFFFF) {
-        statusReg = readWord_GBA(currBlock);
-      }
+      eraseIntelBlock_GBA(currBlock);
       // Blink led
       blinkLED();
     }
@@ -2333,36 +2297,12 @@ void eraseIntel4400_GBA() {
 
   // Erase 4 blocks with 16kwords each
   for (unsigned long currBlock = 0x0; currBlock < 0x1FFFF; currBlock += 0x8000) {
-    // Unlock Block
-    writeWord_GBA(currBlock, 0x60);
-    writeWord_GBA(currBlock, 0xD0);
-
-    // Erase Command
-    writeWord_GBA(currBlock, 0x20);
-    writeWord_GBA(currBlock, 0xD0);
-
-    // Read the status register
-    word statusReg = readWord_GBA(currBlock);
-    while ((statusReg | 0xFF7F) != 0xFFFF) {
-      statusReg = readWord_GBA(currBlock);
-    }
+    eraseIntelBlock_GBA(currBlock);
   }
 
   // Erase 255 blocks with 64kwords each
   for (unsigned long currBlock = 0x20000; currBlock < lastBlock; currBlock += 0x1FFFF) {
-    // Unlock Block
-    writeWord_GBA(currBlock, 0x60);
-    writeWord_GBA(currBlock, 0xD0);
-
-    // Erase Command
-    writeWord_GBA(currBlock, 0x20);
-    writeWord_GBA(currBlock, 0xD0);
-
-    // Read the status register
-    word statusReg = readWord_GBA(currBlock);
-    while ((statusReg | 0xFF7F) != 0xFFFF) {
-      statusReg = readWord_GBA(currBlock);
-    }
+    eraseIntelBlock_GBA(currBlock);
     // Blink led
     blinkLED();
   }
@@ -2409,12 +2349,9 @@ void eraseIntel4400_GBA() {
     }*/
 }
 
-void sectorEraseMSP55LV128_GBA() {
-  unsigned long lastSector = 0xFFFFFF;
-
-  // Erase 256 sectors with 64kbytes each
-  unsigned long currSector;
-  for (currSector = 0x0; currSector < lastSector; currSector += 0x10000) {
+static void sectorEraseAMD_GBA(unsigned long sectorStep) __attribute__((noinline));
+static void sectorEraseAMD_GBA(unsigned long sectorStep) {
+  for (unsigned long currSector = 0; currSector < 0xFFFFFF; currSector += sectorStep) {
     writeWord_GAB(0xAAA, 0xAA);
     writeWord_GAB(0x555, 0x55);
     writeWord_GAB(0xAAA, 0x80);
@@ -2432,27 +2369,12 @@ void sectorEraseMSP55LV128_GBA() {
   }
 }
 
+void sectorEraseMSP55LV128_GBA() {
+  sectorEraseAMD_GBA(0x10000);
+}
+
 void sectorEraseMX29GL128E_GBA() {
-  unsigned long lastSector = 0xFFFFFF;
-
-  // Erase 128 sectors with 128kbytes each
-  unsigned long currSector;
-  for (currSector = 0x0; currSector < lastSector; currSector += 0x20000) {
-    writeWord_GAB(0xAAA, 0xAA);
-    writeWord_GAB(0x555, 0x55);
-    writeWord_GAB(0xAAA, 0x80);
-    writeWord_GAB(0xAAA, 0xAA);
-    writeWord_GAB(0x555, 0x55);
-    writeWord_GAB(currSector, 0x30);
-
-    // Read the status register
-    word statusReg = readWord_GAB(currSector);
-    while ((statusReg | 0xFF7F) != 0xFFFF) {
-      statusReg = readWord_GAB(currSector);
-    }
-    // Blink LED
-    blinkLED();
-  }
+  sectorEraseAMD_GBA(0x20000);
 }
 
 void writeIntel4000_GBA() {

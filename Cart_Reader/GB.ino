@@ -3064,6 +3064,20 @@ void readMegaMem_GB() {
   Datel Mega Memory Card Gameboy Device Write Function
 *******************************************************/
 // Read Mega Memory Card Rom and Save Backup Data
+// Keep the flash protection read sequence and final address unchanged.
+static void setMegaMemFlashProtection_GB(word finalAddress) __attribute__((noinline));
+static void setMegaMemFlashProtection_GB(word finalAddress) {
+  writeByte_GB(0x2000, 0x0);
+  readByte_GB(0x5823);
+  readByte_GB(0x5820);
+  readByte_GB(0x5822);
+  readByte_GB(0x4418);
+  readByte_GB(0x441B);
+  readByte_GB(0x4419);
+  readByte_GB(finalAddress);
+  delay(100);
+}
+
 void writeMegaMem_GB() {
   // Write Datel Mega Memory Card Save Storage Chip SST28LF040
   browseRootFileAndClear();
@@ -3098,15 +3112,7 @@ void writeMegaMem_GB() {
     showFlashErasing();
 
     //Unprotect flash
-    writeByte_GB(0x2000, 0x0);
-    readByte_GB(0x5823);
-    readByte_GB(0x5820);
-    readByte_GB(0x5822);
-    readByte_GB(0x4418);
-    readByte_GB(0x441B);
-    readByte_GB(0x4419);
-    readByte_GB(0x441A);
-    delay(100);
+    setMegaMemFlashProtection_GB(0x441A);
 
     //Erase flash
     writeByte_GB(0x2000, 0x1);
@@ -3143,15 +3149,7 @@ void writeMegaMem_GB() {
   bool toggle = true;
 
   //Unprotect flash
-  writeByte_GB(0x2000, 0x0);
-  readByte_GB(0x5823);
-  readByte_GB(0x5820);
-  readByte_GB(0x5822);
-  readByte_GB(0x4418);
-  readByte_GB(0x441B);
-  readByte_GB(0x4419);
-  readByte_GB(0x441A);
-  delay(100);
+  setMegaMemFlashProtection_GB(0x441A);
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -3202,15 +3200,7 @@ void writeMegaMem_GB() {
 
   if (flashid == 0xBF04) {
     //Protect flash
-    writeByte_GB(0x2000, 0x0);
-    readByte_GB(0x5823);
-    readByte_GB(0x5820);
-    readByte_GB(0x5822);
-    readByte_GB(0x4418);
-    readByte_GB(0x441B);
-    readByte_GB(0x4419);
-    readByte_GB(0x440A);
-    delay(100);
+    setMegaMemFlashProtection_GB(0x440A);
   }
 
   clearAndShowVerifying();

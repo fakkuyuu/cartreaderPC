@@ -2209,6 +2209,14 @@ static void initMmc3OuterBanks_NES() {
   }
 }
 
+static void finishRead_NES() __attribute__((noinline));
+static void finishRead_NES() {
+  set_address(0);
+  PHI2_HI;
+  ROMSEL_HI;
+  rgbLed(black_color);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3532,10 +3540,7 @@ void readPRG(bool readrom) {
       blankLineAndUpdate();
     }
   }
-  set_address(0);
-  PHI2_HI;
-  ROMSEL_HI;
-  rgbLed(black_color);
+  finishRead_NES();
 }
 
 void readCHR(bool readrom) {
@@ -4444,10 +4449,7 @@ void readCHR(bool readrom) {
       }
     }
   }
-  set_address(0);
-  PHI2_HI;
-  ROMSEL_HI;
-  rgbLed(black_color);
+  finishRead_NES();
 }
 
 /******************************************
@@ -4664,10 +4666,7 @@ void readRAM() {
         writeNesSaveLog(saveSize, saveCrc);
     }
   }
-  set_address(0);
-  PHI2_HI;
-  ROMSEL_HI;
-  rgbLed(black_color);
+  finishRead_NES();
 }
 
 void writeBankPRG(const size_t from, const size_t to, const size_t base) {
