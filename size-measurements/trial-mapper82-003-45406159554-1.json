@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "run_id": "45406159554",
+  "run_attempt": "1",
+  "workflow_commit": "88ea37c9fcd61f5d5b087d45f6eeaca97537f903",
+  "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+  "status": "ok",
+  "request": {
+    "id": "trial-mapper82-003",
+    "base": "3776db829354b7e9ae8b69ce3cdc7cd5a55dcbd4",
+    "head": "e48648c837c8f957e0cc7f377605d86479cfa6e4",
+    "expected_base_flash": 215050,
+    "expected_base_ram": 6281
+  },
+  "baseline_matches_local": true,
+  "head_matches_local": null,
+  "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+  "results": [
+    {
+      "commit": "3776db829354b7e9ae8b69ce3cdc7cd5a55dcbd4",
+      "subject": "Measure isolated MMC1 SRAM traversal change against Actions baseline",
+      "status": "ok",
+      "flash": 215050,
+      "ram": 6281,
+      "delta_previous": null,
+      "delta_base": 0,
+      "classification": "baseline",
+      "error": null
+    },
+    {
+      "commit": "e48648c837c8f957e0cc7f377605d86479cfa6e4",
+      "subject": "Share NES mapper 82 SRAM access register sequences",
+      "status": "ok",
+      "flash": 215044,
+      "ram": 6281,
+      "delta_previous": -6,
+      "delta_base": -6,
+      "classification": "reduced",
+      "error": null
+    }
+  ],
+  "fatal_error": null
+}

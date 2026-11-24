@@ -1,15 +1,15 @@
 {
   "schema": 1,
-  "run_id": "45405320283",
+  "run_id": "45406159554",
   "run_attempt": "1",
-  "workflow_commit": "3776db829354b7e9ae8b69ce3cdc7cd5a55dcbd4",
+  "workflow_commit": "88ea37c9fcd61f5d5b087d45f6eeaca97537f903",
   "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
   "status": "ok",
   "request": {
-    "id": "trial-mmc1-002",
-    "base": "279c47ee9df48b78c5a3d23a4136c4f60af17b0a",
-    "head": "30ac12fb03f4fc63b816ed8d68236fefb2b67a0b",
-    "expected_base_flash": 215072,
+    "id": "trial-mapper82-003",
+    "base": "3776db829354b7e9ae8b69ce3cdc7cd5a55dcbd4",
+    "head": "e48648c837c8f957e0cc7f377605d86479cfa6e4",
+    "expected_base_flash": 215050,
     "expected_base_ram": 6281
   },
   "baseline_matches_local": true,
@@ -17,10 +17,10 @@
   "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
   "results": [
     {
-      "commit": "279c47ee9df48b78c5a3d23a4136c4f60af17b0a",
-      "subject": "Calibrate full HW3 core profile and linker relaxation; measure MMC5 trial commit",
+      "commit": "3776db829354b7e9ae8b69ce3cdc7cd5a55dcbd4",
+      "subject": "Measure isolated MMC1 SRAM traversal change against Actions baseline",
       "status": "ok",
-      "flash": 215072,
+      "flash": 215050,
       "ram": 6281,
       "delta_previous": null,
       "delta_base": 0,
@@ -28,13 +28,13 @@
       "error": null
     },
     {
-      "commit": "30ac12fb03f4fc63b816ed8d68236fefb2b67a0b",
-      "subject": "Share NES MMC1 SRAM bank traversal between read and write",
+      "commit": "e48648c837c8f957e0cc7f377605d86479cfa6e4",
+      "subject": "Share NES mapper 82 SRAM access register sequences",
       "status": "ok",
-      "flash": 215050,
+      "flash": 215044,
       "ram": 6281,
-      "delta_previous": -22,
-      "delta_base": -22,
+      "delta_previous": -6,
+      "delta_base": -6,
       "classification": "reduced",
       "error": null
     }
