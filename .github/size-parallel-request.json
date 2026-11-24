@@ -1,28 +1,28 @@
 {
-  "id": "parallel-001",
-  "base": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
-  "expected_base_flash": 214982,
+  "id": "parallel-002",
+  "base": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
+  "expected_base_flash": 214620,
   "expected_base_ram": 6281,
   "candidates": [
     {
-      "id": "gb-mbc7-bits",
-      "head": "c881ea917367250530f4d64fe0b15965f644931b",
+      "id": "nes-mapper162-163",
+      "head": "55f99db73f280c038ab3a7a21704aaddcf2f35c9",
+      "path": "Cart_Reader/NES.ino"
+    },
+    {
+      "id": "gba-fram-setup",
+      "head": "19f622e0ada1178a3814884b1e89359b8cf28f34",
+      "path": "Cart_Reader/GBA.ino"
+    },
+    {
+      "id": "gb-sram-enable",
+      "head": "5c71ee4f99c6aa12d03c3304564b2fa338084370",
       "path": "Cart_Reader/GB.ino"
     },
     {
-      "id": "md-eeprom-address",
-      "head": "3479a69a1d502fccfdac30be685278bcd630e10b",
+      "id": "md-eeprom-bit-count",
+      "head": "29421f687112bca76f5416be0d1c78401a0eaef2",
       "path": "Cart_Reader/MD.ino"
-    },
-    {
-      "id": "snes-special-lorom",
-      "head": "932f394570716d0fb17848772ca801f99e5f4c33",
-      "path": "Cart_Reader/SNES.ino"
-    },
-    {
-      "id": "n64-sram-verify",
-      "head": "5fbde3cf288764cf2b40421fd6cf1fbb99595337",
-      "path": "Cart_Reader/N64.ino"
     }
   ]
 }
