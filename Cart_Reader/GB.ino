@@ -1788,6 +1788,14 @@ void writeEEPROM_MBC7_GB() {
   showDoneAndUpdate();
 }
 
+static void sendMbc7Bit_GB() __attribute__((noinline));
+static void sendMbc7Bit_GB() {
+  eepbit[0] = (eepbit[1] | 0x80);
+  eepbit[1] |= 0xc0;
+  writeByte_GB(0xa080, eepbit[0]);
+  writeByte_GB(0xa080, eepbit[1]);
+}
+
 void sendMBC7EEPROM_Inst_GB(uint8_t op, uint8_t addr, uint16_t data) {
   boolean send_data = false;
   uint8_t i;
@@ -1809,31 +1817,19 @@ void sendMBC7EEPROM_Inst_GB(uint8_t op, uint8_t addr, uint16_t data) {
   // send op
   for (i = 0; i < 2; i++, op <<= 1) {
     eepbit[1] = (op & 0x02);
-    eepbit[0] = (eepbit[1] | 0x80);
-    eepbit[1] |= 0xc0;
-
-    writeByte_GB(0xa080, eepbit[0]);
-    writeByte_GB(0xa080, eepbit[1]);
+    sendMbc7Bit_GB();
   }
 
   // send addr
   for (i = 0; i < 8; i++, addr <<= 1) {
     eepbit[1] = ((addr & 0x80) >> 6);
-    eepbit[0] = (eepbit[1] | 0x80);
-    eepbit[1] |= 0xc0;
-
-    writeByte_GB(0xa080, eepbit[0]);
-    writeByte_GB(0xa080, eepbit[1]);
+    sendMbc7Bit_GB();
   }
 
   if (send_data) {
     for (i = 0; i < 16; i++, data <<= 1) {
       eepbit[1] = ((data & 0x8000) >> 14);
-      eepbit[0] = (eepbit[1] | 0x80);
-      eepbit[1] |= 0xc0;
-
-      writeByte_GB(0xa080, eepbit[0]);
-      writeByte_GB(0xa080, eepbit[1]);
+      sendMbc7Bit_GB();
     }
   }
 }
