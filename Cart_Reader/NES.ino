@@ -1652,87 +1652,6 @@ void printPrgSize_NES(int index) {
 }
 #endif
 
-void setPRGSize() {
-  uint8_t newprgsize;
-
-#ifdef ENABLE_GLOBAL_LOG
-  // Disable log to prevent unnecessary logging
-  println_Log(F("Set PRG Size"));
-  dont_log = true;
-#endif
-
-#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
-  display_Clear();
-  if (prglo == prghi)
-    newprgsize = prglo;
-  else {
-#ifdef PC_MENU
-    if (PcLink::connected()) {
-      pcCustomControlActive = true;
-      pcDirectMenuCode = 'P';
-      PcConsole.print(F("[Control] nes-options\tP\tPRG ROMサイズ"));
-      for (uint8_t i = prglo; i <= prghi; i++) {
-        PcConsole.print('\t');
-        PcConsole.print(i);
-        PcConsole.print('=');
-        PcConsole.print(pgm_read_word(&(PRG[i])));
-        PcConsole.print(FS(SharedFlashText::unitKBWithSpace));
-      }
-      PcConsole.println();
-      PcLink::menuReady();
-    }
-#endif
-    newprgsize = navigateMenu(prglo, prghi, &printPrgSize_NES);
-#ifdef PC_MENU
-    pcDirectMenuCode = 0;
-    pcCustomControlActive = false;
-#endif
-
-    display.setCursor(0, 56);  // Display selection at bottom
-  }
-  print_Msg(F("PRG SIZE "));
-  print_Msg(pgm_read_word(&(PRG[newprgsize])));
-  println_Msg(FS(SharedFlashText::unitK));
-  display_Update();
-  delay(500);
-
-#elif defined(ENABLE_SERIAL)
-  if (prglo == prghi)
-    newprgsize = prglo;
-  else {
-setprg:
-    String sizePRG;
-    for (int i = 0; i < (prghi - prglo + 1); i++) {
-      PcConsole.print(F("Select PRG Size:  "));
-      PcConsole.print(i);
-      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
-      PcConsole.print(pgm_read_word(&(PRG[i + prglo])));
-      PcConsole.println(FS(SharedFlashText::unitK));
-    }
-    PcConsole.print(F("Enter PRG Size: "));
-    while (PcConsole.available() == 0) {}
-    sizePRG = PcConsole.readStringUntil('\n');
-    PcConsole.println(sizePRG);
-    newprgsize = sizePRG.toInt() + prglo;
-    if (newprgsize > prghi) {
-      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
-      PcConsole.println(FS(FSTRING_EMPTY));
-      goto setprg;
-    }
-  }
-  PcConsole.print(F("PRG Size = "));
-  PcConsole.print(pgm_read_word(&(PRG[newprgsize])));
-  PcConsole.println(FS(SharedFlashText::unitK));
-#endif
-  EEPROM_writeAnything(9, newprgsize);
-  prgsize = newprgsize;
-
-#ifdef ENABLE_GLOBAL_LOG
-  // Enable log again
-  dont_log = false;
-#endif
-}
-
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
 void printChrSize_NES(int index) {
   display_Clear();
@@ -1741,36 +1660,41 @@ void printChrSize_NES(int index) {
 }
 #endif
 
-void setCHRSize() {
-  uint8_t newchrsize;
+static void setRomSize_NES(bool chr) __attribute__((noinline));
+static void setRomSize_NES(bool chr) {
+  const uint8_t lo = chr ? chrlo : prglo;
+  const uint8_t hi = chr ? chrhi : prghi;
+  const uint16_t* table = chr ? CHR : PRG;
+  uint8_t selected;
+
 #ifdef ENABLE_GLOBAL_LOG
   // Disable log to prevent unnecessary logging
-  println_Log(F("Set CHR Size"));
+  println_Log((chr ? F("Set CHR Size") : F("Set PRG Size")));
   dont_log = true;
 #endif
 
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display_Clear();
-  if (chrlo == chrhi)
-    newchrsize = chrlo;
+  if (lo == hi)
+    selected = lo;
   else {
 #ifdef PC_MENU
     if (PcLink::connected()) {
       pcCustomControlActive = true;
-      pcDirectMenuCode = 'C';
-      PcConsole.print(F("[Control] nes-options\tC\tCHR ROMサイズ"));
-      for (uint8_t i = chrlo; i <= chrhi; i++) {
+      pcDirectMenuCode = chr ? 'C' : 'P';
+      PcConsole.print((chr ? F("[Control] nes-options\tC\tCHR ROMサイズ") : F("[Control] nes-options\tP\tPRG ROMサイズ")));
+      for (uint8_t i = lo; i <= hi; i++) {
         PcConsole.print('\t');
         PcConsole.print(i);
         PcConsole.print('=');
-        PcConsole.print(pgm_read_word(&(CHR[i])));
+        PcConsole.print(pgm_read_word(&(table[i])));
         PcConsole.print(FS(SharedFlashText::unitKBWithSpace));
       }
       PcConsole.println();
       PcLink::menuReady();
     }
 #endif
-    newchrsize = navigateMenu(chrlo, chrhi, &printChrSize_NES);
+    selected = navigateMenu(lo, hi, (chr ? &printChrSize_NES : &printPrgSize_NES));
 #ifdef PC_MENU
     pcDirectMenuCode = 0;
     pcCustomControlActive = false;
@@ -1778,47 +1702,56 @@ void setCHRSize() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("CHR SIZE "));
-  print_Msg(pgm_read_word(&(CHR[newchrsize])));
+  print_Msg((chr ? F("CHR SIZE ") : F("PRG SIZE ")));
+  print_Msg(pgm_read_word(&(table[selected])));
   println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(500);
 
 #elif defined(ENABLE_SERIAL)
-  if (chrlo == chrhi)
-    newchrsize = chrlo;
+  if (lo == hi)
+    selected = lo;
   else {
-setchr:
-    String sizeCHR;
-    for (int i = 0; i < (chrhi - chrlo + 1); i++) {
-      PcConsole.print(F("Select CHR Size:  "));
+selectSize:
+    String sizeInput;
+    for (int i = 0; i < (hi - lo + 1); i++) {
+      PcConsole.print((chr ? F("Select CHR Size:  ") : F("Select PRG Size:  ")));
       PcConsole.print(i);
       PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
-      PcConsole.print(pgm_read_word(&(CHR[i + chrlo])));
+      PcConsole.print(pgm_read_word(&(table[i + lo])));
       PcConsole.println(FS(SharedFlashText::unitK));
     }
-    PcConsole.print(F("Enter CHR Size: "));
+    PcConsole.print((chr ? F("Enter CHR Size: ") : F("Enter PRG Size: ")));
     while (PcConsole.available() == 0) {}
-    sizeCHR = PcConsole.readStringUntil('\n');
-    PcConsole.println(sizeCHR);
-    newchrsize = sizeCHR.toInt() + chrlo;
-    if (newchrsize > chrhi) {
+    sizeInput = PcConsole.readStringUntil('\n');
+    PcConsole.println(sizeInput);
+    selected = sizeInput.toInt() + lo;
+    if (selected > hi) {
       PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
       PcConsole.println(FS(FSTRING_EMPTY));
-      goto setchr;
+      goto selectSize;
     }
   }
-  PcConsole.print(F("CHR Size = "));
-  PcConsole.print(pgm_read_word(&(CHR[newchrsize])));
+  PcConsole.print((chr ? F("CHR Size = ") : F("PRG Size = ")));
+  PcConsole.print(pgm_read_word(&(table[selected])));
   PcConsole.println(FS(SharedFlashText::unitK));
 #endif
-  EEPROM_writeAnything(10, newchrsize);
-  chrsize = newchrsize;
+  EEPROM_writeAnything(chr ? 10 : 9, selected);
+  if (chr) chrsize = selected;
+  else prgsize = selected;
 
 #ifdef ENABLE_GLOBAL_LOG
   // Enable log again
   dont_log = false;
 #endif
+}
+
+void setPRGSize() {
+  setRomSize_NES(false);
+}
+
+void setCHRSize() {
+  setRomSize_NES(true);
 }
 
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
