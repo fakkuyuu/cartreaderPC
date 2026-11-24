@@ -1004,7 +1004,7 @@ void getCartInfo_GB() {
   // ROM banks
   romBanks = 2;
   if (romSize >= 0x01 && romSize <= 0x08) {
-    romBanks = (uint16_t(2) << romSize);
+    romBanks = int_pow(2, romSize + 1);
   }
 
   // SRAM banks
@@ -1941,7 +1941,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
     // ROM banks
     romBanks = 2;
     if (romSize >= 0x01 && romSize <= 0x07) {
-      romBanks = (uint16_t(2) << romSize);
+      romBanks = int_pow(2, romSize + 1);
     }
 
     if (MBC > 0) {
@@ -2450,7 +2450,7 @@ bool writeCFI_GB() {
     // ROM banks
     romBanks = 2;
     if (romSize >= 0x01 && romSize <= 0x07) {
-      romBanks = (uint16_t(2) << romSize);
+      romBanks = int_pow(2, romSize + 1);
     }
 
     if (romBanks <= flashBanks) {
