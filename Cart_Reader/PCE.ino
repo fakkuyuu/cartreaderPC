@@ -506,7 +506,7 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((u
       flag = CHKSUM_ERROR;
       crc = crc ^ 0xFFFFFFFFUL;  //Finish CRC calculation and progress bar
       //Display calculated CRC
-      sprintf(crc_file, "%08lX", crc);
+      formatFixedHex(crc_file, crc, 8);
 
       //Search for same CRC in list
       while (script.available()) {
