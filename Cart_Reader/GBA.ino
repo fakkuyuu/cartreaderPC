@@ -1328,7 +1328,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
   if (browseFile) {
     browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectSrmFile));
   } else
-    strcpy(filePath, fileName);
+    sprintf(filePath, "%s", fileName);
 
   //open file on sd card
   if (openSelectedFileForRead()) {
