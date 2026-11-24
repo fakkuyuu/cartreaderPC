@@ -1,234 +1,76 @@
 {
-  "schema": 2,
-  "mode": "parallel-independent",
-  "run_id": "45408401525",
+  "schema": 1,
+  "run_id": "45410022171",
   "run_attempt": "1",
-  "workflow_commit": "f6ed847c17a7015d405a9f3774bd6b1c9e7b1c5a",
-  "request": {
-    "id": "parallel-001",
-    "base": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
-    "expected_base_flash": 214982,
-    "expected_base_ram": 6281,
-    "candidates": [
-      {
-        "id": "gb-mbc7-bits",
-        "head": "c881ea917367250530f4d64fe0b15965f644931b",
-        "path": "Cart_Reader/GB.ino"
-      },
-      {
-        "id": "md-eeprom-address",
-        "head": "3479a69a1d502fccfdac30be685278bcd630e10b",
-        "path": "Cart_Reader/MD.ino"
-      },
-      {
-        "id": "snes-special-lorom",
-        "head": "932f394570716d0fb17848772ca801f99e5f4c33",
-        "path": "Cart_Reader/SNES.ino"
-      },
-      {
-        "id": "n64-sram-verify",
-        "head": "5fbde3cf288764cf2b40421fd6cf1fbb99595337",
-        "path": "Cart_Reader/N64.ino"
-      }
-    ]
-  },
+  "workflow_commit": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
+  "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
   "status": "ok",
-  "candidates": [
+  "request": {
+    "id": "parallel-001-integration",
+    "base": "f6ed847c17a7015d405a9f3774bd6b1c9e7b1c5a",
+    "head": "9568123f6bb428d40537a6639401882bef432319",
+    "expected_base_flash": 214982,
+    "expected_base_ram": 6281
+  },
+  "baseline_matches_local": true,
+  "head_matches_local": null,
+  "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+  "results": [
     {
-      "schema": 1,
-      "run_id": "45408401525",
-      "run_attempt": "1",
-      "workflow_commit": "f6ed847c17a7015d405a9f3774bd6b1c9e7b1c5a",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "commit": "f6ed847c17a7015d405a9f3774bd6b1c9e7b1c5a",
+      "subject": "Launch four independent HW3 size candidates in parallel",
       "status": "ok",
-      "request": {
-        "id": "gb-mbc7-bits",
-        "head": "c881ea917367250530f4d64fe0b15965f644931b",
-        "path": "Cart_Reader/GB.ino",
-        "base": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
-        "expected_base_flash": 214982,
-        "expected_base_ram": 6281
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
-          "subject": "Measure default NES SRAM mapper setup change",
-          "status": "ok",
-          "flash": 214982,
-          "ram": 6281,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "c881ea917367250530f4d64fe0b15965f644931b",
-          "subject": "Share MBC7 EEPROM bit output sequence",
-          "status": "ok",
-          "flash": 214920,
-          "ram": 6281,
-          "delta_previous": -62,
-          "delta_base": -62,
-          "classification": "reduced",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "gb-mbc7-bits",
-        "head": "c881ea917367250530f4d64fe0b15965f644931b",
-        "path": "Cart_Reader/GB.ino"
-      }
+      "flash": 214982,
+      "ram": 6281,
+      "delta_previous": null,
+      "delta_base": 0,
+      "classification": "baseline",
+      "error": null
     },
     {
-      "schema": 1,
-      "run_id": "45408401525",
-      "run_attempt": "1",
-      "workflow_commit": "f6ed847c17a7015d405a9f3774bd6b1c9e7b1c5a",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "commit": "adb597585d1e76c502521963e13c6de2b534cbd2",
+      "subject": "Adopt gb-mbc7-bits (isolated -62 B; c881ea9)",
       "status": "ok",
-      "request": {
-        "id": "md-eeprom-address",
-        "head": "3479a69a1d502fccfdac30be685278bcd630e10b",
-        "path": "Cart_Reader/MD.ino",
-        "base": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
-        "expected_base_flash": 214982,
-        "expected_base_ram": 6281
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
-          "subject": "Measure default NES SRAM mapper setup change",
-          "status": "ok",
-          "flash": 214982,
-          "ram": 6281,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "3479a69a1d502fccfdac30be685278bcd630e10b",
-          "subject": "Share MD EEPROM addressing preamble",
-          "status": "ok",
-          "flash": 214848,
-          "ram": 6281,
-          "delta_previous": -134,
-          "delta_base": -134,
-          "classification": "reduced",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "md-eeprom-address",
-        "head": "3479a69a1d502fccfdac30be685278bcd630e10b",
-        "path": "Cart_Reader/MD.ino"
-      }
+      "flash": 214920,
+      "ram": 6281,
+      "delta_previous": -62,
+      "delta_base": -62,
+      "classification": "reduced",
+      "error": null
     },
     {
-      "schema": 1,
-      "run_id": "45408401525",
-      "run_attempt": "1",
-      "workflow_commit": "f6ed847c17a7015d405a9f3774bd6b1c9e7b1c5a",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "commit": "7abf84ccff9b7f2829fb5e28c9508f5053c5ca19",
+      "subject": "Adopt md-eeprom-address (isolated -134 B; 3479a69)",
       "status": "ok",
-      "request": {
-        "id": "snes-special-lorom",
-        "head": "932f394570716d0fb17848772ca801f99e5f4c33",
-        "path": "Cart_Reader/SNES.ino",
-        "base": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
-        "expected_base_flash": 214982,
-        "expected_base_ram": 6281
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
-          "subject": "Measure default NES SRAM mapper setup change",
-          "status": "ok",
-          "flash": 214982,
-          "ram": 6281,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "932f394570716d0fb17848772ca801f99e5f4c33",
-          "subject": "Share special LoROM split bank dumping loop",
-          "status": "ok",
-          "flash": 214916,
-          "ram": 6281,
-          "delta_previous": -66,
-          "delta_base": -66,
-          "classification": "reduced",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "snes-special-lorom",
-        "head": "932f394570716d0fb17848772ca801f99e5f4c33",
-        "path": "Cart_Reader/SNES.ino"
-      }
+      "flash": 214786,
+      "ram": 6281,
+      "delta_previous": -134,
+      "delta_base": -196,
+      "classification": "reduced",
+      "error": null
     },
     {
-      "schema": 1,
-      "run_id": "45408401525",
-      "run_attempt": "1",
-      "workflow_commit": "f6ed847c17a7015d405a9f3774bd6b1c9e7b1c5a",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "commit": "cac4bf24135df59bfbfa3e76301a72d2972d933b",
+      "subject": "Adopt snes-special-lorom (isolated -66 B; 932f394)",
       "status": "ok",
-      "request": {
-        "id": "n64-sram-verify",
-        "head": "5fbde3cf288764cf2b40421fd6cf1fbb99595337",
-        "path": "Cart_Reader/N64.ino",
-        "base": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
-        "expected_base_flash": 214982,
-        "expected_base_ram": 6281
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "c41842e79a02b5b1ab5c1b2f980f766d93e93428",
-          "subject": "Measure default NES SRAM mapper setup change",
-          "status": "ok",
-          "flash": 214982,
-          "ram": 6281,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "5fbde3cf288764cf2b40421fd6cf1fbb99595337",
-          "subject": "Share N64 SRAM verification and FlashRAM blank check traversal",
-          "status": "ok",
-          "flash": 214882,
-          "ram": 6281,
-          "delta_previous": -100,
-          "delta_base": -100,
-          "classification": "reduced",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "n64-sram-verify",
-        "head": "5fbde3cf288764cf2b40421fd6cf1fbb99595337",
-        "path": "Cart_Reader/N64.ino"
-      }
+      "flash": 214720,
+      "ram": 6281,
+      "delta_previous": -66,
+      "delta_base": -262,
+      "classification": "reduced",
+      "error": null
+    },
+    {
+      "commit": "9568123f6bb428d40537a6639401882bef432319",
+      "subject": "Adopt n64-sram-verify (isolated -100 B; 5fbde3c)",
+      "status": "ok",
+      "flash": 214620,
+      "ram": 6281,
+      "delta_previous": -100,
+      "delta_base": -362,
+      "classification": "reduced",
+      "error": null
     }
-  ]
+  ],
+  "fatal_error": null
 }
