@@ -2784,12 +2784,8 @@ void writeEepromByte(word address) {
 }
 
 // Read EEPROM and save to the SD card
-void readEEP_MD() {
-  dataIn_MD();
-
-  // Get name, add extension and convert to char array for sd lib
-  createFolder("MD", "SAVE", romName, "eep");
-
+static void openMdBackupOutput() __attribute__((noinline));
+static void openMdBackupOutput() {
   // write new folder number back to eeprom
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
@@ -2801,6 +2797,15 @@ void readEEP_MD() {
   if (!openNamedOutputFile()) {
     fatalSdError();
   }
+}
+
+void readEEP_MD() {
+  dataIn_MD();
+
+  // Get name, add extension and convert to char array for sd lib
+  createFolder("MD", "SAVE", romName, "eep");
+
+  openMdBackupOutput();
   if (eepSize > 0x100) {  // 24C04+
     for (word currByte = 0; currByte < eepSize; currByte += 256) {
       print_Msg(F("*"));
@@ -2873,17 +2878,7 @@ void readBram_MD() {
   // Get name, add extension and convert to char array for sd lib
   createFolder("MD", "RAM", "Cart", "brm");
 
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  println_Msg(FS(SharedFlashText::textReading));
-  display_Update();
-
-  // Open file on sd card
-  if (!openNamedOutputFile()) {
-    fatalSdError();
-  }
+  openMdBackupOutput();
 
   for (unsigned long currByte = 0; currByte < bramSize; currByte += 512) {
     for (int i = 0; i < 512; i++) {
