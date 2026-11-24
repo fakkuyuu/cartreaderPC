@@ -4422,6 +4422,33 @@ static void writeNesSaveLog(uint32_t saveSize, uint32_t saveCrc) {
   memcpy(fileName + extension, ".sav", 5);
 }
 
+static void visitMmc5Sram_NES(word base, void (*visit)(word, word)) __attribute__((noinline));
+static void visitMmc5Sram_NES(word base, void (*visit)(word, word)) {
+  write_prg_byte(0x5100, 3);                    // 8K PRG Banks
+  uint16_t banks = int_pow(2, ramsize) / 2;              // banks = 1,2,4
+  if (banks == 2) {                             // 16K - Split SRAM Chips 8K/8K
+    for (size_t i = 0; i < (banks / 2); i++) {  // Chip 1
+      write_prg_byte(0x5113, i);
+      for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
+        visit(base, address);
+      }
+    }
+    for (size_t j = 4; j < (banks / 2) + 4; j++) {  // Chip 2
+      write_prg_byte(0x5113, j);
+      for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
+        visit(base, address);
+      }
+    }
+  } else {                                // 8K/32K Single SRAM Chip
+    for (size_t i = 0; i < banks; i++) {  // banks = 1 or 4
+      write_prg_byte(0x5113, i);
+      for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
+        visit(base, address);
+      }
+    }
+  }
+}
+
 void readRAM() {
   clearAndUpdateDisplay();
 
@@ -4477,30 +4504,8 @@ void readRAM() {
           }
           break;
 
-        case 5:                                         // 8K/16K/32K
-          write_prg_byte(0x5100, 3);                    // 8K PRG Banks
-          banks = int_pow(2, ramsize) / 2;              // banks = 1,2,4
-          if (banks == 2) {                             // 16K - Split SRAM Chips 8K/8K
-            for (size_t i = 0; i < (banks / 2); i++) {  // Chip 1
-              write_prg_byte(0x5113, i);
-              for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-                dumpMMC5RAM(base, address);
-              }
-            }
-            for (size_t j = 4; j < (banks / 2) + 4; j++) {  // Chip 2
-              write_prg_byte(0x5113, j);
-              for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-                dumpMMC5RAM(base, address);
-              }
-            }
-          } else {                                // 8K/32K Single SRAM Chip
-            for (size_t i = 0; i < banks; i++) {  // banks = 1 or 4
-              write_prg_byte(0x5113, i);
-              for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-                dumpMMC5RAM(base, address);
-              }
-            }
-          }
+        case 5:  // 8K/16K/32K
+          visitMmc5Sram_NES(base, dumpMMC5RAM);
           break;
 
         case 16:  // 256-byte EEPROM 24C02
@@ -4672,30 +4677,8 @@ void writeRAM() {
           }
           break;
 
-        case 5:                                         // 8K/16K/32K
-          write_prg_byte(0x5100, 3);                    // 8K PRG Banks
-          banks = int_pow(2, ramsize) / 2;              // banks = 1,2,4
-          if (banks == 2) {                             // 16K - Split SRAM Chips 8K/8K [ETROM = 16K (ONLY 1ST 8K BATTERY BACKED)]
-            for (size_t i = 0; i < (banks / 2); i++) {  // Chip 1
-              write_prg_byte(0x5113, i);
-              for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-                writeMMC5RAM(base, address);
-              }
-            }
-            for (size_t j = 4; j < (banks / 2) + 4; j++) {  // Chip 2
-              write_prg_byte(0x5113, j);
-              for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-                writeMMC5RAM(base, address);
-              }
-            }
-          } else {                                // 8K/32K Single SRAM Chip [EKROM = 8K BATTERY BACKED, EWROM = 32K BATTERY BACKED]
-            for (size_t i = 0; i < banks; i++) {  // banks = 1 or 4
-              write_prg_byte(0x5113, i);
-              for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-                writeMMC5RAM(base, address);
-              }
-            }
-          }
+        case 5:  // 8K/16K/32K
+          visitMmc5Sram_NES(base, writeMMC5RAM);
           break;
 
         case 16:  // 256-byte EEPROM 24C02
