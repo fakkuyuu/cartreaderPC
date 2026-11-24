@@ -2103,21 +2103,28 @@ void readSRAM() {
 }
 
 // Check if the SRAM was written without any error
-void verifySramFileRange_SNES(byte bank, long start, long end, byte) {
+static void verifySramRange_SNES(byte bank, long start, long end, byte value, bool fromFile) __attribute__((noinline));
+static void verifySramRange_SNES(byte bank, long start, long end, byte value, bool fromFile) {
   for (long address = start; address < end; address += 512) {
-    readSdBufferBlock();
-    for (int c = 0; c < 512; ++c) {
-      if (readBank_SNES(bank, address + c) != sdBuffer[c]) ++writeErrors;
+    if (fromFile) {
+      readSdBufferBlock();
+      for (int c = 0; c < 512; ++c) {
+        if (readBank_SNES(bank, address + c) != sdBuffer[c]) ++writeErrors;
+      }
+    } else {
+      for (int c = 0; c < 512; ++c) {
+        if (readBank_SNES(bank, address + c) != value) ++writeErrors;
+      }
     }
   }
 }
 
+void verifySramFileRange_SNES(byte bank, long start, long end, byte) {
+  verifySramRange_SNES(bank, start, end, 0, true);
+}
+
 void verifySramFillRange_SNES(byte bank, long start, long end, byte value) {
-  for (long address = start; address < end; address += 512) {
-    for (int c = 0; c < 512; ++c) {
-      if (readBank_SNES(bank, address + c) != value) ++writeErrors;
-    }
-  }
+  verifySramRange_SNES(bank, start, end, value, false);
 }
 
 void fillSramRange_SNES(byte bank, long start, long end, byte value) {
