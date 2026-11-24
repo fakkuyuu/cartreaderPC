@@ -1,0 +1,221 @@
+name: Phase 2 per-commit firmware size measurement
+
+on:
+  push:
+    branches: [experiment/size-reduction-phase2]
+    paths:
+      - '.github/workflows/phase2-size-matrix.yml'
+      - '.github/size-measurement-request.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase2-size-measurement
+  cancel-in-progress: false
+
+jobs:
+  measure:
+    runs-on: windows-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build each commit separately (HW3 FLASH OFF)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $repo = $env:GITHUB_WORKSPACE
+          $temp = Join-Path $env:RUNNER_TEMP 'phase2-size'
+          $out = Join-Path $repo 'size-measurement-output'
+          New-Item -ItemType Directory -Force -Path $temp,$out | Out-Null
+          $requestFile = Join-Path $repo '.github/size-measurement-request.json'
+          # Initial two-build calibration against the known local measurements.
+          $request = [pscustomobject]@{
+            id = 'smoke-log-integer'
+            base = '866ee1aa2387997bd41daa96b13f5ca55ddfdd03'
+            head = '2dc6b67a5758ddd5a542269e00da84adbcc820e7'
+            expected_base_flash = 215954
+            expected_base_ram = 6255
+            expected_head_flash = 214558
+          }
+          $report = [ordered]@{
+            schema = 1; run_id = $env:GITHUB_RUN_ID; run_attempt = $env:GITHUB_RUN_ATTEMPT
+            workflow_commit = $env:GITHUB_SHA
+            config = 'HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2'
+            status = 'running'; request = $null; baseline_matches_local = $null
+            head_matches_local = $null; compiler_version = $null; results = @(); fatal_error = $null
+          }
+          function Save-Report {
+            $report | ConvertTo-Json -Depth 12 | Set-Content -Encoding utf8 (Join-Path $out 'results.json')
+          }
+          try {
+            if (Test-Path -LiteralPath $requestFile) {
+              $request = Get-Content -LiteralPath $requestFile -Raw | ConvertFrom-Json
+            }
+            $report.request = $request
+            if ($request.id -notmatch '^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$') { throw 'Invalid request id' }
+            foreach ($ref in @($request.base, $request.head)) {
+              if ($ref -notmatch '^[0-9a-f]{40}$') { throw 'Use full 40-character commit SHAs' }
+            }
+            $base = [string]$request.base
+            $head = [string]$request.head
+            $lineage = @(git -C $repo rev-list --first-parent $head)
+            if ($lineage -notcontains $base) { throw 'Base must lie on the head first-parent history' }
+            $refs = @($base) + @(git -C $repo rev-list --first-parent --reverse "$base..$head")
+            if ($refs.Count -gt 41) { throw 'At most 40 candidate commits per request' }
+            Save-Report
+            $archive = Join-Path $temp 'upstream.zip'
+            curl.exe --fail --location --retry 3 --output $archive 'https://github.com/sanni/cartreader/releases/download/V15.5/V15.5_Portable.zip'
+            if ((Get-FileHash -LiteralPath $archive).Hash -ne 'e39b323226cb4dc668e69a3e678926f3a9ad4ec7d2c5e48301bc55b5b293eab4') { throw 'Upstream archive hash mismatch' }
+            & "$env:ProgramFiles/7-Zip/7z.exe" x $archive "-o$temp" -y | Out-Host
+            $ide = Join-Path $temp 'V15.5_Portable/Arduino IDE'
+            $sketchbook = Join-Path $ide 'portable/sketchbook'
+            $gcc = @(Get-ChildItem -LiteralPath "$ide/hardware" -Filter avr-gcc.exe -Recurse -File)
+            if ($gcc.Count -ne 1) { throw "Expected one bundled avr-gcc, got $($gcc.Count)" }
+            $version = & $gcc[0].FullName --version
+            $version | Out-Host
+            if (($version -join ' ') -notmatch '15\.2') { throw 'Expected AVR GCC 15.2' }
+            $sizeTool = Join-Path $gcc[0].DirectoryName 'avr-size.exe'
+            $report.compiler_version = ($version -join ' ')
+            $previousFlash = $null
+            foreach ($ref in $refs) {
+              $short = $ref.Substring(0,7)
+              $row = [ordered]@{commit=$ref; subject=''; status='failed'; flash=$null; ram=$null; delta_previous=$null; delta_base=$null; classification='unavailable'; error=$null}
+              try {
+                $row.subject = (git -C $repo show -s --format=%s $ref)
+                $short = $ref.Substring(0,7)
+                $src = Join-Path $temp "src-$short"
+                $build = Join-Path $temp "build-$short"
+                $zip = Join-Path $temp "$short.zip"
+                New-Item -ItemType Directory -Path $src,$build | Out-Null
+                git -C $repo archive --format=zip "--output=$zip" $ref Cart_Reader
+                Expand-Archive -LiteralPath $zip -DestinationPath $src
+                $config = Join-Path $src 'Cart_Reader/Config.h'
+                $cfg = [IO.File]::ReadAllText($config)
+                $pattern = '(?m)^([ \t]*)//[ \t]*(#define[ \t]+HW3\b)'
+                if ([regex]::Matches($cfg,$pattern).Count -ne 1) { throw 'Expected one commented HW3 definition' }
+                $cfg = $cfg -replace $pattern, '$1$2'
+                $active = [regex]::Replace($cfg, '(?s)/\*.*?\*/', '')
+                $active = [regex]::Replace($active, '(?m)//.*
+                Write-Host "=== Config: $short ==="
+                Get-Content $config | Select-String '^\s*#define\s+(HW\d|ENABLE_|OPTION_|PC_)'
+                $log = Join-Path $out "$short-build.log"
+                $args = @('-compile','-verbose','-hardware',"$ide/hardware",'-tools',"$ide/tools-builder",'-tools',"$ide/hardware/tools/avr",'-built-in-libraries',"$ide/libraries",'-libraries',"$sketchbook/libraries",'-fqbn','arduino:avr:mega:cpu=atmega2560','-prefs','compiler.c.elf.extra_flags=-flto-partition=none','-build-path',$build,"$src/Cart_Reader/Cart_Reader.ino")
+                & "$ide/arduino-builder.exe" @args 2>&1 | Tee-Object -FilePath $log | Out-Host
+                $logText = Get-Content -LiteralPath $log -Raw
+                foreach ($flag in @('-Os','-mcall-prologues','--relax','-flto-partition=none')) {
+                  if (!$logText.Contains($flag)) { throw "Missing expected compiler/linker flag $flag" }
+                }
+                $elf = Join-Path $build 'Cart_Reader.ino.elf'
+                $sections = & $sizeTool -A $elf
+                $sections | Out-Host
+                $sizes = @{}
+                foreach ($line in $sections) {
+                  if ($line -match '^\s*(\.[\w.]+)\s+(\d+)\s+') { $sizes[$Matches[1]] = [int]$Matches[2] }
+                }
+                if (!$sizes.ContainsKey('.text') -or !$sizes.ContainsKey('.data') -or !$sizes.ContainsKey('.bss')) { throw 'Missing ELF size sections' }
+                $flash = $sizes['.text'] + $sizes['.data']
+                $ram = $sizes['.data'] + $sizes['.bss'] + $sizes['.noinit']
+, '')
+                if ($active -match '(?m)^\s*#define\s+HW[1245]\b') { throw 'Unexpected board define' }
+                if ($active -match '(?m)^\s*#define\s+ENABLE_FLASH(?:8|16)?\b') { throw 'FLASH configuration not OFF' }
+                [IO.File]::WriteAllText($config, $cfg)
+                Write-Host "=== Config: $short ==="
+                Get-Content $config | Select-String '^\s*#define\s+(HW\d|ENABLE_|OPTION_|PC_)'
+                $log = Join-Path $temp "$short-build.log"
+                $args = @('-compile','-verbose','-hardware',"$ide/hardware",'-tools',"$ide/tools-builder",'-tools',"$ide/hardware/tools/avr",'-built-in-libraries',"$ide/libraries",'-libraries',"$sketchbook/libraries",'-fqbn','arduino:avr:mega:cpu=atmega2560','-prefs','compiler.c.elf.extra_flags=-flto-partition=none','-build-path',$build,"$src/Cart_Reader/Cart_Reader.ino")
+                & "$ide/arduino-builder.exe" @args 2>&1 | Tee-Object -FilePath $log | Out-Host
+                $logText = Get-Content -LiteralPath $log -Raw
+                foreach ($flag in @('-Os','-mcall-prologues','--relax','-flto-partition=none')) {
+                  if (!$logText.Contains($flag)) { throw "Missing expected compiler/linker flag $flag" }
+                }
+                $elf = Join-Path $build 'Cart_Reader.ino.elf'
+                $sections = & $sizeTool -A $elf
+                $sections | Out-Host
+                $sizes = @{}
+                foreach ($line in $sections) {
+                  if ($line -match '^\s*(\.[\w.]+)\s+(\d+)\s+') { $sizes[$Matches[1]] = [int]$Matches[2] }
+                }
+                if (!$sizes.ContainsKey('.text') -or !$sizes.ContainsKey('.data') -or !$sizes.ContainsKey('.bss')) { throw 'Missing ELF size sections' }
+                $flash = $sizes['.text'] + $sizes['.data']
+                $ram = $sizes['.data'] + $sizes['.bss'] + $sizes['.noinit']
+                $row.flash = [int]$flash
+                $row.ram = [int]$ram
+                $row.status = 'ok'
+                if ($ref -eq $base) {
+                  $row.classification = 'baseline'
+                  $row.delta_base = 0
+                  if ($null -ne $request.expected_base_flash) {
+                    $report.baseline_matches_local = ($row.flash -eq $request.expected_base_flash -and ($null -eq $request.expected_base_ram -or $row.ram -eq $request.expected_base_ram))
+                  }
+                } else {
+                  if ($null -ne $previousFlash) {
+                    $row.delta_previous = $row.flash - $previousFlash
+                    $row.classification = if ($row.delta_previous -lt 0) { 'reduced' } elseif ($row.delta_previous -gt 0) { 'increased' } else { 'unchanged' }
+                  }
+                  if ($report.results[0].status -eq 'ok') { $row.delta_base = $row.flash - $report.results[0].flash }
+                }
+                if ($ref -eq $head -and $null -ne $request.expected_head_flash) {
+                  $report.head_matches_local = ($row.flash -eq $request.expected_head_flash)
+                }
+              } catch {
+                $row.error = $_.Exception.Message
+                Write-Warning "$short build failed: $($row.error)"
+              }
+              $previousFlash = if ($row.status -eq 'ok') { $row.flash } else { $null }
+              $report.results += [pscustomobject]$row
+              Write-Host ("SIZE_RESULT " + ($row | ConvertTo-Json -Compress))
+              Save-Report
+            }
+            $report.status = if (@($report.results | Where-Object status -ne 'ok').Count) { 'build_failed' } elseif ($report.baseline_matches_local -eq $false -or $report.head_matches_local -eq $false) { 'calibration_mismatch' } else { 'ok' }
+          } catch {
+            $report.status = 'error'
+            $report.fatal_error = $_.Exception.Message
+            Write-Warning $report.fatal_error
+          } finally {
+            Save-Report
+            $report.results | Format-Table commit,status,flash,ram,delta_previous,classification | Out-Host
+            Add-Content $env:GITHUB_STEP_SUMMARY "Status: $($report.status); calibration baseline: $($report.baseline_matches_local); head: $($report.head_matches_local)"
+            Add-Content $env:GITHUB_STEP_SUMMARY '| Commit | Build | Flash B | RAM B | Delta B |'
+            Add-Content $env:GITHUB_STEP_SUMMARY '| --- | --- | ---: | ---: | ---: |'
+            foreach ($row in $report.results) {
+              Add-Content $env:GITHUB_STEP_SUMMARY "| $($row.commit.Substring(0,7)) | $($row.status) | $($row.flash) | $($row.ram) | $($row.delta_previous) |"
+            }
+          }
+          if ($report.status -ne 'ok') { throw "Measurement status: $($report.status)" }
+      - name: Upload reports and build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-size-results
+          path: size-measurement-output/
+          if-no-files-found: warn
+      - name: Publish machine-readable report to dedicated results branch
+        if: always()
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $repo = $env:GITHUB_WORKSPACE
+          $file = Join-Path $repo 'size-measurement-output/results.json'
+          if (!(Test-Path -LiteralPath $file)) { throw 'No measurement report was generated' }
+          $resultBranch = 'experiment/size-measurement-results'
+          git -C $repo fetch origin "refs/heads/$($resultBranch):refs/remotes/origin/$resultBranch"
+          $worktree = Join-Path $env:RUNNER_TEMP 'phase2-size-results'
+          git -C $repo worktree add --detach $worktree "origin/$resultBranch"
+          $dest = Join-Path $worktree 'size-measurements'
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          $report = Get-Content -LiteralPath $file -Raw | ConvertFrom-Json
+          $id = [string]$report.request.id
+          if ($id -notmatch '^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$') { $id = 'invalid-request' }
+          Copy-Item -LiteralPath $file -Destination (Join-Path $dest "$id-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT).json")
+          Copy-Item -LiteralPath $file -Destination (Join-Path $dest 'latest.json') -Force
+          git -C $worktree config user.name 'github-actions[bot]'
+          git -C $worktree config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C $worktree add -- size-measurements
+          git -C $worktree commit -m "Size measurement $id run $env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT"
+          git -C $worktree push origin "HEAD:refs/heads/$resultBranch"
