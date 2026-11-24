@@ -2698,17 +2698,8 @@ static void showAccessoryVerifyResult_GB() {
   }
 }
 
-void readPelican_GB() {
-  // Get name, add extension and convert to char array for sd lib
-  createFolderAndOpenFile("GB", "ROM", "Pelican", "GB");
-
-  word finalAddress = 0x3FFF;
-  word startAddress = 0x2000;
-  word bankAddress = 0xA000;
-
-  //Enable bank addressing in the CPLD
-  readByte_GB(0x100);
-
+static void identifyPelicanW29C020_GB() __attribute__((noinline));
+static void identifyPelicanW29C020_GB() {
   // W29C020 ID command sequence
   sendW29C020Command_GB(0x80);
   sendW29C020CommandSufix_GB(0x60);
@@ -2722,6 +2713,20 @@ void readPelican_GB() {
   // W29C020 Flash ID Mode Exit
   sendW29C020Command_GB(0xF0);
   delay(100);
+}
+
+void readPelican_GB() {
+  // Get name, add extension and convert to char array for sd lib
+  createFolderAndOpenFile("GB", "ROM", "Pelican", "GB");
+
+  word finalAddress = 0x3FFF;
+  word startAddress = 0x2000;
+  word bankAddress = 0xA000;
+
+  //Enable bank addressing in the CPLD
+  readByte_GB(0x100);
+
+  identifyPelicanW29C020_GB();
 
   if (flashid == 0xDA45 || flashid == 0xBF10) {
     println_Msg(FS(SharedFlashText::text29EE020W29C020));
@@ -2791,19 +2796,7 @@ void writePelican_GB() {
     readByte_GB(0x100);
     delay(100);
 
-    // W29C020 ID command sequence
-    sendW29C020Command_GB(0x80);
-    sendW29C020CommandSufix_GB(0x60);
-    delay(10);
-
-    // Read the two id bytes into a string
-    writeByteSRAM_GB(0xA000, 0x0);
-    flashid = readByte_GB(0) << 8;
-    flashid |= readByte_GB(1);
-
-    // W29C020 Flash ID Mode Exit
-    sendW29C020Command_GB(0xF0);
-    delay(100);
+    identifyPelicanW29C020_GB();
 
     if (flashid == 0xDA45 || flashid == 0xBF10) {
       println_Msg(FS(SharedFlashText::text29EE020W29C020));
@@ -3243,16 +3236,8 @@ void sendGamesharkCommand_GB(byte cmd) {
 }
 
 // Read Datel GBC Gameshark Device
-void readGameshark_GB() {
-  word finalAddress = 0x5FFF;
-  word startAddress = 0x4000;
-  romBanks = 16;
-
-  //Enable bank addressing in the CPLD
-  readByte_GB(0x101);
-  readByte_GB(0x108);
-  readByte_GB(0x101);
-
+static void identifyGamesharkFlash_GB() __attribute__((noinline));
+static void identifyGamesharkFlash_GB() {
   // SST 39SF010 ID command sequence
   sendGamesharkCommand_GB(0x90);
   delay(10);
@@ -3264,6 +3249,19 @@ void readGameshark_GB() {
 
   // SST 39SF010 Flash ID Mode Exit
   sendGamesharkCommand_GB(0xF0);
+}
+
+void readGameshark_GB() {
+  word finalAddress = 0x5FFF;
+  word startAddress = 0x4000;
+  romBanks = 16;
+
+  //Enable bank addressing in the CPLD
+  readByte_GB(0x101);
+  readByte_GB(0x108);
+  readByte_GB(0x101);
+
+  identifyGamesharkFlash_GB();
   delay(100);
 
   if (flashid == 0xBFB5) {
@@ -3320,17 +3318,7 @@ void writeGameshark_GB() {
   readByte_GB(0x101);
   delay(100);
 
-  // SST 39SF010 ID command sequence
-  sendGamesharkCommand_GB(0x90);
-  delay(10);
-
-  // Read the two id bytes into a string
-  writeByte_GB(0x7FE1, 0x0);
-  flashid = readByte_GB(0x4000) << 8;
-  flashid |= readByte_GB(0x4001);
-
-  // SST 39SF010 Flash ID Mode Exit
-  sendGamesharkCommand_GB(0xF0);
+  identifyGamesharkFlash_GB();
 
   if (flashid != 0xBFB5) {
     display_Clear();
