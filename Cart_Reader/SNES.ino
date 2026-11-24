@@ -2077,6 +2077,45 @@ void writeSRAM(boolean browseFile) {
   }
 }
 
+// Shared read-side mapping for dump, file verification and fill verification.
+static void visitReadSramMapping_SNES(void (*visit)(byte, long, long, byte), byte value) __attribute__((noinline));
+static void visitReadSramMapping_SNES(void (*visit)(byte, long, long, byte), byte value) {
+  if (romType == LO) {
+    // Sram size
+    long lastByte = (long(sramSize) * 128);
+    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
+      visitSramBanks_SNES(0x70, 0x0000, 0x10000L, lastByte, visit, value);
+    } else visitSramBanks_SNES(0x70, 0x0000, 0x8000L, lastByte, visit, value);
+  } else if (romType == HI) {
+    if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
+      // Configure SPC7110 SRAM Register
+      setSpc7110SramAccess_SNES(0x80);
+      // Sram size
+      long lastByte = (long(sramSize) * 128) + 0x6000;
+      visit(0x30, 0x6000, lastByte, value);
+      setSpc7110SramAccess_SNES(0);
+    } else {
+      // Dumping SRAM on HiRom needs CS(PH3) to be high
+      PORTH |= (1 << 3);
+      // Sram size
+      long lastByte = (long(sramSize) * 128);
+      visitSramBanks_SNES(0x30, 0x6000, 0x2000L, lastByte, visit, value);
+    }
+  } else if (romType == EX) {
+    // Dumping SRAM on HiRom needs CS(PH3) to be high
+    PORTH |= (1 << 3);
+    // Sram size
+    long lastByte = (long(sramSize) * 128);
+    visitSramBanks_SNES(0xB0, 0x6000, 0x2000L, lastByte, visit, value);
+  } else if (romType == SA) {
+    // Dumping SRAM on HiRom needs CS(PH3) to be high
+    PORTH |= (1 << 3);
+    // Sram size
+    long lastByte = (long(sramSize) * 128);
+    visitSramBanks_SNES(0x40, 0, 0x10000L, lastByte, visit, value);
+  }
+}
+
 void readSRAM() {
   const uint32_t startedAt = PcLink::hostTime();
   // set control
@@ -2089,40 +2128,7 @@ void readSRAM() {
   if (!openNamedOutputFile()) {
     fatalSdError();
   }
-  if (romType == LO) {
-    // Sram size
-    long lastByte = (long(sramSize) * 128);
-    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
-      visitSramBanks_SNES(0x70, 0x0000, 0x10000L, lastByte, readSramFileRange_SNES, 0);
-    } else visitSramBanks_SNES(0x70, 0x0000, 0x8000L, lastByte, readSramFileRange_SNES, 0);
-  } else if (romType == HI) {
-    if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
-      // Configure SPC7110 SRAM Register
-      setSpc7110SramAccess_SNES(0x80);
-      // Sram size
-      long lastByte = (long(sramSize) * 128) + 0x6000;
-      readSramFileRange_SNES(0x30, 0x6000, lastByte, 0);
-      setSpc7110SramAccess_SNES(0);
-    } else {
-      // Dumping SRAM on HiRom needs CS(PH3) to be high
-      PORTH |= (1 << 3);
-      // Sram size
-      long lastByte = (long(sramSize) * 128);
-      visitSramBanks_SNES(0x30, 0x6000, 0x2000L, lastByte, readSramFileRange_SNES, 0);
-    }
-  } else if (romType == EX) {
-    // Dumping SRAM on HiRom needs CS(PH3) to be high
-    PORTH |= (1 << 3);
-    // Sram size
-    long lastByte = (long(sramSize) * 128);
-    visitSramBanks_SNES(0xB0, 0x6000, 0x2000L, lastByte, readSramFileRange_SNES, 0);
-  } else if (romType == SA) {
-    // Dumping SRAM on HiRom needs CS(PH3) to be high
-    PORTH |= (1 << 3);
-    // Sram size
-    long lastByte = (long(sramSize) * 128);
-    visitSramBanks_SNES(0x40, 0, 0x10000L, lastByte, readSramFileRange_SNES, 0);
-  }
+  visitReadSramMapping_SNES(readSramFileRange_SNES, 0);
 
   // Close the file:
   closeCurrentFile();
@@ -2167,40 +2173,8 @@ unsigned long verifySRAM() {
     // Set control
     controlIn_SNES();
 
-    if (romType == LO) {
-      // Sram size
-      long lastByte = (long(sramSize) * 128);
-      if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
-        visitSramBanks_SNES(0x70, 0, 0x10000L, lastByte, verifySramFileRange_SNES, 0);
-      } else visitSramBanks_SNES(0x70, 0, 0x8000L, lastByte, verifySramFileRange_SNES, 0);
-    } else if (romType == HI) {
-      if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
-        // Configure SPC7110 SRAM Register
-        setSpc7110SramAccess_SNES(0x80);
-        // Sram size
-        long lastByte = (long(sramSize) * 128) + 0x6000;
-        verifySramFileRange_SNES(0x30, 0x6000, lastByte, 0);
-        setSpc7110SramAccess_SNES(0);
-      } else {
-        // Dumping SRAM on HiRom needs CS(PH3) to be high
-        PORTH |= (1 << 3);
-        // Sram size
-        long lastByte = (long(sramSize) * 128);
-        visitSramBanks_SNES(0x30, 0x6000, 0x2000L, lastByte, verifySramFileRange_SNES, 0);
-      }
-    } else if (romType == EX) {
-      // Dumping SRAM on HiRom needs CS(PH3) to be high
-      PORTH |= (1 << 3);
-      // Sram size
-      long lastByte = (long(sramSize) * 128);
-      visitSramBanks_SNES(0xB0, 0x6000, 0x2000L, lastByte, verifySramFileRange_SNES, 0);
-    } else if (romType == SA) {
-      // Dumping SRAM on HiRom needs CS(PH3) to be high
-      PORTH |= (1 << 3);
-      // Sram size
-      long lastByte = (long(sramSize) * 128);
-
-      visitSramBanks_SNES(0x40, 0x0, 0x10000L, lastByte, verifySramFileRange_SNES, 0);
+    visitReadSramMapping_SNES(verifySramFileRange_SNES, 0);
+    if (romType == SA) {
       // Reset SA1
       // Set pins to input
       dataIn();
@@ -2333,40 +2307,7 @@ boolean eraseSRAM(byte b) {
   // Set control
   controlIn_SNES();
 
-  if (romType == LO) {
-    // Sram size
-    long lastByte = (long(sramSize) * 128);
-    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
-      visitSramBanks_SNES(0x70, 0, 0x10000L, lastByte, verifySramFillRange_SNES, b);
-    } else visitSramBanks_SNES(0x70, 0, 0x8000L, lastByte, verifySramFillRange_SNES, b);
-  } else if (romType == HI) {
-    if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
-      // Configure SPC7110 SRAM Register
-      setSpc7110SramAccess_SNES(0x80);
-      // Sram size
-      long lastByte = (long(sramSize) * 128) + 0x6000;
-      verifySramFillRange_SNES(0x30, 0x6000, lastByte, b);
-      setSpc7110SramAccess_SNES(0);
-    } else {
-      // Dumping SRAM on HiRom needs CS(PH3) to be high
-      PORTH |= (1 << 3);
-      // Sram size
-      long lastByte = (long(sramSize) * 128);
-      visitSramBanks_SNES(0x30, 0x6000, 0x2000L, lastByte, verifySramFillRange_SNES, b);
-    }
-  } else if (romType == EX) {
-    // Dumping SRAM on HiRom needs CS(PH3) to be high
-    PORTH |= (1 << 3);
-    // Sram size
-    long lastByte = (long(sramSize) * 128);
-    visitSramBanks_SNES(0xB0, 0x6000, 0x2000L, lastByte, verifySramFillRange_SNES, b);
-  } else if (romType == SA) {
-    // Dumping SRAM on HiRom needs CS(PH3) to be high
-    PORTH |= (1 << 3);
-    // Sram size
-    long lastByte = (long(sramSize) * 128);
-    visitSramBanks_SNES(0x40, 0x0, 0x10000L, lastByte, verifySramFillRange_SNES, b);
-  }
+  visitReadSramMapping_SNES(verifySramFillRange_SNES, b);
   if (writeErrors == 0) {
     printOkLine();
     return 1;
