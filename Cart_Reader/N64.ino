@@ -3115,10 +3115,10 @@ void flashRepro_N64() {
     updateDisplayAndWait();
 
     // clear IDs
-    strcpy(vendorID, "CONF");
+    sprintf(vendorID, "%s", "CONF");
     flashid = 0;
-    strcpy(flashid_str, "CONF");
-    strcpy(cartID, "CONF");
+    sprintf(flashid_str, "%s", "CONF");
+    sprintf(cartID, "%s", "CONF");
 
     // Set cartsize manually
     unsigned char N64RomMenu;
