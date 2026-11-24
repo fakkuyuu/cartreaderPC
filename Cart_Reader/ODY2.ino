@@ -107,8 +107,7 @@ void setup_ODY2() {
 }
 
 void ody2Menu() {
-  convertPgm(menuOptionsODY2, 4);
-  uint8_t mainMenu = question_box(F("ODYSSEY 2 MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("ODYSSEY 2 MENU"), menuOptionsODY2, 4);
 
   switch (mainMenu) {
     case 0:

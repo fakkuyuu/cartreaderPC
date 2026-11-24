@@ -128,7 +128,7 @@ void wsMenu() {
   uint8_t mainMenu = (wsWitch ? 5 : 4);
 
   convertPgm(menuOptionsWS, mainMenu);
-  mainMenu = question_box(FS(SharedFlashText::textWSMenu), menuOptions, mainMenu, 0);
+  mainMenu = chooseMenuOption(FS(SharedFlashText::textWSMenu), mainMenu);
 
   switch (mainMenu) {
     case 0:
@@ -507,7 +507,7 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
   uint32_t progress = 0;
   uint16_t checksum = 0;
 
-  draw_progressbar(0, cartSize);
+  startProgressBar(cartSize);
 
   // start reading rom
   for (; bank <= 0xff; bank++) {

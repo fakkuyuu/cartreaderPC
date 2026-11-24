@@ -149,7 +149,7 @@ void gbSmartMenu() {
 
   // Copy menuOptions out of progmem
   convertPgm(menuOptionsGBSmart, 3);
-  mainMenu = question_box(F("GB Smart"), menuOptions, 3, 0);
+  mainMenu = chooseMenuOption(F("GB Smart"), 3);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -174,8 +174,7 @@ void gbSmartMenu() {
 void gbSmartGameOptions() {
   uint8_t gameSubMenu;
 
-  convertPgm(menuOptionsGBSmartGame, 5);
-  gameSubMenu = question_box(F("GB Smart Game Menu"), menuOptions, 5, 0);
+  gameSubMenu = chooseFlashMenuOption(F("GB Smart Game Menu"), menuOptionsGBSmartGame, 5);
 
   switch (gameSubMenu) {
     case 0:  // Read Game
@@ -271,8 +270,7 @@ gb_smart_load_more_games:
 void gbSmartFlashMenu() {
   uint8_t flashSubMenu;
 
-  convertPgm(menuOptionsGBSmartFlash, 3);
-  flashSubMenu = question_box(F("GB Smart Flash Menu"), menuOptions, 3, 0);
+  flashSubMenu = chooseFlashMenuOption(F("GB Smart Flash Menu"), menuOptionsGBSmartFlash, 3);
 
   switch (flashSubMenu) {
     case 0:

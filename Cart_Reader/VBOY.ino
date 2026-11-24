@@ -110,8 +110,7 @@ static const char VBRomSizeItem5[] PROGMEM = "4 MB";
 static const char* const VBRomSizeMenu[] PROGMEM = { VBRomSizeItem1, VBRomSizeItem2, VBRomSizeItem3, VBRomSizeItem4, VBRomSizeItem5 };
 
 void vboyMenu() {
-  convertPgm(menuOptionsVBOY, 5);
-  uint8_t mainMenu = question_box(F("VIRTUALBOY MENU"), menuOptions, 5, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("VIRTUALBOY MENU"), menuOptionsVBOY, 5);
 
   switch (mainMenu) {
     case 0:
@@ -441,7 +440,7 @@ void readROM_VB() {
 
   word d = 0;
   uint32_t progress = 0;
-  draw_progressbar(0, cartSize);
+  startProgressBar(cartSize);
   // HYPER FIGHTING FIX
   // VIRTUAL BOY ADDRESSING IS TOP DOWN
   // ONLY FOR HYPER FIGHTING PLUGIN WITH ALL ADDRESS LINES CONNECTED
@@ -572,8 +571,7 @@ unsigned long verifySRAM_VB() {
 
 void setRomSize() {
   unsigned char VBRomSize;
-  convertPgm(VBRomSizeMenu, 5);
-  VBRomSize = question_box(F("Select ROM size"), menuOptions, 5, 0);
+  VBRomSize = chooseFlashMenuOption(F("Select ROM size"), VBRomSizeMenu, 5);
   switch (VBRomSize) {
     case 0:
       cartSize = 0x10000;    // 64KB

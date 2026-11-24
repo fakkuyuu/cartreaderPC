@@ -67,8 +67,7 @@ void flashMenu() {
   // create menu with title and 6 options to choose from
   unsigned char flashSlot;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFlash, 6);
-  flashSlot = question_box(F("Select Mode"), menuOptions, 6, 0);
+  flashSlot = chooseFlashMenuOption(F("Select Mode"), menuOptionsFlash, 6);
 
   // wait for user choice to come back from the question box menu
   switch (flashSlot) {
@@ -126,8 +125,7 @@ void flashMenu() {
   // create menu with title and 4 options to choose from
   unsigned char flashMode;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsMode, 4);
-  flashMode = question_box(F("Select Flash Mode"), menuOptions, 4, 0);
+  flashMode = chooseFlashMenuOption(F("Select Flash Mode"), menuOptionsMode, 4);
 
   // wait for user choice to come back from the question box menu
   switch (flashMode) {
@@ -193,8 +191,7 @@ void flashromMenu8() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFLASH8, 7);
-  mainMenu = question_box(F("Flashrom Writer 8"), menuOptions, 7, 0);
+  mainMenu = chooseFlashMenuOption(F("Flashrom Writer 8"), menuOptionsFLASH8, 7);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -333,8 +330,7 @@ void flashromMenu16() {
   // create menu with title "Flashrom Writer 16" and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFLASH16, 7);
-  mainMenu = question_box(F("Flashrom Writer 16"), menuOptions, 7, 0);
+  mainMenu = chooseFlashMenuOption(F("Flashrom Writer 16"), menuOptionsFLASH16, 7);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -426,8 +422,7 @@ void epromMenu() {
   // create menu with title "Eprom Writer" and 4 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsEprom, 6);
-  mainMenu = question_box(F("Eprom Writer"), menuOptions, 6, 0);
+  mainMenu = chooseFlashMenuOption(F("Eprom Writer"), menuOptionsEprom, 6);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -847,8 +842,7 @@ void setup_FlashVoltage() {
   // create menu with title and 3 options to choose from
   unsigned char flashvolt;
   // Copy menuOptions out of progmem
-  convertPgm(flashvoltOptions, 3);
-  flashvolt = question_box(F("Select Flash Voltage"), menuOptions, 3, 0);
+  flashvolt = chooseFlashMenuOption(F("Select Flash Voltage"), flashvoltOptions, 3);
 
   // wait for user choice to come back from the question box menu
   switch (flashvolt) {
@@ -1603,7 +1597,7 @@ void writeFlash29F032() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     // Fill sdBuffer
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
@@ -1739,7 +1733,7 @@ void writeFlash29F1610() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 128) {
       // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
@@ -1785,7 +1779,7 @@ void writeFlash29F1601() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 128) {
       // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
@@ -1921,7 +1915,7 @@ void writeFlash29LV640() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       // Fill sdBuffer
@@ -1961,7 +1955,7 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
       // Blink led
@@ -2021,7 +2015,7 @@ void writeFlash29F800() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     // Fill sdBuffer
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
@@ -2116,7 +2110,7 @@ void writeFlashE28FXXXJ3A() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)fileSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // Fill sdBuffer
   for (uint32_t currByte = 0; currByte < fileSize; currByte += 512) {
@@ -2167,7 +2161,7 @@ void writeFlashLH28F0XX() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)fileSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // Fill sdBuffer
   for (uint32_t currByte = 0; currByte < fileSize; currByte += 512) {
@@ -2212,7 +2206,7 @@ void blankcheck_Flash() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = flashSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   blank = 1;
   for (unsigned long currBuffer = 0; currBuffer < flashSize; currBuffer += 512) {
@@ -2259,7 +2253,7 @@ void verifyFlash(byte currChip, byte totalChips, boolean reversed) {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       if ((reversed) && (currChip == 1) && (totalChips == 1) && (fileSize == 8388608) && (currByte == 4194304)) {
@@ -2308,7 +2302,7 @@ void readFlash() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = flashSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (unsigned long currByte = 0; currByte < flashSize; currByte += 512) {
     for (int c = 0; c < 512; c++) {
@@ -3223,7 +3217,7 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     for (unsigned long currAddr = 0; currAddr < fileSize; currAddr += 512) {
       if ((reversed) && (currChip == 1) && (totalChips == 1) && (fileSize == 8388608) && (currAddr == 4194304)) {

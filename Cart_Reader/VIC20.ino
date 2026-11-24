@@ -104,8 +104,7 @@ static const char* const menuOptionsVIC20[] PROGMEM = { FSTRING_SELECT_CART, FST
 
 void vic20Menu()
 {
-  convertPgm(menuOptionsVIC20, 4);
-  uint8_t mainMenu = question_box(F("VIC-20 MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("VIC-20 MENU"), menuOptionsVIC20, 4);
 
   switch (mainMenu)
   {

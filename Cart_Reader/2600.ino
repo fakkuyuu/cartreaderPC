@@ -107,8 +107,7 @@ void setup_2600() {
 }
 
 void a2600Menu() {
-  convertPgm(menuOptions2600, 4);
-  uint8_t mainMenu = question_box(F("ATARI 2600 MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("ATARI 2600 MENU"), menuOptions2600, 4);
 
   switch (mainMenu) {
     case 0:

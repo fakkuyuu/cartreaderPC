@@ -73,8 +73,7 @@ static const char* const menuOptionsVSMILE[] PROGMEM = { FSTRING_SELECT_CART, FS
 
 void vsmileMenu()
 {
-  convertPgm(menuOptionsVSMILE, 4);
-  uint8_t mainMenu = question_box(F("V.SMILE MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("V.SMILE MENU"), menuOptionsVSMILE, 4);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {

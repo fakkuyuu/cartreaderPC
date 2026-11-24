@@ -118,8 +118,7 @@ void n64Menu() {
   // create menu with title and 6 options to choose from
   unsigned char n64Dev;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsN64, 6);
-  n64Dev = question_box(FS(SharedFlashText::textSelectN64Device), menuOptions, 6, 0);
+  n64Dev = chooseFlashMenuOption(FS(SharedFlashText::textSelectN64Device), menuOptionsN64, 6);
 
   // wait for user choice to come back from the question box menu
   switch (n64Dev) {
@@ -186,8 +185,7 @@ void n64ControllerMenu() {
   // create menu with title and 4 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsN64Controller, 4);
-  mainMenu = question_box(F("N64 Controller"), menuOptions, 4, 0);
+  mainMenu = chooseFlashMenuOption(F("N64 Controller"), menuOptionsN64Controller, 4);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -255,8 +253,7 @@ void n64CartMenu() {
   // create menu with title and 6 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsN64Cart, 6);
-  mainMenu = question_box(FS(SharedFlashText::textN64CartReader), menuOptions, 6, 0);
+  mainMenu = chooseFlashMenuOption(FS(SharedFlashText::textN64CartReader), menuOptionsN64Cart, 6);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -398,8 +395,7 @@ void n64CartMenu() {
       // create submenu with title and 6 options to choose from
       unsigned char N64SaveMenu;
       // Copy menuOptions out of progmem
-      convertPgm(saveOptionsN64, 5);
-      N64SaveMenu = question_box(FS(SharedFlashText::textSelectSaveType), menuOptions, 5, 0);
+      N64SaveMenu = chooseFlashMenuOption(FS(SharedFlashText::textSelectSaveType), saveOptionsN64, 5);
 
       // wait for user choice to come back from the question box menu
       switch (N64SaveMenu) {
@@ -436,8 +432,7 @@ void n64CartMenu() {
       // Set cartsize manually
       unsigned char N64RomMenu;
       // Copy menuOptions out of progmem
-      convertPgm(romOptionsN64, 7);
-      N64RomMenu = question_box(F("Select ROM size"), menuOptions, 7, 0);
+      N64RomMenu = chooseFlashMenuOption(F("Select ROM size"), romOptionsN64, 7);
 
       // wait for user choice to come back from the question box menu
       switch (N64RomMenu) {
@@ -1746,7 +1741,7 @@ void readMPK() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(0x7FFF);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
   for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += 512) {
@@ -1794,7 +1789,7 @@ void verifyCRC() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(0x7FFF);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
   for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += 512) {
@@ -1930,7 +1925,7 @@ void writeMPK() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)(0x7FFF);
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     for (word address = 0x0000; address < 0x8000; address += 32) {
       myFile.read(command + 3, sizeof(command) - 3);
@@ -1979,7 +1974,7 @@ void verifyMPK() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(0x7FFF);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
   for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += sizeof(sdBuffer)) {
@@ -2984,7 +2979,7 @@ void readRom_N64() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(cartSize) * 1024 * 1024;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // PC-only N64 retry transport. SD/standalone dumps retain the old reader.
   const uint32_t totalBytes = totalProgressBar;
@@ -3040,7 +3035,7 @@ uint32_t readRom_N64() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(cartSize) * 1024 * 1024;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // prepare crc32
   uint32_t oldcrc32 = 0xFFFFFFFF;
@@ -3305,8 +3300,7 @@ void flashRepro_N64() {
     // Set cartsize manually
     unsigned char N64RomMenu;
     // Copy menuOptions out of progmem
-    convertPgm(romOptionsN64, 7);
-    N64RomMenu = question_box(F("Select flash size"), menuOptions, 7, 0);
+    N64RomMenu = chooseFlashMenuOption(F("Select flash size"), romOptionsN64, 7);
 
     // wait for user choice to come back from the question box menu
     switch (N64RomMenu) {
@@ -3349,8 +3343,7 @@ void flashRepro_N64() {
     // Set flash buffer manually
     unsigned char N64BufferMenu;
     // Copy menuOptions out of progmem
-    convertPgm(bufferOptionsN64, 4);
-    N64BufferMenu = question_box(F("Select buffer size"), menuOptions, 4, 0);
+    N64BufferMenu = chooseFlashMenuOption(F("Select buffer size"), bufferOptionsN64, 4);
 
     // wait for user choice to come back from the question box menu
     switch (N64BufferMenu) {
@@ -3378,8 +3371,7 @@ void flashRepro_N64() {
     // Set sector size manually
     unsigned char N64SectorMenu;
     // Copy menuOptions out of progmem
-    convertPgm(sectorOptionsN64, 4);
-    N64SectorMenu = question_box(F("Select sector size"), menuOptions, 4, 0);
+    N64SectorMenu = chooseFlashMenuOption(F("Select sector size"), sectorOptionsN64, 4);
 
     // wait for user choice to come back from the question box menu
     switch (N64SectorMenu) {
@@ -3421,8 +3413,7 @@ void flashRepro_N64() {
     boolean selectedErase = 0;
     unsigned char n64FlashErase;
     // Copy menuOptions out of progmem
-    convertPgm(menuOptionsN64FlashErase, 2);
-    n64FlashErase = question_box(FS(SharedFlashText::textErase), menuOptions, 2, 0);
+    n64FlashErase = chooseFlashMenuOption(FS(SharedFlashText::textErase), menuOptionsN64FlashErase, 2);
 
     // wait for user choice to come back from the question box menu
     switch (n64FlashErase) {
@@ -3964,7 +3955,7 @@ void writeIntel4400_N64() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(fileSize);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
     // Blink led
@@ -4025,7 +4016,7 @@ void writeMSP55LV100_N64(unsigned long sectorSize) {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(fileSize);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
@@ -4089,7 +4080,7 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(fileSize);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
@@ -4158,7 +4149,7 @@ void writeFlashrom_N64(unsigned long sectorSize) {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(fileSize);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
@@ -4204,7 +4195,7 @@ unsigned long verifyFlashrom_N64() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)(fileSize);
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
       // Blink led
@@ -4500,7 +4491,7 @@ void writeGameshark_N64() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)(fileSize);
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
     myFile.seek(0);
     for (unsigned long currPage = 0; currPage < fileSize / 2; currPage += 128) {
       // Fill SD buffer with twice the amount since we flash 2 chips
@@ -4530,7 +4521,7 @@ void writeGameshark_N64() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)(fileSize);
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
     myFile.seek(0);
     for (unsigned long currSector = 0; currSector < fileSize; currSector += 16384) {
       for (unsigned long currSdBuffer = 0; currSdBuffer < 16384; currSdBuffer += 256) {
@@ -4580,7 +4571,7 @@ unsigned long verifyGameshark_N64() {
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(fileSize);
   printBlankLine();
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
   // Open file on sd card
   if (openSelectedFileForRead()) {
     writeErrors = 0;
@@ -4850,7 +4841,7 @@ void writeXplorer_N64() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(fileSize);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
   for (unsigned long currPage = 0; currPage < fileSize / 2; currPage += 128) {
 
     // Fill SD buffer with data in the order it will be expected by the CPLD
@@ -4886,7 +4877,7 @@ unsigned long verifyXplorer_N64() {
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(262144);
   printBlankLine();
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
   // Open file on sd card
   if (openSelectedFileForRead()) {
     myFile.seek(0);

@@ -124,8 +124,7 @@ void setup_FAIRCHILD() {
 }
 
 void fairchildMenu() {
-  convertPgm(menuOptionsFAIRCHILD, 5);
-  uint8_t mainMenu = question_box(F("CHANNEL F MENU"), menuOptions, 5, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("CHANNEL F MENU"), menuOptionsFAIRCHILD, 5);
 
   switch (mainMenu) {
     case 0:

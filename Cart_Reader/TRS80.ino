@@ -71,8 +71,7 @@ static const char* const menuOptionsTRS80[] PROGMEM = { FSTRING_SELECT_CART, FST
 
 void trs80Menu()
 {
-  convertPgm(menuOptionsTRS80, 4);
-  uint8_t mainMenu = question_box(F("TRS-80 MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("TRS-80 MENU"), menuOptionsTRS80, 4);
 
   switch (mainMenu)
   {

@@ -120,8 +120,7 @@ byte c64port;  // exrom+game
 static const char* const menuOptionsC64[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
 
 void c64Menu() {
-  convertPgm(menuOptionsC64, 4);
-  uint8_t mainMenu = question_box(F("C64 MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("C64 MENU"), menuOptionsC64, 4);
 
   switch (mainMenu) {
     case 0:

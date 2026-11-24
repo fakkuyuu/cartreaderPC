@@ -14,8 +14,7 @@ static const char* const menuOptionsST[] PROGMEM = { stMenuItem1, stMenuItem2, F
 void stMenu() {
   // Create ST menu with title and 3 options to choose from
   unsigned char mainMenu;
-  convertPgm(menuOptionsST, 3);
-  mainMenu = question_box(F("Sufami Turbo"), menuOptions, 3, 0);
+  mainMenu = chooseFlashMenuOption(F("Sufami Turbo"), menuOptionsST, 3);
 
   // Wait for user choice to come back from the question box menu
   switch (mainMenu) {

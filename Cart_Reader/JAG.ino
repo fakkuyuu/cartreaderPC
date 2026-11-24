@@ -86,7 +86,7 @@ static const char* const ConfirmMenu[] PROGMEM = { FSTRING_OK, FSTRING_RESET };
 void jagMenu() {
 
   convertPgm(menuOptionsJag, 7);
-  uint8_t mainMenu = question_box(F("Jaguar MENU"), menuOptions, 8, 0);
+  uint8_t mainMenu = chooseMenuOption(F("Jaguar MENU"), 8);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -303,8 +303,7 @@ void setCart_Jag() {
 //******************************************************************************
 void jagSizeMenu() {
 
-  convertPgm(jagRomMenu, 3);
-  unsigned char subMenu = question_box(F("Select ROM Size"), menuOptions, 3, 0);
+  unsigned char subMenu = chooseFlashMenuOption(F("Select ROM Size"), jagRomMenu, 3);
 
   switch (subMenu) {
     case 0:
@@ -331,8 +330,7 @@ void jagSizeMenu() {
 // EEPROM SIZE MENU
 //******************************************************************************
 void jagEepMenu() {
-  convertPgm(jagSaveMenu, 5);
-  unsigned char subMenu = question_box(F("Select EEPROM Size"), menuOptions, 5, 0);
+  unsigned char subMenu = chooseFlashMenuOption(F("Select EEPROM Size"), jagSaveMenu, 5);
 
   switch (subMenu) {
     case 0:
@@ -615,7 +613,7 @@ void readJagROM() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(jagCartSize);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   int d = 0;
   for (unsigned long currBuffer = 0; currBuffer < jagCartSize; currBuffer += 512) {
@@ -1337,7 +1335,7 @@ void readJagMEMORY() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(jagCartSize);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
   for (unsigned long currBuffer = 0; currBuffer < jagCartSize; currBuffer += 512) {
     // Blink led
     if (currBuffer % 16384 == 0)
@@ -1397,7 +1395,7 @@ void readJagFLASH() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(jagflaSize);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
   for (unsigned long currByte = 0; currByte < jagflaSize; currByte += 512) {
     // Blink led
     if (currByte % 16384 == 0)
@@ -1435,7 +1433,7 @@ void writeJagFLASH() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)(jagflaSize);
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
     for (unsigned long currByte = 0; currByte < jagflaSize; currByte += 128) {
       // Blink led
       if (currByte % 16384 == 0)
@@ -1511,7 +1509,7 @@ void writeConfirm() {
   println_Msg(F("********************"));
   wait();
   convertPgm(ConfirmMenu, 4);
-  uint8_t resetMenu = question_box(F("CONTINUE?"), menuOptions, 2, 0);
+  uint8_t resetMenu = chooseMenuOption(F("CONTINUE?"), 2);
 
   // wait for user choice to come back from the question box menu
   switch (resetMenu) {

@@ -159,8 +159,7 @@ static const char* const menuOptionsLEAP[] PROGMEM = {  FSTRING_SELECT_CART, FST
 
 void leapMenu()
 {
-  convertPgm(menuOptionsLEAP, 7);
-  uint8_t mainMenu = question_box(F("LEAPSTER MENU"), menuOptions, 7, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("LEAPSTER MENU"), menuOptionsLEAP, 7);
 
   switch (mainMenu)
   {

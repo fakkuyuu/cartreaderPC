@@ -80,8 +80,7 @@ static const char *const menuOptionspceFlash[] PROGMEM = { flashMenuItemWrite, F
 // PCE start menu, first a device type is selected and set in pce_internal_mode
 void pcsMenu(void) {
   unsigned char pceDev;
-  convertPgm(menuOptionspce, 5);
-  pceDev = question_box(F("Select device"), menuOptions, 5, 0);
+  pceDev = chooseFlashMenuOption(F("Select device"), menuOptionspce, 5);
 
   switch (pceDev) {
     case 0:
@@ -943,7 +942,7 @@ void flash_PCE() {
     display_Update();
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     flash_mode_PCE();
     const size_t BUFSIZE = 512;
@@ -993,7 +992,7 @@ void pceMenu() {
       sprintf_P(menuOptions[5], menuOptionspceCart_5, FORCED_SIZE);
     }
     strcpy_P(menuOptions[6], FSTRING_RESET);
-    mainMenu = question_box(FS(SharedFlashText::textPCEHuCARDMenu), menuOptions, 7, 0);
+    mainMenu = chooseMenuOption(FS(SharedFlashText::textPCEHuCARDMenu), 7);
 
     // wait for user choice to come back from the question box menu
     switch (mainMenu) {
@@ -1031,8 +1030,7 @@ void pceMenu() {
     }
   } else if (pce_internal_mode == TURBOCHIP) {
     // Copy menuOptions out of progmem
-    convertPgm(menuOptionspceTC, 2);
-    mainMenu = question_box(F("TG TurboChip menu"), menuOptions, 2, 0);
+    mainMenu = chooseFlashMenuOption(F("TG TurboChip menu"), menuOptionspceTC, 2);
 
     // wait for user choice to come back from the question box menu
     switch (mainMenu) {
@@ -1049,7 +1047,7 @@ void pceMenu() {
   else if (pce_internal_mode == PCE_FLASH) {
     const int max = 2;
     convertPgm(menuOptionspceFlash, max);
-    mainMenu = question_box(F("Flash Repro menu"), menuOptions, max, 0);
+    mainMenu = chooseMenuOption(F("Flash Repro menu"), max);
 
     switch (mainMenu) {
       case 0:

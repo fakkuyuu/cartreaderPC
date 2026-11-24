@@ -44,8 +44,7 @@ void svMenu() {
   // create menu with title and 3 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSVFlash, 5);
-  mainMenu = question_box(F("Satellaview 8M Memory"), menuOptions, 5, 0);
+  mainMenu = chooseFlashMenuOption(F("Satellaview 8M Memory"), menuOptionsSVFlash, 5);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {

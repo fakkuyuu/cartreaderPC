@@ -70,8 +70,7 @@ static const char* const menuOptionsBALLY[] PROGMEM = { FSTRING_SELECT_CART, FST
 
 void ballyMenu()
 {
-  convertPgm(menuOptionsBALLY, 4);
-  uint8_t mainMenu = question_box(F("BALLY ASTROCADE MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("BALLY ASTROCADE MENU"), menuOptionsBALLY, 4);
 
   switch (mainMenu)
   {

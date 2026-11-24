@@ -239,8 +239,7 @@ void mdMenu() {
   // create menu with title and 4 options to choose from
   unsigned char mdDev;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsMD, 5);
-  mdDev = question_box(FS(SharedFlashText::textSelectMDDevice), menuOptions, 5, 0);
+  mdDev = chooseFlashMenuOption(FS(SharedFlashText::textSelectMDDevice), menuOptionsMD, 5);
 
   // wait for user choice to come back from the question box menu
   switch (mdDev) {
@@ -355,8 +354,7 @@ void mdCartMenu() {
   // create menu with title and 6 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsMDCart, 6);
-  mainMenu = question_box(FS(SharedFlashText::textMEGADRIVEReader), menuOptions, 6, 0);
+  mainMenu = chooseFlashMenuOption(FS(SharedFlashText::textMEGADRIVEReader), menuOptionsMDCart, 6);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -470,8 +468,7 @@ void segaCDMenu() {
   // create menu with title and 3 options to choose from
   unsigned char scdMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSCD, 3);
-  scdMenu = question_box(F("SEGA CD RAM"), menuOptions, 3, 0);
+  scdMenu = chooseFlashMenuOption(F("SEGA CD RAM"), menuOptionsSCD, 3);
 
   // wait for user choice to come back from the question box menu
   switch (scdMenu) {
@@ -1556,7 +1553,7 @@ void readROM_MD() {
   uint32_t totalProgressBar = (uint32_t)(cartSize);
   if (SnKmode >= 2) totalProgressBar += (uint32_t)cartSizeLockon;
   if (SnKmode == 3) totalProgressBar += (uint32_t)cartSizeSonic2;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   bool md2mTransferred = false;
 
@@ -2156,7 +2153,7 @@ void write29F1610_MD() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize / 2;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
     int d = 0;
@@ -2222,7 +2219,7 @@ void write29GL_MD() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     for (unsigned long currSdBuffer = 0; currSdBuffer < fileSize; currSdBuffer += 512) {
       readSdBufferBlock();
@@ -3271,7 +3268,7 @@ void writeCFIChip_MD(byte currChip, unsigned long toFlash, unsigned long fileSiz
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)toFlash / 2;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   resetFlashCFIChip_MD(currChip);
   for (unsigned long a = 0; a < toFlash / 2; a += 256) {

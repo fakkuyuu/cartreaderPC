@@ -434,7 +434,7 @@ void nesMenu() {
 
   // create menu with title "NES CART READER" and 7 options to choose from
   convertPgm(menuOptionsNES, 7);
-  answer = question_box(FS(SharedFlashText::textNESCARTREADER), menuOptions, 7, 0);
+  answer = chooseMenuOption(FS(SharedFlashText::textNESCARTREADER), 7);
 
   // wait for user choice to come back from the question box menu
   switch (answer) {
@@ -509,8 +509,7 @@ void nesMenu() {
 
 void nesChipMenu() {
   // create menu with title "Select NES Chip" and 4 options to choose from
-  convertPgm(menuOptionsNESChips, 4);
-  unsigned char answer = question_box(F("Select NES Chip"), menuOptions, 4, 0);
+  unsigned char answer = chooseFlashMenuOption(F("Select NES Chip"), menuOptionsNESChips, 4);
 
   // wait for user choice to come back from the question box menu
   switch (answer) {
@@ -563,8 +562,7 @@ void nesChipMenu() {
 #if defined(ENABLE_FLASH)
 void nesFlashMenu() {
   // create menu with title "Select NES Flash Repro" and 3 options to choose from
-  convertPgm(menuOptionsNESFlash, 3);
-  unsigned char answer = question_box(F("Select Flash Writer"), menuOptions, 3, 0);
+  unsigned char answer = chooseFlashMenuOption(F("Select Flash Writer"), menuOptionsNESFlash, 3);
   switch (answer) {
     case 0:
 
@@ -945,7 +943,7 @@ void read_NES(const char* fileSuffix, const byte* header, const uint8_t headersi
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(headersize + prgsize * 16 * 1024 + chrsize * 4 * 1024);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   //Write header
   if (headersize > 0) {

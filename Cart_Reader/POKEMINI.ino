@@ -82,8 +82,7 @@
 static const char* const menuOptionsPOKE[] PROGMEM = { FSTRING_READ_ROM, FSTRING_RESET };
 
 void pokeMenu() {
-  convertPgm(menuOptionsPOKE, 2);
-  uint8_t mainMenu = question_box(F("POKEMON MINI MENU"), menuOptions, 2, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("POKEMON MINI MENU"), menuOptionsPOKE, 2);
 
   switch (mainMenu) {
     case 0:
@@ -243,7 +242,7 @@ void readROM_POKE() {
 
   // read rom
   uint32_t progress = 0;
-  draw_progressbar(0, 0x80000);
+  startProgressBar(0x80000);
   for (uint32_t addr = 0; addr < 0x80000; addr += 512) {  // 512K
     for (int w = 0; w < 512; w++) {
       uint8_t temp = readData_POKE(addr + w);

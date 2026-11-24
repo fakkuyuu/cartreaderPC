@@ -49,8 +49,7 @@ void sfmMenu() {
   // create menu with title and 3 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSFM, 3);
-  mainMenu = question_box(F("SF Memory"), menuOptions, 3, 0);
+  mainMenu = chooseFlashMenuOption(F("SF Memory"), menuOptionsSFM, 3);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -141,8 +140,7 @@ void sfmGameOptions() {
   // create menu with title and 5 options to choose from
   unsigned char gameSubMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSFMGame, 5);
-  gameSubMenu = question_box(F("SFM Game Menu"), menuOptions, 5, 0);
+  gameSubMenu = chooseFlashMenuOption(F("SFM Game Menu"), menuOptionsSFMGame, 5);
 
   // wait for user choice to come back from the question box menu
   switch (gameSubMenu) {
@@ -208,8 +206,7 @@ void sfmFlashMenu() {
   // create menu with title and 6 options to choose from
   unsigned char flashSubMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSFMFlash, 6);
-  flashSubMenu = question_box(F("SFM Flash Menu"), menuOptions, 6, 0);
+  flashSubMenu = chooseFlashMenuOption(F("SFM Flash Menu"), menuOptionsSFMFlash, 6);
 
   // wait for user choice to come back from the question box menu
   switch (flashSubMenu) {
@@ -1023,7 +1020,7 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
       uint32_t totalProgressBar = numBanks * 0x10000;
-      draw_progressbar(0, totalProgressBar);
+      startProgressBar(totalProgressBar);
 
       // Write hirom
       for (word currBank = startBank; currBank < startBank + numBanks; currBank++) {
@@ -1056,7 +1053,7 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
       uint32_t totalProgressBar = numBanks * 0x8000;
-      draw_progressbar(0, totalProgressBar);
+      startProgressBar(totalProgressBar);
 
       // Write lorom
       for (word currBank = 0; currBank < numBanks; currBank++) {

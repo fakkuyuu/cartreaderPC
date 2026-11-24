@@ -3146,6 +3146,19 @@ void printOkLine() {
   println_Msg(FS(FSTRING_OK));
 }
 
+uint8_t chooseMenuOption(const __FlashStringHelper* title, uint8_t count) {
+  return question_box(title, menuOptions, count, 0);
+}
+
+uint8_t chooseFlashMenuOption(const __FlashStringHelper* title, const char* const options[], uint8_t count) {
+  convertPgm(options, count);
+  return chooseMenuOption(title, count);
+}
+
+void startProgressBar(uint32_t total) {
+  draw_progressbar(0, total);
+}
+
 void changeToStorageRoot() {
   sd.chdir("/");
 }

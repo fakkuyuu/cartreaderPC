@@ -36,8 +36,7 @@ void gpcMenu() {
   // create menu with title and 3 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGPCFlash, 3);
-  mainMenu = question_box(F("Game Processor RAM"), menuOptions, 3, 0);
+  mainMenu = chooseFlashMenuOption(F("Game Processor RAM"), menuOptionsGPCFlash, 3);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {

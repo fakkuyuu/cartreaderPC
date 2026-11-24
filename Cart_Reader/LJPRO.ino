@@ -126,8 +126,7 @@ static const char* const menuOptionsLJPRO[] PROGMEM = { FSTRING_READ_ROM, FSTRIN
 
 void ljproMenu()
 {
-  convertPgm(menuOptionsLJPRO, 2);
-  uint8_t mainMenu = question_box(F("LITTLE JAMMER PRO"), menuOptions, 2, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("LITTLE JAMMER PRO"), menuOptionsLJPRO, 2);
 
   switch (mainMenu)
   {

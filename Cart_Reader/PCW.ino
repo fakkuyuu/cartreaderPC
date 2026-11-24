@@ -141,8 +141,7 @@ static const char* const menuOptionsPCW[] PROGMEM = { FSTRING_READ_ROM, FSTRING_
 
 void pcwMenu()
 {
-  convertPgm(menuOptionsPCW, 4);
-  uint8_t mainMenu = question_box(F(" POCKET CHALLENGE W"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F(" POCKET CHALLENGE W"), menuOptionsPCW, 4);
 
   switch (mainMenu) {
     case 0:
@@ -444,7 +443,7 @@ void readSingleROM_PCW()
 
   // Init progress bar
   uint32_t progress = 0;
-  draw_progressbar(0, rom_size);
+  startProgressBar(rom_size);
 
   for (unsigned long address = 0; address < rom_size; address += 512) {  // 4MB
     for (unsigned int x = 0; x < 512; x++) {
@@ -574,7 +573,7 @@ void readMultiROM_PCW()
 
   // Init progress bar
   uint32_t progress = 0;
-  draw_progressbar(0, rom_size);
+  startProgressBar(rom_size);
 
   // Lower Half
   read_setup_PCW();

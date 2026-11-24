@@ -144,8 +144,7 @@ void gbxMenu() {
   // create menu with title and 5 options to choose from
   unsigned char gbType;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBx, 7);
-  gbType = question_box(F("Select Game Boy"), menuOptions, 7, 0);
+  gbType = chooseFlashMenuOption(F("Select Game Boy"), menuOptionsGBx, 7);
 
   // wait for user choice to come back from the question box menu
   switch (gbType) {
@@ -168,8 +167,7 @@ void gbxMenu() {
       // create submenu with title and 7 options to choose from
       unsigned char gbFlash;
       // Copy menuOptions out of progmem
-      convertPgm(menuOptionsGBFlash, 7);
-      gbFlash = question_box(F("Select type"), menuOptions, 7, 0);
+      gbFlash = chooseFlashMenuOption(F("Select type"), menuOptionsGBFlash, 7);
 
       // wait for user choice to come back from the question box menu
       switch (gbFlash) {
@@ -183,8 +181,7 @@ void gbxMenu() {
             // create submenu with title and 6 options to choose from
             unsigned char gbFlashMBC;
             // Copy menuOptions out of progmem
-            convertPgm(menuOptionsGBFlashMBC, 6);
-            gbFlashMBC = question_box(F("Select MBC"), menuOptions, 6, 0);
+            gbFlashMBC = chooseFlashMenuOption(F("Select MBC"), menuOptionsGBFlashMBC, 6);
 
             // wait for user choice to come back from the question box menu
             switch (gbFlashMBC) {
@@ -216,8 +213,7 @@ void gbxMenu() {
             // create submenu with title and 3 options to choose from
             unsigned char gbFlashWE;
             // Copy menuOptions out of progmem
-            convertPgm(menuOptionsGBFlashWE, 3);
-            gbFlashWE = question_box(F("Select WE Pin"), menuOptions, 3, 0);
+            gbFlashWE = chooseFlashMenuOption(F("Select WE Pin"), menuOptionsGBFlashWE, 3);
 
             // wait for user choice to come back from the question box menu
             switch (gbFlashWE) {
@@ -237,8 +233,7 @@ void gbxMenu() {
             // create submenu with title and 3 options to choose from
             unsigned char gbFlashErase;
             // Copy menuOptions out of progmem
-            convertPgm(menuOptionsGBFlashErase, 3);
-            gbFlashErase = question_box(FS(SharedFlashText::textErase), menuOptions, 3, 0);
+            gbFlashErase = chooseFlashMenuOption(FS(SharedFlashText::textErase), menuOptionsGBFlashErase, 3);
 
             // wait for user choice to come back from the question box menu
             switch (gbFlashErase) {
@@ -258,8 +253,7 @@ void gbxMenu() {
             // create submenu with title and 3 options to choose from
             unsigned char gbFlashCommand;
             // Copy menuOptions out of progmem
-            convertPgm(menuOptionsGBFlashCommand, 3);
-            gbFlashCommand = question_box(F("Select Command Set"), menuOptions, 3, 0);
+            gbFlashCommand = chooseFlashMenuOption(F("Select Command Set"), menuOptionsGBFlashCommand, 3);
 
             // wait for user choice to come back from the question box menu
             switch (gbFlashCommand) {
@@ -453,8 +447,7 @@ void gbxMenu() {
       display_Update();
       unsigned char gbPelican;
       // Copy menuOptions out of progmem
-      convertPgm(menuOptionsGBPelican, 2);
-      gbPelican = question_box(FS(SharedFlashText::textSelectOperation), menuOptions, 2, 0);
+      gbPelican = chooseFlashMenuOption(FS(SharedFlashText::textSelectOperation), menuOptionsGBPelican, 2);
 
       // wait for user choice to come back from the question box menu
       switch (gbPelican) {
@@ -483,8 +476,7 @@ void gbxMenu() {
       display_Update();
       unsigned char gbDatel;
       // Copy menuOptions out of progmem
-      convertPgm(menuOptionsGBDatel, 4);
-      gbDatel = question_box(FS(SharedFlashText::textSelectOperation), menuOptions, 4, 0);
+      gbDatel = chooseFlashMenuOption(FS(SharedFlashText::textSelectOperation), menuOptionsGBDatel, 4);
 
       // wait for user choice to come back from the question box menu
       switch (gbDatel) {
@@ -523,8 +515,7 @@ void gbMenu() {
   // create menu with title and 4 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGB, 4);
-  mainMenu = question_box(FS(SharedFlashText::textGBCartReader), menuOptions, 4, 0);
+  mainMenu = chooseFlashMenuOption(FS(SharedFlashText::textGBCartReader), menuOptionsGB, 4);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -1170,7 +1161,7 @@ void readROM_GB() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // M161 banks are double size and start with 0
   if (romType == 0x104) {
@@ -1525,7 +1516,7 @@ void readSRAMFLASH_MBC6_GB() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = 0x108000;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // Enable Mapper and SRAM
   writeByte_GB(0x0000, 0x0A);
@@ -1599,7 +1590,7 @@ void writeSRAMFLASH_MBC6_GB() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = 0x108000;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     // Enable Mapper and SRAM
     writeByte_GB(0x0000, 0x0A);
@@ -2110,7 +2101,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
       uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
-      draw_progressbar(0, totalProgressBar);
+      startProgressBar(totalProgressBar);
 
       for (word currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
@@ -2172,7 +2163,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
       uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
-      draw_progressbar(0, totalProgressBar);
+      startProgressBar(totalProgressBar);
 
       for (word currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
@@ -2225,7 +2216,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
       uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
-      draw_progressbar(0, totalProgressBar);
+      startProgressBar(totalProgressBar);
 
       for (word currBank = 0; currBank < romBanks; currBank++) {
         // Blink led
@@ -2274,7 +2265,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
       //Initialize progress bar
       uint32_t processedProgressBar = 0;
       uint32_t totalProgressBar = (uint32_t)(romBanks) * 16384;
-      draw_progressbar(0, totalProgressBar);
+      startProgressBar(totalProgressBar);
 
       for (unsigned int currAddr = 0; currAddr < 0x7FFF; currAddr += 512) {
         readSdBufferBlock();
@@ -2810,7 +2801,7 @@ void readPelican_GB() {
   // Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(romBanks) * 8192;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (size_t workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
 
@@ -2987,7 +2978,7 @@ void writePelican_GB() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(romBanks) * 8192;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (word currBank = 0; currBank < romBanks; currBank++) {
     // Blink led
@@ -3142,7 +3133,7 @@ void readMegaMem_GB() {
   // Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)16384;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // Read banks and save to SD
   while (startAddress <= finalAddress) {
@@ -3186,7 +3177,7 @@ void readMegaMem_GB() {
   // Initialize progress bar
   processedProgressBar = 0;
   totalProgressBar = (uint32_t)(romBanks) * 8192;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (size_t workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
 
@@ -3325,7 +3316,7 @@ void writeMegaMem_GB() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(romBanks) * 8192;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (word currBank = 0; currBank < romBanks; currBank++) {
     // Blink led
@@ -3493,7 +3484,7 @@ void readGameshark_GB() {
   // Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(romBanks) * 8192;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (size_t workBank = 0; workBank < romBanks; workBank++) {  // Loop over banks
 
@@ -3611,7 +3602,7 @@ void writeGameshark_GB() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(romBanks) * 8192;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (word currBank = 0; currBank < romBanks; currBank++) {
     // Blink led

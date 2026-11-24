@@ -41,8 +41,7 @@ void gbaMenu() {
   // create menu with title and 5 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBA, 5);
-  mainMenu = question_box(FS(SharedFlashText::textGBACartReader), menuOptions, 5, 0);
+  mainMenu = chooseFlashMenuOption(FS(SharedFlashText::textGBACartReader), menuOptionsGBA, 5);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -53,8 +52,7 @@ void gbaMenu() {
         // create submenu with title and 4 options to choose from
         unsigned char GBARomMenu;
         // Copy menuOptions out of progmem
-        convertPgm(romOptionsGBA, 6);
-        GBARomMenu = question_box(F("Select ROM size"), menuOptions, 6, 0);
+        GBARomMenu = chooseFlashMenuOption(F("Select ROM size"), romOptionsGBA, 6);
 
         // wait for user choice to come back from the question box menu
         cartSize = romOptionsGBASize[GBARomMenu];
@@ -286,8 +284,7 @@ void repro369in1Menu() {
   // create menu with title and 5 options to choose from
   unsigned char menu369;
   // Copy menuOptions out of progmem
-  convertPgm(Options369GBA, 5);
-  menu369 = question_box(F("369-in-1 Multicart"), menuOptions, 5, 0);
+  menu369 = chooseFlashMenuOption(F("369-in-1 Multicart"), Options369GBA, 5);
 
   // wait for user choice to come back from the question box menu
   switch (menu369) {
@@ -406,8 +403,7 @@ static byte getSaveType() {
     // create submenu with title and 6 options to choose from
     unsigned char GBASaveMenu;
     // Copy menuOptions out of progmem
-    convertPgm(saveOptionsGBA, 6);
-    GBASaveMenu = question_box(FS(SharedFlashText::textSelectSaveType), menuOptions, 6, 0);
+    GBASaveMenu = chooseFlashMenuOption(FS(SharedFlashText::textSelectSaveType), saveOptionsGBA, 6);
     // wait for user choice to come back from the question box menu
     saveType = saveOptionsGBAType[GBASaveMenu];
   }
@@ -1073,7 +1069,7 @@ void readROM_GBA() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(cartSize);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   const bool usePrefetch=PcLink::usingPcStorage() && myFile.isPc()
                         && PcLink::streamBlockSize()==1024;
@@ -2779,7 +2775,7 @@ void read369in1(byte blockNumber, byte fileSizeByte) {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = fileSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // 256MB repro size
   for (unsigned long currBank = startBank; currBank < startBank + fileSize; currBank += 0x2000000) {
@@ -2821,7 +2817,7 @@ void erase369in1(byte blockNumber) {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)fileSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // 256MB repro size
   for (unsigned long currBank = startBank; currBank < startBank + fileSize; currBank += 0x2000000) {
@@ -2870,7 +2866,7 @@ void write369in1(byte blockNumber) {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = fileSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   // 32MB max GBA bank size
   for (unsigned long currBank = startBank; currBank < startBank + fileSize; currBank += 0x2000000) {

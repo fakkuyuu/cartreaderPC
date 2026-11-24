@@ -65,8 +65,7 @@ static const char* const menuOptionsPV1000[] PROGMEM = { FSTRING_SELECT_CART, FS
 
 void pv1000Menu()
 {
-  convertPgm(menuOptionsPV1000, 4);
-  uint8_t mainMenu = question_box(F("PV-1000 MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("PV-1000 MENU"), menuOptionsPV1000, 4);
 
   switch (mainMenu)
   {

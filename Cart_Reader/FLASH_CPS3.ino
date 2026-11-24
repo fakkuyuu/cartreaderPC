@@ -51,8 +51,7 @@ static const char* const menuOptionsCartCD[] PROGMEM = { cpsCartRegion0, cpsCDIt
 void cpsMenu() {
   // create menu with title and 6 options to choose from
   unsigned char cpsType;
-  convertPgm(menuOptionsCPS, 6);
-  cpsType = question_box(FS(FSTRING_SELECT_CART_TYPE), menuOptions, 6, 0);
+  cpsType = chooseFlashMenuOption(FS(FSTRING_SELECT_CART_TYPE), menuOptionsCPS, 6);
 
   // wait for user choice to come back from the question box menu
   switch (cpsType) {
@@ -105,8 +104,7 @@ void flashromCPS_Cartridge() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFLASH8, 7);
-  mainMenu = question_box(F("CPS3 Cartdrige Writer"), menuOptions, 7, 0);
+  mainMenu = chooseFlashMenuOption(F("CPS3 Cartdrige Writer"), menuOptionsFLASH8, 7);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -258,8 +256,7 @@ void cpsCartRegionMenu() {
 // CPS3 Cartridge CD patch menu
 void cpsCartCDMenu() {
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsCartCD, 4);
-  cartCD = question_box(F("Cartridge CD Patch"), menuOptions, 4, 0);
+  cartCD = chooseFlashMenuOption(F("Cartridge CD Patch"), menuOptionsCartCD, 4);
 
   // wait for user choice to come back from the question box menu
   if (cartCD < 3) {
@@ -279,8 +276,7 @@ void flashromCPS_SIMM2x8() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFLASH8, 7);
-  mainMenu = question_box(F("CPS3 SIMM Writer 2x8bit"), menuOptions, 7, 0);
+  mainMenu = chooseFlashMenuOption(F("CPS3 SIMM Writer 2x8bit"), menuOptionsFLASH8, 7);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -408,8 +404,7 @@ void flashromCPS_SIMM4x8() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsFLASH8, 7);
-  mainMenu = question_box(F("CPS3 SIMM Writer 4x8bit"), menuOptions, 7, 0);
+  mainMenu = chooseFlashMenuOption(F("CPS3 SIMM Writer 4x8bit"), menuOptionsFLASH8, 7);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -648,7 +643,7 @@ void readCartridge() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = flashSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (unsigned long currByte = 0; currByte < flashSize; currByte += 512) {
     for (int c = 0; c < 512; c++) {
@@ -679,7 +674,7 @@ void writeCartridge() {
     // Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     // Fill sdBuffer
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
@@ -739,7 +734,7 @@ void verifyCartridge() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       //fill sdBuffer
@@ -949,7 +944,7 @@ void blankcheckSIMM2x8() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = flashSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   blank = 1;
   word d = 0;
@@ -1002,7 +997,7 @@ void readSIMM2x8() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = flashSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   word d = 0;
   unsigned long simmAddress = 0;
@@ -1044,7 +1039,7 @@ void readSIMM2x8B() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = flashSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   word d = 0;
   unsigned long simmAddress = 0;
@@ -1092,7 +1087,7 @@ void writeSIMM2x8() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     // Fill sdBuffer LSB
     unsigned long simmAddress = 0;
@@ -1142,7 +1137,7 @@ void verifySIMM2x8() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
     for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 256) {
       //fill sdBuffer
       readSdBufferBlock();
@@ -1258,7 +1253,7 @@ void blankcheckSIMM4x8() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = flashSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   blank = 1;
   word d = 0;
@@ -1322,7 +1317,7 @@ void readSIMM4x8() {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = flashSize;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   word d = 0;
   for (unsigned long currByte = 0; currByte < flashSize / 4; currByte += 128) {
@@ -1368,7 +1363,7 @@ void writeSIMM4x8() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     // Fill sdBuffer
     for (unsigned long currByte = 0; currByte < fileSize / 4; currByte += 128) {
@@ -1419,7 +1414,7 @@ void verifySIMM4x8() {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = fileSize;
-    draw_progressbar(0, totalProgressBar);
+    startProgressBar(totalProgressBar);
 
     for (unsigned long currByte = 0; currByte < fileSize / 4; currByte += 128) {
       //fill sdBuffer

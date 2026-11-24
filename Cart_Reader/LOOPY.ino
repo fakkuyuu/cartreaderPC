@@ -121,8 +121,7 @@ static const char loopyMenuItem4[] PROGMEM = "Format SRAM";
 static const char* const menuOptionsLOOPY[] PROGMEM = { FSTRING_REFRESH_CART, FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, loopyMenuItem4, FSTRING_RESET };
 
 void loopyMenu() {
-  convertPgm(menuOptionsLOOPY, 5);
-  uint8_t mainMenu = question_box(F("CASIO LOOPY MENU"), menuOptions, 5, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("CASIO LOOPY MENU"), menuOptionsLOOPY, 5);
   display_Clear();
   display_Update();
   bool waitForInput = false;
@@ -522,7 +521,7 @@ void readROM_LOOPY() {
 
   createFolderAndOpenFile("LOOPY", "ROM", romName, "bin");
 
-  draw_progressbar(0, cartSize);
+  startProgressBar(cartSize);
 
   const size_t sdBufferSize = 512;
   uint32_t sum = 0;

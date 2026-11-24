@@ -94,7 +94,7 @@ void suprAcanMenu() {
     mainMenu = 7;
 
   convertPgm(menuOptionsAcan, mainMenu);
-  mainMenu = question_box(F("Super A'can Menu"), menuOptions, mainMenu, 0);
+  mainMenu = chooseMenuOption(F("Super A'can Menu"), mainMenu);
 
   switch (mainMenu) {
     case 0:
@@ -181,7 +181,7 @@ static void readROM_Acan() {
 
   createFolderAndOpenFile("/ACAN", "ROM", "rom", "bin");
 
-  draw_progressbar(0, cartSize);
+  startProgressBar(cartSize);
 
   dataIn_Acan();
   for (uint32_t addr = 0; addr < cartSize; addr += 512, draw_progressbar(addr, cartSize)) {
@@ -366,7 +366,7 @@ static void flashCart_Acan() {
   DDRG |= (1 << 5);
   PORTG |= (1 << 5);
 
-  draw_progressbar(0, file_length);
+  startProgressBar(file_length);
 
   for (i = 0; i < file_length; i += *flash_size) {
     // erase chip

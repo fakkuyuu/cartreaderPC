@@ -131,8 +131,7 @@ static const char* const menuOptionsTI99[] PROGMEM = { FSTRING_SELECT_CART, ti99
 
 void ti99Menu()
 {
-  convertPgm(menuOptionsTI99, 7);
-  uint8_t mainMenu = question_box(F("TI-99 MENU"), menuOptions, 7, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("TI-99 MENU"), menuOptionsTI99, 7);
 
   switch (mainMenu)
   {

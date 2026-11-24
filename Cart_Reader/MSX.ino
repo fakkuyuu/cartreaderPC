@@ -202,8 +202,7 @@ static const char msxMenuItem4[] PROGMEM = "Write SRAM";
 static const char* const menuOptionsMSX[] PROGMEM = { FSTRING_SELECT_CART, msxMenuItem2, msxMenuItem3, msxMenuItem4, FSTRING_RESET };
 
 void msxMenu() {
-  convertPgm(menuOptionsMSX, 5);
-  uint8_t mainMenu = question_box(F("MSX MENU"), menuOptions, 5, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("MSX MENU"), menuOptionsMSX, 5);
 
   switch (mainMenu) {
     case 0:

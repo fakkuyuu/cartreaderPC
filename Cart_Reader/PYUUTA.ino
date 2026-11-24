@@ -69,8 +69,7 @@ static const char* const menuOptionsPYUUTA[] PROGMEM = { FSTRING_SELECT_CART, FS
 
 void pyuutaMenu()
 {
-  convertPgm(menuOptionsPYUUTA, 4);
-  uint8_t mainMenu = question_box(F("TOMY PYUUTA MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("TOMY PYUUTA MENU"), menuOptionsPYUUTA, 4);
 
   switch (mainMenu)
   {

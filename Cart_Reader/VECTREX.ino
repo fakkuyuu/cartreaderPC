@@ -74,8 +74,7 @@ static const char* const menuOptionsVECTREX[] PROGMEM = { FSTRING_SELECT_CART, F
 
 void vectrexMenu()
 {
-  convertPgm(menuOptionsVECTREX, 4);
-  uint8_t mainMenu = question_box(F("VECTREX MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("VECTREX MENU"), menuOptionsVECTREX, 4);
 
   switch (mainMenu) {
     case 0:

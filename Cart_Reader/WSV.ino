@@ -104,8 +104,7 @@ void setup_WSV() {
 static const char* const menuOptionsSV[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
 
 void wsvMenu() {
-  convertPgm(menuOptionsSV, 4);
-  uint8_t mainMenu = question_box(F("SUPERVISION MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("SUPERVISION MENU"), menuOptionsSV, 4);
 
   switch (mainMenu) {
     case 0:

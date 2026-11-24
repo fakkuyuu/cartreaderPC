@@ -132,8 +132,7 @@ void setup_INTV() {
 }
 
 void intvMenu() {
-  convertPgm(menuOptionsINTV, 4);
-  uint8_t mainMenu = question_box(F("INTELLIVISION MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("INTELLIVISION MENU"), menuOptionsINTV, 4);
 
   switch (mainMenu) {
     case 0:

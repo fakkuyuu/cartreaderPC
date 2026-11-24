@@ -133,8 +133,7 @@ void setup_5200() {
 }
 
 void a5200Menu() {
-  convertPgm(menuOptions5200, 4);
-  uint8_t mainMenu = question_box(F("ATARI 5200 MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("ATARI 5200 MENU"), menuOptions5200, 4);
 
   switch (mainMenu) {
     case 0:

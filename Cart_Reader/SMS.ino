@@ -54,8 +54,7 @@ bool manRomSizeSelected = false;
 //*********************************************************
 void smsMenu() {
   unsigned char SMSSetup;
-  convertPgm(SMSAdapterMenu, 6);
-  SMSSetup = question_box(F("Select your setup"), menuOptions, 6, 0);
+  SMSSetup = chooseFlashMenuOption(F("Select your setup"), SMSAdapterMenu, 6);
 
   switch (SMSSetup) {
     case 0:
@@ -99,8 +98,7 @@ void operationsMenu() {
   unsigned char SMSOperation = '3';
 
   if (system_sg1000) {
-    convertPgm(SGOperationsMenu, 2);
-    SMSOperation = question_box(FS(SMSAdapterItem6), menuOptions, 2, 0);
+    SMSOperation = chooseFlashMenuOption(FS(SMSAdapterItem6), SGOperationsMenu, 2);
     switch (SMSOperation) {
       case 0: // Read ROM
         mode = CORE_SMS;
@@ -117,17 +115,17 @@ void operationsMenu() {
     convertPgm(SMSOperationMenu, 5);
     if (system_sms) {
       if (adapter_raphnet) {
-        SMSOperation = question_box(FS(SMSAdapterItem1), menuOptions, 5, 0);
+        SMSOperation = chooseMenuOption(FS(SMSAdapterItem1), 5);
       } else if (adapter_retrode) {
-        SMSOperation = question_box(FS(SMSAdapterItem2), menuOptions, 5, 0);
+        SMSOperation = chooseMenuOption(FS(SMSAdapterItem2), 5);
       } else if (adapter_retron) {
-        SMSOperation = question_box(FS(SMSAdapterItem3), menuOptions, 5, 0);
+        SMSOperation = chooseMenuOption(FS(SMSAdapterItem3), 5);
       }
     } else if (system_gg) {
       if (adapter_retrode) {
-        SMSOperation = question_box(FS(SMSAdapterItem4), menuOptions, 5, 0);
+        SMSOperation = chooseMenuOption(FS(SMSAdapterItem4), 5);
       } else if (adapter_retron) {
-        SMSOperation = question_box(FS(SMSAdapterItem5), menuOptions, 5, 0);
+        SMSOperation = chooseMenuOption(FS(SMSAdapterItem5), 5);
       }
     }
 
@@ -507,8 +505,7 @@ void manual_selectRomSize() {
 
   if (system_sg1000) {
     // Rom sizes for SG-1000
-    convertPgm(SG1RomSizeMenu, 4);
-    SMSRomSize = question_box(F("Select ROM size"), menuOptions, 4, 0);
+    SMSRomSize = chooseFlashMenuOption(F("Select ROM size"), SG1RomSizeMenu, 4);
     switch (SMSRomSize) {
       case 0:
         cartSize = 8192;   // 8 KiB
@@ -531,8 +528,7 @@ void manual_selectRomSize() {
     }
   } else {
     // Rom sizes for SMS and GG
-    convertPgm(SMSRomSizeMenu, 6);
-    SMSRomSize = question_box(F("Select ROM size"), menuOptions, 6, 0);
+    SMSRomSize = chooseFlashMenuOption(F("Select ROM size"), SMSRomSizeMenu, 6);
     switch (SMSRomSize) {
       case 0:
         cartSize = 32768;    // 32 KiB
@@ -601,7 +597,7 @@ void readROM_SMS() {
   // Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(cartSize);
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (byte currBank = 0x0; currBank < (cartSize / bankSize); currBank++) {
     // Write current 16KB bank to slot 2 register 0xFFFF

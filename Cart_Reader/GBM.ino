@@ -20,8 +20,7 @@ void gbmMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsGBM, 7);
-  mainMenu = question_box(F("GB Memory Menu"), menuOptions, 7, 0);
+  mainMenu = chooseFlashMenuOption(F("GB Memory Menu"), menuOptionsGBM, 7);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {

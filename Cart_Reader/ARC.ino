@@ -92,8 +92,7 @@ void setup_ARC() {
 }
 
 void arcMenu() {
-  convertPgm(menuOptionsARC, 4);
-  uint8_t mainMenu = question_box(F("ARCADIA 2001 MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("ARCADIA 2001 MENU"), menuOptionsARC, 4);
 
   switch (mainMenu) {
     case 0:

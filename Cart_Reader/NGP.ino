@@ -54,8 +54,7 @@ void setup_NGP() {
 void ngpMenu() {
   uint8_t mainMenu;
 
-  convertPgm(menuOptionsNGP, 4);
-  mainMenu = question_box(F("NGP Menu"), menuOptions, 4, 0);
+  mainMenu = chooseFlashMenuOption(F("NGP Menu"), menuOptionsNGP, 4);
 
   switch (mainMenu) {
     case 0:
@@ -225,7 +224,7 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
   // read rom
   dataIn();
   uint32_t progress = 0;
-  draw_progressbar(0, cartSize);
+  startProgressBar(cartSize);
   for (uint32_t addr = 0; addr < cartSize; addr += 512) {
     // blink LED
     if ((addr & ((1 << 14) - 1)) == 0)
@@ -322,7 +321,7 @@ void changeSize_NGP() {
 
   // Copy menuOptions out of progmem
   convertPgm(ngpRomOptions, 4);
-  ngpRomMenu = question_box(F("Select ROM size"), menuOptions, 4, 0);
+  ngpRomMenu = chooseMenuOption(F("Select ROM size"), 4);
 
   // wait for user choice to come back from the question box menu
   switch (ngpRomMenu) {

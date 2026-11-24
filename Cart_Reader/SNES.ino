@@ -83,8 +83,7 @@ static const char* const menuOptionsReproCFI[] PROGMEM = { reproCFIItem1, reproC
   // create menu with title and 3 options to choose from
   unsigned char snsReproEX;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsReproEX, 3);
-  snsReproEX = question_box(F("ROM file order"), menuOptions, 3, 0);
+  snsReproEX = chooseFlashMenuOption(F("ROM file order"), menuOptionsReproEX, 3);
 
   // wait for user choice to come back from the question box menu
   switch (snsReproEX) {
@@ -107,8 +106,7 @@ void reproCFIMenu() {
   // create menu with title and 7 options to choose from
   unsigned char snsReproCFI;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsReproCFI, 7);
-  snsReproCFI = question_box(F("Select Flash Config"), menuOptions, 7, 0);
+  snsReproCFI = chooseFlashMenuOption(F("Select Flash Config"), menuOptionsReproCFI, 7);
 
   // wait for user choice to come back from the question box menu
   switch (snsReproCFI) {
@@ -244,8 +242,7 @@ void reproMenu() {
   // create menu with title and 7 options to choose from
   unsigned char snsRepro;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsRepro, 7);
-  snsRepro = question_box(F("Select Repro Type"), menuOptions, 7, 0);
+  snsRepro = chooseFlashMenuOption(F("Select Repro Type"), menuOptionsRepro, 7);
 
   // wait for user choice to come back from the question box menu
   switch (snsRepro) {
@@ -318,8 +315,7 @@ void snsMenu() {
   // create menu with title and 7 options to choose from
   unsigned char snsCart;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSNS, 7);
-  snsCart = question_box(FS(FSTRING_SELECT_CART_TYPE), menuOptions, 7, 0);
+  snsCart = chooseFlashMenuOption(FS(FSTRING_SELECT_CART_TYPE), menuOptionsSNS, 7);
 
   // wait for user choice to come back from the question box menu
   switch (snsCart) {
@@ -393,8 +389,7 @@ void snesMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsSNES, 7);
-  mainMenu = question_box(FS(SharedFlashText::textSNESCartReader), menuOptions, 7, 0);
+  mainMenu = chooseFlashMenuOption(FS(SharedFlashText::textSNESCartReader), menuOptionsSNES, 7);
 
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
@@ -530,8 +525,7 @@ void confMenuManual() {
   // create menu with title and 5 options to choose from
   unsigned char subMenu;
   // Copy menuOptions out of progmem
-  convertPgm(menuOptionsConfManual, 5);
-  subMenu = question_box(F("Choose mapping"), menuOptions, 5, 0);
+  subMenu = chooseFlashMenuOption(F("Choose mapping"), menuOptionsConfManual, 5);
 
   // wait for user choice to come back from the question box menu
   switch (subMenu) {
@@ -799,7 +793,7 @@ void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (word currBank = start; currBank < total; currBank++) {
     PORTL = currBank;
@@ -849,7 +843,7 @@ void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
-  draw_progressbar(0, totalProgressBar);
+  startProgressBar(totalProgressBar);
 
   for (word currBank = start; currBank < total; currBank++) {
     PORTL = currBank;

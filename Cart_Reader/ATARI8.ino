@@ -80,8 +80,7 @@ static const char* const menuOptionsATARI8[] PROGMEM = { FSTRING_SELECT_CART, FS
 
 void atari8Menu()
 {
-  convertPgm(menuOptionsATARI8, 5);
-  uint8_t mainMenu = question_box(F("ATARI 8-BIT MENU"), menuOptions, 5, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("ATARI 8-BIT MENU"), menuOptionsATARI8, 5);
 
   switch (mainMenu)
   {

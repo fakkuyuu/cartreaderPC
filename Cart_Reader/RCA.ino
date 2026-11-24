@@ -66,8 +66,7 @@ static const char* const menuOptionsRCA[] PROGMEM = { FSTRING_SELECT_CART, FSTRI
 
 void rcaMenu()
 {
-  convertPgm(menuOptionsRCA, 4);
-  uint8_t mainMenu = question_box(F("RCA STUDIO II MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("RCA STUDIO II MENU"), menuOptionsRCA, 4);
 
   switch (mainMenu)
   {

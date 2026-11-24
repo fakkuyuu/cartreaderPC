@@ -91,8 +91,7 @@ void setup_COL() {
 }
 
 void colMenu() {
-  convertPgm(menuOptionsCOL, 4);
-  uint8_t mainMenu = question_box(F("COLECOVISION MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("COLECOVISION MENU"), menuOptionsCOL, 4);
 
   switch (mainMenu) {
     case 0:

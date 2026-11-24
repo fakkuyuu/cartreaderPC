@@ -99,8 +99,7 @@ static const char* const menuOptionsLJ[] PROGMEM = { FSTRING_SELECT_CART, FSTRIN
 
 void ljMenu()
 {
-  convertPgm(menuOptionsLJ, 4);
-  uint8_t mainMenu = question_box(F("LITTLE JAMMER MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("LITTLE JAMMER MENU"), menuOptionsLJ, 4);
 
   switch (mainMenu)
   {

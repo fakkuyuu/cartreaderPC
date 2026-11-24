@@ -151,8 +151,7 @@ void setup_7800() {
 }
 
 void a7800Menu() {
-  convertPgm(menuOptions7800, 4);
-  uint8_t mainMenu = question_box(F("ATARI 7800 MENU"), menuOptions, 4, 0);
+  uint8_t mainMenu = chooseFlashMenuOption(F("ATARI 7800 MENU"), menuOptions7800, 4);
 
   switch (mainMenu) {
     case 0:

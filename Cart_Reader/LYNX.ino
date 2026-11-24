@@ -465,7 +465,7 @@ static const char* const menuOptionsLYNX[] PROGMEM = { FSTRING_READ_ROM, LYNX_ME
 void lynxMenu() {
   size_t menuCount = sizeof(menuOptionsLYNX) / sizeof(menuOptionsLYNX[0]);
   convertPgm(menuOptionsLYNX, menuCount);
-  uint8_t mainMenu = question_box(F("LYNX MENU"), menuOptions, menuCount, 0);
+  uint8_t mainMenu = chooseMenuOption(F("LYNX MENU"), menuCount);
   display_Clear();
   display_Update();
 
