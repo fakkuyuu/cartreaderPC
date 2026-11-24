@@ -33,14 +33,13 @@ jobs:
           $out = Join-Path $repo 'size-measurement-output'
           New-Item -ItemType Directory -Force -Path $temp,$out | Out-Null
           $requestFile = Join-Path $repo '.github/size-measurement-request.json'
-          # Initial two-build calibration against the known local measurements.
+          # Trial: compare one candidate against the last measured firmware.
           $request = [pscustomobject]@{
-            id = 'smoke-log-integer'
-            base = '866ee1aa2387997bd41daa96b13f5ca55ddfdd03'
-            head = '2dc6b67a5758ddd5a542269e00da84adbcc820e7'
-            expected_base_flash = 215954
+            id = 'trial-mmc5-001'
+            base = '6b306f9bdabc5eb6a06310d810aa1c0f4bda841c'
+            head = '87cb8e4d805ff3a21d27c74a57254d7ff2c0861a'
+            expected_base_flash = 214558
             expected_base_ram = 6255
-            expected_head_flash = 214558
           }
           $report = [ordered]@{
             schema = 1; run_id = $env:GITHUB_RUN_ID; run_attempt = $env:GITHUB_RUN_ATTEMPT
@@ -98,15 +97,21 @@ jobs:
                 $pattern = '(?m)^([ \t]*)//[ \t]*(#define[ \t]+HW3\b)'
                 if ([regex]::Matches($cfg,$pattern).Count -ne 1) { throw 'Expected one commented HW3 definition' }
                 $cfg = $cfg -replace $pattern, '$1$2'
+                # Explicitly enable the additional HW3 cartridge cores used in the local test profile.
+                foreach ($core in @('ENABLE_NGP','ENABLE_MSX','ENABLE_PCE','ENABLE_POKE','ENABLE_SFM','ENABLE_SV','ENABLE_ST','ENABLE_VBOY','ENABLE_WS')) {
+                  $corePattern = '(?m)^([ \t]*)//[ \t]*(#define[ \t]+' + $core + '\b)'
+                  if ([regex]::Matches($cfg,$corePattern).Count -ne 1) { throw "Unexpected core configuration: $core" }
+                  $cfg = $cfg -replace $corePattern, '$1$2'
+                }
                 $active = [regex]::Replace($cfg, '(?s)/\*.*?\*/', '')
                 $active = [regex]::Replace($active, '(?m)//.*$', '')
                 if ($active -match '(?m)^\s*#define\s+HW[1245]\b') { throw 'Unexpected board define' }
                 if ($active -match '(?m)^\s*#define\s+ENABLE_FLASH(?:8|16)?\b') { throw 'FLASH configuration not OFF' }
                 [IO.File]::WriteAllText($config, $cfg)
-                Write-Host "=== Config: $short ==="
-                Get-Content $config | Select-String '^\s*#define\s+(HW\d|ENABLE_|OPTION_|PC_)'
+                Write-Host "=== Config: $short (comments excluded; conditional defines still listed) ==="
+                $active -split "`n" | Select-String '^\s*#define\s+(HW\d|ENABLE_|OPTION_|PC_)'
                 $log = Join-Path $out "$short-build.log"
-                $args = @('-compile','-verbose','-hardware',"$ide/hardware",'-tools',"$ide/tools-builder",'-tools',"$ide/hardware/tools/avr",'-built-in-libraries',"$ide/libraries",'-libraries',"$sketchbook/libraries",'-fqbn','arduino:avr:mega:cpu=atmega2560','-prefs','compiler.c.elf.extra_flags=-flto-partition=none','-build-path',$build,"$src/Cart_Reader/Cart_Reader.ino")
+                $args = @('-compile','-verbose','-hardware',"$ide/hardware",'-tools',"$ide/tools-builder",'-tools',"$ide/hardware/tools/avr",'-built-in-libraries',"$ide/libraries",'-libraries',"$sketchbook/libraries",'-fqbn','arduino:avr:mega:cpu=atmega2560','-prefs','compiler.c.elf.extra_flags=-Wl,--relax -flto-partition=none','-build-path',$build,"$src/Cart_Reader/Cart_Reader.ino")
                 & "$ide/arduino-builder.exe" @args 2>&1 | Tee-Object -FilePath $log | Out-Host
                 $logText = Get-Content -LiteralPath $log -Raw
                 foreach ($flag in @('-Os','-mcall-prologues','--relax','-flto-partition=none')) {
