@@ -2168,7 +2168,8 @@ byte selectSlotNumber() {
 }
 
 // Read rom ID
-void idCart() {
+static void readN64HeaderAndIdentity() __attribute__((noinline));
+static void readN64HeaderAndIdentity() {
   // Set the address
   setAddress_N64(romBase);
   // Read first 64 bytes of rom
@@ -2201,6 +2202,10 @@ void idCart() {
   if (buildRomName(romName, &sdBuffer[0x20], 20) == 0) {
     strcpy(romName, cartID);
   }
+}
+
+void idCart() {
+  readN64HeaderAndIdentity();
 
   // 18-in-1 repro
   if (strcmp("CZN Production!", romName) == 0) {
@@ -2231,37 +2236,7 @@ void idCart() {
     setAddress_N64(0x8000002);
     writeWord_N64(cmdTwo);
 
-    // Read rom header again
-    setAddress_N64(romBase);
-    for (int c = 0; c < 64; c += 2) {
-      // split word
-      word myWord = readWord_N64();
-      byte loByte = myWord & 0xFF;
-      byte hiByte = myWord >> 8;
-
-      // write to buffer
-      sdBuffer[c] = hiByte;
-      sdBuffer[c + 1] = loByte;
-    }
-    // Pull ale_H(PC1) high
-    PORTC |= (1 << 1);
-
-    // CRC1
-    formatFixedHex(checksumStr, (uint32_t(sdBuffer[0x10]) << 24) | (uint32_t(sdBuffer[0x11]) << 16) | (uint32_t(sdBuffer[0x12]) << 8) | sdBuffer[0x13], 8);
-
-    // Get cart id
-    cartID[0] = sdBuffer[0x3B];
-    cartID[1] = sdBuffer[0x3C];
-    cartID[2] = sdBuffer[0x3D];
-    cartID[3] = sdBuffer[0x3E];
-
-    // Get rom version
-    romVersion = sdBuffer[0x3F];
-
-    // If name consists out of all japanese characters use cart id
-    if (buildRomName(romName, &sdBuffer[0x20], 20) == 0) {
-      strcpy(romName, cartID);
-    }
+    readN64HeaderAndIdentity();
   }
 
 #ifdef OPTION_N64_SAVESUMMARY
@@ -4068,6 +4043,24 @@ static void readAndShowFlashFileSize_N64() {
   display_Update();
 }
 
+static void showAccessoryFlashVerify_N64() __attribute__((noinline));
+static void showAccessoryFlashVerify_N64() {
+  if (writeErrors == 0) {
+    clearAndUpdateDisplay();
+    println_Msg(FS(SharedFlashText::textVerfiedOK));
+    printBlankLine();
+    println_Msg(FS(SharedFlashText::textTurnCartReaderOffNow));
+    display_Update();
+    while (1)
+      ;
+  } else {
+    clearAndUpdateDisplay();
+    println_Msg(FS(SharedFlashText::textVerificationFailed));
+    println_Msg(writeErrors);
+    showVerificationBytesTail();
+  }
+}
+
 void flashGameshark_N64() {
   // Check flashrom ID's
   unlockGSAddressRanges();
@@ -4130,20 +4123,7 @@ void flashGameshark_N64() {
       showVerifyingAndUpdate();
       writeErrors = verifyGameshark_N64();
 
-      if (writeErrors == 0) {
-        clearAndUpdateDisplay();
-        println_Msg(FS(SharedFlashText::textVerfiedOK));
-        printBlankLine();
-        println_Msg(FS(SharedFlashText::textTurnCartReaderOffNow));
-        display_Update();
-        while (1)
-          ;
-      } else {
-        clearAndUpdateDisplay();
-        println_Msg(FS(SharedFlashText::textVerificationFailed));
-        println_Msg(writeErrors);
-        showVerificationBytesTail();
-      }
+      showAccessoryFlashVerify_N64();
     } else {
       print_Error(open_file_STR);
     }
@@ -4464,20 +4444,7 @@ void flashXplorer_N64() {
       showVerifyingAndUpdate();
       writeErrors = verifyXplorer_N64();
 
-      if (writeErrors == 0) {
-        clearAndUpdateDisplay();
-        println_Msg(FS(SharedFlashText::textVerfiedOK));
-        printBlankLine();
-        println_Msg(FS(SharedFlashText::textTurnCartReaderOffNow));
-        display_Update();
-        while (1)
-          ;
-      } else {
-        clearAndUpdateDisplay();
-        println_Msg(FS(SharedFlashText::textVerificationFailed));
-        println_Msg(writeErrors);
-        showVerificationBytesTail();
-      }
+      showAccessoryFlashVerify_N64();
     } else {
       print_Error(open_file_STR);
     }
