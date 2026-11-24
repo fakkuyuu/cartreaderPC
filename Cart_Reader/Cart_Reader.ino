@@ -646,6 +646,27 @@ void rewind_line(FsFile& readfile, byte count = 1) {
     readfile.seekCur(1);
 }
 
+#ifdef ENABLE_NES
+// NES database records store the 16-byte header as 32 ASCII hex digits.
+// Decode pairs directly rather than pulling in scanf's general parser.
+static uint8_t nesHexDigit(char c) {
+  if (c >= '0' && c <= '9') return c - '0';
+  if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+  if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+  return 0xFF;
+}
+
+static void decodeNesHeader(const char* input, uint8_t* output) __attribute__((noinline));
+static void decodeNesHeader(const char* input, uint8_t* output) {
+  for (uint8_t i = 0; i < 16; ++i) {
+    const uint8_t high = nesHexDigit(input[0]);
+    const uint8_t low = nesHexDigit(input[1]);
+    output[i] = high < 16 && low < 16 ? (high << 4) | low : 0;
+    input += 2;
+  }
+}
+#endif
+
 // Calculate CRC32 if needed and compare it to CRC read from database
 boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, int offset) {
   // The host computes CRC and searches its local database when the completed
@@ -695,11 +716,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
           get_line(iNES_STR, &myFile, 33);
 
           // Convert "4E4553" to (0x4E, 0x45, 0x53)
-          unsigned int iNES_BUF;
-          for (byte j = 0; j < 16; j++) {
-            sscanf(iNES_STR + j * 2, "%2X", &iNES_BUF);
-            iNES_HEADER[j] = iNES_BUF;
-          }
+          decodeNesHeader(iNES_STR, iNES_HEADER);
           //Skip CRLF
           myFile.seekCur(4);
         }
