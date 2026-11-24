@@ -429,6 +429,18 @@ static const char* const menuOptionsNESFlash[] PROGMEM = { nesFlashMenuItem1, ne
 #endif
 
 // NES start menu
+static void finishNesRomMenuRead() __attribute__((noinline));
+static void finishNesRomMenuRead() {
+  printBlankLine();
+  // Prints string out of the common strings array either with or without newline
+  printPressButtonPrompt();
+   ENABLE_GLOBAL_LOG
+  save_log();
+
+  display_Update();
+  wait();
+}
+
 void nesMenu() {
   unsigned char answer;
 
@@ -444,14 +456,7 @@ void nesMenu() {
       // Change working dir to root
       changeToStorageRoot();
       readRom_NES();
-      printBlankLine();
-      // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-#ifdef ENABLE_GLOBAL_LOG
-      save_log();
-#endif
-      display_Update();
-      wait();
+      finishNesRomMenuRead();
       break;
 
     // Read single chip
@@ -517,14 +522,7 @@ void nesChipMenu() {
       // Change working dir to root
       changeToStorageRoot();
       readRaw_NES();
-      printBlankLine();
-      // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-#ifdef ENABLE_GLOBAL_LOG
-      save_log();
-#endif
-      display_Update();
-      wait();
+      finishNesRomMenuRead();
       break;
 
     // Read PRG
