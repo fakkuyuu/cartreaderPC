@@ -1952,6 +1952,14 @@ void visitSramBanks_SNES(byte bank, long start, long capacity, long size,
   }
 }
 
+// Change the SPC7110 SRAM register and restore the data bus to input.
+static void setSpc7110SramAccess_SNES(byte value) __attribute__((noinline));
+static void setSpc7110SramAccess_SNES(byte value) {
+  dataOut();
+  writeBank_SNES(0, 0x4830, value);
+  dataIn();
+}
+
 void writeSRAM(boolean browseFile) {
   if (browseFile) {
     browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectSrmFile));
@@ -1987,10 +1995,7 @@ void writeSRAM(boolean browseFile) {
         // Write to sram bank
         writeSramFileRange_SNES(0x30, 0x6000, lastByte, 0);
         // Reset SPC7110 SRAM Register
-        dataOut();
-        // Reset 0x4830 to 0x0
-        writeBank_SNES(0, 0x4830, 0);
-        dataIn();
+        setSpc7110SramAccess_SNES(0);
       } else {
         // Writing SRAM on HiRom needs CS(PH3) to be high
         PORTH |= (1 << 3);
@@ -2093,17 +2098,11 @@ void readSRAM() {
   } else if (romType == HI) {
     if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
       // Configure SPC7110 SRAM Register
-      dataOut();
-      // Set 0x4830 to 0x80
-      writeBank_SNES(0, 0x4830, 0x80);
-      dataIn();
+      setSpc7110SramAccess_SNES(0x80);
       // Sram size
       long lastByte = (long(sramSize) * 128) + 0x6000;
       readSramFileRange_SNES(0x30, 0x6000, lastByte, 0);
-      dataOut();
-      // Reset 0x4830 to 0x0
-      writeBank_SNES(0, 0x4830, 0);
-      dataIn();
+      setSpc7110SramAccess_SNES(0);
     } else {
       // Dumping SRAM on HiRom needs CS(PH3) to be high
       PORTH |= (1 << 3);
@@ -2177,17 +2176,11 @@ unsigned long verifySRAM() {
     } else if (romType == HI) {
       if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
         // Configure SPC7110 SRAM Register
-        dataOut();
-        // Set 0x4830 to 0x80
-        writeBank_SNES(0, 0x4830, 0x80);
-        dataIn();
+        setSpc7110SramAccess_SNES(0x80);
         // Sram size
         long lastByte = (long(sramSize) * 128) + 0x6000;
         verifySramFileRange_SNES(0x30, 0x6000, lastByte, 0);
-        dataOut();
-        // Reset 0x4830 to 0x0
-        writeBank_SNES(0, 0x4830, 0);
-        dataIn();
+        setSpc7110SramAccess_SNES(0);
       } else {
         // Dumping SRAM on HiRom needs CS(PH3) to be high
         PORTH |= (1 << 3);
@@ -2265,10 +2258,7 @@ boolean eraseSRAM(byte b) {
       // Write to sram bank
       fillSramRange_SNES(0x30, 0x6000, lastByte, b);
       // Reset SPC7110 SRAM Register
-      dataOut();
-      // Reset 0x4830 to 0x0
-      writeBank_SNES(0, 0x4830, 0);
-      dataIn();
+      setSpc7110SramAccess_SNES(0);
     } else {
       // Writing SRAM on HiRom needs CS(PH3) to be high
       PORTH |= (1 << 3);
@@ -2352,17 +2342,11 @@ boolean eraseSRAM(byte b) {
   } else if (romType == HI) {
     if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
       // Configure SPC7110 SRAM Register
-      dataOut();
-      // Set 0x4830 to 0x80
-      writeBank_SNES(0, 0x4830, 0x80);
-      dataIn();
+      setSpc7110SramAccess_SNES(0x80);
       // Sram size
       long lastByte = (long(sramSize) * 128) + 0x6000;
       verifySramFillRange_SNES(0x30, 0x6000, lastByte, b);
-      dataOut();
-      // Reset 0x4830 to 0x0
-      writeBank_SNES(0, 0x4830, 0);
-      dataIn();
+      setSpc7110SramAccess_SNES(0);
     } else {
       // Dumping SRAM on HiRom needs CS(PH3) to be high
       PORTH |= (1 << 3);
