@@ -302,7 +302,7 @@ void gbxMenu() {
               println_Msg(F("to B2 (Bank 2)"));
               println_Msg(F("if you want to flash"));
               println_Msg(F("a second game"));
-              println_Msg(FS(FSTRING_EMPTY));
+              printBlankLine();
               // Prints string out of the common strings array either with or without newline
               print_STR(press_button_STR, 1);
               updateDisplayAndWait();
@@ -314,7 +314,7 @@ void gbxMenu() {
               writeFlash_GB(3, 0, 0);
 
               // Reset
-              println_Msg(FS(FSTRING_EMPTY));
+              printBlankLine();
               feedbackPressAndReset();
 
             }
@@ -554,7 +554,7 @@ void gbMenu() {
       } else {
         print_Error(FS(SharedFlashText::textNoSaveOrUnsupportedType));
       }
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       break;
 
     case 2:
@@ -587,7 +587,7 @@ void gbMenu() {
       } else {
         print_Error(FS(SharedFlashText::textNoSaveOrUnsupportedType));
       }
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       break;
 
     case 3:
@@ -677,7 +677,7 @@ void showCartInfo_GB() {
     else if (romType == 0x104)
       print_Msg(F("M161"));
 
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_Msg(FS(FSTRING_ROM_SIZE));
     switch (romSize) {
       case 0:
@@ -717,7 +717,7 @@ void showCartInfo_GB() {
         break;
     }
 
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     //print_Msg(FS(SharedFlashText::textBanks));
     //println_Msg(romBanks);
 
@@ -761,13 +761,13 @@ void showCartInfo_GB() {
 
       default: print_Msg(FS(SharedFlashText::textNone));
     }
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     //print_Msg(F("Checksum: "));
     //println_Msg(checksumStr);
     //display_Update();
 
     // Wait for user input
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     updateDisplayAndWait();
@@ -989,9 +989,9 @@ void getCartInfo_GB() {
 
     if (logoChecksum != 0x1546) {
     print_Error(F("STARTUP LOGO ERROR"));
-    println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
+    printBlankLine();
+    printBlankLine();
     println_Msg(FS(SharedFlashText::textPressButtonTo));
     println_Msg(FS(SharedFlashText::textIgnoreOrPowercycle));
     println_Msg(FS(SharedFlashText::textToTryAgain));
@@ -1019,9 +1019,9 @@ void getCartInfo_GB() {
 
   if (headerChecksum != sdBuffer[0x14D]) {
     print_Error(F("HEADER CHECKSUM ERROR"));
-    println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
+    printBlankLine();
+    printBlankLine();
     println_Msg(FS(SharedFlashText::textPressButtonTo));
     println_Msg(F("ignore or clean"));
     println_Msg(F("cart and try again"));
@@ -1380,7 +1380,7 @@ void readSRAM_GB() {
     EEPROM_writeAnything(0, foldern);
 
     //open file on sd card
-    if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+    if (!openNamedOutputFile()) {
       print_FatalError(sd_error_STR);
     }
 
@@ -1416,7 +1416,7 @@ void readSRAM_GB() {
     // Signal end of process
     print_Msg(FS(SharedFlashText::textSavedTo));
     print_Msg(folder);
-    println_Msg(F("/"));
+    println_Msg(FS(SharedFlashText::pathSeparator));
     display_Update();
   } else {
     print_Error(FS(SharedFlashText::textCartHasNoSRAM));
@@ -1431,7 +1431,7 @@ void writeSRAM_GB() {
     sprintf(filePath, "%s/%s", filePath, fileName);
 
     //open file on sd card
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       // MBC2 Fix
       readByte_GB(0x0134);
 
@@ -1473,7 +1473,7 @@ void writeSRAM_GB() {
 unsigned long verifySRAM_GB() {
 
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     // Variable for errors
     writeErrors = 0;
@@ -1591,7 +1591,7 @@ void writeSRAMFLASH_MBC6_GB() {
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     display_Clear();
     println_Msg(F("Writing MBC6 save..."));
     display_Update();
@@ -1720,14 +1720,14 @@ void readEEPROM_MBC7_GB() {
   EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
 
   display_Clear();
   print_STR(saving_to_STR, 0);
   print_Msg(folder);
-  println_Msg(F("/..."));
+  println_Msg(FS(SharedFlashText::pathEllipsis));
   display_Update();
 
   uint16_t* data = (uint16_t*)sdBuffer;
@@ -1772,7 +1772,7 @@ void writeEEPROM_MBC7_GB() {
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   // open file on sd card
-  if (!myFile.open(filePath, O_READ))
+  if (!openSelectedFileForRead())
     print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
 
   myFile.read(sdBuffer, lastByte);
@@ -1958,7 +1958,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Get rom size from file
     myFile.seekCur(0x147);
     romType = myFile.read();
@@ -2520,7 +2520,7 @@ bool writeCFI_GB() {
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Get rom size from file
     myFile.seekCur(0x147);
     romType = myFile.read();
@@ -2537,7 +2537,7 @@ bool writeCFI_GB() {
     if (romBanks <= flashBanks) {
       print_Msg(F("Using "));
       print_Msg(romBanks);
-      print_Msg(F("/"));
+      print_Msg(FS(SharedFlashText::pathSeparator));
       print_Msg(flashBanks);
       println_Msg(F(" Banks"));
       display_Update();
@@ -2860,7 +2860,7 @@ void writePelican_GB() {
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     // Enable Rom Banks
     readByte_GB(0x100);
@@ -2945,7 +2945,7 @@ void writePelican_GB() {
     }
 
     // Blankcheck
-    println_Msg(F("Blankcheck..."));
+    println_Msg(FS(SharedFlashText::blankCheckProgress));
     display_Update();
 
     // Read x number of banks
@@ -3127,12 +3127,12 @@ void readMegaMem_GB() {
   display_Clear();
   print_STR(saving_to_STR, 0);
   print_Msg(folder);
-  println_Msg(F("/..."));
+  println_Msg(FS(SharedFlashText::pathEllipsis));
   println_Msg(F("Rom.GB"));
   display_Update();
 
   //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(create_file_STR);
   }
 
@@ -3165,7 +3165,7 @@ void readMegaMem_GB() {
   display_Clear();
   print_STR(saving_to_STR, 0);
   print_Msg(folder);
-  println_Msg(F("/..."));
+  println_Msg(FS(SharedFlashText::pathEllipsis));
   println_Msg(F("SaveData.bin"));
   display_Update();
 
@@ -3174,7 +3174,7 @@ void readMegaMem_GB() {
   EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(create_file_STR);
   }
 
@@ -3225,7 +3225,7 @@ void writeMegaMem_GB() {
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     writeByte_GB(0x2000, 0x1);
     writeByte_GB(0x5555, 0xFF);
@@ -3277,7 +3277,7 @@ void writeMegaMem_GB() {
   }
 
   // Blankcheck
-  println_Msg(F("Blankcheck..."));
+  println_Msg(FS(SharedFlashText::blankCheckProgress));
   display_Update();
 
   // Read x number of banks
@@ -3486,7 +3486,7 @@ void readGameshark_GB() {
   printAndIncrementFolder();
 
   //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(create_file_STR);
   }
 
@@ -3561,7 +3561,7 @@ void writeGameshark_GB() {
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   // Open file on sd card
-  myFile.open(filePath, O_READ);
+  openSelectedFileForRead();
 
   if (flashid == 0xBFB5) {
     println_Msg(FS(SharedFlashText::textSST39SF010));
@@ -3577,7 +3577,7 @@ void writeGameshark_GB() {
   }
 
   // Blankcheck
-  println_Msg(F("Blankcheck..."));
+  println_Msg(FS(SharedFlashText::blankCheckProgress));
   display_Update();
 
   // Read x number of banks

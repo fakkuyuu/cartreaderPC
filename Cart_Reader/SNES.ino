@@ -462,8 +462,8 @@ void snesMenu() {
         println_Msg(F("Warning:"));
         println_Msg(F("This can erase"));
         println_Msg(F("your save games"));
-        println_Msg(FS(FSTRING_EMPTY));
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
+        printBlankLine();
         println_Msg(F("Press any button to"));
         println_Msg(F("start sram testing"));
         updateDisplayAndWait();
@@ -519,7 +519,7 @@ void snesMenu() {
       resetArduino();
       break;
   }
-  //println_Msg(FS(FSTRING_EMPTY));
+  //printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -927,8 +927,8 @@ void getCartInfo_SNES() {
     println_Msg(FS(SharedFlashText::textERROR));
     println_Msg(FS(SharedFlashText::textRomHeaderCorrupt));
     println_Msg(FS(SharedFlashText::textOrMissing));
-    println_Msg(FS(FSTRING_EMPTY));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
+    printBlankLine();
     println_Msg(FS(SharedFlashText::textPressButtonFor));
     println_Msg(F("manual configuration"));
     println_Msg(F("or powercycle if SA1"));
@@ -1001,16 +1001,16 @@ void getCartInfo_SNES() {
   else if (romChips == 249)
     println_Msg(F("SPC RAM RTC"));
   else
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
 
 
   print_Msg(FS(FSTRING_ROM_SIZE));
   if ((romSize >> 3) < 1) {
     print_Msg(1024 * romSize >> 3);
-    print_Msg(F(" KB"));
+    print_Msg(FS(SharedFlashText::unitKBWithSpace));
   } else {
     print_Msg(romSize >> 3);
-    print_Msg(F(" MB"));
+    print_Msg(FS(SharedFlashText::unitMBWithSpace));
   }
   print_Msg(F(" ("));
   print_Msg(numBanks);
@@ -1021,7 +1021,7 @@ void getCartInfo_SNES() {
 
   print_Msg(FS(SharedFlashText::textSaveSize));
   print_Msg(sramSize >> 3);
-  println_Msg(F(" KB"));
+  println_Msg(FS(SharedFlashText::unitKBWithSpace));
 
   print_Msg(FS(FSTRING_CHECKSUM));
   println_Msg(checksumStr);
@@ -1942,7 +1942,7 @@ void readROM_SNES() {
         display_Update();
         readHiRomBanks(240, 256, &myFile);
       }
-      //println_Msg(FS(FSTRING_EMPTY));
+      //printBlankLine();
       display_Clear();  // need more space due to the 4 progress bars
 
       // Return mapping registers to initial settings...
@@ -2010,7 +2010,7 @@ void writeSRAM(boolean browseFile) {
     sprintf(filePath, "%s", fileName);
 
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     // Set pins to output
     dataOut();
@@ -2185,7 +2185,7 @@ void readSRAM() {
   createDbSaveFolder("SNES", "srm");
 
   //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
   int sramBanks = 0;
@@ -2301,7 +2301,7 @@ void readSRAM() {
 // Check if the SRAM was written without any error
 unsigned long verifySRAM() {
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     // Variable for errors
     writeErrors = 0;

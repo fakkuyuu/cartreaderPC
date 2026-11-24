@@ -242,7 +242,7 @@ void readROM_VIC20()
   display_Clear();
   print_Msg(FS(SharedFlashText::textSavingTo));
   print_Msg(folder);
-  println_Msg(F("/..."));
+  println_Msg(FS(SharedFlashText::pathEllipsis));
   display_Update();
 
   byte rommap = 0;
@@ -262,7 +262,7 @@ void readROM_VIC20()
     }
     snprintf(fileName, sizeof(fileName), "%s.%x", romName, rommap);
     // open file on sdcard
-    if (!myFile.open(fileName, O_RDWR | O_CREAT))
+    if (!openNamedOutputFile())
       print_FatalError(FS(SharedFlashText::textCanTCreateFileOnSD));
 
     if (rommap == 0x20) { // BLK1
@@ -315,7 +315,7 @@ void readROM_VIC20()
     print_Msg(FS(FSTRING_SPACE));
     printCRC(fileName, NULL, 0);
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -339,7 +339,7 @@ void setROMSize_VIC20()
       println_Msg((VIC20SIZE[i] & 0xF0) >> 4);
       print_Msg(F("ROM1 Size: "));
       println_Msg(VIC20SIZE[i] & 0x0F);
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       println_Msg(FS(SharedFlashText::textPressToChange));
       println_Msg(FS(SharedFlashText::textHoldToSelect));
       display_Update();
@@ -367,10 +367,10 @@ void setROMSize_VIC20()
   }
   print_Msg(F("ROM0 SIZE "));
   print_Msg((VIC20SIZE[newvic20size] & 0xF0) >> 4);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   print_Msg(F("ROM1 SIZE "));
   print_Msg(VIC20SIZE[newvic20size] & 0x0F);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
   delay(1000);
 #else
@@ -382,11 +382,11 @@ setrom:
     for (int i = 0; i < (vic20hi - vic20lo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print((VIC20SIZE[i + vic20lo] & 0xF0) >> 4);
       PcConsole.print(F("KB/"));
       PcConsole.print(VIC20SIZE[i + vic20lo] & 0x0F);
-      PcConsole.println(F("KB"));
+      PcConsole.println(FS(SharedFlashText::unitKB));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -401,10 +401,10 @@ setrom:
   }
   PcConsole.print(F("ROM0 Size = "));
   PcConsole.print((VIC20SIZE[newvic20size] & 0xF0) >> 4);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
   PcConsole.print(F("ROM1 Size = "));
   PcConsole.print(VIC20SIZE[newvic20size] & 0x0F);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
 #endif
   EEPROM_writeAnything(8, newvic20size);
   vic20size = newvic20size;
@@ -427,25 +427,25 @@ void checkStatus_VIC20()
   display_Clear();
   println_Msg(F("COMMODORE VIC-20"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(F("ROM MAP:   "));
   println_Msg(VIC20MAP[vic20map], HEX);
   print_Msg(F("ROM0 SIZE: "));
   print_Msg((VIC20SIZE[vic20size] & 0xF0) >> 4);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   print_Msg(F("ROM1 SIZE: "));
   print_Msg(VIC20SIZE[vic20size] & 0x0F);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   updateDisplayAndWait();
 #else
   PcConsole.print(F("CURRENT ROM MAP:   "));
   PcConsole.println(VIC20MAP[vic20map]);
   PcConsole.print(F("CURRENT ROM0 SIZE: "));
   PcConsole.print((VIC20SIZE[vic20size] & 0xF0) >> 4);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
   PcConsole.print(F("CURRENT ROM1 SIZE: "));
   PcConsole.print(VIC20SIZE[vic20size] & 0x0F);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
@@ -498,7 +498,7 @@ void setROMMap_VIC20()
     print_Msg(FS(SharedFlashText::textROMMap));
     vic20mapselect = VIC20MAP[i];
     println_Msg(vic20mapselect, HEX);
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     println_Msg(FS(SharedFlashText::textPressToChange));
     println_Msg(FS(SharedFlashText::textHoldToSelect));
     display_Update();

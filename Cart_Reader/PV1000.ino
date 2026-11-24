@@ -202,7 +202,7 @@ void readROM_PV1000()
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -233,7 +233,7 @@ void setROMSize_PV1000()
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(PV1000[newpv1000size]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
   delay(1000);
 #else
@@ -245,9 +245,9 @@ setrom:
     for (int i = 0; i < (pv1000hi - pv1000lo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(PV1000[i + pv1000lo]);
-      PcConsole.println(F("KB"));
+      PcConsole.println(FS(SharedFlashText::unitKB));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -262,7 +262,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(PV1000[newpv1000size]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
 #endif
   EEPROM_writeAnything(8, newpv1000size);
   pv1000size = newpv1000size;
@@ -280,15 +280,15 @@ void checkStatus_PV1000()
   display_Clear();
   println_Msg(F("CASIO PV-1000"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(PV1000[pv1000size]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(PV1000[pv1000size]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

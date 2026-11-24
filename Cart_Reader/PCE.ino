@@ -522,7 +522,7 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((u
           println_Msg(crc_file);
           print_Msg(FS(SharedFlashText::textSavedTo));
           print_Msg(folder_p);
-          print_Msg(F("/"));
+          print_Msg(FS(SharedFlashText::pathSeparator));
           print_Msg(gamename);
           flag = CHKSUM_OK;
           rom.rename(gamename);
@@ -536,14 +536,14 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((u
   if (flag == CHKSUM_SKIP) {
     print_Msg(FS(SharedFlashText::textSavedTo));
     print_Msg(folder_p);
-    print_Msg(F("/"));
+    print_Msg(FS(SharedFlashText::pathSeparator));
     print_Msg(file_p);
   } else if (flag == CHKSUM_ERROR) {
     print_Msg(F("Chksum Error "));
     println_Msg(crc_file);
     print_Msg(FS(SharedFlashText::textSavedTo));
     print_Msg(folder_p);
-    print_Msg(F("/"));
+    print_Msg(FS(SharedFlashText::pathSeparator));
     print_Msg(file_p);
   }
 
@@ -582,7 +582,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
 
   print_Msg(F("Saving RAM to "));
   print_Msg(folder);
-  print_Msg(F("/"));
+  print_Msg(FS(SharedFlashText::pathSeparator));
   println_Msg(fileName);
   display_Update();
 
@@ -591,7 +591,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
   EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(create_file_STR);
   }
 
@@ -622,7 +622,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
     //     print_Msg_PaddedHexByte(b);
     //     //print_Msg(FS(FSTRING_SPACE));
     //   }
-    //   println_Msg(FS(FSTRING_EMPTY));
+    //   printBlankLine();
     // }
 
     if (block_index == 0) {
@@ -631,7 +631,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
         uint8_t b = sdBuffer[i];
         print_Msg_PaddedHexByte(b);
       }
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
     }
     if (block_index == 0 && sdBuffer[2] == 0x42 && sdBuffer[3] == 0x4D) {
       if (sdBuffer[0] != 0x48 || sdBuffer[1] != 0x55) {
@@ -650,7 +650,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
   //Close the file:
   myFile.close();
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -664,7 +664,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
   display_Clear();
 
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     fileSize = myFile.fileSize();
     if (fileSize != 2 * 1024UL) {
@@ -748,7 +748,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
     print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -767,7 +767,7 @@ void read_rom_PCE(void) {
     print_Msg(F("Detected size: "));
   }
   print_Msg(rom_size);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
 
   // Get name, add extension and convert to char array for sd lib
   sd.chdir("/");
@@ -775,7 +775,7 @@ void read_rom_PCE(void) {
   printAndIncrementFolder();
 
   //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(create_file_STR);
   }
 
@@ -821,7 +821,7 @@ void read_rom_PCE(void) {
   //CRC search and rename ROM
   compareCRC("pce.txt", 0, 1, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_STR(press_button_STR, true);
   updateDisplayAndWait();
 }

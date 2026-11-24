@@ -501,7 +501,7 @@ void segaCDMenu() {
       resetArduino();
       break;
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -1184,13 +1184,13 @@ void getCartInfo_MD() {
         } else {
           print_Msg(("sramType: "));
           print_Msg_PaddedHex16(sramType);
-          println_Msg(FS(FSTRING_EMPTY));
+          printBlankLine();
           print_Msg(("sramBase: "));
           print_Msg_PaddedHex32(sramBase);
-          println_Msg(FS(FSTRING_EMPTY));
+          printBlankLine();
           print_Msg(("sramEnd: "));
           print_Msg_PaddedHex32(sramEnd);
-          println_Msg(FS(FSTRING_EMPTY));
+          printBlankLine();
           print_FatalError(FS(SharedFlashText::textUnknownSramBase));
         }
       } else if (sramType == 0xE020) {  // SRAM BOTH BYTES
@@ -1212,13 +1212,13 @@ void getCartInfo_MD() {
         } else {
           print_Msg(("sramType: "));
           print_Msg_PaddedHex16(sramType);
-          println_Msg(FS(FSTRING_EMPTY));
+          printBlankLine();
           print_Msg(("sramBase: "));
           print_Msg_PaddedHex32(sramBase);
-          println_Msg(FS(FSTRING_EMPTY));
+          printBlankLine();
           print_Msg(("sramEnd: "));
           print_Msg_PaddedHex32(sramEnd);
-          println_Msg(FS(FSTRING_EMPTY));
+          printBlankLine();
           print_FatalError(FS(SharedFlashText::textUnknownSramBase));
         }
       }
@@ -1329,7 +1329,7 @@ void getCartInfo_MD() {
   if (bramCheck != 0x00FF) {
     print_Msg(F("bramCheck: "));
     print_Msg_PaddedHex16(bramCheck);
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
   }
   if (bramSize > 0) {
     print_Msg(F("bramSize(KB): "));
@@ -1372,7 +1372,7 @@ void getCartInfo_MD() {
       print_Msg_PaddedHexByte((chksumSonic2 & 0x00ff));
       break;
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   if (saveType == 4) {
     print_Msg(F("PcConsole EEPROM: "));
     print_Msg(eepSize * 8 / 1024);
@@ -1957,12 +1957,12 @@ void writeSram_MD() {
 
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Writing..."));
+  println_Msg(FS(SharedFlashText::writingProgress));
   println_Msg(filePath);
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Write to the lower byte
     if (saveType == 1) {
       for (unsigned long currByte = sramBase; currByte < sramBase + sramSize; currByte++) {
@@ -2017,7 +2017,7 @@ void readSram_MD() {
   EEPROM_writeAnything(0, foldern);
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
 
@@ -2066,7 +2066,7 @@ void readSram_MD() {
   myFile.close();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
-  println_Msg(F("/"));
+  println_Msg(FS(SharedFlashText::pathSeparator));
   display_Update();
 }
 
@@ -2075,7 +2075,7 @@ unsigned long verifySram_MD() {
   writeErrors = 0;
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     for (unsigned long currBuffer = sramBase; currBuffer < sramBase + sramSize; currBuffer += 256) {
       for (int currWord = 0; currWord < 256; currWord++) {
         word myWord = readWord_MD(currBuffer + currWord);
@@ -2140,11 +2140,11 @@ void write29F1610_MD() {
   sprintf(filePath, "%s/%s", filePath, fileName);
   print_STR(flashing_file_STR, 0);
   print_Msg(filePath);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
@@ -2206,11 +2206,11 @@ void write29GL_MD() {
   sprintf(filePath, "%s/%s", filePath, fileName);
   print_STR(flashing_file_STR, 0);
   print_Msg(filePath);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
@@ -2352,7 +2352,7 @@ void blankcheck_MD() {
 
 void verifyFlash_MD() {
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
@@ -2963,7 +2963,7 @@ void readEEP_MD() {
   display_Update();
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
   if (eepSize > 0x100) {  // 24C04+
@@ -2987,7 +2987,7 @@ void readEEP_MD() {
   }
   // Close the file:
   myFile.close();
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   display_Clear();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
@@ -3000,12 +3000,12 @@ void writeEEP_MD() {
 
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Writing..."));
+  println_Msg(FS(SharedFlashText::writingProgress));
   println_Msg(filePath);
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     if (eepSize > 0x100) {  // 24C04+
       for (word currByte = 0; currByte < eepSize; currByte += 256) {
         myFile.read(sdBuffer, 256);
@@ -3022,13 +3022,13 @@ void writeEEP_MD() {
         writeEepromByte(currByte);
         print_Msg(F("."));
         if ((currByte != 0) && ((currByte + 1) % 64 == 0))
-          println_Msg(FS(FSTRING_EMPTY));
+          printBlankLine();
         display_Update();  // ON SERIAL = delay(100)
       }
     }
     // Close the file:
     myFile.close();
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     display_Clear();
     print_STR(done_STR, 1);
     display_Update();
@@ -3055,7 +3055,7 @@ void readBram_MD() {
   display_Update();
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
 
@@ -3068,7 +3068,7 @@ void readBram_MD() {
 
   // Close the file:
   myFile.close();
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   display_Clear();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
@@ -3081,12 +3081,12 @@ void writeBram_MD() {
 
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Writing..."));
+  println_Msg(FS(SharedFlashText::writingProgress));
   println_Msg(filePath);
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     // 0x700000-0x7FFFFF: Writes by /LWR latch D0; 1=RAM write enabled, 0=disabled
     writeWord_MD(0x380000, 1);  // Enable BRAM Writes
@@ -3100,7 +3100,7 @@ void writeBram_MD() {
     writeWord_MD(0x380000, 0);  // Disable BRAM Writes
     // Close the file:
     myFile.close();
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     display_Clear();
     print_STR(done_STR, 1);
     display_Update();
@@ -3230,7 +3230,7 @@ void resetFlashCFIChip_MD(byte currChip) {
 }
 
 void writeCFI_MD() {
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > totalFlashSizeCFI) {
@@ -3257,7 +3257,7 @@ void writeCFIChip_MD(byte currChip, unsigned long toFlash, unsigned long fileSiz
   display_Clear();
   print_STR(flashing_file_STR, 0);
   print_Msg(filePath);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   print_Msg(F("Writing"));
   if (currChip == 0 && toFlash == fileSize)  {
     println_Msg("...");
@@ -3301,7 +3301,7 @@ void writeCFIChip_MD(byte currChip, unsigned long toFlash, unsigned long fileSiz
 
 void verifyFlashCFI_MD() {
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > totalFlashSizeCFI) {
@@ -3327,7 +3327,7 @@ void verifyFlashCFI_MD() {
 void verifyFlashCFIChip_MD(byte currChip, unsigned long toVerify) {
   print_Msg(F("Verifying Chip"));
   print_Msg(currChip);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
   blank = 0;

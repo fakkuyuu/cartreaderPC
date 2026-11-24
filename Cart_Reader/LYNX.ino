@@ -271,7 +271,7 @@ static bool readHeader_LYNX() {
     lynxBlockSize = (header[5] << 8) | header[4];
     lynxUseAudin = header[59];
     romSize = fileSize - LYNX_HEADER_SIZE;
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
   } else {
     // Header not valid, assume unheadered, rewind so we don't skip valid data
     println_Msg(F("[NO HEADER]"));
@@ -290,24 +290,24 @@ static bool readHeader_LYNX() {
 
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(romSize / 1024);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
 
   // Ensure valid block size, file size, and file fits in flash
   uint32_t expectedSize = (uint32_t)LYNX_BLOCKCOUNT * lynxBlockSize;
   if (lynxBlockSize % 256 != 0 || lynxBlockSize > LYNX_BLOCKADDR || lynxBlockSize <= 0) {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_STR(error_STR, false);
     println_Msg(F("Invalid block size"));
     return waitPressButton_LYNX();
   }
   if (romSize != expectedSize) {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_STR(error_STR, false);
     println_Msg(F("Invalid file size"));
     return waitPressButton_LYNX();
   }
   if (expectedSize > flashSize) {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_STR(error_STR, false);
     print_STR(file_too_big_STR, true);
     return waitPressButton_LYNX();
@@ -365,14 +365,14 @@ static bool detectFlash_LYNX() {
   }
 
   if (flashSize <= 0) {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_STR(error_STR, false);
     println_Msg(F("Not recognized"));
     return waitPressButton_LYNX();
   }
 
   print_Msg(flashSize / 1024);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
   return true;
 }

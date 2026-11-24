@@ -187,7 +187,7 @@ void loopyMenu() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   if (waitForInput) {
     // Wait for user input
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     updateDisplayAndWait();
@@ -592,7 +592,7 @@ void writeSRAM_LOOPY() {
   digitalWrite(LOOPY_RESET, HIGH);
   digitalWrite(LOOPY_OE, LOW);
 
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     for (unsigned long currByte = 0; currByte < sramSize; currByte++) {
       writeByte_LOOPY(currByte, myFile.read());
       if (currByte % 512 == 0) {
@@ -642,7 +642,7 @@ void readSRAM_LOOPY() {
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
 
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
 
@@ -677,7 +677,7 @@ unsigned long verifySRAM_LOOPY() {
   digitalWrite(LOOPY_RAMCS1, LOW);
   digitalWrite(LOOPY_OE, LOW);
 
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     for (unsigned long currBuffer = 0; currBuffer < sramSize; currBuffer += 512) {
       for (int currByte = 0; currByte < 512; currByte++) {
         byte myByte = readByte_LOOPY(currBuffer + currByte);

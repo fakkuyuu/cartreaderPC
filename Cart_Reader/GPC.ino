@@ -318,7 +318,7 @@ void writeRAM_GPC(void) {
   display_Clear();
 
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     fileSize = myFile.fileSize();
     if (fileSize != 0x80000) {
@@ -380,7 +380,7 @@ void writeRAM_GPC(void) {
 // Check if the RAM was written without any error
 unsigned long verifyRAM_GPC() {
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Variable for errors
     writeErrors = 0;
 

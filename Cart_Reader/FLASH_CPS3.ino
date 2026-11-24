@@ -126,7 +126,7 @@ void flashromCPS_Cartridge() {
         println_Msg(F("your CPS3 Cartdrige BIOS"));
         promptAndWaitForButton();
         rgbLed(black_color);
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
         time = millis();
@@ -160,7 +160,7 @@ void flashromCPS_Cartridge() {
         // Calculate CRC32 of BIOS
         display_Clear();
         println_Msg("Looking BIOS patch");
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
         char crcStr[9];
@@ -205,9 +205,9 @@ void flashromCPS_Cartridge() {
         case 2: idFlash29F1610(); break;
         case 3: idFlash28FXXX(); break;
       }
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       printFlash(40);
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       display_Update();
       resetFlash8();
       break;
@@ -300,7 +300,7 @@ void flashromCPS_SIMM2x8() {
         println_Msg(F("your CPS3 SIMM 2x8bit"));
         promptAndWaitForButton();
         rgbLed(black_color);
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
         time = millis();
@@ -368,9 +368,9 @@ void flashromCPS_SIMM2x8() {
         case 2: break;
         case 3: break;
       }
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       printFlash16(40);
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       display_Update();
       resetSIMM2x8();
       break;
@@ -429,7 +429,7 @@ void flashromCPS_SIMM4x8() {
         println_Msg(F("your CPS3 SIMM 4x8bit"));
         promptAndWaitForButton();
         rgbLed(black_color);
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
         time = millis();
@@ -502,9 +502,9 @@ void flashromCPS_SIMM4x8() {
         case 2: break;
         case 3: break;
       }
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       printSIMM4x8(40);
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       display_Update();
       resetSIMM4x8();
       break;
@@ -926,11 +926,11 @@ void id_SIMM2x8() {
     // print first 40 bytes of flash
     display_Clear();
     println_Msg(FS(SharedFlashText::textFirst40Bytes));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     printFlash16(40);
     resetSIMM2x8();
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -987,7 +987,7 @@ void blankcheckSIMM2x8() {
     println_Msg(FS(SharedFlashText::textSIMMIsEmpty));
     display_Update();
   } else {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_Error(FS(SharedFlashText::textErrorNotBlank));
   }
 }
@@ -1235,11 +1235,11 @@ void id_SIMM4x8() {
     // print first 40 bytes of flash
     display_Clear();
     println_Msg(FS(SharedFlashText::textFirst40Bytes));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     printFlash16(40);
     resetSIMM4x8();
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -1301,7 +1301,7 @@ void blankcheckSIMM4x8() {
     println_Msg(FS(SharedFlashText::textSIMMIsEmpty));
     display_Update();
   } else {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_Error(FS(SharedFlashText::textErrorNotBlank));
   }
 }

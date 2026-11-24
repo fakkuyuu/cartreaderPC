@@ -175,7 +175,7 @@ void readRom_ST(unsigned int bankStart, unsigned int bankEnd) {
   // Compare dump CRC with db values
   compareCRC("st.txt", 0, 1, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 #endif

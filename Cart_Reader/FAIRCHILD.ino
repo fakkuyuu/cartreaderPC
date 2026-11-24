@@ -452,7 +452,7 @@ void readROM_FAIRCHILD() {
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -482,7 +482,7 @@ void read16K_FAIRCHILD() { // Read 16K Bytes
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -511,7 +511,7 @@ void setROMSize_FAIRCHILD() {
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(FAIRCHILD[newfairchildsize]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(1000);
 #else
@@ -523,9 +523,9 @@ setrom:
     for (int i = 0; i < (fairchildhi - fairchildlo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(FAIRCHILD[i + fairchildlo]);
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -540,7 +540,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(FAIRCHILD[newfairchildsize]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(8, newfairchildsize);
   fairchildsize = newfairchildsize;
@@ -557,15 +557,15 @@ void checkStatus_FAIRCHILD() {
   display_Clear();
   println_Msg(F("CHANNEL F READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(FAIRCHILD[fairchildsize]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(FAIRCHILD[fairchildsize]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

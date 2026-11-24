@@ -202,7 +202,7 @@ void printDataLine_Jag(void* entry) {
   struct database_entry_Jag* castEntry = (database_entry_Jag*)entry;
   print_Msg(FS(FSTRING_SIZE));
   print_Msg(castEntry->gameSize);
-  println_Msg(F("MB"));
+  println_Msg(FS(SharedFlashText::unitMB));
   // 0 = 93C46 = 128 byte = Standard
   // 1 = 93C56 = 256 byte = Aftermarket
   // 2 = 93C66 = 512 byte = Aftermarket
@@ -444,11 +444,11 @@ void getJagCartInfo() {
   print_Msg(F("Size: "));
   if (jagMemorytrack) {
     print_Msg(jagCartSize / 1024);
-    println_Msg(F(" KB"));
+    println_Msg(FS(SharedFlashText::unitKBWithSpace));
   } else {
 
     print_Msg(jagCartSize / 1024 / 1024);
-    println_Msg(F(" MB"));
+    println_Msg(FS(SharedFlashText::unitMBWithSpace));
   }
   if (jagSaveType == 0) {
     print_Msg(F("EEPROM: "));
@@ -457,7 +457,7 @@ void getJagCartInfo() {
   } else if (jagSaveType == 1) {
     print_Msg(F("FLASH: "));
     print_Msg(jagflaSize / 1024);
-    println_Msg(F(" KB"));
+    println_Msg(FS(SharedFlashText::unitKBWithSpace));
   }
   display_Update();
 
@@ -597,7 +597,7 @@ void readJagROM() {
   display_Clear();
   print_Msg(FS(SharedFlashText::textSavingROMTo));
   print_Msg(folder);
-  println_Msg(F("/..."));
+  println_Msg(FS(SharedFlashText::pathEllipsis));
   display_Update();
 
   // write new folder number back to eeprom
@@ -605,7 +605,7 @@ void readJagROM() {
   EEPROM_writeAnything(0, foldern);
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     println_Msg(FS(SharedFlashText::textSDERROR));
     println_Msg(FS(SharedFlashText::textPressButtonToReset));
     updateDisplayAndWait();
@@ -929,7 +929,7 @@ void readJagEEP() {
   EEPROM_writeAnything(0, foldern);
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     println_Msg(FS(SharedFlashText::textSDERROR));
 
     println_Msg(FS(SharedFlashText::textPressButtonToReset));
@@ -967,12 +967,12 @@ void readJagEEP() {
 void writeJagEEP() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Writing..."));
+  println_Msg(FS(SharedFlashText::writingProgress));
   println_Msg(filePath);
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     EepromEWEN();  // ERASE/WRITE ENABLE
     EepromERAL();  // ERASE ALL
 #ifdef SERIAL_MONITOR
@@ -1319,7 +1319,7 @@ void readJagMEMORY() {
   display_Clear();
   print_Msg(FS(SharedFlashText::textSavingROMTo));
   print_Msg(folder);
-  println_Msg(F("/..."));
+  println_Msg(FS(SharedFlashText::pathEllipsis));
   display_Update();
 
   // write new folder number back to eeprom
@@ -1327,7 +1327,7 @@ void readJagMEMORY() {
   EEPROM_writeAnything(0, foldern);
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     println_Msg(FS(SharedFlashText::textSDERROR));
     println_Msg(FS(SharedFlashText::textPressButtonToReset));
     updateDisplayAndWait();
@@ -1380,7 +1380,7 @@ void readJagFLASH() {
   display_Clear();
   print_Msg(F("Saving FLASH to "));
   print_Msg(folder);
-  println_Msg(F("/..."));
+  println_Msg(FS(SharedFlashText::pathEllipsis));
   display_Update();
 
   // write new folder number back to eeprom
@@ -1388,7 +1388,7 @@ void readJagFLASH() {
   EEPROM_writeAnything(0, foldern);
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     println_Msg(FS(SharedFlashText::textSDERROR));
     println_Msg(FS(SharedFlashText::textPressButtonToReset));
     updateDisplayAndWait();
@@ -1413,7 +1413,7 @@ void readJagFLASH() {
   myFile.close();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
-  println_Msg(F("/"));
+  println_Msg(FS(SharedFlashText::pathSeparator));
 
   println_Msg(FS(SharedFlashText::textPressButton));
   updateDisplayAndWait();
@@ -1426,12 +1426,12 @@ void writeJagFLASH() {
 
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Writing..."));
+  println_Msg(FS(SharedFlashText::writingProgress));
   println_Msg(filePath);
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
     uint32_t totalProgressBar = (uint32_t)(jagflaSize);
@@ -1470,7 +1470,7 @@ unsigned long verifyJagFLASH() {
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     for (unsigned long currByte = 0; currByte < jagflaSize; currByte += 512) {
       for (int i = 0; i < 512; i++) {
         sdBuffer[i] = readBYTE_FLASH((currByte + i) * 4);

@@ -495,7 +495,7 @@ void readROM_LEAP()
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -526,7 +526,7 @@ void setROMSize_LEAP()
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(LEAPSTER[newleapsize]);
-  println_Msg(F("MB"));
+  println_Msg(FS(SharedFlashText::unitMB));
   display_Update();
   delay(1000);
 #else
@@ -538,9 +538,9 @@ setrom:
     for (int i = 0; i < (leaphi - leaplo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(LEAPSTER[i + leaplo]);
-      PcConsole.println(F("MB"));
+      PcConsole.println(FS(SharedFlashText::unitMB));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -555,7 +555,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(LEAPSTER[newleapsize]);
-  PcConsole.println(F("MB"));
+  PcConsole.println(FS(SharedFlashText::unitMB));
 #endif
   EEPROM_writeAnything(8, newleapsize);
   leapsize = newleapsize;
@@ -573,14 +573,14 @@ void checkStatus_LEAP()
   display_Clear();
   println_Msg(F("LEAPSTER READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(FS(SharedFlashText::textTITLE));
   println_Msg(ROMTitle);
   print_Msg(FS(SharedFlashText::textVER));
   println_Msg(ROMVersion);
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(LEAPSTER[leapsize]);
-  println_Msg(F("MB"));
+  println_Msg(FS(SharedFlashText::unitMB));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textTITLE));
@@ -589,7 +589,7 @@ void checkStatus_LEAP()
   PcConsole.println(ROMVersion);
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(LEAPSTER[leapsize]);
-  PcConsole.println(F("MB"));
+  PcConsole.println(FS(SharedFlashText::unitMB));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
@@ -697,10 +697,10 @@ void readFLASH_LEAP()
     myFile.close();
     FL_CE_HIGH;
     OE_HIGH;
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     printCRC(fileName, NULL, 0); // 512K
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -717,7 +717,7 @@ void writeFLASH_LEAP()
   display_Update();
 
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     CE_HIGH;
     dataOut_LEAP();
     eraseFLASH_LEAP();
@@ -736,7 +736,7 @@ void writeFLASH_LEAP()
     }
     dataIn_LEAP();
     myFile.close();
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     println_Msg(FS(SharedFlashText::textFLASHFILEWRITTEN));
     display_Update();
   }
@@ -975,7 +975,7 @@ void readEEP_LEAP()
 
     printCRC(fileName, NULL, 0); // 2048
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -992,7 +992,7 @@ void writeEEP_LEAP()
   display_Update();
 
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     WP_LOW;
     for (word currByte = 0; currByte < 2048; currByte += 256) {
       myFile.read(sdBuffer, 256);
@@ -1005,7 +1005,7 @@ void writeEEP_LEAP()
     }
     WP_HIGH;
     myFile.close();
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     println_Msg(F("EEPROM FILE WRITTEN!"));
     display_Update();
   }

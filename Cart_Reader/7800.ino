@@ -440,7 +440,7 @@ void readROM_7800() {
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -520,7 +520,7 @@ void setROMSize_7800() {
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a7800[new7800size]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(1000);
 #else
@@ -532,9 +532,9 @@ setrom:
     for (int i = 0; i < (a7800hi - a7800lo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(a7800[i + a7800lo]);
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -549,7 +549,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(a7800[new7800size]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(8, new7800size);
   a7800size = new7800size;
@@ -571,13 +571,13 @@ void checkStatus_7800() {
   display_Clear();
   println_Msg(F("ATARI 7800 READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(F("MAPPER:   "));
   println_Msg(a7800mapper);
   println_Mapper7800(a7800mapper);
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a7800[a7800size]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();
 #else
   PcConsole.print(F("MAPPER:   "));
@@ -602,7 +602,7 @@ void checkStatus_7800() {
     PcConsole.println(F("Bentley Bears Crystal Quest/Bounty Bob Strikes Back"));
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(a7800[a7800size]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

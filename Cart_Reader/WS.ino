@@ -188,7 +188,7 @@ void wsMenu() {
       }
   }
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
 
@@ -499,7 +499,7 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
   printAndIncrementFolder(true);
 
   // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
+  if (!openNamedOutputFile())
     print_FatalError(create_file_STR);
 
   // get correct starting rom bank
@@ -598,7 +598,7 @@ static void verifySRAM_WS() {
   print_Msg(F("Verifying... "));
   display_Update();
 
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     uint32_t bank_size = (sramSize << 7);
     uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
     uint16_t bank = 0;
@@ -648,10 +648,10 @@ static void writeSRAM_WS() {
   display_Clear();
   print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     uint32_t bank_size = (sramSize << 7);
     uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
 
@@ -726,7 +726,7 @@ static void verifyEEPROM_WS() {
   print_Msg(F("Verifying... "));
   display_Update();
 
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     uint32_t write_errors = 0;
     uint32_t eepromSize = (sramSize << 7);
     uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
@@ -784,10 +784,10 @@ static void writeEEPROM_WS() {
   display_Clear();
   print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     uint32_t eepromSize = (sramSize << 7);
     uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
 
@@ -845,7 +845,7 @@ static void writeWitchOS_WS() {
 
     display_Clear();
 
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       println_Msg(F("Erasing OS..."));
       display_Update();
       eraseWitchFlashSector_WS(0xe0000);
@@ -855,7 +855,7 @@ static void writeWitchOS_WS() {
 
       print_Msg(F("Flashing OS "));
       print_Msg(filePath);
-      println_Msg(F("..."));
+      println_Msg(FS(SharedFlashText::ellipsis));
       display_Update();
 
       uint32_t fbin_length = myFile.fileSize();
@@ -962,7 +962,7 @@ static boolean compareChecksum_WS(uint16_t checksum) {
 
     return 1;
   } else {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_Error(FS(SharedFlashText::textChecksumError));
     return 0;
   }

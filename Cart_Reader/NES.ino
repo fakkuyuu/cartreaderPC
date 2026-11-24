@@ -444,7 +444,7 @@ void nesMenu() {
       // Change working dir to root
       sd.chdir("/");
       readRom_NES();
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
 #ifdef ENABLE_GLOBAL_LOG
@@ -463,7 +463,7 @@ void nesMenu() {
     case 2:
       readRAM();
       resetROM();
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       updateDisplayAndWait();
@@ -473,7 +473,7 @@ void nesMenu() {
     case 3:
       writeRAM();
       resetROM();
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       updateDisplayAndWait();
@@ -520,7 +520,7 @@ void nesChipMenu() {
       // Change working dir to root
       sd.chdir("/");
       readRaw_NES();
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
 #ifdef ENABLE_GLOBAL_LOG
@@ -535,7 +535,7 @@ void nesChipMenu() {
       CreateROMFolderInSD();
       readPRG(false);
       resetROM();
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       updateDisplayAndWait();
@@ -546,7 +546,7 @@ void nesChipMenu() {
       CreateROMFolderInSD();
       readCHR(false);
       resetROM();
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       updateDisplayAndWait();
@@ -575,7 +575,7 @@ void nesFlashMenu() {
         display_Clear();
         println_Msg(FS(string_error5));
         println_Msg(FS(SharedFlashText::textCanTWriteToThisCartridge));
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         // Prints string out of the common strings array either with or without newline
         print_STR(press_button_STR, 1);
         display_Update();
@@ -841,7 +841,7 @@ void getMapping() {
       sprintf(crcStrAlt, "%08lX", oldcrc32MMC3);
       print_Msg(crcStrAlt);
     }
-    println_Msg(F("..."));
+    println_Msg(FS(SharedFlashText::ellipsis));
     display_Update();
     if (database.isPc()) database.findRecord(1, crcStr, oldcrc32 != oldcrc32MMC3 ? crcStrAlt : nullptr);
     while (database.available()) {
@@ -861,7 +861,7 @@ void getMapping() {
       standaloneCandidateAllowed(true);
     } else {
       // File searched until end but nothing found
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       println_Msg(F("CRC not found in database"));
       println_Msg(FS(SharedFlashText::textUsingManualSelection));
       display_Update();
@@ -1350,7 +1350,7 @@ void CreateRAMFileInSD() {
       if (myFile) {
         print_STR(saving_to_STR, 0);
         print_Msg(filePath);
-        println_Msg(F("/..."));
+        println_Msg(FS(SharedFlashText::pathEllipsis));
         display_Update();
         foldern = (foldern == 32767) ? 0 : foldern + 1;
         EEPROM_writeAnything(0, foldern);
@@ -1672,7 +1672,7 @@ void setPRGSize() {
         PcConsole.print(i);
         PcConsole.print('=');
         PcConsole.print(pgm_read_word(&(PRG[i])));
-        PcConsole.print(F(" KB"));
+        PcConsole.print(FS(SharedFlashText::unitKBWithSpace));
       }
       PcConsole.println();
       PcLink::menuReady();
@@ -1688,7 +1688,7 @@ void setPRGSize() {
   }
   print_Msg(F("PRG SIZE "));
   print_Msg(pgm_read_word(&(PRG[newprgsize])));
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(500);
 
@@ -1701,9 +1701,9 @@ setprg:
     for (int i = 0; i < (prghi - prglo + 1); i++) {
       PcConsole.print(F("Select PRG Size:  "));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(pgm_read_word(&(PRG[i + prglo])));
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(F("Enter PRG Size: "));
     while (PcConsole.available() == 0) {}
@@ -1718,7 +1718,7 @@ setprg:
   }
   PcConsole.print(F("PRG Size = "));
   PcConsole.print(pgm_read_word(&(PRG[newprgsize])));
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(9, newprgsize);
   prgsize = newprgsize;
@@ -1760,7 +1760,7 @@ void setCHRSize() {
         PcConsole.print(i);
         PcConsole.print('=');
         PcConsole.print(pgm_read_word(&(CHR[i])));
-        PcConsole.print(F(" KB"));
+        PcConsole.print(FS(SharedFlashText::unitKBWithSpace));
       }
       PcConsole.println();
       PcLink::menuReady();
@@ -1776,7 +1776,7 @@ void setCHRSize() {
   }
   print_Msg(F("CHR SIZE "));
   print_Msg(pgm_read_word(&(CHR[newchrsize])));
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(500);
 
@@ -1789,9 +1789,9 @@ setchr:
     for (int i = 0; i < (chrhi - chrlo + 1); i++) {
       PcConsole.print(F("Select CHR Size:  "));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(pgm_read_word(&(CHR[i + chrlo])));
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(F("Enter CHR Size: "));
     while (PcConsole.available() == 0) {}
@@ -1806,7 +1806,7 @@ setchr:
   }
   PcConsole.print(F("CHR Size = "));
   PcConsole.print(pgm_read_word(&(CHR[newchrsize])));
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(10, newchrsize);
   chrsize = newchrsize;
@@ -1895,19 +1895,19 @@ void setRAMSize() {
     else
       sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 16;
     print_Msg(sizeEEP);
-    println_Msg(F("B"));
+    println_Msg(FS(SharedFlashText::unitB));
   } else if (mapper == 19) {
     print_Msg(FS(SharedFlashText::textRAMSIZE));
     if (newramsize == 2)
       println_Msg(FS(SharedFlashText::text128B));
     else {
       print_Msg(pgm_read_byte(&(RAM[newramsize])));
-      println_Msg(F("K"));
+      println_Msg(FS(SharedFlashText::unitK));
     }
   } else if (mapper == 80) {
     print_Msg(FS(SharedFlashText::textRAMSIZE));
     print_Msg(pgm_read_byte(&(RAM[newramsize])) * 16);
-    println_Msg(F("B"));
+    println_Msg(FS(SharedFlashText::unitB));
   } else {
     print_Msg(FS(SharedFlashText::textRAMSIZE));
     if (mapper == 0)
@@ -1916,7 +1916,7 @@ void setRAMSize() {
       print_Msg(newramsize * 5);
     else
       print_Msg(pgm_read_byte(&(RAM[newramsize])));
-    println_Msg(F("K"));
+    println_Msg(FS(SharedFlashText::unitK));
   }
   display_Update();
   delay(500);
@@ -1930,26 +1930,26 @@ setram:
     for (int i = 0; i < (ramhi - ramlo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectRAMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       if (mapper == 0) {
         PcConsole.print(pgm_read_byte(&(RAM[i])) / 4);
-        PcConsole.println(F("K"));
+        PcConsole.println(FS(SharedFlashText::unitK));
       } else if ((mapper == 16) || (mapper == 159)) {
         if (mapper == 16)
           PcConsole.print(pgm_read_byte(&(RAM[i + ramlo])) * 32);
         else
           PcConsole.print(pgm_read_byte(&(RAM[i + ramlo])) * 16);
-        PcConsole.println(F("B"));
+        PcConsole.println(FS(SharedFlashText::unitB));
       } else if (mapper == 19) {
         if (i == 2)
           PcConsole.println(FS(SharedFlashText::text128B));
         else {
           PcConsole.print(pgm_read_byte(&(RAM[i + ramlo])));
-          PcConsole.println(F("K"));
+          PcConsole.println(FS(SharedFlashText::unitK));
         }
       } else {
         PcConsole.print(pgm_read_byte(&(RAM[i + ramlo])));
-        PcConsole.println(F("K"));
+        PcConsole.println(FS(SharedFlashText::unitK));
       }
     }
     PcConsole.print(FS(SharedFlashText::textEnterRAMSize));
@@ -1971,7 +1971,7 @@ setram:
     else
       sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 16;
     PcConsole.print(sizeEEP);
-    PcConsole.println(F("B"));
+    PcConsole.println(FS(SharedFlashText::unitB));
     PcConsole.println(FS(FSTRING_EMPTY));
   } else if (mapper == 19) {
     PcConsole.print(F("RAM Size =  "));
@@ -1979,13 +1979,13 @@ setram:
       PcConsole.println(FS(SharedFlashText::text128B));
     else {
       PcConsole.print(pgm_read_byte(&(RAM[newramsize])));
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.println(FS(FSTRING_EMPTY));
   } else if (mapper == 80) {
     PcConsole.print(FS(SharedFlashText::textRAMSize));
     PcConsole.print(pgm_read_byte(&(RAM[newramsize])) * 16);
-    PcConsole.println(F("B"));
+    PcConsole.println(FS(SharedFlashText::unitB));
     PcConsole.println(FS(FSTRING_EMPTY));
   } else {
     PcConsole.print(FS(SharedFlashText::textRAMSize));
@@ -1995,7 +1995,7 @@ setram:
       PcConsole.print(newramsize * 5);
     else
       PcConsole.print(pgm_read_byte(&(RAM[newramsize])));
-    PcConsole.println(F("K"));
+    PcConsole.println(FS(SharedFlashText::unitK));
     PcConsole.println(FS(FSTRING_EMPTY));
   }
 #endif
@@ -2055,11 +2055,11 @@ void checkStatus_NES() {
 
   display_Clear();
   println_Msg(FS(SharedFlashText::textNESCARTREADER));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   printNESSettings();
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -2070,30 +2070,30 @@ static void printNESSettings(void) {
   println_Msg(mapper);
   print_Msg(F("PRG SIZE: "));
   print_Msg(prg);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   print_Msg(F("CHR SIZE: "));
   print_Msg(chr);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   print_Msg(F("RAM SIZE: "));
   if (mapper == 0) {
     print_Msg(ram / 4);
-    println_Msg(F("K"));
+    println_Msg(FS(SharedFlashText::unitK));
   } else if ((mapper == 16) || (mapper == 80) || (mapper == 159)) {
     if (mapper == 16)
       print_Msg(ram * 32);
     else
       print_Msg(ram * 16);
-    println_Msg(F("B"));
+    println_Msg(FS(SharedFlashText::unitB));
   } else if (mapper == 19) {
     if (ramsize == 2)
       println_Msg(FS(SharedFlashText::text128B));
     else {
       print_Msg(ram);
-      println_Msg(F("K"));
+      println_Msg(FS(SharedFlashText::unitK));
     }
   } else {
     print_Msg(ram);
-    println_Msg(F("K"));
+    println_Msg(FS(SharedFlashText::unitK));
   }
 }
 
@@ -3510,7 +3510,7 @@ void readPRG(bool readrom) {
       myFile.close();
 
       println_Msg(F("PRG FILE DUMPED!"));
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       display_Update();
     }
   }
@@ -4451,7 +4451,7 @@ void readCHR(bool readrom) {
         myFile.close();
 
         println_Msg(F("CHR FILE DUMPED!"));
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         display_Update();
       }
     }
@@ -4669,7 +4669,7 @@ void readRAM() {
       myFile.close();
 
       println_Msg(F("RAM FILE DUMPED!"));
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       display_Update();
 
       uint32_t saveCrc;
@@ -4722,7 +4722,7 @@ void writeRAM() {
     display_Update();
 
     //open file on sd card
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       switch (mapper) {
         case 0:                                        // 2K/4K
           writeBankPRG(0x0, (0x800 * ramsize), base);  // 2K/4K
@@ -4888,7 +4888,7 @@ void writeRAM() {
       myFile.close();
       rgbLed(green_color);
 
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       println_Msg(FS(SharedFlashText::textRAMFILEWRITTEN));
       display_Update();
 
@@ -5145,9 +5145,9 @@ void writeFLASH() {
   } else {
     print_Msg(FS(SharedFlashText::textFlashID));
     println_Msg(flashid_str);
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     println_Msg(F("NESmaker Flash Found"));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     display_Update();
     delay(100);
 
@@ -5168,7 +5168,7 @@ void writeFLASH() {
     uint16_t banks;
 
     //open file on sd card
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       banks = int_pow(2, prgsize);                                    // 256K/512K
       for (size_t i = 0; i < banks; i++) {                            // 16K Banks
         for (size_t sector = 0; sector < 0x4000; sector += 0x1000) {  // 4K Sectors ($8000/$9000/$A000/$B000)
@@ -5210,7 +5210,7 @@ void writeFLASH() {
       myFile.close();
       rgbLed(green_color);
 
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       println_Msg(FS(SharedFlashText::textFLASHFILEWRITTEN));
       display_Update();
     } else {
@@ -5347,27 +5347,27 @@ void A29040B_writeFLASH() {
   if (!flashfound) {
     rgbLed(red_color);
     println_Msg(F(A29040B_TITLE));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_Msg(FS(SharedFlashText::textFlashID));
     println_Msg(flashid_str);
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     println_Msg(F("FLASH NOT FOUND"));
     updateDisplayAndWait();
   } else {
     println_Msg(F(A29040B_TITLE));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_Msg(FS(SharedFlashText::textFlashID));
     println_Msg(flashid_str);
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     println_Msg(F("Flash Found"));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     display_Update();
     delay(3000);
     fileBrowser(FS(SharedFlashText::textSelectFLASHFile));
     sd.chdir();
     sprintf(filePath, "%s/%s", filePath, fileName);
 
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       // Step 1: Read the header and extract PRG and CHR sizes
       uint8_t header[16];
       myFile.read(header, 16);  // Read the 16-byte header
@@ -5379,7 +5379,7 @@ void A29040B_writeFLASH() {
       // Output the sizes for verification
       display_Clear();
       println_Msg(F(A29040B_TITLE));
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       println_Msg(F("PRG Size:"));
       sprintf(data_str, "%lu", prgSize);
       println_Msg(data_str);
@@ -5394,7 +5394,7 @@ void A29040B_writeFLASH() {
       rgbLed(red_color);
       display_Clear();
       println_Msg(F(A29040B_TITLE));
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       A29040B_PRG_ResetFlash();
       println_Msg(F("ERASING PRG..."));
       display_Update();
@@ -5422,7 +5422,7 @@ void A29040B_writeFLASH() {
       delay(18);  // Adjust delay as needed
 
       rgbLed(red_color);
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       println_Msg(F("Writing PRG Data..."));
       display_Update();
 
@@ -5457,7 +5457,7 @@ void A29040B_writeFLASH() {
       A29040B_CHR_ResetFlash();
       display_Clear();
       println_Msg(F(A29040B_TITLE));
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       println_Msg(F("ERASING CHR..."));
       display_Update();
       A29040B_CHR_ChipErase();
@@ -5505,7 +5505,7 @@ void A29040B_writeFLASH() {
       rgbLed(green_color);
       display_Clear();
       println_Msg(F(A29040B_TITLE));
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       println_Msg(FS(SharedFlashText::textFLASHFILEWRITTEN));
       display_Update();
     } else {

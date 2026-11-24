@@ -548,7 +548,7 @@ void readROM_C64() {
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -646,7 +646,7 @@ void setROMSize_C64() {
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(C64[newc64size]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(1000);
 #else
@@ -658,9 +658,9 @@ setrom:
     for (int i = 0; i < (c64hi - c64lo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(C64[i + c64lo]);
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -675,7 +675,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(C64[newc64size]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(8, newc64size);
   c64size = newc64size;
@@ -700,20 +700,20 @@ void checkStatus_C64() {
   display_Clear();
   println_Msg(F("C64 READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(F("MAPPER:     "));
   println_Msg(c64mapper);
   printMapper_C64(c64mapper);
   print_Msg(FS(SharedFlashText::textROMSIZE));
   print_Msg(C64[c64size]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();
 #else
   PcConsole.print(F("CURRENT MAPPER:     "));
   PcConsole.println(c64mapper);
   PcConsole.print(F("CURRENT ROM SIZE:   "));
   PcConsole.print(C64[c64size]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

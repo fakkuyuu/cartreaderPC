@@ -551,7 +551,7 @@ void readROM_2600() {
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -633,7 +633,7 @@ void checkStatus_2600() {
   display_Clear();
   println_Msg(F("ATARI 2600 READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(F("MAPPER:   "));
   println_Mapper2600(a2600mapper);
   print_Msg(FS(FSTRING_ROM_SIZE));
@@ -641,7 +641,7 @@ void checkStatus_2600() {
     print_Msg(F("10"));
   else
     print_Msg(a2600[a2600size]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();
 #else
   PcConsole.print(F("MAPPER:   "));
@@ -652,7 +652,7 @@ void checkStatus_2600() {
     PcConsole.print(F("10"));
   else
     PcConsole.print(a2600[a2600size]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

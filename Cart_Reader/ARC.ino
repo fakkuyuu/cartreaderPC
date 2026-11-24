@@ -167,7 +167,7 @@ void readROM_ARC() {
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -196,7 +196,7 @@ void setROMSize_ARC() {
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ARC[newarcsize]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(1000);
 #else
@@ -208,9 +208,9 @@ setrom:
     for (int i = 0; i < (archi - arclo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(ARC[i + arclo]);
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -225,7 +225,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(ARC[newarcsize]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(8, newarcsize);
   arcsize = newarcsize;
@@ -242,15 +242,15 @@ void checkStatus_ARC() {
   display_Clear();
   println_Msg(F("ARCADIA 2001 READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ARC[arcsize]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(ARC[arcsize]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

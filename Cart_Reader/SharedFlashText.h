@@ -2,6 +2,18 @@
 #include <avr/pgmspace.h>
 
 namespace SharedFlashText {
+static const char unitK[] PROGMEM = "K";
+static const char unitKB[] PROGMEM = "KB";
+static const char unitMB[] PROGMEM = "MB";
+static const char equalsWithSpaces[] PROGMEM = " = ";
+static const char ellipsis[] PROGMEM = "...";
+static const char pathEllipsis[] PROGMEM = "/...";
+static const char unitKBWithSpace[] PROGMEM = " KB";
+static const char pathSeparator[] PROGMEM = "/";
+static const char unitMBWithSpace[] PROGMEM = " MB";
+static const char unitB[] PROGMEM = "B";
+static const char blankCheckProgress[] PROGMEM = "Blankcheck...";
+static const char writingProgress[] PROGMEM = "Writing...";
 static const char textFast[] PROGMEM = " (fast)";
 static const char textOK[] PROGMEM = " -> OK";
 static const char textBLOCK[] PROGMEM = " BLOCK=";

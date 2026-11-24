@@ -109,7 +109,7 @@ void sfmGameMenu() {
           print_Msg(gameSubMenu + 0x80, HEX);
           println_Msg(F(" Timeout"));
           println_Msg(readBank_SFM(0, 0x2400), HEX);
-          println_Msg(FS(FSTRING_EMPTY));
+          printBlankLine();
           print_FatalError(FS(SharedFlashText::textPowercycleSFMCart));
         }
       }
@@ -196,7 +196,7 @@ void sfmGameOptions() {
       break;
   }
   if (gameSubMenu != 3) {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     updateDisplayAndWait();
@@ -388,7 +388,7 @@ void sfmFlashMenu() {
       // Erase mapping
       eraseMapping(0xD0);
       eraseMapping(0xE0);
-      print_Msg(F("Blankcheck..."));
+      print_Msg(FS(SharedFlashText::blankCheckProgress));
       display_Update();
       if (blankcheckMapping_SFM()) {
         println_Msg(FS(FSTRING_OK));
@@ -424,7 +424,7 @@ void sfmFlashMenu() {
       break;
   }
   if (flashSubMenu != 5) {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     updateDisplayAndWait();
@@ -599,8 +599,8 @@ void setup_SFM() {
     // Abort, something is wrong
     if (timeout == 5) {
       println_Msg(F("Hirom All Timeout"));
-      println_Msg(FS(FSTRING_EMPTY));
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
+      printBlankLine();
       print_FatalError(FS(SharedFlashText::textPowercycleSFMCart));
     }
   }
@@ -897,7 +897,7 @@ void readROM_SFM() {
   EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(create_file_STR);
   }
 
@@ -1008,7 +1008,7 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     // Seek to a new position in the file
     if (pos != 0)
@@ -1191,7 +1191,7 @@ unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
   unsigned long verified = 0;
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     // Set file starting position
     myFile.seekCur(pos);
@@ -1246,11 +1246,11 @@ void readFlash_SFM() {
 
   print_Msg(F("Saving as NP/"));
   print_Msg(fileName);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(create_file_STR);
   }
   if (romType) {
@@ -1394,7 +1394,7 @@ void readMapping() {
   EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
 
@@ -1576,7 +1576,7 @@ void writeMapping_SFM(byte startBank, uint32_t pos) {
       controlOut_SFM();
 
       // Open file on sd card
-      if (myFile.open(filePath, O_READ)) {
+      if (openSelectedFileForRead()) {
 
         // Seek to a new position in the file
         if (pos != 0)
@@ -1708,7 +1708,7 @@ void write_SFM(int startBank, uint32_t pos) {
       resetFlash_SFM(startBank);
       delay(1000);
       // Erase flash
-      print_Msg(F("Blankcheck..."));
+      print_Msg(FS(SharedFlashText::blankCheckProgress));
       display_Update();
       if (blankcheck_SFM(startBank)) {
         println_Msg(FS(FSTRING_OK));
@@ -1721,7 +1721,7 @@ void write_SFM(int startBank, uint32_t pos) {
         eraseFlash_SFM(startBank);
         resetFlash_SFM(startBank);
         print_STR(done_STR, 1);
-        print_Msg(F("Blankcheck..."));
+        print_Msg(FS(SharedFlashText::blankCheckProgress));
         display_Update();
         if (blankcheck_SFM(startBank)) {
           println_Msg(FS(FSTRING_OK));

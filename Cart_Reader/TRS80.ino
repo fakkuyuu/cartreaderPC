@@ -276,7 +276,7 @@ void readROM_TRS80()
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -307,7 +307,7 @@ void setROMSize_TRS80()
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(TRS80[newtrs80size]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
   delay(1000);
 #else
@@ -319,9 +319,9 @@ setrom:
     for (int i = 0; i < (trs80hi - trs80lo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(TRS80[i + trs80lo]);
-      PcConsole.println(F("KB"));
+      PcConsole.println(FS(SharedFlashText::unitKB));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -336,7 +336,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(TRS80[newtrs80size]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
 #endif
   EEPROM_writeAnything(8, newtrs80size);
   trs80size = newtrs80size;
@@ -354,15 +354,15 @@ void checkStatus_TRS80()
   display_Clear();
   println_Msg(F("TRS-80 COLOR COMPUTER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(TRS80[trs80size]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(TRS80[trs80size]);
-               PcConsole.println(F("KB"));
+               PcConsole.println(FS(SharedFlashText::unitKB));
                PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

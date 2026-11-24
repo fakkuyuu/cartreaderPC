@@ -243,7 +243,7 @@ void readROM_VSMILE()
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -274,7 +274,7 @@ void setROMSize_VSMILE()
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(VSMILE[newvsmilesize]);
-  println_Msg(F("MB"));
+  println_Msg(FS(SharedFlashText::unitMB));
   display_Update();
   delay(1000);
 #else
@@ -286,9 +286,9 @@ setrom:
     for (int i = 0; i < (vsmilehi - vsmilelo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(VSMILE[i + vsmilelo]);
-      PcConsole.println(F("MB"));
+      PcConsole.println(FS(SharedFlashText::unitMB));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -303,7 +303,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(VSMILE[newvsmilesize]);
-  PcConsole.println(F("MB"));
+  PcConsole.println(FS(SharedFlashText::unitMB));
 #endif
   EEPROM_writeAnything(8, newvsmilesize);
   vsmilesize = newvsmilesize;
@@ -321,15 +321,15 @@ void checkStatus_VSMILE()
   display_Clear();
   println_Msg(F("V.SMILE READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(VSMILE[vsmilesize]);
-  println_Msg(F("MB"));
+  println_Msg(FS(SharedFlashText::unitMB));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(VSMILE[vsmilesize]);
-  PcConsole.println(F("MB"));
+  PcConsole.println(FS(SharedFlashText::unitMB));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

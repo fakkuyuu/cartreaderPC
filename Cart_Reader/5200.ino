@@ -283,7 +283,7 @@ void readROM_5200() {
 
   compareCRC("5200.txt", 0, 1, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -344,7 +344,7 @@ void setROMSize_5200() {
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a5200[new5200size]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(1000);
 #else
@@ -356,9 +356,9 @@ setrom:
     for (int i = 0; i < (a5200hi - a5200lo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(a5200[i + a5200lo]);
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -373,7 +373,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(a5200[new5200size]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(8, new5200size);
   a5200size = new5200size;
@@ -395,13 +395,13 @@ void checkStatus_5200() {
   display_Clear();
   println_Msg(F("ATARI 5200 READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(F("MAPPER:   "));
   println_Msg(a5200mapper);
   println_Mapper5200(a5200mapper);
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(a5200[a5200size]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();
 #else
   PcConsole.print(F("MAPPER:   "));
@@ -409,7 +409,7 @@ void checkStatus_5200() {
   println_Mapper5200(a5200mapper);
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(a5200[a5200size]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

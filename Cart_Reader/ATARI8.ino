@@ -366,7 +366,7 @@ void readROM_ATARI8()
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -397,7 +397,7 @@ void setROMSize_ATARI8()
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ATARI8[newatari8size]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
   delay(1000);
 #else
@@ -409,9 +409,9 @@ setrom:
     for (int i = 0; i < (atari8hi - atari8lo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(ATARI8[i + atari8lo]);
-      PcConsole.println(F("KB"));
+      PcConsole.println(FS(SharedFlashText::unitKB));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -426,7 +426,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(ATARI8[newatari8size]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
 #endif
   EEPROM_writeAnything(8, newatari8size);
   atari8size = newatari8size;
@@ -449,7 +449,7 @@ void checkStatus_ATARI8()
   display_Clear();
   println_Msg(F("ATARI 8-BIT READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(F("SLOT:     "));
   if (atari8right)
     println_Msg(F("RIGHT"));
@@ -457,12 +457,12 @@ void checkStatus_ATARI8()
     println_Msg(F("LEFT"));
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ATARI8[atari8size]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(ATARI8[atari8size]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

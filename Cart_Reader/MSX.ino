@@ -180,7 +180,7 @@ static void pcMSXSizeReady(char code, const __FlashStringHelper* title,
     PcConsole.print(i, HEX);
     PcConsole.print('=');
     PcConsole.print(ramValues ? MSXRAM[i] : MSX[i]);
-    PcConsole.print(F(" KB"));
+    PcConsole.print(FS(SharedFlashText::unitKBWithSpace));
   }
   PcConsole.println();
   PcLink::menuReady();
@@ -231,7 +231,7 @@ void msxMenu() {
     case 3:
       // Write RAM
       writeRAM_MSX();
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       updateDisplayAndWait();
@@ -602,7 +602,7 @@ void readROM_MSX() {
 
     printCRC(fileName, NULL, 0);
 
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     updateDisplayAndWait();
@@ -670,11 +670,11 @@ void readRAM_MSX() {
     display_Clear();
     print_STR(saving_to_STR, 0);
     print_Msg(folder);
-    println_Msg(F("/..."));
+    println_Msg(FS(SharedFlashText::pathEllipsis));
     display_Update();
 
     // open file on sdcard
-    if (!myFile.open(fileName, O_RDWR | O_CREAT))
+    if (!openNamedOutputFile())
       print_FatalError(sd_error_STR);
 
     if (msxsize == 0) {
@@ -760,7 +760,7 @@ void readRAM_MSX() {
 
     printCRC(fileName, NULL, 0);
 
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     updateDisplayAndWait();
@@ -786,7 +786,7 @@ void writeRAM_MSX() {
     display_Update();
 
     //open file on sd card
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
 
       switch (msxmapper) {
         case 1:  // ASCII8 (2K/8K)
@@ -883,7 +883,7 @@ void writeRAM_MSX() {
       }
       myFile.close();
 
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       println_Msg(FS(SharedFlashText::textRAMFILEWRITTEN));
       display_Update();
 
@@ -1064,7 +1064,7 @@ void setROMSize_MSX() {
     print_Msg(F("384"));
   else
     print_Msg(MSX[newmsxsize]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(1000);
 #else
@@ -1076,12 +1076,12 @@ setrom:
     for (int i = 0; i < (msxhi - msxlo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       if (msxmapper == 12)  // R-Type
         PcConsole.print(F("384"));
       else
         PcConsole.print(MSX[i + msxlo]);
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -1106,7 +1106,7 @@ setrom:
     PcConsole.print(F("384"));
   else
     PcConsole.print(MSX[newmsxsize]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(8, newmsxsize);
   msxsize = newmsxsize;
@@ -1194,7 +1194,7 @@ void setRAMSize_MSX() {
   }
   print_Msg(FS(SharedFlashText::textRAMSIZE));
   print_Msg(MSXRAM[newmsxramsize]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(1000);
 #else
@@ -1206,9 +1206,9 @@ setram:
     for (int i = 0; i < (msxramhi - msxramlo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectRAMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(MSXRAM[i + msxramlo]);
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterRAMSize));
     while (PcConsole.available() == 0) {}
@@ -1230,7 +1230,7 @@ setram:
   }
   PcConsole.print(FS(SharedFlashText::textRAMSize));
   PcConsole.print(MSXRAM[newmsxramsize]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(10, newmsxramsize);
   msxramsize = newmsxramsize;
@@ -1260,7 +1260,7 @@ void checkStatus_MSX() {
   display_Clear();
   println_Msg(F("MSX READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(F("MAPPER:   "));
   println_Msg(msxmapper);
   printMapper(msxmapper);
@@ -1269,10 +1269,10 @@ void checkStatus_MSX() {
     print_Msg(F("384"));
   else
     print_Msg(MSX[msxsize]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   print_Msg(F("RAM SIZE: "));
   print_Msg(MSXRAM[msxramsize]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTMAPPER));
@@ -1282,10 +1282,10 @@ void checkStatus_MSX() {
     PcConsole.print(F("384"));
   else
     PcConsole.print(MSX[msxsize]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.print(F("CURRENT RAM SIZE: "));
   PcConsole.print(MSXRAM[msxramsize]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

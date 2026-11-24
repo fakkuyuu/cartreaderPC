@@ -484,7 +484,7 @@ void readROM_VB() {
 
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   // Wait for user input
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -499,11 +499,11 @@ void writeSRAM_VB() {
   dataOut_VB();
 
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Writing..."));
+  println_Msg(FS(SharedFlashText::writingProgress));
   println_Msg(filePath);
   display_Update();
 
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     for (unsigned long currByte = 0; currByte < sramSize; currByte++) {
       //        writeWord_VB(currByte, ((myFile.read() << 8 ) & 0xFF));
       writeByte_VB(currByte, (myFile.read()));
@@ -525,7 +525,7 @@ void readSRAM_VB() {
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
 
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
   for (unsigned long currBuffer = 0; currBuffer < sramSize; currBuffer += 512) {
@@ -538,7 +538,7 @@ void readSRAM_VB() {
   myFile.close();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
-  println_Msg(F("/"));
+  println_Msg(FS(SharedFlashText::pathSeparator));
   display_Update();
 }
 
@@ -546,7 +546,7 @@ unsigned long verifySRAM_VB() {
   dataIn_VB();
   writeErrors = 0;
 
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     for (unsigned long currBuffer = 0; currBuffer < sramSize; currBuffer += 512) {
       for (int currByte = 0; currByte < 512; currByte++) {
         byte myByte = readByte_VB(currBuffer + currByte);

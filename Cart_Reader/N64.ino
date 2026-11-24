@@ -214,7 +214,7 @@ void n64ControllerMenu() {
       readMPK();
       verifyCRC();
       validateMPK();
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       updateDisplayAndWait();
@@ -235,7 +235,7 @@ void n64ControllerMenu() {
       writeMPK();
       delay(500);
       verifyMPK();
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       updateDisplayAndWait();
@@ -307,7 +307,7 @@ void n64CartMenu() {
       } else {
         print_Error(FS(SharedFlashText::textSavetypeError));
       }
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
       updateDisplayAndWait();
@@ -1729,7 +1729,7 @@ void readMPK() {
   }
 
   //open mpk file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(open_file_STR);
   }
 
@@ -1921,11 +1921,11 @@ void writeMPK() {
   sprintf(filePath, "%s/%s", filePath, fileName);
   print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     //Initialize progress bar
     uint32_t processedProgressBar = 0;
@@ -1972,7 +1972,7 @@ void verifyMPK() {
   display_Update();
 
   //open file on sd card
-  if (!myFile.open(filePath, O_READ)) {
+  if (!openSelectedFileForRead()) {
     print_FatalError(open_file_STR);
   }
 
@@ -2040,7 +2040,7 @@ void printCartInfo_N64() {
     println_Msg(romVersion);
     print_Msg(FS(FSTRING_ROM_SIZE));
     print_Msg(cartSize);
-    println_Msg(F(" MB"));
+    println_Msg(FS(SharedFlashText::unitMBWithSpace));
     print_Msg(FS(SharedFlashText::textSaveType));
     switch (saveType) {
       case 1:
@@ -2169,7 +2169,7 @@ void getCartInfo_N64() {
   println_Msg(FS(SharedFlashText::textSearchingDatabase));
   display_Update();
 #if defined(SERIAL_MONITOR)
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
 #endif
 
   if (myFile.open("n64.txt", O_READ)) {
@@ -2245,7 +2245,7 @@ byte selectSlotNumber() {
     println_Msg(slotNumber);
   display_Update();
 #if defined(SERIAL_MONITOR)
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
 #endif
   delay(200);
   return slotNumber;
@@ -2373,12 +2373,12 @@ void writeEeprom_N64() {
 
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
-    println_Msg(F("Writing..."));
+    println_Msg(FS(SharedFlashText::writingProgress));
     println_Msg(filePath);
     display_Update();
 
     // Open file on sd card
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       // 2 command bytes and 8 data bytes
       byte command[2 + 8];
       command[0] = 0x05;
@@ -2462,10 +2462,10 @@ void readEeprom_N64() {
     for (int i = 0; i < eepPages; i += sizeof(sdBuffer) / 8) {
       // If any missing bytes error out
       if (readEepromPageList(sdBuffer, i, sizeof(sdBuffer) / 8) == 0) {
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         print_STR(error_STR, 0);
         println_Msg(F("no data received"));
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         break;
       }
       // Write 64 pages at once to the SD card
@@ -2491,7 +2491,7 @@ unsigned long verifyEeprom_N64() {
     display_Update();
 
     // Open file on sd card
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       for (int i = 0; i < eepPages; i += sizeof(sdBuffer) / 8) {
         readEepromPageList(sdBuffer, i, sizeof(sdBuffer) / 8);
         // Check sdBuffer content against file on sd card
@@ -2524,12 +2524,12 @@ void writeSram(unsigned long sramSize) {
   if (saveType == 1 || saveType == 2) {
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
-    println_Msg(F("Writing..."));
+    println_Msg(FS(SharedFlashText::writingProgress));
     println_Msg(filePath);
     display_Update();
 
     // Open file on sd card
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       for (unsigned long currByte = sramBase; currByte < (sramBase + sramSize); currByte += 512) {
 
         // Read save from SD into buffer
@@ -2612,7 +2612,7 @@ unsigned long verifySram(unsigned long sramSize, byte flashramType) {
   }
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     for (unsigned long currByte = sramBase; currByte < (sramBase + (sramSize / flashramType)); currByte += offset) {
       // Set the address
       setAddress_N64(currByte);
@@ -2695,7 +2695,7 @@ void writeFram(byte flashramType) {
     display_Update();
 
     // Open file on sd card
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       // Init fram
       initFram();
 
@@ -2954,7 +2954,7 @@ void getFramType() {
       if (c < 7)
         print_Msg(F(", "));
       if (c == 7)
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
     }
     print_FatalError(F("Flashram unknown"));
   }
@@ -2977,7 +2977,7 @@ void readRom_N64() {
   printAndIncrementFolder();
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(create_file_STR);
   }
 
@@ -3033,7 +3033,7 @@ uint32_t readRom_N64() {
   printAndIncrementFolder();
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(create_file_STR);
   }
 
@@ -3173,7 +3173,7 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
   myFile.print(F("Size\t: "));
   myFile.print(cartSize);
 
-  myFile.println(F(" MB"));
+  myFile.println(FS(SharedFlashText::unitMBWithSpace));
   myFile.print(F("Save\t: "));
 
   switch (saveType) {
@@ -3271,7 +3271,7 @@ void flashRepro_N64() {
     print_Msg(flashid_str);
     print_Msg(FS(SharedFlashText::textSize));
     print_Msg(cartSize);
-    println_Msg(F("MB"));
+    println_Msg(FS(SharedFlashText::unitMB));
     println_Msg("");
     println_Msg(FS(SharedFlashText::textThisWillEraseYour));
     println_Msg(FS(SharedFlashText::textReproCartridge));
@@ -3416,7 +3416,7 @@ void flashRepro_N64() {
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // create submenu with title and 2 options to choose from
     boolean selectedErase = 0;
     unsigned char n64FlashErase;
@@ -3440,7 +3440,7 @@ void flashRepro_N64() {
     fileSize = myFile.fileSize();
     print_Msg(FS(SharedFlashText::textFileSize));
     print_Msg(fileSize / 1048576);
-    println_Msg(F("MB"));
+    println_Msg(FS(SharedFlashText::unitMB));
     display_Update();
 
     // Compare file size to flashrom size
@@ -3468,7 +3468,7 @@ void flashRepro_N64() {
       }
     }
     else {
-      print_Msg(F("Blankcheck..."));
+      print_Msg(FS(SharedFlashText::blankCheckProgress));
       display_Update();
     }
 
@@ -4198,7 +4198,7 @@ void writeFlashrom_N64(unsigned long sectorSize) {
 
 unsigned long verifyFlashrom_N64() {
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     writeErrors = 0;
 
     //Initialize progress bar
@@ -4291,13 +4291,13 @@ void flashGameshark_N64() {
     sprintf(filePath, "%s/%s", filePath, fileName);
 
     // Open file on sd card
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       // Get rom size from file
       fileSize = myFile.fileSize();
       display_Clear();
       print_Msg(FS(SharedFlashText::textFileSize));
       print_Msg(fileSize / 1024);
-      println_Msg(F(" KB"));
+      println_Msg(FS(SharedFlashText::unitKBWithSpace));
       display_Update();
 
       // Compare file size to flashrom size for 1 Mbit eeproms
@@ -4332,7 +4332,7 @@ void flashGameshark_N64() {
         display_Clear();
         display_Update();
         println_Msg(FS(SharedFlashText::textVerfiedOK));
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         println_Msg(FS(SharedFlashText::textTurnCartReaderOffNow));
         display_Update();
         while (1)
@@ -4473,7 +4473,7 @@ void eraseGameshark_N64() {
 
 void blankCheck_N64() {
   // Blankcheck
-  println_Msg(F("Blankcheck..."));
+  println_Msg(FS(SharedFlashText::blankCheckProgress));
   display_Update();
 
   for (unsigned long currSector = 0; currSector < flashSize; currSector += 131072) {
@@ -4579,10 +4579,10 @@ void writeGameshark_N64() {
 unsigned long verifyGameshark_N64() {
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(fileSize);
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   draw_progressbar(0, totalProgressBar);
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     writeErrors = 0;
 
     for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
@@ -4648,13 +4648,13 @@ void flashXplorer_N64() {
     sprintf(filePath, "%s/%s", filePath, fileName);
 
     // Open file on sd card
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       // Get rom size from file
       fileSize = myFile.fileSize();
       display_Clear();
       print_Msg(FS(SharedFlashText::textFileSize));
       print_Msg(fileSize / 1024);
-      println_Msg(F(" KB"));
+      println_Msg(FS(SharedFlashText::unitKBWithSpace));
       display_Update();
 
       // Compare file size to flashrom size
@@ -4685,7 +4685,7 @@ void flashXplorer_N64() {
         display_Clear();
         display_Update();
         println_Msg(FS(SharedFlashText::textVerfiedOK));
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         println_Msg(FS(SharedFlashText::textTurnCartReaderOffNow));
         display_Update();
         while (1)
@@ -4824,7 +4824,7 @@ void eraseXplorer_N64() {
 
 void blankCheck_XP64() {
   // Blankcheck
-  println_Msg(F("Blankcheck..."));
+  println_Msg(FS(SharedFlashText::blankCheckProgress));
   display_Update();
 
   for (unsigned long currSector = 0; currSector < 262144; currSector += 131072) {
@@ -4885,10 +4885,10 @@ void writeXplorer_N64() {
 unsigned long verifyXplorer_N64() {
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(262144);
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   draw_progressbar(0, totalProgressBar);
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     myFile.seek(0);
     writeErrors = 0;
 

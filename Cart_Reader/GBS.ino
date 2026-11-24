@@ -224,7 +224,7 @@ void gbSmartGameOptions() {
   }
 
   if (gameSubMenu != 3) {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     updateDisplayAndWait();
@@ -299,7 +299,7 @@ void gbSmartFlashMenu() {
         println_Msg(FS(SharedFlashText::textAttention));
         println_Msg(FS(SharedFlashText::textThisWillEraseYour));
         println_Msg(F("GB Smart Cartridge."));
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         // Prints string out of the common strings array either with or without newline
         print_STR(press_button_STR, 1);
         updateDisplayAndWait();
@@ -320,7 +320,7 @@ void gbSmartFlashMenu() {
       }
   }
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -393,10 +393,10 @@ void gbSmartGetGames(struct GBSmartGameInfo *gbSmartGames, boolean *hasMenu, byt
 void gbSmartReadFlash() {
   print_Msg(F("Saving as GB/GBS/"));
   print_Msg(fileName);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
+  if (!openNamedOutputFile())
     print_FatalError(create_file_STR);
 
   // reset flash to read array state
@@ -449,7 +449,7 @@ void gbSmartWriteFlash() {
     gbSmartResetFlash(bank);
 
     print_STR(done_STR, 1);
-    print_Msg(F("Blankcheck..."));
+    print_Msg(FS(SharedFlashText::blankCheckProgress));
     display_Update();
 
     if (!gbSmartBlankCheckingFlash(bank))
@@ -481,7 +481,7 @@ void gbSmartWriteFlash() {
 }
 
 void gbSmartWriteFlash(uint32_t start_bank) {
-  if (!myFile.open(filePath, O_READ))
+  if (!openSelectedFileForRead())
     print_FatalError(open_file_STR);
 
   // switch to flash base bank
@@ -491,7 +491,7 @@ void gbSmartWriteFlash(uint32_t start_bank) {
 
   print_Msg(FS(SharedFlashText::textWritingBank0x));
   print_Msg(start_bank, HEX);
-  print_Msg(F("..."));
+  print_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
   // handle bank 0x00 on 0x0000
@@ -541,7 +541,7 @@ void gbSmartWriteFlashFromMyFile(uint32_t addr) {
 uint32_t gbSmartVerifyFlash() {
   uint32_t verified = 0;
 
-  if (!myFile.open(filePath, O_READ)) {
+  if (!openSelectedFileForRead()) {
     verified = 0xffffffff;
     print_Error(FS(SharedFlashText::textCanTOpenFileOnSD));
   } else {

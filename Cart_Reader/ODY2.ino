@@ -244,7 +244,7 @@ void readROM_ODY2() {
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -273,7 +273,7 @@ void setROMSize_ODY2() {
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ODY2[newody2size]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(1000);
 #else
@@ -285,9 +285,9 @@ setrom:
     for (int i = 0; i < (ody2hi - ody2lo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(ODY2[i + ody2lo]);
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -302,7 +302,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(ODY2[newody2size]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(8, newody2size);
   ody2size = newody2size;
@@ -324,19 +324,19 @@ void checkStatus_ODY2() {
   display_Clear();
   println_Msg(F("ODYSSEY 2 READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(F("MAPPER:   "));
   println_Msg(ody2mapper);
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ODY2[ody2size]);
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTMAPPER));
   PcConsole.println(ody2mapper);
   PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(ODY2[ody2size]);
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

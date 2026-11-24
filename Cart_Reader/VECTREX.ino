@@ -235,7 +235,7 @@ void readROM_VECTREX()
 
   printCRC(fileName, NULL, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -268,7 +268,7 @@ void setROMSize_VECTREX()
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(VECTREX[newvectrexsize]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
   delay(1000);
 #else
@@ -280,9 +280,9 @@ setrom:
     for (int i = 0; i < (vectrexhi - vectrexlo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(VECTREX[i + vectrexlo]);
-      PcConsole.println(F("KB"));
+      PcConsole.println(FS(SharedFlashText::unitKB));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -297,7 +297,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(VECTREX[newvectrexsize]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
 #endif
   EEPROM_writeAnything(8, newvectrexsize);
   vectrexsize = newvectrexsize;
@@ -315,15 +315,15 @@ void checkStatus_VECTREX()
   display_Clear();
   println_Msg(F("VECTREX READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(VECTREX[vectrexsize]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(FSTRING_ROM_SIZE));
   PcConsole.print(VECTREX[vectrexsize]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }

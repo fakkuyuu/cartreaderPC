@@ -492,7 +492,7 @@ uint32_t calculateCRC(char* fileName, char* folder, unsigned long offset) {
     display_Clear();
     print_Msg(F("File "));
     //print_Msg(folder);
-    //print_Msg(F("/"));
+    //print_Msg(FS(SharedFlashText::pathSeparator));
     //print_Msg(fileName);
     print_FatalError(F(" not found"));
     return 0;
@@ -795,7 +795,7 @@ static void __attribute__((noinline)) finishDbSaveLog(uint32_t startedAt) {
   if (!extension)
     return;
   strcpy(extension, ".txt");
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_Error(F("Cannot create save TXT"));
     return;
   }
@@ -820,7 +820,7 @@ static void __attribute__((noinline)) finishDbSaveLog(uint32_t startedAt) {
 void showDbSaveFolder(const __FlashStringHelper* label) {
   print_Msg(label);
   print_Msg(filePath);
-  println_Msg(F("/..."));
+  println_Msg(FS(SharedFlashText::pathEllipsis));
   display_Update();
 }
 #endif
@@ -850,7 +850,7 @@ void printAndIncrementFolder(bool displayClear = false) {
   }
   print_STR(saving_to_STR, 0);
   print_Msg(folder);
-  println_Msg(F("/..."));
+  println_Msg(FS(SharedFlashText::pathEllipsis));
   display_Update();
   // write new folder number back to eeprom
   foldern = foldern + 1;
@@ -861,7 +861,7 @@ void createFolderAndOpenFile(const char* system, const char* subfolder, const ch
   createFolder(system, subfolder, gameName, fileSuffix);
   printAndIncrementFolder(true);
 
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
 }
@@ -980,13 +980,13 @@ boolean checkCartSelection(FsFile& database, void (*readData)(FsFile&, void*), v
     }
 
     println_Msg(F("Select your cartridge"));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     println_Msg(gamename);
 
     if (printDataLine) {
       printDataLine(data);
     }
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
 
 #if defined(ENABLE_OLED)
     print_STR(press_to_change_STR, 0);
@@ -1109,7 +1109,7 @@ void pcAlphabetReady(byte index, const char* databaseName) {
 }
 
 void printInstructions() {
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
 
 #ifdef ENABLE_GLOBAL_LOG
   // Disable log to prevent unnecessary logging
@@ -1255,11 +1255,11 @@ byte starting_letter(const char* databaseName) {
   display_Clear();
 
   println_Msg(F("[#] [A] [B] [C] [D] [E] [F]"));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   println_Msg(F("[G] [H] [ I ] [J] [K] [L] [M]"));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   println_Msg(F("[N] [O] [P] [Q] [R] [S] [T]"));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   println_Msg(F("[U] [V] [W] [X] [Y] [Z] [?]"));
 
   // Draw selection line
@@ -1906,16 +1906,16 @@ void selfTest() {
 
   display_Clear();
   println_Msg(F("Self Test"));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   println_Msg(F("Remove all Cartridges"));
   println_Msg(F("before continuing!"));
 #if (defined(HW3) || defined(HW2))
   println_Msg(F("And turn the EEP switch on."));
 #else
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
 #endif
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
+  printBlankLine();
   promptAndWaitForButton();
   display_Clear();
 
@@ -1928,7 +1928,7 @@ void selfTest() {
     rgbLed(red_color);
     errorLvl = 1;
     println_Msg(FS(SharedFlashText::textError));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     promptAndWaitForButton();
     resetArduino();
   }
@@ -1957,7 +1957,7 @@ void selfTest() {
           print_Msg(F("D"));
           println_Msg(pinNumber);
         }
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         promptAndWaitForButton();
         resetArduino();
       }
@@ -1994,7 +1994,7 @@ void selfTest() {
               print_Msg(F("D"));
               println_Msg(pinNumber2);
             }
-            println_Msg(FS(FSTRING_EMPTY));
+            printBlankLine();
             promptAndWaitForButton();
             resetArduino();
           }
@@ -2011,7 +2011,7 @@ void selfTest() {
     errorLvl = 1;
     println_Msg(F("Error: Clock Generator"));
     println_Msg(F("not found"));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     promptAndWaitForButton();
     resetArduino();
   } else {
@@ -2028,9 +2028,9 @@ void selfTest() {
     clockgen.output_enable(SI5351_CLK0, 1);
   }
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   println_Msg(F("All tests passed."));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
   resetArduino();
 }
@@ -2046,10 +2046,10 @@ void aboutScreen() {
   println_Msg(F("github.com/sanni"));
   print_Msg(F("2025 FW "));
   println_Msg(FS(FSTRING_VERSION));
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
+  printBlankLine();
+  printBlankLine();
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -2336,10 +2336,10 @@ void clkcal() {
         println_Msg(String(cal_factor));
         print_Msg(F("Step:"));
         print_Msg(cal_offset);
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
 #ifdef ENABLE_BUTTON2
         println_Msg(F("(Hold button to save)"));
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         println_Msg(F("Decrease     Increase"));
 #else
 #ifdef ENABLE_ROTARY
@@ -2606,7 +2606,7 @@ void setup() {
     display_Clear();
 #ifdef ENABLE_VSELECT
     print_STR(sd_error_STR, 1);
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     println_Msg(F("Press button to enable 5V for"));
     println_Msg(F("  updating firmware..."));
     updateDisplayAndWait();
@@ -2614,7 +2614,7 @@ void setup() {
     setVoltage(VOLTS_SET_5V);  // Set voltage high for flashing
     println_Msg(F(" ======== UPDATE MODE ======== "));
     println_Msg(F("Waiting for update..."));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     println_Msg(F("Press button to cancel/restart."));
     updateDisplayAndWait();
     resetArduino();
@@ -2662,7 +2662,7 @@ void setup() {
     }
   }
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
 #if defined(HW1)
   print_Msg(F("OSCR HW1"));
 #elif defined(HW2)
@@ -2808,7 +2808,7 @@ void print_Error(int errorMessage) {
 }
 
 void _print_FatalError(void) {
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
   resetArduino();
 }
@@ -2893,7 +2893,7 @@ void save_log() {
   sd.chdir(folder);
   strcpy(fileName, romName);
   strcat(fileName, ".txt");
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
 
@@ -3124,6 +3124,18 @@ void println_Msg(long unsigned int message) {
 #ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(message);
 #endif
+}
+
+bool openSelectedFileForRead() {
+  return myFile.open(filePath, O_READ);
+}
+
+bool openNamedOutputFile() {
+  return myFile.open(fileName, O_RDWR | O_CREAT);
+}
+
+void printBlankLine() {
+  println_Msg(FS(FSTRING_EMPTY));
 }
 
 void readerConnectionDisplayRefresh() {
@@ -3679,7 +3691,7 @@ selected:
 #ifdef ENABLE_GLOBAL_LOG
   // Reserve the connected console reset event for the actual restart.
   if (!PcLink::connected() || strcmp_P(answers[choice], FSTRING_RESET) != 0) {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_Msg(F("[+] "));
     println_Msg(answers[choice]);
   }

@@ -177,7 +177,7 @@ void gbmMenu() {
     default:
       print_MissingModule();  // does not return
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -342,7 +342,7 @@ void readROM_GBM(word numBanks) {
   EEPROM_writeAnything(0, foldern);
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(create_file_STR);
   } else {
     // Read rom
@@ -564,7 +564,7 @@ void eraseFlash_GBM() {
 }
 
 boolean blankcheckFlash_GBM() {
-  print_Msg(F("Blankcheck..."));
+  print_Msg(FS(SharedFlashText::blankCheckProgress));
   display_Update();
 
   //enable access to ports 0120h (F2)
@@ -597,11 +597,11 @@ boolean blankcheckFlash_GBM() {
 }
 
 void writeFlash_GBM() {
-  print_Msg(F("Writing..."));
+  print_Msg(FS(SharedFlashText::writingProgress));
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if ((fileSize / 0x4000) > 64) {
@@ -734,7 +734,7 @@ void readMapping_GBM() {
   EEPROM_writeAnything(0, foldern);
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(create_file_STR);
   } else {
     for (byte currByte = 0; currByte < 128; currByte++) {
@@ -795,7 +795,7 @@ void eraseMapping_GBM() {
 }
 
 boolean blankcheckMapping_GBM() {
-  print_Msg(F("Blankcheck..."));
+  print_Msg(FS(SharedFlashText::blankCheckProgress));
   display_Update();
 
   // Enable ports 0x0120
@@ -827,11 +827,11 @@ boolean blankcheckMapping_GBM() {
 }
 
 void writeMapping_GBM() {
-  print_Msg(F("Writing..."));
+  print_Msg(FS(SharedFlashText::writingProgress));
   display_Update();
 
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Get map file size and check if it exceeds 128KByte
     if (myFile.fileSize() > 0x80) {
       print_FatalError(FS(SharedFlashText::textFileIsTooBig));

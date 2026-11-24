@@ -190,7 +190,7 @@ void readROM_COL() {
   // Compare CRC32 to database and rename ROM if found
   compareCRC("colv.txt", 0, 1, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -222,7 +222,7 @@ void setROMSize_COL() {
 
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(COL[newcolsize])));
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(1000);
 #else
@@ -234,9 +234,9 @@ setrom:
     for (int i = 0; i < (colhi - collo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(pgm_read_byte(&(COL[i + collo])));
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -251,7 +251,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(pgm_read_byte(&(COL[newcolsize])));
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(8, newcolsize);
   colsize = newcolsize;
@@ -268,18 +268,18 @@ void checkStatus_COL() {
   display_Clear();
   println_Msg(F("COLECOVISION READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(COL[colsize])));
-  println_Msg(F("K"));
-  println_Msg(FS(FSTRING_EMPTY));
+  println_Msg(FS(SharedFlashText::unitK));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(pgm_read_byte(&(COL[colsize])));
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
@@ -324,7 +324,7 @@ void printDataLine_COL(void* entry) {
 
   print_Msg(FS(FSTRING_SIZE));
   print_Msg(castEntry->gameSize);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
 }
 
 void setCart_COL() {

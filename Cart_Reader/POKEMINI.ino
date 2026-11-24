@@ -257,7 +257,7 @@ void readROM_POKE() {
 
   // compare dump CRC with db values
   compareCRC("pkmn.txt", 0, 1, 0);
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
 
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);

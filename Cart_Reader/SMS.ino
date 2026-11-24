@@ -437,7 +437,7 @@ void getCartInfo_SMS() {
       // println_Msg(bank);
       // print_Msg(F("Parsed ROM name: "));
       // println_Msg(romNameBuf);
-      // println_Msg(FS(FSTRING_EMPTY));
+      // printBlankLine();
 
       if (strcmp(romNameBuf, romName) == 0) {
         break;
@@ -487,7 +487,7 @@ void getCartInfo_SMS() {
   print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
   print_Msg(cartSize / 1024);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   println_Msg(FS(FSTRING_SPACE));
 
   // Wait for user input
@@ -561,7 +561,7 @@ void manual_selectRomSize() {
   display_Clear();
   print_Msg(F("Selected Size: "));
   print_Msg(cartSize / 1024);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
 
   print_STR(press_button_STR, 1);
 }
@@ -583,10 +583,10 @@ void readROM_SMS() {
 
   print_Msg(F("ROM Size: "));
   print_Msg(cartSize / 1024);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
 
   // Open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
 
@@ -627,7 +627,7 @@ void readROM_SMS() {
       //     }
       //     print_Msg_PaddedHexByte(sdBuffer[xi]);
       //     if (xi>0&&((xi+1)%16)==0) {
-      //       println_Msg(FS(FSTRING_EMPTY));
+      //       printBlankLine();
       //     } else {
       //       print_Msg(FS(FSTRING_SPACE));
       //     }
@@ -715,7 +715,7 @@ void writeSRAM_SMS() {
     println_Msg(filePath);
     display_Update();
 
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       // Get SRAM size from file, with a maximum of 32KB
       uint32_t sramSize = myFile.fileSize();
       if (sramSize > ((uint32_t)32 * (uint32_t)1024)) {
@@ -723,7 +723,7 @@ void writeSRAM_SMS() {
       }
       print_Msg(F("sramSize: "));
       print_Msg(sramSize);
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       word bankSize = 16384;
       for (word address = 0x0; address < sramSize; address += 512) {
         byte currBank = address >= bankSize ? 1 : 0;

@@ -431,14 +431,14 @@ void readSingleROM_PCW()
   print_Msg(FS(SharedFlashText::textREADING));
   print_Msg(rom_size / 1024 / 1024);
   print_Msg("MB SINGLE-PACK");
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
 
   // Create file
   createFolder("PCW", "ROM", romName, "pcw");
 
   printAndIncrementFolder();
 
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
 
@@ -462,7 +462,7 @@ void readSingleROM_PCW()
   compareCRC("pcw.txt", 0, 1, 0);
 
   // Wait for user input
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -561,14 +561,14 @@ void readMultiROM_PCW()
   print_Msg(FS(SharedFlashText::textREADING));
   print_Msg(rom_size / 1024 / 1024);
   print_Msg("MB MULTI-PACK");
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
 
   // Create file
   createFolder("PCW", "ROM", romName, "pcw");
 
   printAndIncrementFolder();
 
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
 
@@ -611,7 +611,7 @@ void readMultiROM_PCW()
   compareCRC("pcw.txt", 0, 1, 0);
 
   // Wait for user input
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -626,7 +626,7 @@ void readSRAM_PCW()
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
 
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
   display_Clear();
@@ -641,7 +641,7 @@ void readSRAM_PCW()
   myFile.close();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
-  println_Msg(F("/"));
+  println_Msg(FS(SharedFlashText::pathSeparator));
   display_Update();
   //  calcCRC(fileName, 0x8000, NULL, 0); // 32K
 }
@@ -650,11 +650,11 @@ void readSRAM_PCW()
 void writeSRAM_PCW()
 {
   sprintf(filePath, "%s/%s", filePath, fileName);
-  println_Msg(F("Writing..."));
+  println_Msg(FS(SharedFlashText::writingProgress));
   println_Msg(filePath);
   display_Update();
 
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     sd.chdir();
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
@@ -663,7 +663,7 @@ void writeSRAM_PCW()
     println_Msg(fileName);
     display_Update();
     //open file on sd card
-    if (myFile.open(filePath, O_READ)) {
+    if (openSelectedFileForRead()) {
       read_setup_PCW();
       for (unsigned int address = 0x0; address < 0x8000; address += 512) {  // 32K
         myFile.read(sdBuffer, 512);
@@ -687,7 +687,7 @@ unsigned long verifySRAM_PCW()
 {
   writeErrors = 0;
 
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     read_setup_PCW();
     for (unsigned int address = 0x0; address < 0x8000; address += 512) {  // 32K
       for (unsigned int x = 0; x < 512; x++) {

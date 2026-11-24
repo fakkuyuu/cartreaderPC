@@ -77,7 +77,7 @@ void ngpMenu() {
       break;
   }
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -215,7 +215,7 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
   printAndIncrementFolder(true);
 
   // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
+  if (!openNamedOutputFile())
     print_FatalError(create_file_STR);
 
   // back to read mode
@@ -251,11 +251,11 @@ void scanChip_NGP() {
 
   print_Msg(F("Saving chip report to "));
   print_Msg(folder);
-  println_Msg(F("/..."));
+  println_Msg(FS(SharedFlashText::pathEllipsis));
   display_Update();
 
   // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
+  if (!openNamedOutputFile())
     print_FatalError(create_file_STR);
 
   // write new folder number back to EEPROM

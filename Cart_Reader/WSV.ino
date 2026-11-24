@@ -208,7 +208,7 @@ void readROM_WSV() {
   // Arguments: database name, precalculated crc string or 0 to calculate, rename rom or not, starting offset
   compareCRC("wsv.txt", 0, 1, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -239,7 +239,7 @@ void setROMSize_WSV() {
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_word(&(WSV[newwsvsize])));
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(1000);
 #else
@@ -251,9 +251,9 @@ setrom:
     for (int i = 0; i < (wsvhi - wsvlo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(pgm_read_word(&(WSV[i + wsvlo])));
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -268,7 +268,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(pgm_read_word(&(WSV[newwsvsize])));
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(8, newwsvsize);
   wsvsize = newwsvsize;
@@ -285,15 +285,15 @@ void checkStatus_WSV() {
   display_Clear();
   println_Msg(F("WATARA SUPERVISION"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_word(&(WSV[wsvsize])));
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(pgm_read_word(&(WSV[wsvsize])));
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
@@ -339,7 +339,7 @@ void printDataLine_WSV(void* entry) {
     print_Msg(F("512"));
   else
     print_Msg(castEntry->gameSize);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
 }
 
 void setCart_WSV() {

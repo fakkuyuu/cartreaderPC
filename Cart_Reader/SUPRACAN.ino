@@ -137,7 +137,7 @@ void suprAcanMenu() {
       }
   }
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -170,7 +170,7 @@ static void openFile_Acan() {
 
   display_Clear();
 
-  if (!myFile.open(filePath, O_READ)) {
+  if (!openSelectedFileForRead()) {
     print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     return;
   }
@@ -202,7 +202,7 @@ static void readROM_Acan() {
 
   print_Msg(F("CRC32: "));
   print_Msg_PaddedHex32(crc32);
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_STR(done_STR, 1);
 }
 
@@ -226,7 +226,7 @@ static void writeSRAM_Acan() {
 
   print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
   dataOut_Acan();
@@ -247,7 +247,7 @@ static void verifySRAM_Acan() {
   print_STR(verifying_STR, 0);
   display_Update();
 
-  if (!myFile.open(filePath, O_READ)) {
+  if (!openSelectedFileForRead()) {
     print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     return;
   }
@@ -298,7 +298,7 @@ static void verifyUM6650() {
   print_STR(verifying_STR, 0);
   display_Update();
 
-  if (!myFile.open(filePath, O_READ)) {
+  if (!openSelectedFileForRead()) {
     print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     return;
   }
@@ -335,7 +335,7 @@ static void writeUM6650() {
 
   print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
   dataOut_Acan();
@@ -357,7 +357,7 @@ static void flashCart_Acan() {
 
   print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath + 1);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
   uint32_t i, j, k, file_length = myFile.fileSize();

@@ -181,11 +181,11 @@ void setupCFI() {
 
 void readOnlyMode() {
   display_Clear();
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
+  printBlankLine();
   println_Msg(F("Read-only Mode!"));
-  println_Msg(FS(FSTRING_EMPTY));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
+  printBlankLine();
   display_Update();
 }
 
@@ -214,7 +214,7 @@ void flashromMenu8() {
         println_Msg(F("your flashrom/repro"));
         promptAndWaitForButton();
         rgbLed(black_color);
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         println_Msg(FS(SharedFlashText::textPleaseWait));
         display_Update();
         time = millis();
@@ -293,9 +293,9 @@ void flashromMenu8() {
         case 2: idFlash29F1610(); break;
         case 3: idFlash28FXXX(); break;
       }
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       printFlash(40);
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       display_Update();
       resetFlash8();
       break;
@@ -389,9 +389,9 @@ void flashromMenu16() {
       display_Clear();
       println_Msg(FS(SharedFlashText::textIDFlashrom));
       idFlash16();
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       printFlash16(40);
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       display_Update();
       resetFlash16();
       break;
@@ -499,7 +499,7 @@ void printFlashSize(int index) {
   display_Clear();
   print_Msg(F("Flashsize: "));
   print_Msg(index);
-  println_Msg(F("MB"));
+  println_Msg(FS(SharedFlashText::unitMB));
 #ifdef ENABLE_GLOBAL_LOG
   dont_log = false;
 #endif
@@ -532,7 +532,7 @@ byte selectFlashtype(boolean option) {
   } else {
     print_Msg(F("Flash Size: "));
     print_Msg(selectionByte);
-    println_Msg(F("MB"));
+    println_Msg(FS(SharedFlashText::unitMB));
   }
   display_Update();
   delay(200);
@@ -752,11 +752,11 @@ idtheflash:
     // print first 40 bytes of flash
     display_Clear();
     println_Msg(FS(SharedFlashText::textFirst40Bytes));
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     printFlash(40);
     resetFlash8();
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -1445,13 +1445,13 @@ word readWord_Flash(unsigned long myAddress) {
 *****************************************/
 bool openFileOnSD() {
   // Open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Get rom size from file
     fileSize = myFile.fileSize();
     if (fileSize > flashSize) {
       display_Clear();
       println_Msg(filePath);
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       print_Msg(F("File:"));
       print_Msg(FS(FSTRING_SPACE));
       print_Msg(FS(FSTRING_SPACE));
@@ -1477,7 +1477,7 @@ bool openFlashFile() {
   sprintf(filePath, "%s/%s", filePath, fileName);
   print_STR(flashing_file_STR, 0);
   print_Msg(filePath);
-  println_Msg(F("..."));
+  println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
 
   return openFileOnSD();
@@ -1611,7 +1611,7 @@ void writeFlash29F032() {
       //   print_Msg(currByte);
       //   print_Msg(FS(FSTRING_SPACE));
       //   print_Msg(dq5failcnt);
-      //   println_Msg(FS(FSTRING_EMPTY));
+      //   printBlankLine();
       // }
       if (!noread) {
         myFile.read(sdBuffer, 512);
@@ -1645,7 +1645,7 @@ void writeFlash29F032() {
         print_Msg(currByte);
         print_Msg(F(": "));
         print_Msg(blockfailcnt);
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         dq5failcnt -= blockfailcnt;
         currByte -= 512;
         delay(100);
@@ -2240,7 +2240,7 @@ void blankcheck_Flash() {
     println_Msg(F("Flashrom is empty"));
     display_Update();
   } else {
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     print_Error(FS(SharedFlashText::textErrorNotBlank));
   }
 }
@@ -3137,10 +3137,10 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
     // Print filepath
     print_STR(flashing_file_STR, 0);
     print_Msg(filePath);
-    println_Msg(F("..."));
+    println_Msg(FS(SharedFlashText::ellipsis));
     // Check size
     if ((flashSize == 8388608) && (fileSize < 6291456) && reversed) {
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       print_STR(error_STR, 0);
       print_FatalError(F("ROM file not ExROM"));
     }
@@ -3188,7 +3188,7 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
     if ((totalChips > 1) || reversed) {
       print_Msg(FS(FSTRING_SPACE));
       print_Msg(currChip);
-      print_Msg(F("/"));
+      print_Msg(FS(SharedFlashText::pathSeparator));
       print_Msg(totalChips);
       print_Msg(FS(FSTRING_SPACE));
       print_Msg(FS(FSTRING_SPACE));
@@ -3217,7 +3217,7 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
           break;
       }
     } else
-      println_Msg(F("..."));
+      println_Msg(FS(SharedFlashText::ellipsis));
     display_Update();
 
     //Initialize progress bar

@@ -452,10 +452,10 @@ void readGROM_TI99()
   }
   else {
     //    println_Msg(F("USE GOOD POWER SUPPLY"));
-    //    println_Msg(FS(FSTRING_EMPTY));
+    //    printBlankLine();
     print_Msg(FS(SharedFlashText::textSavingTo));
     print_Msg(folder);
-    println_Msg(F("/..."));
+    println_Msg(FS(SharedFlashText::pathEllipsis));
     display_Update();
 
     // Split into Individual GROM Files
@@ -463,13 +463,13 @@ void readGROM_TI99()
       if (((grommap >> x) & 0x1) == 1) {
         snprintf(fileName, sizeof(fileName), "%s.g%d.bin", romName, x);
         // open file on sdcard
-        if (!myFile.open(fileName, O_RDWR | O_CREAT))
+        if (!openNamedOutputFile())
           print_Error(FS(SharedFlashText::textCanTCreateFileOnSD));
 
         display_Clear();
         print_Msg(F("Reading GROM "));
         println_Msg(x);
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         display_Update();
 
         // Normal GROM 6KB/12KB/18KB/24KB/30K
@@ -494,7 +494,7 @@ void readGROM_TI99()
       }
     }
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -515,12 +515,12 @@ void readCROM_TI99()
   else {
     print_Msg(FS(SharedFlashText::textSavingTo));
     print_Msg(folder);
-    println_Msg(F("/..."));
+    println_Msg(FS(SharedFlashText::pathEllipsis));
     display_Update();
 
     snprintf(fileName, sizeof(fileName), "%s.c.bin", romName);
     // open file on sdcard
-    if (!myFile.open(fileName, O_RDWR | O_CREAT))
+    if (!openNamedOutputFile())
       print_Error(FS(SharedFlashText::textCanTCreateFileOnSD));
 
     if (ti99mapper == 1) { // MBX
@@ -579,7 +579,7 @@ void readCROM_TI99()
 
     printCRC(fileName, NULL, 0);
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   promptAndWaitForButton();
 }
 
@@ -610,16 +610,16 @@ void checkStatus_TI99()
   display_Clear();
   println_Msg(F("TI-99 READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(F("MAPPER:     "));
   //  println_Msg(ti99mapper);
   printMapper_TI99(ti99mapper);
   print_Msg(F("GROM SIZE:  "));
   print_Msg(GROM[gromsize]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   print_Msg(FS(SharedFlashText::textROMSIZE));
   print_Msg(CROM[cromsize]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   print_Msg(F("GROM MAP:   "));
   display_Update();
   readGROMMap();
@@ -629,10 +629,10 @@ void checkStatus_TI99()
   PcConsole.println(ti99mapper);
   PcConsole.print(F("GROM SIZE: "));
   PcConsole.print(GROM[gromsize]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
   PcConsole.print(F("ROM SIZE:  "));
   PcConsole.print(CROM[cromsize]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
   PcConsole.print(F("GROM MAP:  "));
   readGROMMap();
   PcConsole.println(F(""));
@@ -749,7 +749,7 @@ void setGROMSize_TI99()
       display_Clear();
       print_Msg(F("GROM Size: "));
       println_Msg(GROM[i]);
-      println_Msg(FS(FSTRING_EMPTY));
+      printBlankLine();
       println_Msg(FS(SharedFlashText::textPressToChange));
       println_Msg(FS(SharedFlashText::textHoldToSelect));
       display_Update();
@@ -777,7 +777,7 @@ void setGROMSize_TI99()
   }
   print_Msg(FS(SharedFlashText::textGROMSIZE));
   print_Msg(GROM[newgromsize]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
   EEPROM_writeAnything(8, newgromsize);
   gromsize = newgromsize;
@@ -801,9 +801,9 @@ setgrom:
     for (int i = 0; i < (gromhi - gromlo + 1); i++) {
       PcConsole.print(F("Select GROM Size:  "));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(GROM[i + gromlo]);
-      PcConsole.println(F("KB"));
+      PcConsole.println(FS(SharedFlashText::unitKB));
     }
     PcConsole.print(F("Enter GROM Size: "));
     while (PcConsole.available() == 0) {}
@@ -818,7 +818,7 @@ setgrom:
   }
   PcConsole.print(FS(SharedFlashText::textGROMSIZE));
   PcConsole.print(GROM[newgromsize]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
   EEPROM_writeAnything(8, newgromsize);
   gromsize = newgromsize;
   // Default GROM Map to sequential GROMs
@@ -847,7 +847,7 @@ void readGROMMap()
       }
     }
   }
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   display_Update();
 #else
   if (grommap == 0)
@@ -878,7 +878,7 @@ void setGROMMap_TI99()
     display_Clear();
     print_Msg(FS(SharedFlashText::textEnableGROM));
     println_Msg(i);
-    println_Msg(FS(FSTRING_EMPTY));
+    printBlankLine();
     println_Msg(F("Press to Skip GROM"));
     println_Msg(F("Hold to Enable GROM"));
     display_Update();
@@ -893,7 +893,7 @@ void setGROMMap_TI99()
       }
       if (b == 3) { // Long Press - Execute
         newgrommap = (newgrommap | (1 << i));
-        println_Msg(FS(FSTRING_EMPTY));
+        printBlankLine();
         print_Msg(F("GROM "));
         print_Msg(i);
         println_Msg(F(" ENABLED"));
@@ -958,7 +958,7 @@ void setCROMSize_TI99()
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(CROM[newcromsize]);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
   delay(1000);
 #else
@@ -970,9 +970,9 @@ setrom:
     for (int i = 0; i < (cromhi - cromlo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(CROM[i + cromlo]);
-      PcConsole.println(F("KB"));
+      PcConsole.println(FS(SharedFlashText::unitKB));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -987,7 +987,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(CROM[newcromsize]);
-  PcConsole.println(F("KB"));
+  PcConsole.println(FS(SharedFlashText::unitKB));
 #endif
   EEPROM_writeAnything(8, newcromsize);
   cromsize = newcromsize;

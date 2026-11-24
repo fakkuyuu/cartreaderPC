@@ -401,7 +401,7 @@ void readROM_INTV() {
   // Compare CRC32 to database and rename ROM if found
   compareCRC("intv.txt", 0, 1, 0);
 
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   updateDisplayAndWait();
@@ -541,7 +541,7 @@ void setROMSize_INTV() {
   }
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(INTV[newintvsize])));
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   display_Update();
   delay(1000);
 #else
@@ -553,9 +553,9 @@ setrom:
     for (int i = 0; i < (intvhi - intvlo + 1); i++) {
       PcConsole.print(FS(SharedFlashText::textSelectROMSize));
       PcConsole.print(i);
-      PcConsole.print(F(" = "));
+      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
       PcConsole.print(pgm_read_byte(&(INTV[i + intvlo])));
-      PcConsole.println(F("K"));
+      PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
@@ -570,7 +570,7 @@ setrom:
   }
   PcConsole.print(FS(SharedFlashText::textROMSize));
   PcConsole.print(pgm_read_byte(&(INTV[newintvsize])));
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
 #endif
   EEPROM_writeAnything(8, newintvsize);
   intvsize = newintvsize;
@@ -592,19 +592,19 @@ void checkStatus_INTV() {
   display_Clear();
   println_Msg(F("INTELLIVISION READER"));
   println_Msg(FS(FSTRING_CURRENT_SETTINGS));
-  println_Msg(FS(FSTRING_EMPTY));
+  printBlankLine();
   print_Msg(F("MAPPER:   "));
   println_Msg(intvmapper);
   print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(INTV[intvsize])));
-  println_Msg(F("K"));
+  println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTMAPPER));
   PcConsole.println(intvmapper);
   PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));
   PcConsole.print(pgm_read_byte(&(INTV[intvsize])));
-  PcConsole.println(F("K"));
+  PcConsole.println(FS(SharedFlashText::unitK));
   PcConsole.println(FS(FSTRING_EMPTY));
 #endif
 }
@@ -660,7 +660,7 @@ void printDataLine_INTV(void* entry) {
   struct database_entry_INTV* castEntry = (database_entry_INTV*)entry;
   print_Msg(FS(FSTRING_SIZE));
   print_Msg(castEntry->gameSize);
-  println_Msg(F("KB"));
+  println_Msg(FS(SharedFlashText::unitKB));
   print_Msg(FS(FSTRING_MAPPER));
   println_Msg(castEntry->gameMapper);
 }

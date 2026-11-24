@@ -295,7 +295,7 @@ void readSRAM_SV() {
   EEPROM_writeAnything(0, foldern);
 
   //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
+  if (!openNamedOutputFile()) {
     print_FatalError(sd_error_STR);
   }
 
@@ -318,7 +318,7 @@ void readSRAM_SV() {
   display_Clear();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
-  println_Msg(F("/..."));
+  println_Msg(FS(SharedFlashText::pathEllipsis));
   updateDisplayAndWait();
 }
 
@@ -332,7 +332,7 @@ void writeSRAM_SV() {
   display_Clear();
 
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Set pins to output
     dataOut();
 
@@ -373,7 +373,7 @@ void writeSRAM_SV() {
 // Check if the SRAM was written without any error
 unsigned long verifySRAM_SV() {
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
     // Variable for errors
     writeErrors = 0;
 
@@ -454,7 +454,7 @@ void writeROM_SV(void) {
   display_Clear();
 
   //open file on sd card
-  if (myFile.open(filePath, O_READ)) {
+  if (openSelectedFileForRead()) {
 
     fileSize = myFile.fileSize();
     if (fileSize != 0x100000) {
@@ -486,7 +486,7 @@ void writeROM_SV(void) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
         if (0xFF != readBank_SV(currBank, currByte)) {
-          println_Msg(FS(FSTRING_EMPTY));
+          printBlankLine();
           println_Msg(FS(SharedFlashText::textEraseFailed));
           display_Update();
           myFile.close();
@@ -529,7 +529,7 @@ void writeROM_SV(void) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
         if (myFile.read() != readBank_SV(currBank, currByte)) {
-          println_Msg(FS(FSTRING_EMPTY));
+          printBlankLine();
           println_Msg(F("Verify failed"));
           display_Update();
           myFile.close();
