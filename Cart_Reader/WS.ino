@@ -685,6 +685,22 @@ static void writeSRAM_WS() {
   }
 }
 
+static void issueEepromRead_WS(uint16_t address) __attribute__((noinline));
+static void issueEepromRead_WS(uint16_t address) {
+  generateEepromInstruction_WS(wsEepromShiftReg, 0x2, address);
+
+  dataOut_WS();
+  writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
+  writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
+  writeByte_WSPort(0xc8, 0x10);
+
+  // MMC will shift out from port 0xc7 to 0xc6
+  // and shift in 16bits into port 0xc5 to 0xc4
+  pulseCLK_WS(1 + 32 + 3);
+
+  dataIn_WS();
+}
+
 static void readEEPROM_WS() {
   // generate fullname of eep file
   createFolderAndOpenFile("WS", "SAVE", romName, "eep");
@@ -698,18 +714,7 @@ static void readEEPROM_WS() {
       if ((j & 0x1f) == 0x00)
         blinkLED();
 
-      generateEepromInstruction_WS(wsEepromShiftReg, 0x2, ((i + j) >> 1));
-
-      dataOut_WS();
-      writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
-      writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
-      writeByte_WSPort(0xc8, 0x10);
-
-      // MMC will shift out from port 0xc7 to 0xc6
-      // and shift in 16bits into port 0xc5 to 0xc4
-      pulseCLK_WS(1 + 32 + 3);
-
-      dataIn_WS();
+      issueEepromRead_WS((i + j) >> 1);
       sdBuffer[j] = readByte_WSPort(0xc4);
       sdBuffer[j + 1] = readByte_WSPort(0xc5);
     }
@@ -739,18 +744,7 @@ static void verifyEEPROM_WS() {
         if ((j & 0x1f) == 0x00)
           blinkLED();
 
-        generateEepromInstruction_WS(wsEepromShiftReg, 0x2, ((i + j) >> 1));
-
-        dataOut_WS();
-        writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
-        writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
-        writeByte_WSPort(0xc8, 0x10);
-
-        // MMC will shift out from port 0xc7 to 0xc6
-        // and shift in 16bits into port 0xc5 to 0xc4
-        pulseCLK_WS(1 + 32 + 3);
-
-        dataIn_WS();
+        issueEepromRead_WS((i + j) >> 1);
         if (readByte_WSPort(0xc4) != sdBuffer[j])
           write_errors++;
 
