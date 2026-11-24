@@ -296,7 +296,7 @@ void checkStatus_BALLY()
 void setCart_BALLY()
 {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   byte gameSize;
 
@@ -311,7 +311,7 @@ void setCart_BALLY()
       EEPROM_writeAnything(8, gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

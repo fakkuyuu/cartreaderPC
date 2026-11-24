@@ -666,7 +666,7 @@ void printDataLine_INTV(void* entry) {
 
 void setCart_INTV() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   struct database_entry_INTV entry;
 
@@ -712,7 +712,7 @@ void setCart_INTV() {
       EEPROM_writeAnything(8, intvsize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

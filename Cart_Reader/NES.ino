@@ -802,9 +802,9 @@ void getMapping() {
 
   display_Clear();
 
-  sd.chdir();
+  resetStorageDirectory();
   if (!database.open("nes.txt", O_READ)) {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
     // never reached
   }
 
@@ -1283,7 +1283,7 @@ void dumpCHR_pulsem2(word address) {
    File Functions
  *****************************************/
 void CreateROMFolderInSD() {
-  sd.chdir();
+  resetStorageDirectory();
   sprintf(folder, "NES/ROM");
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -1307,7 +1307,7 @@ FsFile createNewFile(const char* prefix, const char* extension) {
   print_Msg(filename);
   println_Msg(F(": no available name"));
   display_Update();
-  print_FatalError(sd_error_STR);
+  fatalSdError();
 
   rgbLed(black_color);
 }
@@ -2155,6 +2155,34 @@ void dumpBankCHR(const size_t from, const size_t to) {
   }
 }
 
+static void dumpPRG8KiB(uint16_t base) {
+  dumpBankPRG(0x0, 0x2000, base);
+}
+
+static void dumpPRG16KiB(uint16_t base) {
+  dumpBankPRG(0x0, 0x4000, base);
+}
+
+static void dumpPRG32KiB(uint16_t base) {
+  dumpBankPRG(0x0, 0x8000, base);
+}
+
+static void dumpCHR1KiB() {
+  dumpBankCHR(0x0, 0x400);
+}
+
+static void dumpCHR2KiB() {
+  dumpBankCHR(0x0, 0x800);
+}
+
+static void dumpCHR4KiB() {
+  dumpBankCHR(0x0, 0x1000);
+}
+
+static void dumpCHR8KiB() {
+  dumpBankCHR(0x0, 0x2000);
+}
+
 // Simple mappers select each bank with a single register write.
 static void dumpSequentialPRGBanks(uint16_t count, uint16_t reg, uint8_t shift,
                                    uint16_t bankSize, uint16_t base) {
@@ -2203,7 +2231,7 @@ void readPRG(bool readrom) {
         if (matchesNesHeaderCrc(nesSmallPrgCrcs, sizeof(nesSmallPrgCrcs) / sizeof(uint32_t))) {
           println_Msg(F("DUMPING 8KiB PRG"));
           display_Update();
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         } else {
           banks = prgBanks16K;
           dumpBankPRG(0x0, 0x4000 * banks, base);
@@ -2214,7 +2242,7 @@ void readPRG(bool readrom) {
       case 155:  // 32K/64K/128K/256K/512K
         if (prgsize == 1) {
           write_prg_byte(0x8000, 0x80);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         } else {
           banks = prgBanks16K;
           for (size_t i = 0; i < banks; i++) {  // 16K Banks ($8000-$BFFF)
@@ -2225,7 +2253,7 @@ void readPRG(bool readrom) {
             if (i > 15)                         // Switch Upper 256K
               write_mmc1_byte(0xA000, 0x10);    // Set 512K Flag
             write_mmc1_byte(0xE000, i);
-            dumpBankPRG(0x0, 0x4000, base);
+            dumpPRG16KiB(base);
           }
         }
         break;
@@ -2245,7 +2273,7 @@ void readPRG(bool readrom) {
           if (busConflict) {
             write_prg_byte(0xC000 + i, i);
           }
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -2293,7 +2321,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8001, 0);
           write_prg_byte(0x8000, 7);
           write_prg_byte(0x8001, 1);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         } else {
           banks = prgBanks16K * 2;
           write_prg_byte(0xA001, 0x80);  // Block Register - PRG RAM Chip Enable, Writable
@@ -2414,7 +2442,7 @@ void readPRG(bool readrom) {
             }
             write_prg_byte(0x8000, 0x06);  // PRG Bank 0 ($8000-$9FFF)
             write_prg_byte(0x8001, i);
-            dumpBankPRG(0x0, 0x2000, base);
+            dumpPRG8KiB(base);
           }
         }
         break;
@@ -2425,7 +2453,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i += 2) {  // 128K/256K/512K
           write_prg_byte(0x5114, i | 0x80);
           write_prg_byte(0x5115, (i + 1) | 0x80);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -2443,7 +2471,7 @@ void readPRG(bool readrom) {
             delay(200);                 // NINA seems slow to switch banks
           }
           write_prg_byte(0x8000, i);
-          dumpBankPRG(0x0, 0x8000, base);  // 32K Banks ($8000-$FFFF)
+          dumpPRG32KiB(base);  // 32K Banks ($8000-$FFFF)
         }
         break;
 
@@ -2460,7 +2488,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xFFB0 + i, i);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -2468,7 +2496,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000, i);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -2478,7 +2506,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x6008, i);       // Submapper 4
           write_prg_byte(0x8008, i);       // Submapper 5
-          dumpBankPRG(0x0, 0x4000, base);  // 16K Banks ($8000-$BFFF)
+          dumpPRG16KiB(base);  // 16K Banks ($8000-$BFFF)
         }
         break;
 
@@ -2489,7 +2517,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8001, (i >> 4) & 0xF);
           write_prg_byte(0x8002, (i + 1) & 0xF);
           write_prg_byte(0x8003, ((i + 1) >> 4) & 0xF);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -2501,7 +2529,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i++) {
           write_ram_byte(0xE000, i);  // PRG Bank 0 ($8000-$9FFF)
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         break;
 
@@ -2533,7 +2561,7 @@ void readPRG(bool readrom) {
         }
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000, i);
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         break;
 
@@ -2565,7 +2593,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5000, 0x81);
           write_prg_byte(0x8000, i);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -2580,7 +2608,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x5FFD, i + 5);
           write_prg_byte(0x5FFE, i + 6);
           write_prg_byte(0x5FFF, i + 7);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -2599,7 +2627,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000, i);       // PRG Bank 0 ($8000-$9FFF)
           write_prg_byte(0x8001, i + 1);   // PRG Bank 1 ($A000-$BFFF)
-          dumpBankPRG(0x0, 0x4000, base);  // 8K Banks ($A000-$BFFF)
+          dumpPRG16KiB(base);  // 8K Banks ($A000-$BFFF)
         }
         break;
 
@@ -2612,7 +2640,7 @@ void readPRG(bool readrom) {
         for (uint8_t i = 0; i < banks; i++) {
           write_prg_byte(0xD003, ((i >> 5) & 0x06) | 0x20);
           write_prg_byte(0x8000, (i & 0x3f));
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         break;
 
@@ -2626,7 +2654,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x4100, 0);
           write_prg_byte(0x4103, 0xFF);
           write_prg_byte(0xFFFF, 0xFF);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -2642,9 +2670,9 @@ void readPRG(bool readrom) {
         }
         if (prgsize > 2) {
           write_prg_byte(0xC018, 0);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
           write_prg_byte(0xC058, 0);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -2653,7 +2681,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x6000 + i, 0);
           write_prg_byte(0x6000 + i, 0);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -2662,17 +2690,17 @@ void readPRG(bool readrom) {
         base = 0x6000;  // 8k switchable PRG ROM bank at $6000-$7FFF
         for (size_t i = 0; i < banks - 4; i++) {
           write_prg_byte(0xE000, i & 0x0F);
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         base = 0x8000;  // last 32k fixed to $8000-$FFFF
-        dumpBankPRG(0x0, 0x8000, base);
+        dumpPRG32KiB(base);
         break;
 
       case 43:
         base = 0xC000;
         for (size_t i = 0; i < 8; i++) {
           write_prg_byte(0x4022, i);
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         base = 0x5000;
         for (size_t i = 0; i < 4; i++) {
@@ -2723,7 +2751,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x6000, (i & 0x1E) >> 1);  // high bits
           write_prg_byte(0x8000, i & 0x01);         // low bit
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -2736,7 +2764,7 @@ void readPRG(bool readrom) {
         break;
 
       case 55:
-        dumpBankPRG(0x0, 0x8000, base);
+        dumpPRG32KiB(base);
         base = 0x6000;
         for (size_t i = 0; i < 8; i++) {
           dumpBankPRG(0x0, 0x800, base);
@@ -2748,7 +2776,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xE000, 1);
           write_prg_byte(0xF000, i);
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         break;
 
@@ -2768,7 +2796,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000 + (i & 0x07), 0);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -2776,16 +2804,16 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i += 2) {
           write_reg_m59(0x8000 + ((i & 0x07) << 4));
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
       case 60:
-        dumpBankPRG(0x0, 0x4000, base);
+        dumpPRG16KiB(base);
         for (size_t i = 0; i < 3; i++) {
           write_prg_byte(0x8D8D, i);
           delay(500);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -2793,7 +2821,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8010 | ((i & 0x01) << 5) | ((i >> 1) & 0x0F), 0);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -2801,7 +2829,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + (i * 512) + ((i & 32) << 1), 0);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -2809,7 +2837,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < 192; i++) {
           write_prg_byte(0x8000 + (i << 2), 0);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -2821,7 +2849,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {  // 128K
           write_reg_byte(0xF800, i);          // [WRITE RAM SAFE]
-          dumpBankPRG(0x0, 0x4000, base);     // 16K Banks ($8000-$BFFF)
+          dumpPRG16KiB(base);     // 16K Banks ($8000-$BFFF)
         }
         break;
 
@@ -2837,7 +2865,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {  // 128K/256K
           write_prg_byte(0x8000, 9);          // Command Register - PRG Bank 1
           write_prg_byte(0xA000, i);          // Parameter Register - ($8000-$9FFF)
-          dumpBankPRG(0x0, 0x2000, base);     // 8K Banks ($8000-$9FFF)
+          dumpPRG8KiB(base);     // 8K Banks ($8000-$9FFF)
         }
         break;
 
@@ -2857,7 +2885,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {  // 128K
           write_prg_byte(0x8000, i | 0x80);   // PRG Command + Bank
           write_prg_byte(0x8000, i);          // PRG Bank
-          dumpBankPRG(0x0, 0x4000, base);     // 16K Banks ($8000-$BFFF)
+          dumpPRG16KiB(base);     // 16K Banks ($8000-$BFFF)
         }
         break;
 
@@ -2890,7 +2918,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + ((i & 0x30) >> 3), i);  // PRG A18-A17 (submapper 0 only)
           write_prg_byte(0x7000, i);                      // PRG -A13
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         break;
 
@@ -2909,7 +2937,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x6000, i);
           write_prg_byte(0x8000, i << 4 | 0x01);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -2927,14 +2955,14 @@ void readPRG(bool readrom) {
           if (busConflict) {
             write_prg_byte(0x8000 + i, i << 2);
           }
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
       case 97:   // fixed first bank
       case 180:  // bus conflicts - fixed fist bank
         banks = prgBanks16K;
-        dumpBankPRG(0x0, 0x4000, base);
+        dumpPRG16KiB(base);
         for (size_t i = 1; i < banks; i++) {
           write_prg_byte(0x8000, i);
           dumpBankPRG(0x4000, 0x8000, base);
@@ -2945,7 +2973,7 @@ void readPRG(bool readrom) {
         for (size_t i = 1; i < 80; i++) {
           write_prg_byte(0x8000, (i & 0x70) >> 4);  // outer bank
           write_prg_byte(0xC000, i & 0x0F);         // inner bank
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -2954,13 +2982,13 @@ void readPRG(bool readrom) {
         write_mmc1_byte(0xA000, 0x10);    // Set PRG Init/IRQ (Bit 4) to enable bank swapping
         for (size_t i = 0; i < 4; i++) {  // PRG CHIP 1 128K
           write_mmc1_byte(0xA000, i << 1);
-          dumpBankPRG(0x0, 0x8000, base);  // 32K Banks ($8000-$FFFF)
+          dumpPRG32KiB(base);  // 32K Banks ($8000-$FFFF)
         }
         write_mmc1_byte(0x8000, 0x0C);    // Switch 16K Bank ($8000-$BFFF) + Fixed Last Bank ($C000-$FFFF)
         write_mmc1_byte(0xA000, 0x08);    // Select PRG CHIP 2 (Bit 3)
         for (size_t j = 0; j < 8; j++) {  // PRG CHIP 2 128K
           write_mmc1_byte(0xE000, j);
-          dumpBankPRG(0x0, 0x4000, base);  // 16K Banks ($8000-$BFFF)
+          dumpPRG16KiB(base);  // 16K Banks ($8000-$BFFF)
         }
         break;
 
@@ -2977,7 +3005,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000, 0);
           write_prg_byte(0xA000, i);
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         break;
 
@@ -2985,7 +3013,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x4100, (i & 0x07) << 3);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -2996,7 +3024,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xA000, 4);
           write_prg_byte(0xC000, i);
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         break;
 
@@ -3004,17 +3032,17 @@ void readPRG(bool readrom) {
         base = 0x6000;
         for (size_t i = 0; i < 8; i++) {
           write_prg_byte(0x41FF, i);
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         base = 0x8000;
-        dumpBankPRG(0x0, 0x8000, base);
+        dumpPRG32KiB(base);
         break;
 
       case 125:
         base = 0x6000;
         for (size_t i = 0; i < 16; i++) {
           write_prg_byte(0x6000, i);
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         break;
 
@@ -3030,7 +3058,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0xF000, i + 2);
           write_prg_byte(0xE000, 3);  // Select 8 KB PRG bank at CPU $C000-$DFFF
           write_prg_byte(0xF000, i + 3);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3046,7 +3074,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8002, i >> 4);     // PRG Outer Bank
           write_prg_byte(0x8003, i >> 4);     // PRG Outer Bank
           write_prg_byte(0x8008, i & 0xF);    // PRG Inner Bank
-          dumpBankPRG(0x0, 0x4000, base);     // 16K Banks ($8000-$BFFF)
+          dumpPRG16KiB(base);     // 16K Banks ($8000-$BFFF)
         }
         break;
 
@@ -3060,7 +3088,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5200, (i & 0x30) >> 4);  // A20-A19
           write_prg_byte(0x5000, i & 0x0F);         // A18-A15
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3070,7 +3098,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5200, (i & 0x30) >> 4);  // A20-A19
           write_prg_byte(0x5000, i & 0x0F);         // A18-A15
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3081,7 +3109,7 @@ void readPRG(bool readrom) {
       case 174:  // 128K
         for (size_t i = 0; i < 8; i++) {
           write_prg_byte(0xFF00 + (i << 4), 0);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3090,7 +3118,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xA000, i << 2);
           write_prg_byte(0x8000, i);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3111,7 +3139,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x4132, (i << 4) & 0xF0);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3120,7 +3148,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + (i & 0x07), 0);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3128,7 +3156,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + (i & 0xFF), 0);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3136,7 +3164,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 | (i << 1), 0);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3144,7 +3172,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000, (i & 0x1F) << 2);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3153,7 +3181,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0xE000, i);      // PRG Bank 0 ($8000-$9FFF) [WRITE NO RAM]
           write_prg_byte(0xE800, i + 1);  // PRG Bank 1 ($A000-$BFFF) [WRITE NO RAM]
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3161,7 +3189,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 | (i << 2), 0);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3170,7 +3198,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + ((i << 2) & 0xE0) + ((i << 3) & 0x200), 0);
           write_prg_byte(0xC000 + (i & 7), 0);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3179,7 +3207,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x9000 + ((i & 0x40) << 8) + ((i & 0x3F) << 6), i);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3202,7 +3230,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8083 + ((i & 0xF) << 3), 0);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3211,22 +3239,22 @@ void readPRG(bool readrom) {
         write_prg_byte(0x8000, 0);
         for (size_t i = 0; i < banks; i += 2) {  // up to 1024k PRG
           write_prg_byte(0x8000 + ((i & 0x3F) << 6), 0);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         if (prgsize > 5) {  // reading the 3rd 512k PRG chip (Action 52)
           for (size_t i = 0; i < 32; i += 2) {
             write_prg_byte(0x9800 + ((i & 0x1F) << 6), 0);
-            dumpBankPRG(0x0, 0x8000, base);
+            dumpPRG32KiB(base);
           }
         }
         break;
 
       case 229:
         write_prg_byte(0x8000, 0);
-        dumpBankPRG(0x0, 0x8000, base);
+        dumpPRG32KiB(base);
         for (size_t i = 2; i < 32; i++) {
           write_prg_byte(0x8000 + i, i);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3237,7 +3265,7 @@ void readPRG(bool readrom) {
           for (size_t i = 0; i < 16; i++) {
             write_prg_byte(0x8000, ((i & 0x04) << 2) | (i & 0x08));
             write_prg_byte(0xC000, i & 0x03);
-            dumpBankPRG(0x0, 0x4000, base);
+            dumpPRG16KiB(base);
           }
         } else {
           banks = prgBanks16K / 4;
@@ -3245,7 +3273,7 @@ void readPRG(bool readrom) {
             write_prg_byte(0x8000, outerbank << 3);
             for (size_t i = 0; i < banks; i++) {
               write_prg_byte(0xC000, i);
-              dumpBankPRG(0x0, 0x4000, base);
+              dumpPRG16KiB(base);
             }
           }
         }
@@ -3274,7 +3302,7 @@ void readPRG(bool readrom) {
         }
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000, i & 0x1F);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         println_Msg(F("POWER CYCLE TO SWITCH"));
         display_Update();
@@ -3283,21 +3311,21 @@ void readPRG(bool readrom) {
       case 235:
         for (size_t i = 0; i < 32; i++) {
           write_prg_byte(0x8000 + i, 0);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         if (prgsize > 6) {
           for (size_t i = 32; i < 64; i++) {
             write_prg_byte(0x80E0 + i, 0);
-            dumpBankPRG(0x0, 0x8000, base);
+            dumpPRG32KiB(base);
           }
           if (prgsize > 7) {
             for (size_t i = 64; i < 96; i++) {
               write_prg_byte(0x81E0 + i, 0);
-              dumpBankPRG(0x0, 0x8000, base);
+              dumpPRG32KiB(base);
             }
             for (size_t i = 96; i < 128; i++) {
               write_prg_byte(0x82E0 + i, 0);
-              dumpBankPRG(0x0, 0x8000, base);
+              dumpPRG32KiB(base);
             }
           }
         }
@@ -3308,7 +3336,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 | ((i & 0x38) >> 3), 0);  // A19-A17
           write_prg_byte(0xC030 | (i & 0x0F), 0);         // A17-A14
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3316,7 +3344,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_pulsem2(0x8000, i | 0xC0);  // 32K NROM Mode
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3324,18 +3352,18 @@ void readPRG(bool readrom) {
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5FFF, (i & 0xF) << 4);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
       case 242:                            // total size is 640k THIS IS NORMAL
         for (size_t i = 0; i < 32; i++) {  // dump 1st chip of 512k
           write_prg_byte(0x8400 + (i * 4), 0);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         for (size_t i = 0; i < 8; i++) {  // dump 2nd chip of 128k
           write_prg_byte(0x8000 + (i * 4), 0);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3346,7 +3374,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x6001, (i | 1));
           write_prg_byte(0x6002, (i | 2));
           write_prg_byte(0x6003, (i | 3));
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3363,7 +3391,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xF000 + ((i & 0x0E) << 6) + ((i & 0x01) << 5), i);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3371,7 +3399,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xA0F0 + i, i);
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         break;
 
@@ -3379,7 +3407,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 + ((i << 3) & 0x18), i);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3398,7 +3426,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x8000 | ((i << 10) & 0x7800) | ((i << 6) & 0x40), i);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3411,7 +3439,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_pulsem2(0x5000, 0x80); // NROM
           write_prg_pulsem2(0x5001, ((i & 0x3F) | 0x80)); // prg 32k bank (M==1 (NROM-256))
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3419,7 +3447,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x6004, (i << 3) | 0x40);  // PRG A14 = CPU A14 (NROM-256)
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3429,7 +3457,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0xE000, i >> 3);
           write_prg_byte(0xA000, i);
           write_prg_byte(0xC000, i);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3458,7 +3486,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xA000, (i >> 3) & 0x07);
           write_prg_byte(0x8000, i & 0x07);
-          dumpBankPRG(0x0, 0x4000, base);
+          dumpPRG16KiB(base);
         }
         break;
 
@@ -3474,7 +3502,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x5002, i >> 8);      // outer bank LSB
           write_prg_byte(0x5001, i);           // outer bank MSB
           write_prg_byte(0x8000, 0);
-          dumpBankPRG(0x0, 0x2000, base);
+          dumpPRG8KiB(base);
         }
         break;
 
@@ -3483,7 +3511,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5000, i >> 3);
           write_prg_byte(0x8000, i & 0x07);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3491,7 +3519,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000 + (i & 0x3F), 0);
-          dumpBankPRG(0x0, 0x8000, base);
+          dumpPRG32KiB(base);
         }
         break;
 
@@ -3499,7 +3527,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x7EFA, ((i & 0x01) << 5) | ((i & 0x02) << 3) | ((i & 0x04) << 1) | ((i & 0x08) >> 1) | ((i & 0x10) >> 3) | ((i & 0x20) >> 5));  // PRG Bank 0 ($8000-$9FFF)
-          dumpBankPRG(0x0, 0x2000, base);                                                                                                                 // 8K Banks ($8000-$BFFF)
+          dumpPRG8KiB(base);                                                                                                                 // 8K Banks ($8000-$BFFF)
         }
         break;
     }
@@ -3544,7 +3572,7 @@ void readCHR(bool readrom) {
         case 0:  // 8K
         case 43:
         case 55:
-          dumpBankCHR(0x0, 0x2000);
+          dumpCHR8KiB();
           break;
 
         case 1:
@@ -3554,7 +3582,7 @@ void readCHR(bool readrom) {
           write_mmc1_byte(0x8000, 0x00);           // Mapper control
           for (size_t i = 0; i < banks; i += 2) {  // 8K/16K/32K/64K/128K (Bank #s are based on 4K Banks)
             write_mmc1_byte(0xA000, i);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3577,7 +3605,7 @@ void readCHR(bool readrom) {
             if (busConflict) {
               write_prg_byte(0x8000 + i, i);
             }
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3708,7 +3736,7 @@ void readCHR(bool readrom) {
             else if (i == 24)
               write_prg_byte(0x5130, 3);  // Set Upper 2 bits
             write_prg_byte(0x5127, i);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3718,7 +3746,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xB000, i);
             write_prg_byte(0xC000, i);
-            dumpBankCHR(0x0, 0x1000);
+            dumpCHR4KiB();
           }
           break;
 
@@ -3727,7 +3755,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xFFB0 + i, i << 4);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3737,7 +3765,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x6000, i);  // Submapper 4
             write_prg_byte(0x8000, i);  // Submapper 5
-            dumpBankCHR(0x0, 0x400);
+            dumpCHR1KiB();
           }
           break;
 
@@ -3746,7 +3774,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xA000, i & 0xF);         // CHR Bank Lower 4 bits
             write_prg_byte(0xA001, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits
-            dumpBankCHR(0x0, 0x400);
+            dumpCHR1KiB();
           }
           break;
 
@@ -3766,7 +3794,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0xA800, i + 5);  // CHR Bank 5
             write_prg_byte(0xB000, i + 6);  // CHR Bank 6
             write_prg_byte(0xB800, i + 7);  // CHR Bank 7
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3778,7 +3806,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0xB002, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4a (Wai Wai World 2)
             else                                       // banks == 256
               write_prg_byte(0xB040, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4c (Ganbare Goemon Gaiden 2)
-            dumpBankCHR(0x0, 0x400);
+            dumpCHR1KiB();
           }
           break;
 
@@ -3788,7 +3816,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xB000, (i << 1) & 0xF);  // CHR Bank Lower 4 bits
             write_prg_byte(0xB002, (i >> 3) & 0xF);  // CHR Bank Upper 4 bits
-            dumpBankCHR(0x0, 0x400);
+            dumpCHR1KiB();
           }
           break;
 
@@ -3808,7 +3836,7 @@ void readCHR(bool readrom) {
             for (size_t i = 0; i < banks; i++) {
               write_prg_byte(0xB000, i & 0xF);          // CHR Bank 0: Lower 4 bits
               write_prg_byte(m23reg, (i >> 4) & 0x1F);  // CHR Bank 0: Upper 5 bits
-              dumpBankCHR(0x0, 0x400);
+              dumpCHR1KiB();
             }
             break;
           }
@@ -3818,7 +3846,7 @@ void readCHR(bool readrom) {
           write_prg_byte(0xB003, 0);  // PPU Banking Mode 0
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xD000, i);  // CHR Bank 0
-            dumpBankCHR(0x0, 0x400);    // 1K Banks
+            dumpCHR1KiB();    // 1K Banks
           }
           break;
 
@@ -3827,7 +3855,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xB000, i & 0xF);         // CHR Bank Lower 4 bits
             write_prg_byte(0xB00A, (i >> 4) & 0xF);  // Combine VRC2c and VRC4b, VRC4d reg
-            dumpBankCHR(0x0, 0x400);
+            dumpCHR1KiB();
           }
           break;
 
@@ -3836,7 +3864,7 @@ void readCHR(bool readrom) {
           write_prg_byte(0xB003, 0);
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xD000, i);
-            dumpBankCHR(0x0, 0x400);
+            dumpCHR1KiB();
           }
           break;
 
@@ -3845,7 +3873,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xB000, i & 0x0F);
             write_prg_byte(0xB001, i >> 4);
-            dumpBankCHR(0x0, 0x400);
+            dumpCHR1KiB();
           }
           break;
 
@@ -3864,7 +3892,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x7FFE, i);  // Select 4 KB CHR bank at $0000
             delay(200);                 // NINA seems slow to switch banks
-            dumpBankCHR(0x0, 0x1000);
+            dumpCHR4KiB();
           }
           break;
 
@@ -3877,7 +3905,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xD003, ((i >> 3) & 0x18) | 0x20);
             write_prg_byte(0x9000, (i & 0x3F));
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3896,7 +3924,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x6004 + ((i & 0x0C) << 1), 0);
             write_prg_byte(0xFFF0 + (i & 0x03), i & 0x03);
             write_prg_byte(0xFFF0 + (i & 0x03), i & 0x03);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3904,7 +3932,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000, i & 0x0F);
-            dumpBankCHR(0x0, 0x1000);
+            dumpCHR4KiB();
           }
           break;
 
@@ -3942,7 +3970,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x6000, (i & 0x78) << 1);  // high bits
             write_prg_byte(0x8000, (i & 0x07) << 4);  // low bits
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3966,7 +3994,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + ((i & 0x07) << 3), 0);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3974,7 +4002,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_reg_m59(0x8000 + (i & 0x07));
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3982,7 +4010,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < 4; i++) {
             write_prg_byte(0x8D8D, i);
             delay(500);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3990,7 +4018,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 | (i << 8), 0);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -3998,7 +4026,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + (i / 4), i & 3);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4013,7 +4041,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x9000, i + 1);         // CHR Bank 1
             write_prg_byte(0xA000, i + 2);         // CHR Bank 2
             write_prg_byte(0xB000, i + 3);         // CHR Bank 3
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4022,7 +4050,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000, 0);  // Command Register - CHR Bank 0
             write_prg_byte(0xA000, i);  // Parameter Register - ($0000-$03FF)
-            dumpBankCHR(0x0, 0x400);    // 1K Banks
+            dumpCHR1KiB();    // 1K Banks
           }
           break;
 
@@ -4032,7 +4060,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {  // 8K Banks
             write_prg_byte(0x8000, i | 0x40);   // CHR Command + Bank
             write_prg_byte(0x8000, i);          // CHR Bank
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4041,7 +4069,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {        // 4K Banks
             write_reg_byte(0xE000, i);                // CHR Bank Low Bits [WRITE RAM SAFE]
             write_prg_byte(0x9000, (i & 0x10) >> 3);  // High Bit
-            dumpBankCHR(0x0, 0x1000);
+            dumpCHR4KiB();
           }
           break;
 
@@ -4050,7 +4078,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000, 2);
             write_prg_byte(0x8001, i);
-            dumpBankCHR(0x0, 0x800);
+            dumpCHR2KiB();
           }
           break;
 
@@ -4076,7 +4104,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i += 2) {
             write_prg_byte(0x7EF0, i << 1);
             write_prg_byte(0x7EF1, (i + 1) << 1);
-            dumpBankCHR(0x0, 0x1000);
+            dumpCHR4KiB();
           }
           break;
 
@@ -4091,7 +4119,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0xC008, i + 5);  // CHR Bank 5
             write_prg_byte(0xD000, i + 6);  // CHR Bank 6
             write_prg_byte(0xD008, i + 7);  // CHR Bank 7
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4102,7 +4130,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0x6000, i & 0x3);
             else
               write_prg_byte(0x6000, (i | 0x40) & 0x43);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4110,7 +4138,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {  // 16K/32K
             write_prg_byte(0x6000, ((i & 0x1) << 1) | ((i & 0x2) >> 1));
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4121,7 +4149,7 @@ void readCHR(bool readrom) {
             if (i < 64) {
               write_prg_byte(0x8000, 0);
               write_prg_byte(0x8001, i);
-              dumpBankCHR(0x0, 0x800);
+              dumpCHR2KiB();
             } else {
               write_prg_byte(0x8000, 2);
               write_prg_byte(0x8001, i);
@@ -4139,7 +4167,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0x8000, i & 0x7);
             else
               write_prg_byte(0x8000, (i | 0x80) & 0x87);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4148,7 +4176,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + ((i & 0x100) >> 8), i);  // CHR A19 (submapper 0 only)
             write_prg_byte(0x6000, i);                       // CHR A18-A11
-            dumpBankCHR(0x0, 0x800);
+            dumpCHR2KiB();
           }
           break;
 
@@ -4158,7 +4186,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {  // 8K Banks
             write_prg_byte(0x8000, i | 0x40);   // CHR Command + Bank
             write_prg_byte(0x8000, i);          // CHR Bank
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4179,7 +4207,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x4100, (i & 0x08) << 3 | (i & 0x07));
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4211,7 +4239,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < 64; i += 2) {
             write_prg_byte(0x8000, 0);
             write_prg_byte(0x8001, i);
-            dumpBankCHR(0x0, 0x800);
+            dumpCHR2KiB();
           }
           for (size_t i = 0; i < 64; i++) {
             write_prg_byte(0x8000, 2);
@@ -4232,7 +4260,7 @@ void readCHR(bool readrom) {
         case 174:  // 64K
           for (size_t i = 0; i < 8; i++) {
             write_prg_byte(0xFF00 + (i << 1), 0);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4241,7 +4269,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xA000, i << 2);
             write_prg_byte(0x8000, i);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4264,7 +4292,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + (i & 0x07), 0);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4272,7 +4300,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + (i & 0xFF), 0);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4280,7 +4308,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 | (i << 1), 0);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4288,7 +4316,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000, (i & 0x03));
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4297,7 +4325,7 @@ void readCHR(bool readrom) {
           write_prg_byte(0xE800, 0xC0);  // CHR RAM DISABLE (Bit 6 and 7) [WRITE NO RAM]
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000, i);  // CHR Bank 0
-            dumpBankCHR(0x0, 0x400);
+            dumpCHR1KiB();
           }
           break;
 
@@ -4305,7 +4333,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 | (i << 2), 0);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4314,7 +4342,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + ((i & 0x40) << 8) + (i & 0x3F), i);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4323,14 +4351,14 @@ void readCHR(bool readrom) {
           write_prg_byte(0x8000, 0);
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + ((i & 0x3C) >> 2), i & 0x03);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
         case 229:
           for (size_t i = 0; i < 32; i++) {
             write_prg_byte(0x8000 + i, i);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4338,7 +4366,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 | (i & 0x0F), 0);  // A16-A13
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4346,7 +4374,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x5FFF, (i & 0xF));
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4357,7 +4385,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x6005, (i | 1));
             write_prg_byte(0x6006, (i | 2));
             write_prg_byte(0x6007, (i | 3));
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4367,7 +4395,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xB000, i & 0x0F);
             write_prg_byte(0xB004, ((i >> 4) & 0x0F) | ((i >> 8) << 4));
-            dumpBankCHR(0x0, 0x400);
+            dumpCHR1KiB();
           }
           break;
 
@@ -4375,7 +4403,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xF000 + (i & 0x0F), i);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4383,7 +4411,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K * 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + i, i);
-            dumpBankCHR(0x0, 0x800);
+            dumpCHR2KiB();
           }
           break;
 
@@ -4391,7 +4419,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 + (i & 0x07), i);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4399,7 +4427,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000 | ((i << 5) & 0x300) | (i & 0x07), i);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4408,7 +4436,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_pulsem2(0x5000, ((i & 0x3) << 1)); // chr 8k bank (bits 0-1)
             write_prg_pulsem2(0x5002, i >> 2); // chr 8k bank (bits 2-5)
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
 
@@ -4421,7 +4449,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xE000, i >> 3);
             write_prg_byte(0xA000, i << 3);
-            dumpBankCHR(0x0, 0x1000);
+            dumpCHR4KiB();
           }
           break;
 
@@ -4440,7 +4468,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x8000, i & 0x7F);
-            dumpBankCHR(0x0, 0x2000);
+            dumpCHR8KiB();
           }
           break;
       }
@@ -4535,7 +4563,7 @@ void readRAM() {
               write_mmc1_byte(0xA000, i << 2);
             else
               write_mmc1_byte(0xA000, i << 3);
-            dumpBankPRG(0x0, 0x2000, base);  // 8K
+            dumpPRG8KiB(base);  // 8K
           }
           break;
 
@@ -4554,7 +4582,7 @@ void readRAM() {
             write_prg_byte(0x8000, 6);       // PRG RAM DISABLE
           } else {                           // MMC3 8K
             write_prg_byte(0xA001, 0xC0);    // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
-            dumpBankPRG(0x0, 0x2000, base);  // 8K
+            dumpPRG8KiB(base);  // 8K
           }
           break;
 
@@ -4610,7 +4638,7 @@ void readRAM() {
             for (size_t i = 0; i < 64; i++) {  // Init Register
               write_ram_byte(0xE000, 0);
             }
-            dumpBankPRG(0x0, 0x2000, base);  // 8K
+            dumpPRG8KiB(base);  // 8K
           }
           break;
 
@@ -4657,7 +4685,7 @@ void readRAM() {
             write_ram_byte(0xE000, 0x80);  // PRG RAM ENABLE
           else if (mapper == 153)          // 8K
             write_prg_byte(0x800D, 0x20);  // PRG RAM Chip Enable
-          dumpBankPRG(0x0, 0x2000, base);  // 8K
+          dumpPRG8KiB(base);  // 8K
           if (mapper == 85)                // 8K
             write_reg_byte(0xE000, 0);     // PRG RAM DISABLE [WRITE RAM SAFE]
           break;
@@ -4710,7 +4738,7 @@ void writeRAM() {
     word base = 0x6000;
     uint16_t banks;
 
-    sd.chdir();
+    resetStorageDirectory();
     sprintf(filePath, "%s/%s", filePath, fileName);
 
     display_Clear();
@@ -4805,7 +4833,7 @@ void writeRAM() {
           }
         case 19:
           if (ramsize == 2) {  // PRG RAM 128B
-            myFile.read(sdBuffer, 128);
+            readSdBuffer128();
             for (size_t x = 0; x < 128; x++) {
               write_ram_byte(0xF800, x);            // PRG RAM ENABLE
               write_prg_byte(0x4800, sdBuffer[x]);  // DATA PORT
@@ -4824,7 +4852,7 @@ void writeRAM() {
           write_prg_byte(0x7EF8, 0xA3);                                      // PRG RAM ENABLE 0
           write_prg_byte(0x7EF9, 0xA3);                                      // PRG RAM ENABLE 1
           for (size_t address = 0x1F00; address < 0x2000; address += 512) {  // PRG RAM 1K ($7F00-$7FFF)
-            myFile.read(sdBuffer, 128);
+            readSdBuffer128();
             for (size_t x = 0; x < 128; x++) {
               write_prg_byte(base + address + x, sdBuffer[x]);
             }
@@ -4891,12 +4919,12 @@ void writeRAM() {
       display_Update();
 
     } else {
-      print_FatalError(sd_error_STR);
+      fatalSdError();
     }
   }
 
   rgbLed(black_color);
-  sd.chdir();          // root
+  resetStorageDirectory();          // root
   filePath[0] = '\0';  // Reset filePath
 }
 
@@ -5152,7 +5180,7 @@ void writeFLASH() {
     fileBrowser(FS(SharedFlashText::textSelectFLASHFile));
     word base = 0x8000;
 
-    sd.chdir();
+    resetStorageDirectory();
     sprintf(filePath, "%s/%s", filePath, fileName);
 
     rgbLed(red_color);
@@ -5219,7 +5247,7 @@ void writeFLASH() {
   }
   display_Clear();
   rgbLed(black_color);
-  sd.chdir();          // root
+  resetStorageDirectory();          // root
   filePath[0] = '\0';  // Reset filePath
 }
 
@@ -5362,7 +5390,7 @@ void A29040B_writeFLASH() {
     display_Update();
     delay(3000);
     fileBrowser(FS(SharedFlashText::textSelectFLASHFile));
-    sd.chdir();
+    resetStorageDirectory();
     sprintf(filePath, "%s/%s", filePath, fileName);
 
     if (openSelectedFileForRead()) {

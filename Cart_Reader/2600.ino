@@ -736,7 +736,7 @@ void readDataLine_2600(FsFile& database, void* gameMapper) {
 
 void setCart_2600() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   byte gameMapper;
 
@@ -759,7 +759,7 @@ void setCart_2600() {
       }
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

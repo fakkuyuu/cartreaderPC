@@ -83,7 +83,7 @@ void svMenu() {
         print_STR(error_STR, 0);
         print_Msg(wrErrors);
         printBytesLine();
-        print_Error(did_not_verify_STR);
+        reportVerificationError();
       }
       wait();
       break;
@@ -295,7 +295,7 @@ void readSRAM_SV() {
 
   //open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   readBank_SV(0x10, 0);  // Preconfigure to fix corrupt 1st byte
@@ -365,7 +365,7 @@ void writeSRAM_SV() {
     println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
     display_Update();
   } else {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 
@@ -521,7 +521,7 @@ void writeROM_SV(void) {
     //Verify
     dataIn();  //Set pins to input
     controlIn_SNES();
-    myFile.seekSet(0);  // Go back to file beginning
+    rewindCurrentFile();  // Go back to file beginning
     print_STR(verifying_STR, 1);
     display_Update();
     for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
@@ -545,7 +545,7 @@ void writeROM_SV(void) {
     updateDisplayAndWait();
 
   } else {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 

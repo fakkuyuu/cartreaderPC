@@ -258,7 +258,7 @@ void setRomnameFromString(const char* input) {
 #endif
 void setCart_Jag() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   struct database_entry_Jag entry;
 
@@ -294,7 +294,7 @@ void setCart_Jag() {
       }
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 
@@ -585,7 +585,7 @@ void readJagROM() {
   strcat(fileName, ".J64");
 
   // create a new folder
-  sd.chdir();
+  resetStorageDirectory();
   EEPROM_readAnything(0, foldern);
   //  sprintf(folder, "JAG/ROM/%s/%d", romName, foldern);
   sprintf(folder, "JAG/ROM/%d", foldern);
@@ -916,7 +916,7 @@ void readJagEEP() {
 
   // create a new folder for the save file
   EEPROM_readAnything(0, foldern);
-  sd.chdir();
+  resetStorageDirectory();
   //  sprintf(folder, "JAG/SAVE/%s/%d", romName, foldern);
   sprintf(folder, "JAG/SAVE/%d", foldern);
   sd.mkdir(folder, true);
@@ -1307,7 +1307,7 @@ void readJagMEMORY() {
   strcat(fileName, ".J64");
 
   // create a new folder
-  sd.chdir();
+  resetStorageDirectory();
   EEPROM_readAnything(0, foldern);
   //  sprintf(folder, "JAG/ROM/%s/%d", romName, foldern);
   sprintf(folder, "JAG/ROM/%d", foldern);
@@ -1368,7 +1368,7 @@ void readJagFLASH() {
   strcat(fileName, ".fla");
 
   // create a new folder for the save file
-  sd.chdir();
+  resetStorageDirectory();
   EEPROM_readAnything(0, foldern);
   //  sprintf(folder, "JAG/SAVE/%s/%d", romName, foldern);
   sprintf(folder, "JAG/SAVE/%d", foldern);

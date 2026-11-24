@@ -164,14 +164,14 @@ static void writeCommand_Acan(uint32_t offset, uint16_t command) {
 
 static void openFile_Acan() {
   filePath[0] = 0;
-  sd.chdir();
+  resetStorageDirectory();
   fileBrowser(FS(FSTRING_SELECT_FILE));
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
   display_Clear();
 
   if (!openSelectedFileForRead()) {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
     return;
   }
 }
@@ -248,7 +248,7 @@ static void verifySRAM_Acan() {
   display_Update();
 
   if (!openSelectedFileForRead()) {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
     return;
   }
 
@@ -273,7 +273,7 @@ static void verifySRAM_Acan() {
     print_Msg(F("Error: "));
     print_Msg(write_errors);
     println_Msg(F(" bytes "));
-    print_Error(did_not_verify_STR);
+    reportVerificationError();
   }
 }
 
@@ -299,7 +299,7 @@ static void verifyUM6650() {
   display_Update();
 
   if (!openSelectedFileForRead()) {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
     return;
   }
 
@@ -321,7 +321,7 @@ static void verifyUM6650() {
     print_Msg(F("Error: "));
     print_Msg(write_errors);
     println_Msg(F(" bytes "));
-    print_Error(did_not_verify_STR);
+    reportVerificationError();
   } else {
     println_Msg(FS(SharedFlashText::textPassed));
   }

@@ -574,7 +574,7 @@ void checkStatus_FAIRCHILD() {
 //******************************************
 void setCart_FAIRCHILD() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   byte gameSize;
 
@@ -589,7 +589,7 @@ void setCart_FAIRCHILD() {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

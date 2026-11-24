@@ -343,7 +343,7 @@ void printDataLine_WSV(void* entry) {
 
 void setCart_WSV() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   struct database_entry_WSV entry;
 
@@ -372,7 +372,7 @@ void setCart_WSV() {
       EEPROM_writeAnything(8, wsvsize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

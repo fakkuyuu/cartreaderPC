@@ -215,7 +215,7 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
 
   // open file on sdcard
   if (!openNamedOutputFile())
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
 
   // back to read mode
   dataOut();
@@ -255,7 +255,7 @@ void scanChip_NGP() {
 
   // open file on sdcard
   if (!openNamedOutputFile())
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
 
   // write new folder number back to EEPROM
   foldern++;

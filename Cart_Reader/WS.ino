@@ -500,7 +500,7 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
 
   // open file on sdcard
   if (!openNamedOutputFile())
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
 
   // get correct starting rom bank
   uint16_t bank = (256 - (cartSize >> 16));
@@ -632,10 +632,10 @@ static void verifySRAM_WS() {
       print_STR(error_STR, 0);
       print_Msg(write_errors);
       printBytesLine();
-      print_Error(did_not_verify_STR);
+      reportVerificationError();
     }
   } else {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 
@@ -681,7 +681,7 @@ static void writeSRAM_WS() {
     println_Msg(F("Writing finished"));
     display_Update();
   } else {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 
@@ -768,10 +768,10 @@ static void verifyEEPROM_WS() {
       print_STR(error_STR, 0);
       print_Msg(write_errors);
       printBytesLine();
-      print_Error(did_not_verify_STR);
+      reportVerificationError();
     }
   } else {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 
@@ -822,7 +822,7 @@ static void writeEEPROM_WS() {
 
     printDoneLine();
   } else {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 
@@ -911,7 +911,7 @@ static void writeWitchOS_WS() {
 
       printDoneLine();
     } else {
-      print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+      reportMissingFile();
     }
   }
 

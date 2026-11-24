@@ -666,7 +666,7 @@ setmapper:
 
 void setCart_7800() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   struct database_entry_mapper_size entry;
 
@@ -682,7 +682,7 @@ void setCart_7800() {
       EEPROM_writeAnything(8, entry.gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

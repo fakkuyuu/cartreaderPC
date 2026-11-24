@@ -184,7 +184,7 @@ void pcwMenu()
         print_STR(error_STR, 0);
         print_Msg(writeErrors);
         printBytesLine();
-        print_Error(did_not_verify_STR);
+        reportVerificationError();
       }
       break;
 
@@ -438,7 +438,7 @@ void readSingleROM_PCW()
   printAndIncrementFolder();
 
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   // Init progress bar
@@ -568,7 +568,7 @@ void readMultiROM_PCW()
   printAndIncrementFolder();
 
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   // Init progress bar
@@ -626,7 +626,7 @@ void readSRAM_PCW()
   EEPROM_writeAnything(0, foldern);
 
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
   display_Clear();
   read_setup_PCW();
@@ -654,7 +654,7 @@ void writeSRAM_PCW()
   display_Update();
 
   if (openSelectedFileForRead()) {
-    sd.chdir();
+    resetStorageDirectory();
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
     println_Msg(FS(SharedFlashText::textWritingFile));
@@ -674,10 +674,10 @@ void writeSRAM_PCW()
       printDoneLine();
       display_Update();
     } else {
-      print_FatalError(sd_error_STR);
+      fatalSdError();
     }
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
   display_Clear();
 }
@@ -701,7 +701,7 @@ unsigned long verifySRAM_PCW()
     }
     closeCurrentFile();
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   return writeErrors;

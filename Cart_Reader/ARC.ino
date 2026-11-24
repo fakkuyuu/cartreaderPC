@@ -259,7 +259,7 @@ void checkStatus_ARC() {
 //******************************************
 void setCart_ARC() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   byte gameSize;
 
@@ -274,7 +274,7 @@ void setCart_ARC() {
       EEPROM_writeAnything(8, gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

@@ -706,7 +706,7 @@ void readFLASH_LEAP()
 void writeFLASH_LEAP()
 {
   fileBrowser(FS(SharedFlashText::textSelectFLASHFile));
-  sd.chdir();
+  resetStorageDirectory();
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   display_Clear();
@@ -743,7 +743,7 @@ void writeFLASH_LEAP()
     println_Msg(FS(SharedFlashText::textSDERROR));
     display_Update();
   }
-  sd.chdir(); // root
+  resetStorageDirectory(); // root
   filePath[0] = '\0'; // Reset filePath
 }
 
@@ -981,7 +981,7 @@ void readEEP_LEAP()
 void writeEEP_LEAP()
 {
   fileBrowser(F("Select EEPROM File"));
-  sd.chdir();
+  resetStorageDirectory();
   sprintf(filePath, "%s/%s", filePath, fileName);
 
   display_Clear();
@@ -1012,7 +1012,7 @@ void writeEEP_LEAP()
     println_Msg(FS(SharedFlashText::textSDERROR));
     display_Update();
   }
-  sd.chdir(); // root
+  resetStorageDirectory(); // root
   filePath[0] = '\0'; // Reset filePath
 }
 
@@ -1023,7 +1023,7 @@ void writeEEP_LEAP()
 void setCart_LEAP()
 {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   byte gameSize;
 
@@ -1038,7 +1038,7 @@ void setCart_LEAP()
       EEPROM_writeAnything(8, gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

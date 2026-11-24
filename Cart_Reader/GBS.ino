@@ -205,7 +205,7 @@ void gbSmartGameOptions() {
           print_STR(error_STR, 0);
           print_Msg(wrErrors);
           println_Msg(FS(SharedFlashText::textBytes));
-          print_Error(did_not_verify_STR);
+          reportVerificationError();
         }
         break;
       }
@@ -395,7 +395,7 @@ void gbSmartReadFlash() {
   display_Update();
 
   if (!openNamedOutputFile())
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
 
   // reset flash to read array state
   for (uint16_t i = 0x00; i < gbSmartBanks; i += gbSmartBanksPerFlashChip)
@@ -480,7 +480,7 @@ void gbSmartWriteFlash() {
 
 void gbSmartWriteFlash(uint32_t start_bank) {
   if (!openSelectedFileForRead())
-    print_FatalError(open_file_STR);
+    fatalOpenFileError();
 
   // switch to flash base bank
   gbSmartRemapStartBank(start_bank, gbSmartFlashSizeGB, gbSmartSramSizeGB);

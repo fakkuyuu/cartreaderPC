@@ -423,7 +423,7 @@ void mdCartMenu() {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
           printBytesLine();
-          print_Error(did_not_verify_STR);
+          reportVerificationError();
         }
       } else if (saveType == 4) {
         // Launch file browser
@@ -764,6 +764,99 @@ byte copyToRomName_MD(char* output, const byte* input, byte length) {
   return myLength;
 }
 
+static const struct {
+  uint16_t checksum, correctedChecksum;
+  uint8_t original64KiB;
+  uint32_t correctedSize;
+} mdSizeFixes[] PROGMEM = {
+  {0xCE25, 0xCE25, 64, 0x500000},  // Super Street Fighter 2 (J) 40Mbit
+  {0xE41D, 0xE41D, 64, 0x500000},  // Super Street Fighter 2 (E) 40Mbit
+  {0xE017, 0xE017, 64, 0x500000},  // Super Street Fighter 2 (U) 40Mbit
+  {0x0000, 0x0000, 64, 0xEAF2F4},  // Demons of Asteborg v1.0 (W) 120Mbit
+  {0xBCBF, 0xBCBF, 64, 0xEA0000},  // Demons of Asteborg v1.1 (W) 120Mbit
+  {0x6E1E, 0x6E1E, 64, 0xEA0000},  // Demons of Asteborg v1.11 (W) 120Mbit
+  {0xBC5F, 0xBC5F, 48, 0x400000},  // Batman Forever (World)
+  {0x3CDD, 0x3CDD, 48, 0x400000},  // Donald in Maui Mallard (Brazil) (En)
+  {0x44AD, 0x44AD, 48, 0x400000},  // Donald in Maui Mallard (Europe) (Rev A)
+  {0x2D9A, 0x2D9A, 48, 0x400000},  // Foreman for Real (World)
+  {0x5648, 0x5648, 48, 0x400000},  // Justice League Task Force (World)
+  {0x0A29, 0x0A29, 48, 0x400000},  // Mega 6 Vol. 3 (Europe)
+  {0x7651, 0x7651, 48, 0x400000},  // NFL Quarterback Club (World)
+  {0x74CA, 0x74CA, 48, 0x400000},  // WWF RAW (World)
+  {0x2078, 0x9877, 32, 0},  // Dynamite Headdy (USA, Europe)
+  {0xAE95, 0x56A0, 32, 0},  // Winter Olympic Games (USA)
+  {0xFFE2, 0xFFE2, 24, 0x200000},  // Cannon Fodder (Europe)
+  {0xF418, 0xF418, 24, 0x200000},  // Chaos Engine, The (Europe)
+  {0xF71D, 0xF71D, 24, 0x200000},  // Fatal Fury (Europe, Korea) (En)
+  {0xA884, 0xA884, 24, 0x200000},  // Flashback (Europe) (En,Fr)
+  {0x7D68, 0x7D68, 24, 0x200000},  // Flashback - The Quest for Identity (USA) (En,Fr)
+  {0x030D, 0x030D, 24, 0x200000},  // Shining Force (Europe)
+  {0xE975, 0xE975, 24, 0x200000},  // Shining Force (USA)
+  {0xCDF5, 0x603A, 16, 0x400000},  // Life on Mars (Aftermarket)
+  {0xF85F, 0x6965, 16, 0x200000},  // Metal Dragon (Aftermarket)
+  {0x4581, 0x0694, 16, 0x400000},  // True Galactic Mission (Aftermarket)
+  {0x9D79, 0x9D79, 12, 0x100000},  // Wonder Boy in Monster World (USA, Europe)
+  {0x06C1, 0x8473, 8, 0x200000},  // Madden NFL 98 (USA)
+  {0x5B3A, 0x5613, 8, 0x200000},  // NHL 98 (USA)
+  {0xD07D, 0xF204, 8, 0x100000},  // Zero Wing (Japan)
+  {0x95C9, 0x95C9, 8, 0x100000},  // Zero Wing (Europe)
+  {0x9144, 0x9144, 8, 0x100000},  // Zoop (Europe)
+  {0xB8D4, 0xB8D4, 8, 0x100000},  // Zoop (USA)
+  {0xC422, 0xC751, 8, 0},  // Jeopardy! (USA)
+  {0x0C6A, 0xE1AA, 8, 0},  // Monopoly (USA)
+  {0xA760, 0x97CD, 8, 0},  // Gain Ground (USA)
+  {0x1404, 0x53B9, 8, 0},  // Wonder Boy III - Monster Lair (Japan, Europe) (En)
+  {0x8BC6, 0x8BC6, 4, 0x100000},  // Pac-Attack (USA)
+  {0xB344, 0xB344, 4, 0x100000},  // Pac-Panic (Europe)
+  {0x7E50, 0xD074, 2, 0x100000},  // Micro Machines 2 - Turbo Tournament (Europe)
+  {0x168B, 0xCEE0, 2, 0x100000},  // Micro Machines - Military (Europe)
+};
+
+void applyMdSizeFixes() {
+  for (const auto& fix : mdSizeFixes) {
+    if (chksum != pgm_read_word(&fix.checksum)) continue;
+    if (cartSize != ((uint32_t)pgm_read_byte(&fix.original64KiB) << 16)) continue;
+    chksum = pgm_read_word(&fix.correctedChecksum);
+    const uint32_t size = pgm_read_dword(&fix.correctedSize);
+    if (size) cartSize = size;
+    break;
+  }
+}
+
+static const struct {
+  char prefix[15];
+  uint16_t checksum, correctedChecksum;
+  uint8_t sizeIn64KiB;
+} mdIdFixes[] PROGMEM = {
+  {"SF-001", 0x3E08, 0x3E08, 64},  // Beggar Prince (Rev 1)
+  {"SF-002", 0x12B0, 0x45C6, 0},  // Legend of Wukong
+  {"GM 10101010", 0xC439, 0x21B0, 16},  // YM2612 Instrument Editor
+  {"MU REMUTE01", 0x0000, 0xB55C, 64},  // Technoptimistic
+  {"GM REMUTE02", 0x0000, 0x5426, 64},  // Decoder
+  {"GM HHARVYSG", 0x0000, 0xD9D2, 16},  // Handy Harvy
+  {"GM T-107036", 0x0000, 0xAA28, 0},  // Jim Power - The Lost Dimension in 3D
+  {"GM 00000000-43", 0x0000, 0x921B, 64},  // mikeyeldey95
+  {"GM 00000000-00", 0x1E0C, 0xE7E5, 64},  // Enryuu Seiken Xiao-Mei
+  {"GM 00000000-00", 0x6BD5, 0x1FEA, 64},  // Life on Earth - Reimagined
+  {"GM 00000005-00", 0x9F34, 0xA094, 64},  // Sasha Darko's Sacred Line I
+  {"GM 00000005-00", 0x0E9B, 0x6B4B, 64},  // Sasha Darko's Sacred Line II
+  {"GM T-574323-00", 0xAEDD, 0xAEDD, 64},  // Sasha Darko's Sacred Line (Watermelon Release)
+  {"GM MK-0000 -00", 0xC536, 0xFAB1, 32},  // Kromasphere
+  {"GM CSET0001-02", 0x0000, 0xE3A9, 0},  // YM2017
+  {"1774          ", 0x0000, 0x6E34, 64},  // The Curse of Illmore Bay
+  {"JN-20160131-03", 0x0000, 0x8040, 64},  // Coffee Crisis
+};
+
+void applyMdIdFixes(const char* id) {
+  for (const auto& fix : mdIdFixes) {
+    if (chksum != pgm_read_word(&fix.checksum)) continue;
+    if (strncmp_P(id, fix.prefix, strlen_P(fix.prefix)) != 0) continue;
+    chksum = pgm_read_word(&fix.correctedChecksum);
+    const byte units = pgm_read_byte(&fix.sizeIn64KiB);
+    if (units) cartSize = (uint32_t)units << 16;
+  }
+}
+
 void getCartInfo_MD() {
   // Set control
   dataIn_MD();
@@ -814,135 +907,7 @@ void getCartInfo_MD() {
     isSVP = 0;
 
   // Fix cartridge sizes and checksums according to no-intro database
-  if (cartSize == 0x400000) {
-    switch (chksum) {
-      case 0xCE25:  // Super Street Fighter 2 (J) 40Mbit
-      case 0xE41D:  // Super Street Fighter 2 (E) 40Mbit
-      case 0xE017:  // Super Street Fighter 2 (U) 40Mbit
-        cartSize = 0x500000;
-        break;
-      case 0x0000:  // Demons of Asteborg v1.0 (W) 120Mbit
-        cartSize = 0xEAF2F4;
-        break;
-      case 0xBCBF:  // Demons of Asteborg v1.1 (W) 120Mbit
-      case 0x6E1E:  // Demons of Asteborg v1.11 (W) 120Mbit
-        cartSize = 0xEA0000;
-        break;
-    }
-  }
-  if (cartSize == 0x300000) {
-    switch (chksum) {
-      case 0xBC5F:  // Batman Forever (World)
-      case 0x3CDD:  // Donald in Maui Mallard (Brazil) (En)
-      case 0x44AD:  // Donald in Maui Mallard (Europe) (Rev A)
-      case 0x2D9A:  // Foreman for Real (World)
-      case 0x5648:  // Justice League Task Force (World)
-      case 0x0A29:  // Mega 6 Vol. 3 (Europe)
-      case 0x7651:  // NFL Quarterback Club (World)
-      case 0x74CA:  // WWF RAW (World)
-        cartSize = 0x400000;
-        break;
-    }
-  }
-  if (cartSize == 0x200000) {
-    switch (chksum) {
-      case 0x2078:  // Dynamite Headdy (USA, Europe)
-        chksum = 0x9877;
-        break;
-      case 0xAE95:  // Winter Olympic Games (USA)
-        chksum = 0x56A0;
-        break;
-    }
-  }
-  if (cartSize == 0x180000) {
-    switch (chksum) {
-      case 0xFFE2:  // Cannon Fodder (Europe)
-      case 0xF418:  // Chaos Engine, The (Europe)
-      case 0xF71D:  // Fatal Fury (Europe, Korea) (En)
-      case 0xA884:  // Flashback (Europe) (En,Fr)
-      case 0x7D68:  // Flashback - The Quest for Identity (USA) (En,Fr)
-      case 0x030D:  // Shining Force (Europe)
-      case 0xE975:  // Shining Force (USA)
-        cartSize = 0x200000;
-        break;
-    }
-  }
-  if (cartSize == 0x100000) {
-    switch (chksum) {
-      case 0xCDF5:  // Life on Mars (Aftermarket)
-        cartSize = 0x400000;
-        chksum = 0x603A;
-        break;
-      case 0xF85F:  // Metal Dragon (Aftermarket)
-        cartSize = 0x200000;
-        chksum = 0x6965;
-        break;
-      case 0x4581:  // True Galactic Mission (Aftermarket)
-        cartSize = 0x400000;
-        chksum = 0x0694;
-        break;
-    }
-  }
-  if (cartSize == 0xC0000) {
-    switch (chksum) {
-      case 0x9D79:  // Wonder Boy in Monster World (USA, Europe)
-        cartSize = 0x100000;
-        break;
-    }
-  }
-  if (cartSize == 0x80000) {
-    switch (chksum) {
-      case 0x06C1:  // Madden NFL 98 (USA)
-        cartSize = 0x200000;
-        chksum = 0x8473;
-        break;
-      case 0x5B3A:  // NHL 98 (USA)
-        cartSize = 0x200000;
-        chksum = 0x5613;
-        break;
-      case 0xD07D:  // Zero Wing (Japan)
-        cartSize = 0x100000;
-        chksum = 0xF204;
-        break;
-      case 0x95C9:  // Zero Wing (Europe)
-      case 0x9144:  // Zoop (Europe)
-      case 0xB8D4:  // Zoop (USA)
-        cartSize = 0x100000;
-        break;
-      case 0xC422:  // Jeopardy! (USA)
-        chksum = 0xC751;
-        break;
-      case 0x0C6A:  // Monopoly (USA)
-        chksum = 0xE1AA;
-        break;
-      case 0xA760:  // Gain Ground (USA)
-        chksum = 0x97CD;
-        break;
-      case 0x1404:  // Wonder Boy III - Monster Lair (Japan, Europe) (En)
-        chksum = 0x53B9;
-        break;
-    }
-  }
-  if (cartSize == 0x40000) {
-    switch (chksum) {
-      case 0x8BC6:  // Pac-Attack (USA)
-      case 0xB344:  // Pac-Panic (Europe)
-        cartSize = 0x100000;
-        break;
-    }
-  }
-  if (cartSize == 0x20000) {
-    switch (chksum) {
-      case 0x7E50:  // Micro Machines 2 - Turbo Tournament (Europe)
-        cartSize = 0x100000;
-        chksum = 0xD074;
-        break;
-      case 0x168B:  // Micro Machines - Military (Europe)
-        cartSize = 0x100000;
-        chksum = 0xCEE0;
-        break;
-    }
-  }
+  applyMdSizeFixes();
 
   // Fatman (Japan)
   if (!strncmp("GM T-44013 ", id, 11) && (chksum == 0xFFFF)) {
@@ -956,87 +921,7 @@ void getCartInfo_MD() {
     chksum = 0x6BAE;
   }
 
-  // Fixes aftermarket cartridges
-  // Beggar Prince (Rev 1)
-  if (!strncmp("SF-001", id, 6) && (chksum == 0x3E08)) {
-    cartSize = 0x400000;
-  }
-  // Legend of Wukong
-  if (!strncmp("SF-002", id, 6) && (chksum == 0x12B0)) {
-    chksum = 0x45C6;
-  }
-  // YM2612 Instrument Editor
-  if (!strncmp("GM 10101010", id, 11) && (chksum == 0xC439)) {
-    chksum = 0x21B0;
-    cartSize = 0x100000;
-  }
-  // Technoptimistic
-  if (!strncmp("MU REMUTE01", id, 11) && (chksum == 0x0000)) {
-    chksum = 0xB55C;
-    cartSize = 0x400000;
-  }
-  // Decoder
-  if (!strncmp("GM REMUTE02", id, 11) && (chksum == 0x0000)) {
-    chksum = 0x5426;
-    cartSize = 0x400000;
-  }
-  // Handy Harvy
-  if (!strncmp("GM HHARVYSG", id, 11) && (chksum == 0x0000)) {
-    chksum = 0xD9D2;
-    cartSize = 0x100000;
-  }
-  // Jim Power - The Lost Dimension in 3D
-  if (!strncmp("GM T-107036", id, 11) && (chksum == 0x0000)) {
-    chksum = 0xAA28;
-  }
-  // mikeyeldey95
-  if (!strncmp("GM 00000000-43", id, 14) && (chksum == 0x0000)) {
-    chksum = 0x921B;
-    cartSize = 0x400000;
-  }
-  // Enryuu Seiken Xiao-Mei
-  if (!strncmp("GM 00000000-00", id, 14) && (chksum == 0x1E0C)) {
-    chksum = 0xE7E5;
-    cartSize = 0x400000;
-  }
-  // Life on Earth - Reimagined
-  if (!strncmp("GM 00000000-00", id, 14) && (chksum == 0x6BD5)) {
-    chksum = 0x1FEA;
-    cartSize = 0x400000;
-  }
-  // Sasha Darko's Sacred Line I
-  if (!strncmp("GM 00000005-00", id, 14) && (chksum == 0x9F34)) {
-    chksum = 0xA094;
-    cartSize = 0x400000;
-  }
-  // Sasha Darko's Sacred Line II
-  if (!strncmp("GM 00000005-00", id, 14) && (chksum == 0x0E9B)) {
-    chksum = 0x6B4B;
-    cartSize = 0x400000;
-  }
-  // Sasha Darko's Sacred Line (Watermelon Release)
-  if (!strncmp("GM T-574323-00", id, 14) && (chksum == 0xAEDD)) {
-    cartSize = 0x400000;
-  }
-  // Kromasphere
-  if (!strncmp("GM MK-0000 -00", id, 14) && (chksum == 0xC536)) {
-    chksum = 0xFAB1;
-    cartSize = 0x200000;
-  }
-  // YM2017
-  if (!strncmp("GM CSET0001-02", id, 14) && (chksum == 0x0000)) {
-    chksum = 0xE3A9;
-  }
-  // The Curse of Illmore Bay
-  if (!strncmp("1774          ", id, 14) && (chksum == 0x0000)) {
-    chksum = 0x6E34;
-    cartSize = 0x400000;
-  }
-  // Coffee Crisis
-  if (!strncmp("JN-20160131-03", id, 14) && (chksum == 0x0000)) {
-    chksum = 0x8040;
-    cartSize = 0x400000;
-  }
+  applyMdIdFixes(id);
   // Romeow & Julicat
   if (!strncmp("ROMEOWJULICAT", romName, 13) && (chksum == 0x0000)) {
     chksum = 0xB094;
@@ -1997,7 +1882,7 @@ void writeSram_MD() {
     printDoneLine();
     display_Update();
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
   dataIn_MD();
 }
@@ -2015,7 +1900,7 @@ void readSram_MD() {
 
   // Open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   for (unsigned long currBuffer = sramBase; currBuffer < sramBase + sramSize; currBuffer += 256) {
@@ -2109,7 +1994,7 @@ unsigned long verifySram_MD() {
     // Close the file:
     closeCurrentFile();
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
   // Return 0 if verified ok, or number of errors
   return writeErrors;
@@ -2158,7 +2043,7 @@ void write29F1610_MD() {
     // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
     int d = 0;
     for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 64) {
-      myFile.read(sdBuffer, 128);
+      readSdBuffer128();
 
       // Blink led
       if (currByte % 4096 == 0) {
@@ -2381,7 +2266,7 @@ void verifyFlash_MD() {
       print_STR(error_STR, 0);
       print_Msg(blank);
       printBytesLine();
-      print_Error(did_not_verify_STR);
+      reportVerificationError();
     }
     // Close the file:
     closeCurrentFile();
@@ -2961,7 +2846,7 @@ void readEEP_MD() {
 
   // Open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
   if (eepSize > 0x100) {  // 24C04+
     for (word currByte = 0; currByte < eepSize; currByte += 256) {
@@ -3030,7 +2915,7 @@ void writeEEP_MD() {
     printDoneLine();
     display_Update();
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
   dataIn_MD();
 }
@@ -3053,7 +2938,7 @@ void readBram_MD() {
 
   // Open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   for (unsigned long currByte = 0; currByte < bramSize; currByte += 512) {
@@ -3102,7 +2987,7 @@ void writeBram_MD() {
     printDoneLine();
     display_Update();
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
   dataIn_MD();
 }
@@ -3246,7 +3131,7 @@ void writeCFI_MD() {
 
     closeCurrentFile();
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 }
 
@@ -3348,7 +3233,7 @@ void verifyFlashCFIChip_MD(byte currChip, unsigned long toVerify) {
     print_STR(error_STR, 0);
     print_Msg(blank);
     printBytesLine();
-    print_Error(did_not_verify_STR);
+    reportVerificationError();
   }
 }
 

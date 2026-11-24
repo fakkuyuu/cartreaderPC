@@ -302,7 +302,7 @@ void checkStatus_RCA()
 void setCart_RCA()
 {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   byte gameSize;
 
@@ -317,7 +317,7 @@ void setCart_RCA()
       EEPROM_writeAnything(8, gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

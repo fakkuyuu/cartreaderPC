@@ -583,7 +583,7 @@ void readROM_SMS() {
 
   // Open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   // Set default bank size to 16 KiB
@@ -703,7 +703,7 @@ void writeSRAM_SMS() {
   } else {
     fileBrowser(FS(FSTRING_SELECT_FILE));
 
-    sd.chdir();
+    resetStorageDirectory();
     sprintf(filePath, "%s/%s", filePath, fileName);
 
     display_Clear();
@@ -738,10 +738,10 @@ void writeSRAM_SMS() {
       printPressButtonPrompt();
       display_Update();
     } else {
-      print_FatalError(sd_error_STR);
+      fatalSdError();
     }
   }
-  sd.chdir();          // root
+  resetStorageDirectory();          // root
   filePath[0] = '\0';  // Reset filePath
 }
 #endif

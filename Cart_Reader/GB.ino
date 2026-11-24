@@ -384,7 +384,7 @@ void gbxMenu() {
                     print_STR(error_STR, 0);
                     print_Msg(wrErrors);
                     printBytesLine();
-                    print_Error(did_not_verify_STR);
+                    reportVerificationError();
                   }
                   break;
                 }
@@ -572,7 +572,7 @@ void gbMenu() {
             print_STR(error_STR, 0);
             print_Msg(wrErrors);
             printBytesLine();
-            print_Error(did_not_verify_STR);
+            reportVerificationError();
           }
         }
       } else {
@@ -1344,7 +1344,7 @@ void compare_checksums_GB() {
   compareCRC("gb.txt", 0, 1, 0);
   display_Update();
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 }
 
 /******************************************
@@ -1372,7 +1372,7 @@ void readSRAM_GB() {
 
     //open file on sd card
     if (!openNamedOutputFile()) {
-      print_FatalError(sd_error_STR);
+      fatalSdError();
     }
 
     // MBC2 Fix
@@ -1453,7 +1453,7 @@ void writeSRAM_GB() {
       display_Update();
 
     } else {
-      print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+      reportMissingFile();
     }
   } else {
     print_Error(FS(SharedFlashText::textCartHasNoSRAM));
@@ -1503,7 +1503,7 @@ unsigned long verifySRAM_GB() {
     closeCurrentFile();
     return writeErrors;
   } else {
-    print_FatalError(open_file_STR);
+    fatalOpenFileError();
     return 1;
   }
 }
@@ -1697,7 +1697,7 @@ void writeSRAMFLASH_MBC6_GB() {
     println_Msg(F("Save writing finished"));
     display_Update();
   } else {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 
@@ -1712,7 +1712,7 @@ void readEEPROM_MBC7_GB() {
 
   //open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   display_Clear();
@@ -1764,7 +1764,7 @@ void writeEEPROM_MBC7_GB() {
 
   // open file on sd card
   if (!openSelectedFileForRead())
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
 
   myFile.read(sdBuffer, lastByte);
   closeCurrentFile();
@@ -1955,7 +1955,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
     romType = myFile.read();
     romSize = myFile.read();
     // Go back to file beginning
-    myFile.seekSet(0);
+    rewindCurrentFile();
 
     // ROM banks
     romBanks = 2;
@@ -2295,7 +2295,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
     display_Update();
 
     // Go back to file beginning
-    myFile.seekSet(0);
+    rewindCurrentFile();
     writeErrors = 0;
 
     if ((MBC == 1) && (romBanks > 32)) {
@@ -2517,7 +2517,7 @@ bool writeCFI_GB() {
     romType = myFile.read();
     romSize = myFile.read();
     // Go back to file beginning
-    myFile.seekSet(0);
+    rewindCurrentFile();
 
     // ROM banks
     romBanks = 2;
@@ -2664,7 +2664,7 @@ bool writeCFI_GB() {
     display_Update();
 
     // Go back to file beginning
-    myFile.seekSet(0);
+    rewindCurrentFile();
     //unsigned int addr = 0;  // unused
     writeErrors = 0;
 
@@ -2710,7 +2710,7 @@ bool writeCFI_GB() {
       print_STR(error_STR, 0);
       print_Msg(writeErrors);
       printBytesLine();
-      print_Error(did_not_verify_STR);
+      reportVerificationError();
     }
   } else {
     print_STR(open_file_STR, 1);
@@ -2987,7 +2987,7 @@ void writePelican_GB() {
 
     if (flashid == 0xDA45 || flashid == 0xBF10) {
       while (currAddr <= endAddr) {
-        myFile.read(sdBuffer, 128);
+        readSdBuffer128();
 
         // Write command sequence
         sendW29C020Command_GB(0xA0);
@@ -3055,7 +3055,7 @@ void writePelican_GB() {
   display_Update();
 
   // Go back to file beginning
-  myFile.seekSet(0);
+  rewindCurrentFile();
   //unsigned int addr = 0;  // unused
   writeErrors = 0;
 
@@ -3124,7 +3124,7 @@ void readMegaMem_GB() {
 
   //open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
   }
 
   word finalAddress = 0x3FFF;
@@ -3166,7 +3166,7 @@ void readMegaMem_GB() {
 
   //open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
   }
 
   finalAddress = 0x7FFF;
@@ -3378,7 +3378,7 @@ void writeMegaMem_GB() {
   display_Update();
 
   // Go back to file beginning
-  myFile.seekSet(0);
+  rewindCurrentFile();
   //unsigned int addr = 0;  // unused
   writeErrors = 0;
 
@@ -3478,7 +3478,7 @@ void readGameshark_GB() {
 
   //open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
   }
 
   // Initialize progress bar
@@ -3642,7 +3642,7 @@ void writeGameshark_GB() {
   display_Update();
 
   // Go back to file beginning
-  myFile.seekSet(0);
+  rewindCurrentFile();
   //unsigned int addr = 0;  // unused
   writeErrors = 0;
 

@@ -604,7 +604,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
 
   if (crc32sum == 0) {
     //go to root
-    sd.chdir();
+    resetStorageDirectory();
     // Calculate CRC32
     sprintf(crcStr, "%08lX", calculateCRC(fileName, folder, offset));
   } else {
@@ -620,7 +620,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
   char crc_search[9];
 
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
   if (myFile.open(database, O_READ)) {
     //Search for same CRC in list
     while (myFile.available()) {
@@ -661,7 +661,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
           // Write iNES header
           sd.chdir(folder);
           if (!myFile.open(fileName, O_RDWR)) {
-            print_FatalError(sd_error_STR);
+            fatalSdError();
           }
           for (byte z = 0; z < 16; z++) {
             myFile.write(iNES_HEADER[z]);
@@ -758,7 +758,7 @@ void createDbSaveFolder(const char* system, const char* suffix) {
     }
     foldern = (foldern == 32767) ? 0 : foldern + 1;
   }
-  print_FatalError(sd_error_STR);
+  fatalSdError();
 }
 
 static void __attribute__((noinline)) finishDbSaveLog(uint32_t startedAt) {
@@ -862,7 +862,7 @@ void createFolderAndOpenFile(const char* system, const char* subfolder, const ch
   printAndIncrementFolder(true);
 
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 }
 
@@ -2428,7 +2428,7 @@ void savetofile() {
   delay(2000);
 
   if (!myFile.open("/snes_clk.txt", O_WRITE | O_CREAT | O_TRUNC)) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
   // Write calibration factor to file
   myFile.print(cal_factor);
@@ -2645,7 +2645,7 @@ void setup() {
   // companion TXT; opening a second streamed PC file corrupts ROM transfer.
   if (!PcLink::usingPcStorage()) {
     if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
-      print_FatalError(sd_error_STR);
+      fatalSdError();
     }
 
     // Start new log if file is too big
@@ -2657,7 +2657,7 @@ void setup() {
       myLog.rename(folder);
       myLog.close();
       if (!myLog.open("OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
-        print_FatalError(sd_error_STR);
+        fatalSdError();
       }
     }
   }
@@ -2894,7 +2894,7 @@ void save_log() {
   strcpy(fileName, romName);
   strcat(fileName, ".txt");
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   while (myLog.available()) {
@@ -3157,6 +3157,42 @@ uint8_t chooseFlashMenuOption(const __FlashStringHelper* title, const char* cons
 
 void startProgressBar(uint32_t total) {
   draw_progressbar(0, total);
+}
+
+void resetStorageDirectory() {
+  sd.chdir();
+}
+
+void rewindCurrentFile() {
+  myFile.seekSet(0);
+}
+
+void readSdBuffer128() {
+  myFile.read(sdBuffer, 128);
+}
+
+void fatalSdError() {
+  print_FatalError(sd_error_STR);
+}
+
+void fatalCreateFileError() {
+  print_FatalError(create_file_STR);
+}
+
+void fatalOpenFileError() {
+  print_FatalError(open_file_STR);
+}
+
+void fatalMissingDatabase() {
+  print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+}
+
+void reportVerificationError() {
+  print_Error(did_not_verify_STR);
+}
+
+void reportMissingFile() {
+  print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
 }
 
 void changeToStorageRoot() {
@@ -4182,7 +4218,7 @@ browserstart:
   // Open filepath directory
   if (!myDir.open(filePath)) {
     display_Clear();
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   // Count files in directory
@@ -4227,7 +4263,7 @@ page:
   // Open filepath directory
   if (!myDir.open(filePath)) {
     display_Clear();
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
 #if defined(OPTION_REVERSE_SORT)

@@ -328,7 +328,7 @@ void printDataLine_COL(void* entry) {
 
 void setCart_COL() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   struct database_entry_COL entry;
 
@@ -373,7 +373,7 @@ void setCart_COL() {
       EEPROM_writeAnything(8, colsize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

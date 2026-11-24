@@ -492,7 +492,7 @@ setmapper:
 //******************************************
 void setCart_5200() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   struct a5200_DB_entry entry;
 
@@ -508,7 +508,7 @@ void setCart_5200() {
       EEPROM_writeAnything(8, entry.gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 

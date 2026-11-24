@@ -473,7 +473,7 @@ void checkStatus_ATARI8()
 void setCart_ATARI8()
 {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   struct database_entry_mapper_size entry;
 
@@ -489,7 +489,7 @@ void setCart_ATARI8()
       EEPROM_writeAnything(8, entry.gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

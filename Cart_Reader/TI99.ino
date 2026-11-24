@@ -409,7 +409,7 @@ void writeData_TI99(uint16_t addr, uint8_t data)
 
 void CreateROMFolder_TI99()
 {
-  sd.chdir();
+  resetStorageDirectory();
   EEPROM_readAnything(0, foldern);
   sprintf(folder, "TI99/ROM/%d", foldern);
   sd.mkdir(folder, true);
@@ -420,7 +420,7 @@ void FinishROMFolder_TI99()
 {
   foldern += 1;
   EEPROM_writeAnything(0, foldern); // FOLDER #
-  sd.chdir();
+  resetStorageDirectory();
 }
 
 //******************************************
@@ -1047,7 +1047,7 @@ void printDataLine_TI99(void* entry)
 
 void setCart_TI99()
 {
-  sd.chdir();
+  resetStorageDirectory();
 
   struct database_entry_TI99 entry;
 
@@ -1064,7 +1064,7 @@ void setCart_TI99()
       EEPROM_writeAnything(13, entry.gromMap);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

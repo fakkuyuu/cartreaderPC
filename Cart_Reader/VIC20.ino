@@ -218,7 +218,7 @@ void readSegment_VIC20(uint32_t startaddr, uint32_t endaddr)
 
 void CreateROMFolder_VIC20()
 {
-  sd.chdir();
+  resetStorageDirectory();
   EEPROM_readAnything(0, foldern);
   sprintf(folder, "VIC20/ROM/%d", foldern);
   sd.mkdir(folder, true);
@@ -229,7 +229,7 @@ void FinishROMFolder_VIC20()
 {
   foldern += 1;
   EEPROM_writeAnything(0, foldern); // FOLDER #
-  sd.chdir();
+  resetStorageDirectory();
 }
 
 //******************************************
@@ -556,7 +556,7 @@ void setROMMap_VIC20()
 void setCart_VIC20()
 {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   struct database_entry_mapper_size entry;
 
@@ -572,7 +572,7 @@ void setCart_VIC20()
       EEPROM_writeAnything(8, entry.gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

@@ -345,7 +345,7 @@ void checkStatus_ODY2() {
 //******************************************
 void setCart_ODY2() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   struct database_entry_mapper_size entry;
 
@@ -361,7 +361,7 @@ void setCart_ODY2() {
       EEPROM_writeAnything(8, entry.gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

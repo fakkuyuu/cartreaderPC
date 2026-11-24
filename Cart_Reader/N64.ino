@@ -327,7 +327,7 @@ void n64CartMenu() {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
           printBytesLine();
-          print_Error(did_not_verify_STR);
+          reportVerificationError();
         }
       } else if (saveType == 2) {
         // Launch file browser
@@ -343,7 +343,7 @@ void n64CartMenu() {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
           printBytesLine();
-          print_Error(did_not_verify_STR);
+          reportVerificationError();
         }
       } else if (saveType == 4) {
         // Launch file browser
@@ -362,7 +362,7 @@ void n64CartMenu() {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
           printBytesLine();
-          print_Error(did_not_verify_STR);
+          reportVerificationError();
         }
       } else if ((saveType == 5) || (saveType == 6)) {
         // Launch file browser
@@ -380,7 +380,7 @@ void n64CartMenu() {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
           printBytesLine();
-          print_Error(did_not_verify_STR);
+          reportVerificationError();
         }
       } else {
         display_Clear();
@@ -1720,12 +1720,12 @@ void readMPK() {
   strcat(filePath, ".crc");
   FsFile crcFile;
   if (!crcFile.open(filePath, O_RDWR | O_CREAT)) {
-    print_FatalError(open_file_STR);
+    fatalOpenFileError();
   }
 
   //open mpk file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(open_file_STR);
+    fatalOpenFileError();
   }
 
   print_Msg(F("Saving N64/MPK/"));
@@ -1778,12 +1778,12 @@ void verifyCRC() {
   //open CRC file on sd card
   FsFile crcFile;
   if (!crcFile.open(filePath, O_READ)) {
-    print_FatalError(open_file_STR);
+    fatalOpenFileError();
   }
 
   //open MPK file on sd card
   if (!myFile.open(fileName, O_READ)) {
-    print_FatalError(open_file_STR);
+    fatalOpenFileError();
   }
 
   //Initialize progress bar
@@ -1821,7 +1821,7 @@ void verifyCRC() {
     print_STR(error_STR, 0);
     print_Msg(writeErrors);
     println_Msg(F(" blocks "));
-    print_Error(did_not_verify_STR);
+    reportVerificationError();
   }
 }
 
@@ -1846,7 +1846,7 @@ void validateMPK() {
 
   //open file on sd card
   if (!mpk_file.open(fileName, O_READ)) {
-    print_FatalError(open_file_STR);
+    fatalOpenFileError();
   }
 
   // Read first 256 byte which contains the header including checksum and reverse checksum and three copies of it
@@ -1954,7 +1954,7 @@ void writeMPK() {
     // Close the file:
     closeCurrentFile();
   } else {
-    print_FatalError(open_file_STR);
+    fatalOpenFileError();
   }
 }
 
@@ -1968,7 +1968,7 @@ void verifyMPK() {
 
   //open file on sd card
   if (!openSelectedFileForRead()) {
-    print_FatalError(open_file_STR);
+    fatalOpenFileError();
   }
 
   //Initialize progress bar
@@ -2013,7 +2013,7 @@ void verifyMPK() {
     print_STR(error_STR, 0);
     print_Msg(writeErrors);
     printBytesLine();
-    print_Error(did_not_verify_STR);
+    reportVerificationError();
   }
 }
 
@@ -2403,7 +2403,7 @@ void writeEeprom_N64() {
       display_Update();
       delay(600);
     } else {
-      print_FatalError(sd_error_STR);
+      fatalSdError();
     }
   } else {
     print_FatalError(FS(SharedFlashText::textSavetypeError));
@@ -2501,7 +2501,7 @@ unsigned long verifyEeprom_N64() {
     } else {
       // SD Error
       writeErrors = 999999;
-      print_FatalError(sd_error_STR);
+      fatalSdError();
     }
     // Return 0 if verified ok, or number of errors
     return writeErrors;
@@ -2546,7 +2546,7 @@ void writeSram(unsigned long sramSize) {
       printDoneLine();
       display_Update();
     } else {
-      print_FatalError(sd_error_STR);
+      fatalSdError();
     }
 
   } else {
@@ -2632,7 +2632,7 @@ unsigned long verifySram(unsigned long sramSize, byte flashramType) {
     // Close the file:
     closeCurrentFile();
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
   // Return 0 if verified ok, or number of errors
   return writeErrors;
@@ -2704,7 +2704,7 @@ void writeFram(byte flashramType) {
         // Write one bank of 128*128 bytes
         for (byte offset = 0; offset < 128; offset++) {
           // Read save from SD into buffer
-          myFile.read(sdBuffer, 128);
+          readSdBuffer128();
 
           // FRAM_WRITE_MODE_CMD
           sendFramCmd(0xB4000000);
@@ -2740,7 +2740,7 @@ void writeFram(byte flashramType) {
       // Close the file:
       closeCurrentFile();
     } else {
-      print_FatalError(sd_error_STR);
+      fatalSdError();
     }
   } else {
     print_FatalError(FS(SharedFlashText::textSavetypeError));
@@ -2973,7 +2973,7 @@ void readRom_N64() {
 
   // Open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
   }
 
   //Initialize progress bar
@@ -3029,7 +3029,7 @@ uint32_t readRom_N64() {
 
   // Open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
   }
 
   //Initialize progress bar
@@ -3149,7 +3149,7 @@ uint32_t readRom_N64() {
 void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElapsed) {
   // Open file on sd card
   if (!myFile.open("N64/ROM/n64log.txt", O_RDWR | O_CREAT | O_APPEND)) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   //Write the info
@@ -3511,7 +3511,7 @@ void flashRepro_N64() {
         display_Clear();
         print_Msg(writeErrors);
         print_Msg(F(" bytes "));
-        print_Error(did_not_verify_STR);
+        reportVerificationError();
       }
     } else {
       // Close the file
@@ -4334,7 +4334,7 @@ void flashGameshark_N64() {
         println_Msg(FS(SharedFlashText::textVerificationFailed));
         println_Msg(writeErrors);
         print_Msg(F(" bytes "));
-        print_Error(did_not_verify_STR);
+        reportVerificationError();
       }
     } else {
       print_Error(open_file_STR);
@@ -4687,7 +4687,7 @@ void flashXplorer_N64() {
         println_Msg(FS(SharedFlashText::textVerificationFailed));
         println_Msg(writeErrors);
         print_Msg(F(" bytes "));
-        print_Error(did_not_verify_STR);
+        reportVerificationError();
       }
     } else {
       print_Error(open_file_STR);

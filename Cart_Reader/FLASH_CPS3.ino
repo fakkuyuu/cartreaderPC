@@ -769,7 +769,7 @@ void verifyCartridge() {
       print_STR(error_STR, 0);
       print_Msg(blank);
       printBytesLine();
-      print_Error(did_not_verify_STR);
+      reportVerificationError();
     }
     // Close the file:
     closeCurrentFile();
@@ -1167,7 +1167,7 @@ void verifySIMM2x8() {
       print_STR(error_STR, 0);
       print_Msg(blank);
       printBytesLine();
-      print_Error(did_not_verify_STR);
+      reportVerificationError();
     }
     // Close the file:
     closeCurrentFile();
@@ -1450,7 +1450,7 @@ void verifySIMM4x8() {
       print_STR(error_STR, 0);
       print_Msg(blank);
       printBytesLine();
-      print_Error(did_not_verify_STR);
+      reportVerificationError();
     }
     // Close the file:
     closeCurrentFile();

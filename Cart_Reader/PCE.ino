@@ -591,7 +591,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
 
   //open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
   }
 
   pin_read_write_PCE();
@@ -703,7 +703,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
 
     // verify
     int diffcnt = 0;
-    myFile.seekSet(0);
+    rewindCurrentFile();
     for (int block_index = 0; block_index < 4; block_index++) {
       //Unlock Tennokoe Bank RAM
       //Disable interrupts
@@ -734,7 +734,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
       println_Msg(F("Verify failed..."));
       print_Msg(diffcnt);
       printBytesLine();
-      print_Error(did_not_verify_STR);
+      reportVerificationError();
     }
 
     pin_init_PCE();
@@ -744,7 +744,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
     println_Msg(F("Finished"));
 
   } else {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 
   printBlankLine();
@@ -775,7 +775,7 @@ void read_rom_PCE(void) {
 
   //open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
   }
 
   pin_read_write_PCE();

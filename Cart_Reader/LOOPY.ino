@@ -164,7 +164,7 @@ void loopyMenu() {
         print_STR(error_STR, 0);
         print_Msg(writeErrors);
         printBytesLine();
-        print_Error(did_not_verify_STR);
+        reportVerificationError();
       }
       waitForInput = true;
       break;
@@ -443,7 +443,7 @@ bool setRomName_LOOPY(const char* database, char* crcStr, int stripExtensionChar
   char crc_search[9];
   bool found;
 
-  sd.chdir();
+  resetStorageDirectory();
   if (!myFile.open(database, O_READ)) {
     return false;
   }
@@ -603,7 +603,7 @@ void writeSRAM_LOOPY() {
     printDoneLine();
     display_Update();
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   digitalWrite(LOOPY_RAMCS1, HIGH);
@@ -642,7 +642,7 @@ void readSRAM_LOOPY() {
   EEPROM_writeAnything(0, foldern);
 
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   digitalWrite(LOOPY_ROMCE, HIGH);
@@ -690,7 +690,7 @@ unsigned long verifySRAM_LOOPY() {
     }
     closeCurrentFile();
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   digitalWrite(LOOPY_OE, HIGH);

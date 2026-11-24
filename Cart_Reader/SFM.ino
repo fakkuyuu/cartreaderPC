@@ -179,7 +179,7 @@ void sfmGameOptions() {
         print_STR(error_STR, 0);
         print_Msg(wrErrors);
         printBytesLine();
-        print_Error(did_not_verify_STR);
+        reportVerificationError();
       }
       break;
 
@@ -895,7 +895,7 @@ void readROM_SFM() {
 
   //open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
   }
 
   // Check if LoROM or HiROM...
@@ -1026,7 +1026,7 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
       for (word currBank = startBank; currBank < startBank + numBanks; currBank++) {
         // Fill SDBuffer with 1 page at a time then write it repeat until all bytes are written
         for (unsigned long currByte = 0; currByte < 0x10000; currByte += 128) {
-          myFile.read(sdBuffer, 128);
+          readSdBuffer128();
           // Write command sequence
           writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
           writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
@@ -1058,7 +1058,7 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
       // Write lorom
       for (word currBank = 0; currBank < numBanks; currBank++) {
         for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte += 128) {
-          myFile.read(sdBuffer, 128);
+          readSdBuffer128();
           // Write command sequence
           writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
           writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
@@ -1085,7 +1085,7 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
     closeCurrentFile();
     println_Msg("");
   } else {
-    print_FatalError(open_file_STR);
+    fatalOpenFileError();
   }
 }
 
@@ -1248,7 +1248,7 @@ void readFlash_SFM() {
 
   // Open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
   }
   if (romType) {
     for (word currBank = 0xC0; currBank < 0xC0 + numBanks; currBank++) {
@@ -1392,7 +1392,7 @@ void readMapping() {
 
   //open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   // Read the mapping info out of the 1st chip
@@ -1590,7 +1590,7 @@ void writeMapping_SFM(byte startBank, uint32_t pos) {
           writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
           writeBank_SFM(startBank, 0x5555L * 2, 0x99);
 
-          myFile.read(sdBuffer, 128);
+          readSdBuffer128();
 
           for (byte c = 0; c < 128; c++) {
             writeBank_SFM(startBank, currByte + c, sdBuffer[c]);

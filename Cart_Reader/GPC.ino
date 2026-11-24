@@ -61,7 +61,7 @@ void gpcMenu() {
         print_STR(error_STR, 0);
         print_Msg(wrErrors);
         printBytesLine();
-        print_Error(did_not_verify_STR);
+        reportVerificationError();
       }
       wait();
       break;
@@ -372,7 +372,7 @@ void writeRAM_GPC(void) {
     println_Msg(F("RAM writing finished"));
     display_Update();
   } else {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 

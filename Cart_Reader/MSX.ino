@@ -674,7 +674,7 @@ void readRAM_MSX() {
 
     // open file on sdcard
     if (!openNamedOutputFile())
-      print_FatalError(sd_error_STR);
+      fatalSdError();
 
     if (msxsize == 0) {
       // write new folder number back to EEPROM
@@ -776,7 +776,7 @@ void writeRAM_MSX() {
     print_Error(FS(SharedFlashText::textRAMSIZE0K));
   } else {
     fileBrowser(FS(SharedFlashText::textSelectRAMFile));
-    sd.chdir();
+    resetStorageDirectory();
     sprintf(filePath, "%s/%s", filePath, fileName);
     display_Clear();
     println_Msg(FS(SharedFlashText::textWritingFile));
@@ -887,10 +887,10 @@ void writeRAM_MSX() {
       display_Update();
 
     } else {
-      print_FatalError(sd_error_STR);
+      fatalSdError();
     }
   }
-  sd.chdir();          // root
+  resetStorageDirectory();          // root
   filePath[0] = '\0';  // Reset filePath
 }
 
@@ -1406,7 +1406,7 @@ void readDataLine_MSX(FsFile& database, void* entry) {
 
 void setCart_MSX() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   struct database_entry_MSX entry;
 
@@ -1423,7 +1423,7 @@ void setCart_MSX() {
       EEPROM_writeAnything(10, entry.ramSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

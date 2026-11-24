@@ -156,7 +156,7 @@ void vboyMenu() {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
           printBytesLine();
-          print_Error(did_not_verify_STR);
+          reportVerificationError();
         }
       } else {
         print_Error(FS(SharedFlashText::textCartHasNoSRAM));
@@ -511,7 +511,7 @@ void writeSRAM_VB() {
     printDoneLine();
     display_Update();
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
   dataIn_VB();
 }
@@ -525,7 +525,7 @@ void readSRAM_VB() {
   EEPROM_writeAnything(0, foldern);
 
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
   for (unsigned long currBuffer = 0; currBuffer < sramSize; currBuffer += 512) {
     for (int currByte = 0; currByte < 512; currByte++) {
@@ -559,7 +559,7 @@ unsigned long verifySRAM_VB() {
     }
     closeCurrentFile();
   } else {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   return writeErrors;

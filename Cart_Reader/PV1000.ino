@@ -299,7 +299,7 @@ void checkStatus_PV1000()
 void setCart_PV1000()
 {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   byte gameSize;
 
@@ -314,7 +314,7 @@ void setCart_PV1000()
       EEPROM_writeAnything(8, gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

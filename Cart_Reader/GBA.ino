@@ -719,7 +719,7 @@ void getCartInfo_GBA() {
     display_Update();
 
     //go to root
-    sd.chdir();
+    resetStorageDirectory();
     if (myFile.open("gba.txt", O_READ)) {
       char gamename[100];
       bool entrySelected = false;
@@ -1035,7 +1035,7 @@ static void createRomFile_GBA() {
   }
   printAndIncrementFolder(true);
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 }
 
@@ -1183,7 +1183,7 @@ void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
 
   //open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   // Seek to a new position in the file
@@ -1239,7 +1239,7 @@ void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
     display_Update();
 
   } else {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 
@@ -1274,7 +1274,7 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
       print_STR(error_STR, 0);
       print_Msg(writeErrors);
       printBytesLine();
-      print_Error(did_not_verify_STR);
+      reportVerificationError();
     }
 
     return writeErrors;
@@ -1307,7 +1307,7 @@ void readFRAM_GBA(unsigned long framSize) {
   display_Clear();
   showDbSaveFolder(FS(SharedFlashText::textSavingTo));
   if (!openNamedOutputFile())
-    print_FatalError(sd_error_STR);
+    fatalSdError();
 
   for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
     for (int c = 0; c < 512; c++) {
@@ -1410,7 +1410,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
     display_Update();
 
   } else {
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 
@@ -1697,7 +1697,7 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, bool cl
 
   //open file on sd card
   if (!myFile && !openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   // Seek to a new position in the file
@@ -1794,7 +1794,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
     } else {
       for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 128) {
         //fill sdBuffer
-        myFile.read(sdBuffer, 128);
+        readSdBuffer128();
 
         // Write command sequence
         writeByteFlash_GBA(0x5555, 0xaa);
@@ -1816,7 +1816,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
 
   } else {
     println_Msg(FS(SharedFlashText::textError));
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 
@@ -1843,7 +1843,7 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
 
   //open file on sd card
   if (!openSelectedFileForRead()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   // Seek to a new position in the file
@@ -1912,7 +1912,7 @@ void writeEeprom_GBA(word eepSize) {
     display_Update();
   } else {
     println_Msg(FS(SharedFlashText::textError));
-    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
+    reportMissingFile();
   }
 }
 
@@ -1924,7 +1924,7 @@ void readEeprom_GBA(word eepSize) {
 
   //open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   // Each block contains 8 Bytes, so for a 8KB eeprom 1024 blocks need to be read
@@ -2166,7 +2166,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
 
   //open file on sd card
   if (!openSelectedFileForRead()) {
-    print_FatalError(sd_error_STR);
+    fatalSdError();
   }
 
   // Fill sd Buffer
@@ -2192,7 +2192,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
     print_STR(error_STR, 0);
     print_Msg(wrError);
     printBytesLine();
-    print_Error(did_not_verify_STR);
+    reportVerificationError();
   }
 
   return wrError;
@@ -2682,7 +2682,7 @@ boolean verifyFlashrom_GBA() {
       return 0;
     }
   } else {
-    print_FatalError(open_file_STR);
+    fatalOpenFileError();
     return 9999;
   }
 }
@@ -3104,7 +3104,7 @@ void flashRepro_GBA(boolean option) {
       //  print_FatalError(FS(SharedFlashText::textFailed));
       //}
     } else {
-      print_FatalError(open_file_STR);
+      fatalOpenFileError();
     }
   } else {
     println_Msg(FS(SharedFlashText::textError));

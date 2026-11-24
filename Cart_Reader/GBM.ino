@@ -342,7 +342,7 @@ void readROM_GBM(word numBanks) {
 
   // Open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
   } else {
     // Read rom
     word currAddress = 0;
@@ -650,7 +650,7 @@ void writeFlash_GBM() {
       // Write single bank in 128 byte steps
       for (; currAddress < 0x7FFF; currAddress += 128) {
         // Fill SD buffer
-        myFile.read(sdBuffer, 128);
+        readSdBuffer128();
 
         // Enable access to ports 0x120 and 0x2100
         send_GBM(0x09);
@@ -734,7 +734,7 @@ void readMapping_GBM() {
 
   // Open file on sd card
   if (!openNamedOutputFile()) {
-    print_FatalError(create_file_STR);
+    fatalCreateFileError();
   } else {
     for (byte currByte = 0; currByte < 128; currByte++) {
       sdBuffer[currByte] = readByte_GBM(currByte);
@@ -865,7 +865,7 @@ void writeMapping_GBM() {
     while ((readByte_GBM(0) & 0x80) != 0x80) {}
 
     // Fill SD buffer
-    myFile.read(sdBuffer, 128);
+    readSdBuffer128();
 
     // Enable access to ports 0x120 and 0x2100
     send_GBM(0x09);

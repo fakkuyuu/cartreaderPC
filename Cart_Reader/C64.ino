@@ -819,7 +819,7 @@ void printMapper_C64(byte c64maplabel) {
 
 void setCart_C64() {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   struct database_entry_mapper_size entry;
 
@@ -835,7 +835,7 @@ void setCart_C64() {
       EEPROM_writeAnything(8, entry.gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

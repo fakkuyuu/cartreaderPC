@@ -333,7 +333,7 @@ void checkStatus_VECTREX()
 void setCart_VECTREX()
 {
   //go to root
-  sd.chdir();
+  resetStorageDirectory();
 
   byte gameSize;
 
@@ -348,7 +348,7 @@ void setCart_VECTREX()
       EEPROM_writeAnything(8, gameSize);
     }
   } else {
-    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+    fatalMissingDatabase();
   }
 }
 #endif

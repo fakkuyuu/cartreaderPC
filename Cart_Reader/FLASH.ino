@@ -1737,7 +1737,7 @@ void writeFlash29F1610() {
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 128) {
       // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
-      myFile.read(sdBuffer, 128);
+      readSdBuffer128();
 
       // Blink led
       if (currByte % 3072 == 0)
@@ -1783,7 +1783,7 @@ void writeFlash29F1601() {
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 128) {
       // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
-      myFile.read(sdBuffer, 128);
+      readSdBuffer128();
 
       // Blink led
       if (currByte % 3072 == 0)
@@ -2257,10 +2257,10 @@ void verifyFlash(byte currChip, byte totalChips, boolean reversed) {
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       if ((reversed) && (currChip == 1) && (totalChips == 1) && (fileSize == 8388608) && (currByte == 4194304)) {
-        myFile.seekSet(0);
+        rewindCurrentFile();
       }
       if ((reversed) && (currChip == 1) && (totalChips == 1) && (fileSize == 6291456) && (currByte == 2097152)) {
-        myFile.seekSet(0);
+        rewindCurrentFile();
         currByte = 4194304;
         fileSize = 8388608;
       }
@@ -2286,7 +2286,7 @@ void verifyFlash(byte currChip, byte totalChips, boolean reversed) {
       print_STR(error_STR, 0);
       print_Msg(blank);
       printBytesLine();
-      print_Error(did_not_verify_STR);
+      reportVerificationError();
     }
     // Close the file:
     closeCurrentFile();
@@ -2371,7 +2371,7 @@ void writeFlash16() {
     // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
     int d = 0;
     for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 64) {
-      myFile.read(sdBuffer, 128);
+      readSdBuffer128();
 
       // Blink led
       if (currByte % 2048 == 0)
@@ -2412,7 +2412,7 @@ void writeFlash16_29F1601() {
     // Fill sdBuffer with 1 page at a time then write it repeat until all bytes are written
     int d = 0;
     for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 64) {
-      myFile.read(sdBuffer, 128);
+      readSdBuffer128();
 
       // Blink led
       if (currByte % 2048 == 0)
@@ -3059,7 +3059,7 @@ void adjustFileSizeOffset(byte currChip, byte totalChips, boolean reversed) {
   } else if ((currChip == 2) && (totalChips == 2)) {
     if (reversed) {
       fileSize = flashSize / 2;
-      myFile.seekSet(0);
+      rewindCurrentFile();
     } else if (fileSize > flashSize / 2) {
       fileSize = fileSize - flashSize / 2;
       myFile.seekSet(flashSize / 2);
@@ -3095,7 +3095,7 @@ void adjustFileSizeOffset(byte currChip, byte totalChips, boolean reversed) {
 
   } else if ((currChip == 3) && (totalChips == 4)) {
     if (reversed) {
-      myFile.seekSet(0);
+      rewindCurrentFile();
       fileSize = 2097152;
     } else {
       if (fileSize > 4194304) {
@@ -3221,10 +3221,10 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
 
     for (unsigned long currAddr = 0; currAddr < fileSize; currAddr += 512) {
       if ((reversed) && (currChip == 1) && (totalChips == 1) && (fileSize == 8388608) && (currAddr == 4194304)) {
-        myFile.seekSet(0);
+        rewindCurrentFile();
       }
       if ((reversed) && (currChip == 1) && (totalChips == 1) && (fileSize == 6291456) && (currAddr == 2097152)) {
-        myFile.seekSet(0);
+        rewindCurrentFile();
         currAddr = 4194304;
         fileSize = 8388608;
       }
