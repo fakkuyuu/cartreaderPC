@@ -84,6 +84,15 @@ static const char N64RomItem6[] PROGMEM = "64 MB";
 static const char N64RomItem7[] PROGMEM = "128 MB";
 static const char* const romOptionsN64[] PROGMEM = { N64RomItem1, N64RomItem2, N64RomItem3, N64RomItem4, N64RomItem5, N64RomItem6, N64RomItem7 };
 
+// Both ROM and repro flash menus use the same size choices in MiB.
+static const uint8_t n64ManualSizes[] PROGMEM = { 4, 8, 12, 16, 32, 64, 128 };
+static void setManualSize_N64(uint8_t choice) __attribute__((noinline));
+static void setManualSize_N64(uint8_t choice) {
+  if (choice < sizeof(n64ManualSizes)) {
+    cartSize = pgm_read_byte(n64ManualSizes + choice);
+  }
+}
+
 // Save menu
 static const char N64SaveItem1[] PROGMEM = "None";
 static const char N64SaveItem2[] PROGMEM = "4K EEPROM";
@@ -403,43 +412,7 @@ void n64CartMenu() {
       // Copy menuOptions out of progmem
       N64RomMenu = chooseFlashMenuOption(F("Select ROM size"), romOptionsN64, 7);
 
-      // wait for user choice to come back from the question box menu
-      switch (N64RomMenu) {
-        case 0:
-          // 4MB
-          cartSize = 4;
-          break;
-
-        case 1:
-          // 8MB
-          cartSize = 8;
-          break;
-
-        case 2:
-          // 12MB
-          cartSize = 12;
-          break;
-
-        case 3:
-          // 16MB
-          cartSize = 16;
-          break;
-
-        case 4:
-          // 32MB
-          cartSize = 32;
-          break;
-
-        case 5:
-          // 64MB
-          cartSize = 64;
-          break;
-
-        case 6:
-          // 128MB
-          cartSize = 128;
-          break;
-      }
+      setManualSize_N64(N64RomMenu);
       break;
 
     case 5:
@@ -3232,43 +3205,7 @@ void flashRepro_N64() {
     // Copy menuOptions out of progmem
     N64RomMenu = chooseFlashMenuOption(F("Select flash size"), romOptionsN64, 7);
 
-    // wait for user choice to come back from the question box menu
-    switch (N64RomMenu) {
-      case 0:
-        // 4MB
-        cartSize = 4;
-        break;
-
-      case 1:
-        // 8MB
-        cartSize = 8;
-        break;
-
-      case 2:
-        // 12MB
-        cartSize = 12;
-        break;
-
-      case 3:
-        // 16MB
-        cartSize = 16;
-        break;
-
-      case 4:
-        // 32MB
-        cartSize = 32;
-        break;
-
-      case 5:
-        // 64MB
-        cartSize = 64;
-        break;
-
-      case 6:
-        // 128MB
-        cartSize = 128;
-        break;
-    }
+    setManualSize_N64(N64RomMenu);
 
     // Set flash buffer manually
     unsigned char N64BufferMenu;
