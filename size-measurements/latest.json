@@ -1,43 +1,42 @@
 {
   "schema": 1,
-  "run_id": "45403347057",
+  "run_id": "45403936757",
   "run_attempt": "1",
-  "workflow_commit": "6b306f9bdabc5eb6a06310d810aa1c0f4bda841c",
+  "workflow_commit": "279c47ee9df48b78c5a3d23a4136c4f60af17b0a",
   "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-  "status": "build_failed",
+  "status": "calibration_mismatch",
   "request": {
-    "id": "smoke-log-integer",
-    "base": "866ee1aa2387997bd41daa96b13f5ca55ddfdd03",
-    "head": "2dc6b67a5758ddd5a542269e00da84adbcc820e7",
-    "expected_base_flash": 215954,
-    "expected_base_ram": 6255,
-    "expected_head_flash": 214558
+    "id": "trial-mmc5-001",
+    "base": "6b306f9bdabc5eb6a06310d810aa1c0f4bda841c",
+    "head": "87cb8e4d805ff3a21d27c74a57254d7ff2c0861a",
+    "expected_base_flash": 214558,
+    "expected_base_ram": 6255
   },
-  "baseline_matches_local": null,
+  "baseline_matches_local": false,
   "head_matches_local": null,
   "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
   "results": [
     {
-      "commit": "866ee1aa2387997bd41daa96b13f5ca55ddfdd03",
-      "subject": "Use existing fixed-width CRC formatter for PCE",
-      "status": "failed",
-      "flash": null,
-      "ram": null,
+      "commit": "6b306f9bdabc5eb6a06310d810aa1c0f4bda841c",
+      "subject": "Fix generated PowerShell configuration check and remove duplicated build block",
+      "status": "ok",
+      "flash": 215134,
+      "ram": 6281,
       "delta_previous": null,
-      "delta_base": null,
-      "classification": "unavailable",
-      "error": "Missing expected compiler/linker flag --relax"
+      "delta_base": 0,
+      "classification": "baseline",
+      "error": null
     },
     {
-      "commit": "2dc6b67a5758ddd5a542269e00da84adbcc820e7",
-      "subject": "Replace NES capacity log calculations with integer indices",
-      "status": "failed",
-      "flash": null,
-      "ram": null,
-      "delta_previous": null,
-      "delta_base": null,
-      "classification": "unavailable",
-      "error": "Missing expected compiler/linker flag --relax"
+      "commit": "87cb8e4d805ff3a21d27c74a57254d7ff2c0861a",
+      "subject": "Share NES MMC5 SRAM bank traversal between read and write",
+      "status": "ok",
+      "flash": 215072,
+      "ram": 6281,
+      "delta_previous": -62,
+      "delta_base": -62,
+      "classification": "reduced",
+      "error": null
     }
   ],
   "fatal_error": null
