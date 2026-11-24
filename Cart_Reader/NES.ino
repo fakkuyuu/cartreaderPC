@@ -434,9 +434,9 @@ static void finishNesRomMenuRead() {
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
   printPressButtonPrompt();
-   ENABLE_GLOBAL_LOG
+#ifdef ENABLE_GLOBAL_LOG
   save_log();
-
+#endif
   display_Update();
   wait();
 }
