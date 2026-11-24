@@ -1,7 +1,7 @@
 {
-  "id": "trial-default-sram-004",
-  "base": "88ea37c9fcd61f5d5b087d45f6eeaca97537f903",
-  "head": "ed9268cb1ba2507fd42107cbe21ee8ab07712400",
-  "expected_base_flash": 215044,
+  "id": "parallel-001-integration",
+  "base": "f6ed847c17a7015d405a9f3774bd6b1c9e7b1c5a",
+  "head": "9568123f6bb428d40537a6639401882bef432319",
+  "expected_base_flash": 214982,
   "expected_base_ram": 6281
 }
