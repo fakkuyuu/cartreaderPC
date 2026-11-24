@@ -1,7 +1,7 @@
 {
-  "id": "trial-mapper82-003",
-  "base": "3776db829354b7e9ae8b69ce3cdc7cd5a55dcbd4",
-  "head": "e48648c837c8f957e0cc7f377605d86479cfa6e4",
-  "expected_base_flash": 215050,
+  "id": "trial-default-sram-004",
+  "base": "88ea37c9fcd61f5d5b087d45f6eeaca97537f903",
+  "head": "ed9268cb1ba2507fd42107cbe21ee8ab07712400",
+  "expected_base_flash": 215044,
   "expected_base_ram": 6281
 }
