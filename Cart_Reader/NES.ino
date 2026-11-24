@@ -703,6 +703,21 @@ void setRomnameFromString(const char* input) {
   }
 }
 
+static void calculateMemorySizes_NES() __attribute__((noinline));
+static void calculateMemorySizes_NES() {
+  prg = (int_pow(2, prgsize)) * 16;
+  if (chrsize == 0)
+    chr = 0;  // 0K
+  else
+    chr = (int_pow(2, chrsize)) * 4;
+  if (ramsize == 0)
+    ram = 0;  // 0K
+  else if (mapper == 82)
+    ram = 5;  // 5K
+  else
+    ram = (int_pow(2, ramsize)) * 4;
+}
+
 void printDataLine_NES(void* entry) {
   struct database_entry* castEntry = (struct database_entry*)entry;
   uint8_t iNES[16];
@@ -745,17 +760,7 @@ void printDataLine_NES(void* entry) {
   if (ramsize != 0)
     ramsize = (int(log(ramsize) / log(2)));
 
-  prg = (int_pow(2, prgsize)) * 16;
-  if (chrsize == 0)
-    chr = 0;  // 0K
-  else
-    chr = (int_pow(2, chrsize)) * 4;
-  if (ramsize == 0)
-    ram = 0;  // 0K
-  else if (mapper == 82)
-    ram = 5;  // 5K
-  else
-    ram = (int_pow(2, ramsize)) * 4;
+  calculateMemorySizes_NES();
 
   // Mapper Variants
   // Identify variant for use across multiple functions
@@ -2019,17 +2024,7 @@ void checkStatus_NES() {
   EEPROM_readAnything(9, prgsize);
   EEPROM_readAnything(10, chrsize);
   EEPROM_readAnything(11, ramsize);
-  prg = (int_pow(2, prgsize)) * 16;
-  if (chrsize == 0)
-    chr = 0;  // 0K
-  else
-    chr = (int_pow(2, chrsize)) * 4;
-  if (ramsize == 0)
-    ram = 0;  // 0K
-  else if (mapper == 82)
-    ram = 5;  // 5K
-  else
-    ram = (int_pow(2, ramsize)) * 4;
+  calculateMemorySizes_NES();
 
   // Mapper Variants
   // Identify variant for use across multiple functions
@@ -3822,6 +3817,7 @@ void readCHR(bool readrom) {
             break;
           }
 
+        case 26:
         case 24:  // 128K
           banks = chrBanks4K * 4;
           write_prg_byte(0xB003, 0);  // PPU Banking Mode 0
@@ -3840,14 +3836,7 @@ void readCHR(bool readrom) {
           }
           break;
 
-        case 26:  // 128K/256K
-          banks = chrBanks4K * 4;
-          write_prg_byte(0xB003, 0);
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xD000, i);
-            dumpCHR1KiB();
-          }
-          break;
+
 
         case 27:
           banks = chrBanks4K * 4;
@@ -4035,6 +4024,7 @@ void readCHR(bool readrom) {
           }
           break;
 
+        case 92:
         case 72:  // 128K
           banks = chrBanks4K / 2;
           write_prg_byte(0x8000, 0);            // Reset Register
@@ -4161,15 +4151,7 @@ void readCHR(bool readrom) {
           }
           break;
 
-        case 92:  // 128K
-          banks = chrBanks4K / 2;
-          write_prg_byte(0x8000, 0);            // Reset Register
-          for (size_t i = 0; i < banks; i++) {  // 8K Banks
-            write_prg_byte(0x8000, i | 0x40);   // CHR Command + Bank
-            write_prg_byte(0x8000, i);          // CHR Bank
-            dumpCHR8KiB();
-          }
-          break;
+
 
         case 107:
           dumpSequentialCHRBanks(chrBanks4K / 2, 0xC000, 0, 0x2000);

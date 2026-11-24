@@ -1924,6 +1924,20 @@ static void showFlashBankCount_GB(const __FlashStringHelper* suffix) {
   display_Update();
 }
 
+// Keep the original file reads, cartridge reads and mismatch counter.
+static void verifyFlashRange_GB(word& romAddress, word end) __attribute__((noinline));
+static void verifyFlashRange_GB(word& romAddress, word end) {
+  while (romAddress < end) {
+    readSdBufferBlock();
+    for (int i = 0; i < 512; i++) {
+      if (readByte_GB(romAddress + i) != sdBuffer[i]) {
+        writeErrors++;
+      }
+    }
+    romAddress += 512;
+  }
+}
+
 void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
   // Launch filebrowser
   browseRootFileAndClear();
@@ -2302,17 +2316,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
           blinkLED();
         }
         // Read up to 7FFF per bank
-        while (romAddress <= 0x7FFF) {
-          // Fill sdBuffer
-          readSdBufferBlock();
-          // Compare
-          for (int i = 0; i < 512; i++) {
-            if (readByte_GB(romAddress + i) != sdBuffer[i]) {
-              writeErrors++;
-            }
-          }
-          romAddress += 512;
-        }
+        verifyFlashRange_GB(romAddress, 0x8000);
       }
     }
 
@@ -2618,17 +2622,7 @@ bool writeCFI_GB() {
       blinkLED();
 
       // Read up to 7FFF per bank
-      while (romAddress <= 0x7FFF) {
-        // Fill sdBuffer
-        readSdBufferBlock();
-        // Compare
-        for (int i = 0; i < 512; i++) {
-          if (readByte_GB(romAddress + i) != sdBuffer[i]) {
-            writeErrors++;
-          }
-        }
-        romAddress += 512;
-      }
+      verifyFlashRange_GB(romAddress, 0x8000);
     }
     // Close the file:
     closeCurrentFile();
@@ -2977,17 +2971,7 @@ void writePelican_GB() {
     blinkLED();
 
     // Read up to 3FFF per bank
-    while (romAddress < 0x4000) {
-      // Fill sdBuffer
-      readSdBufferBlock();
-      // Compare
-      for (int i = 0; i < 512; i++) {
-        if (readByte_GB(romAddress + i) != sdBuffer[i]) {
-          writeErrors++;
-        }
-      }
-      romAddress += 512;
-    }
+    verifyFlashRange_GB(romAddress, 0x4000);
   }
   // Close the file:
   closeCurrentFile();
@@ -3252,17 +3236,7 @@ void writeMegaMem_GB() {
     blinkLED();
 
     // Read up to 3FFF per bank
-    while (romAddress < 0x8000) {
-      // Fill sdBuffer
-      readSdBufferBlock();
-      // Compare
-      for (int i = 0; i < 512; i++) {
-        if (readByte_GB(romAddress + i) != sdBuffer[i]) {
-          writeErrors++;
-        }
-      }
-      romAddress += 512;
-    }
+    verifyFlashRange_GB(romAddress, 0x8000);
   }
   // Close the file:
   closeCurrentFile();
@@ -3484,17 +3458,7 @@ void writeGameshark_GB() {
     blinkLED();
 
     // Read up to 1FFF per bank
-    while (romAddress < 0x6000) {
-      // Fill sdBuffer
-      readSdBufferBlock();
-      // Compare
-      for (int i = 0; i < 512; i++) {
-        if (readByte_GB(romAddress + i) != sdBuffer[i]) {
-          writeErrors++;
-        }
-      }
-      romAddress += 512;
-    }
+    verifyFlashRange_GB(romAddress, 0x6000);
   }
   // Close the file:
   closeCurrentFile();

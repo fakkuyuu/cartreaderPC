@@ -838,6 +838,20 @@ void applyMdIdFixes(const char* id) {
   }
 }
 
+static void showUnknownSramBase_MD(word sramType) __attribute__((noinline, noreturn));
+static void showUnknownSramBase_MD(word sramType) {
+  print_Msg(("sramType: "));
+  print_Msg_PaddedHex16(sramType);
+  printBlankLine();
+  print_Msg(("sramBase: "));
+  print_Msg_PaddedHex32(sramBase);
+  printBlankLine();
+  print_Msg(("sramEnd: "));
+  print_Msg_PaddedHex32(sramEnd);
+  printBlankLine();
+  print_FatalError(FS(SharedFlashText::textUnknownSramBase));
+}
+
 void getCartInfo_MD() {
   // Set control
   dataIn_MD();
@@ -1045,16 +1059,7 @@ void getCartInfo_MD() {
           // Right shift sram base address so [A21] is set to high 0x200000 = 0b001[0]00000000000000000000
           sramBase = sramBase / 2;
         } else {
-          print_Msg(("sramType: "));
-          print_Msg_PaddedHex16(sramType);
-          printBlankLine();
-          print_Msg(("sramBase: "));
-          print_Msg_PaddedHex32(sramBase);
-          printBlankLine();
-          print_Msg(("sramEnd: "));
-          print_Msg_PaddedHex32(sramEnd);
-          printBlankLine();
-          print_FatalError(FS(SharedFlashText::textUnknownSramBase));
+          showUnknownSramBase_MD(sramType);
         }
       } else if (sramType == 0xE020) {  // SRAM BOTH BYTES
         // Get sram start and end
@@ -1073,16 +1078,7 @@ void getCartInfo_MD() {
           // Used for some aftermarket carts without sram
           saveType = 0;
         } else {
-          print_Msg(("sramType: "));
-          print_Msg_PaddedHex16(sramType);
-          printBlankLine();
-          print_Msg(("sramBase: "));
-          print_Msg_PaddedHex32(sramBase);
-          printBlankLine();
-          print_Msg(("sramEnd: "));
-          print_Msg_PaddedHex32(sramEnd);
-          printBlankLine();
-          print_FatalError(FS(SharedFlashText::textUnknownSramBase));
+          showUnknownSramBase_MD(sramType);
         }
       }
     } else {

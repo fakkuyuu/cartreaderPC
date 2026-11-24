@@ -4166,6 +4166,16 @@ void sendFlashromGamesharkCommand_N64(uint16_t cmd) {
   writeWord_N64(cmd);
 }
 
+static void readAndShowFlashFileSize_N64() __attribute__((noinline));
+static void readAndShowFlashFileSize_N64() {
+  fileSize = myFile.fileSize();
+  display_Clear();
+  print_Msg(FS(SharedFlashText::textFileSize));
+  print_Msg(fileSize / 1024);
+  println_Msg(FS(SharedFlashText::unitKBWithSpace));
+  display_Update();
+}
+
 void flashGameshark_N64() {
   // Check flashrom ID's
   unlockGSAddressRanges();
@@ -4201,12 +4211,7 @@ void flashGameshark_N64() {
     // Open file on sd card
     if (openSelectedFileForRead()) {
       // Get rom size from file
-      fileSize = myFile.fileSize();
-      display_Clear();
-      print_Msg(FS(SharedFlashText::textFileSize));
-      print_Msg(fileSize / 1024);
-      println_Msg(FS(SharedFlashText::unitKBWithSpace));
-      display_Update();
+      readAndShowFlashFileSize_N64();
 
       // Compare file size to flashrom size for 1 Mbit eeproms
       if (fileSize > 262144 && (flashid == 0x0808 || flashid == 0x3535 || flashid == 0x0707)) {
@@ -4544,12 +4549,7 @@ void flashXplorer_N64() {
     // Open file on sd card
     if (openSelectedFileForRead()) {
       // Get rom size from file
-      fileSize = myFile.fileSize();
-      display_Clear();
-      print_Msg(FS(SharedFlashText::textFileSize));
-      print_Msg(fileSize / 1024);
-      println_Msg(FS(SharedFlashText::unitKBWithSpace));
-      display_Update();
+      readAndShowFlashFileSize_N64();
 
       // Compare file size to flashrom size
       if (fileSize > 262144) {

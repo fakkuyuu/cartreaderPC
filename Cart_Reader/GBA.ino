@@ -2161,6 +2161,15 @@ boolean sectorCheckMX29GL128E_GBA() {
   return sectorProtect;
 }
 
+static void showUnknownFlashVoltage_GBA() __attribute__((noinline, noreturn));
+static void showUnknownFlashVoltage_GBA() {
+  println_Msg(FS(SharedFlashText::textError));
+  printBlankLine();
+  println_Msg(FS(SharedFlashText::textUnknownFlash));
+  showFlashIdAndBlank();
+  print_FatalError(FS(SharedFlashText::textCheckVoltage));
+}
+
 void idFlashrom_GBA() {
   // Send Intel ID command to flashrom
   writeWord_GBA(0, 0x90);
@@ -2210,11 +2219,7 @@ void idFlashrom_GBA() {
       cartSize = 0x1000000;
       resetMX29GL128E_GBA();
     } else {
-      println_Msg(FS(SharedFlashText::textError));
-      printBlankLine();
-      println_Msg(FS(SharedFlashText::textUnknownFlash));
-      showFlashIdAndBlank();
-      print_FatalError(FS(SharedFlashText::textCheckVoltage));
+      showUnknownFlashVoltage_GBA();
     }
   }
 }
@@ -3027,11 +3032,7 @@ void flashRepro_GBA(boolean option) {
       fatalOpenFileError();
     }
   } else {
-    println_Msg(FS(SharedFlashText::textError));
-    printBlankLine();
-    println_Msg(FS(SharedFlashText::textUnknownFlash));
-    showFlashIdAndBlank();
-    print_FatalError(FS(SharedFlashText::textCheckVoltage));
+    showUnknownFlashVoltage_GBA();
   }
 }
 #endif
