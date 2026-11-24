@@ -4449,10 +4449,28 @@ static void visitMmc5Sram_NES(word base, void (*visit)(word, word)) {
   }
 }
 
+void writeBankPRG(const size_t from, const size_t to, const size_t base);
+
+static void visitMmc1Sram_NES(word base, bool writing) __attribute__((noinline));
+static void visitMmc1Sram_NES(word base, bool writing) {
+  uint16_t banks = int_pow(2, ramsize) / 2;      // banks = 1,2,4
+  for (size_t i = 0; i < banks; i++) {  // 8K Banks ($6000-$7FFF)
+    write_prg_byte(0x8000, 0x80);       // Clear Register
+    write_mmc1_byte(0x8000, 1 << 3);
+    write_mmc1_byte(0xE000, 0);
+    if (banks == 4)  // 32K
+      write_mmc1_byte(0xA000, i << 2);
+    else
+      write_mmc1_byte(0xA000, i << 3);
+    if (writing)
+      writeBankPRG(0x0, 0x2000, base);
+    else
+      dumpPRG8KiB(base);  // 8K
+  }
+}
+
 void readRAM() {
   clearAndUpdateDisplay();
-
-  uint16_t banks;
 
   rgbLed(turquoise_color);
   set_address(0);
@@ -4471,18 +4489,8 @@ void readRAM() {
           break;                                      // SWITCH MUST BE IN OFF POSITION
 
         case 1:
-        case 155:                               // 8K/16K/32K
-          banks = int_pow(2, ramsize) / 2;      // banks = 1,2,4
-          for (size_t i = 0; i < banks; i++) {  // 8K Banks ($6000-$7FFF)
-            write_prg_byte(0x8000, 0x80);       // Clear Register
-            write_mmc1_byte(0x8000, 1 << 3);
-            write_mmc1_byte(0xE000, 0);
-            if (banks == 4)  // 32K
-              write_mmc1_byte(0xA000, i << 2);
-            else
-              write_mmc1_byte(0xA000, i << 3);
-            dumpPRG8KiB(base);  // 8K
-          }
+        case 155:  // 8K/16K/32K
+          visitMmc1Sram_NES(base, false);
           break;
 
         case 4:                                                                // 1K/8K (MMC6/MMC3)
@@ -4628,7 +4636,6 @@ void writeRAM() {
   } else {
     fileBrowser(FS(SharedFlashText::textSelectRAMFile));
     word base = 0x6000;
-    uint16_t banks;
 
     resetStorageAndAppendPath();
 
@@ -4645,18 +4652,8 @@ void writeRAM() {
           break;                                       // SWITCH MUST BE IN OFF POSITION
 
         case 1:
-        case 155:
-          banks = int_pow(2, ramsize) / 2;      // banks = 1,2,4
-          for (size_t i = 0; i < banks; i++) {  // 8K Banks ($6000-$7FFF)
-            write_prg_byte(0x8000, 0x80);       // Clear Register
-            write_mmc1_byte(0x8000, 1 << 3);    // PRG ROM MODE 32K
-            write_mmc1_byte(0xE000, 0);         // PRG RAM ENABLED
-            if (banks == 4)                     // 32K
-              write_mmc1_byte(0xA000, i << 2);
-            else
-              write_mmc1_byte(0xA000, i << 3);
-            writeBankPRG(0x0, 0x2000, base);  // 8K
-          }
+        case 155:  // 8K/16K/32K
+          visitMmc1Sram_NES(base, true);
           break;
 
         case 4:                                   // 1K/8K (MMC6/MMC3)
