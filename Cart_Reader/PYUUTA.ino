@@ -82,9 +82,9 @@ void pyuutaMenu()
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_PYUUTA();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -171,7 +171,7 @@ void readSegment_PYUUTA(uint32_t startaddr, uint32_t endaddr)
       uint8_t temp = readData_PYUUTA(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -201,7 +201,7 @@ void readROM_PYUUTA()
     PORTH |= (1 << 3); // /CS0(PH3) HIGH
   }
   PORTH |= (1 << 4); // /DBIN(PH4) HIGH
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

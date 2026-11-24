@@ -63,9 +63,9 @@ void gbaMenu() {
         cartSize *= 0x100000;
       display_Clear();
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_GBA();
-      sd.chdir("/");
+      changeToStorageRoot();
       if (!PcLink::usingPcStorage()) {
         compare_checksum_GBA();
         compareCRC("gba.txt", 0, 1, 0);
@@ -81,7 +81,7 @@ void gbaMenu() {
     case 1:
       // Read save
       display_Clear();
-      sd.chdir("/");
+      changeToStorageRoot();
       {
         const uint32_t startedAt = PcLink::hostTime();
         const byte detectedSaveType = getSaveType();
@@ -134,7 +134,7 @@ void gbaMenu() {
     case 2:
       // Write save
       display_Clear();
-      sd.chdir("/");
+      changeToStorageRoot();
       switch (getSaveType()) {
         case 1:
           // 4K EEPROM
@@ -293,25 +293,25 @@ void repro369in1Menu() {
   switch (menu369) {
     case 0:
       display_Clear();
-      sd.chdir("/");
+      changeToStorageRoot();
       read369in1(0, 0);
       break;
 
     case 1:
       display_Clear();
-      sd.chdir("/");
+      changeToStorageRoot();
       flashRepro_GBA(0);
       break;
 
     case 2:
       display_Clear();
-      sd.chdir("/");
+      changeToStorageRoot();
       read369in1(selectBlockNumber(1), selectBlockNumber(0));
       break;
 
     case 3:
       display_Clear();
-      sd.chdir("/");
+      changeToStorageRoot();
       flashRepro_GBA(1);
       break;
 
@@ -838,7 +838,7 @@ void getCartInfo_GBA() {
           break;
       }
       // Close the file:
-      myFile.close();
+      closeCurrentFile();
 
 #ifdef ENABLE_GLOBAL_LOG
       // Enable log again
@@ -1065,7 +1065,7 @@ void readROM_GBA() {
       sprintf(tempStr, "Fixing ROM padding (0x%02X)", retryPaddingByteGBA);
       println_Msg(tempStr);
     }
-    myFile.close();
+    closeCurrentFile();
     return;
   }
   PcLink::profileBegin();
@@ -1102,7 +1102,7 @@ void readROM_GBA() {
       prefetchHighGBA=(uint8_t)(nextWord>>16);
       PcLink::preparePrefetch(prefetchWordGBA);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     if(tryPrefetch) {
       // Consume before progress/LED console messages reuse PcLink::data.
       prefetched=PcLink::finishPrefetch(sdBuffer);
@@ -1125,7 +1125,7 @@ void readROM_GBA() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   PcLink::profileEnd();
   if(usePrefetch) {
     PcConsole.print(F("[Prefetch] GBA blocks=")); PcConsole.println(prefetchedBlocks);
@@ -1148,8 +1148,8 @@ boolean compare_checksum_GBA() {
   // If file exists
   if (myFile.open(fileName, O_READ)) {
     // Read rom header
-    myFile.read(sdBuffer, 512);
-    myFile.close();
+    readSdBufferBlock();
+    closeCurrentFile();
 
     // Calculate Checksum and turn into string
     char calcChecksumStr[3];
@@ -1201,10 +1201,10 @@ void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
     }
 
     // Write sdBuffer to file
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   // Signal end of process
   print_STR(done_STR, 1);
@@ -1214,7 +1214,7 @@ void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
 void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
     filePath[0] = '\0';
-    sd.chdir("/");
+    changeToStorageRoot();
     fileBrowser(FS(SharedFlashText::textSelectSrmFile));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
@@ -1230,7 +1230,7 @@ void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
 
     for (uint32_t currAddress = 0; currAddress < sramSize; currAddress += 512) {
       //fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       for (int c = 0; c < 512; c++) {
         // Write byte
@@ -1238,7 +1238,7 @@ void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
     display_Update();
 
@@ -1259,7 +1259,7 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
 
     for (unsigned long currAddress = 0; currAddress < sramSize; currAddress += 512) {
       //fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       for (int c = 0; c < 512; c++) {
         // Read byte
@@ -1269,7 +1269,7 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
 
     if (writeErrors == 0) {
       println_Msg(FS(SharedFlashText::textVerifiedOK));
@@ -1339,10 +1339,10 @@ void readFRAM_GBA(unsigned long framSize) {
       sdBuffer[c] = PINC;
     }
     // Write sdBuffer to file
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   // Signal end of process
   print_STR(done_STR, 1);
@@ -1366,7 +1366,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
 
   if (browseFile) {
     filePath[0] = '\0';
-    sd.chdir("/");
+    changeToStorageRoot();
     fileBrowser(FS(SharedFlashText::textSelectSrmFile));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
@@ -1378,7 +1378,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
   if (openSelectedFileForRead()) {
     for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
       //fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       for (int c = 0; c < 512; c++) {
         // Output Data on PORTC
@@ -1409,7 +1409,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
     display_Update();
 
@@ -1441,7 +1441,7 @@ unsigned long verifyFRAM_GBA(unsigned long framSize) {
 
     for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
       //fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       for (int c = 0; c < 512; c++) {
         // Pull OE_SRAM(PH6) HIGH
@@ -1472,7 +1472,7 @@ unsigned long verifyFRAM_GBA(unsigned long framSize) {
     }
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     return writeErrors;
   } else {
     print_Error(open_file_STR);
@@ -1720,10 +1720,10 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, bool cl
       sdBuffer[c] = readByteFlash_GBA(currAddress + c);
     }
     // Write sdBuffer to file
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
   if (closeFile)
-    myFile.close();
+    closeCurrentFile();
 
   // Set CS_FLASH(PH0) high
   PORTH |= (1 << 0);
@@ -1758,7 +1758,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
 
   if (browseFile) {
     filePath[0] = '\0';
-    sd.chdir("/");
+    changeToStorageRoot();
     fileBrowser(FS(SharedFlashText::textSelectFlaFile));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
@@ -1781,7 +1781,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
     if (!isAtmel) {
       for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 512) {
         //fill sdBuffer
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
 
         for (int c = 0; c < 512 && (currAddress + c) < flashSize; c++) {
           // Write command sequence
@@ -1814,7 +1814,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
     PORTH |= (1 << 0);
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     print_STR(done_STR, 1);
     display_Update();
 
@@ -1855,7 +1855,7 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
     myFile.seekCur(pos);
 
   for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
-    myFile.read(sdBuffer, 512);
+    readSdBufferBlock();
 
     for (int c = 0; c < 512 && (currAddress + c) < flashSize; c++) {
       // Read byte
@@ -1864,7 +1864,7 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
       }
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   // Set CS_FLASH(PH0) high
   PORTH |= (1 << 0);
@@ -1886,7 +1886,7 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
 void writeEeprom_GBA(word eepSize) {
   // Launch Filebrowser
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(FS(SharedFlashText::textSelectEepFile));
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
@@ -1899,7 +1899,7 @@ void writeEeprom_GBA(word eepSize) {
   if (openSelectedFileForRead()) {
     for (word i = 0; i < eepSize * 16; i += 64) {
       // Fill romBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       // Disable interrupts for more uniform clock pulses
       noInterrupts();
       // Write 512 bytes
@@ -1911,7 +1911,7 @@ void writeEeprom_GBA(word eepSize) {
     }
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     print_STR(done_STR, 1);
     display_Update();
   } else {
@@ -1940,12 +1940,12 @@ void readEeprom_GBA(word eepSize) {
     interrupts();
 
     // Write sdBuffer to file
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
 
     // Wait
     delayMicroseconds(200);
   }
-  myFile.close();
+  closeCurrentFile();
 }
 
 // Send address as bits to eeprom
@@ -2187,7 +2187,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
       }
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   if (wrError == 0) {
     println_Msg(FS(SharedFlashText::textVerifiedOK));
@@ -2529,7 +2529,7 @@ void writeIntel4000_GBA() {
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < 0x20000; currSdBuffer += 512) {
       // Fill SD buffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       // Write 32 words at a time
       for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 64) {
@@ -2577,7 +2577,7 @@ void writeMSP55LV128_GBA() {
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < 0x10000; currSdBuffer += 512) {
       // Fill SD buffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       // Write 16 words at a time
       for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 32) {
@@ -2619,7 +2619,7 @@ void writeMX29GL128E_GBA() {
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < 0x20000; currSdBuffer += 512) {
       // Fill SD buffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       // Write 32 words at a time
       for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 64) {
@@ -2663,7 +2663,7 @@ boolean verifyFlashrom_GBA() {
       blinkLED();
       for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
         // Fill SD buffer
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
 
         for (int currByte = 0; currByte < 512; currByte += 2) {
           // Join two bytes into one word
@@ -2672,14 +2672,14 @@ boolean verifyFlashrom_GBA() {
           // Compare both
           if (readWord_GBA(currSector + currSdBuffer + currByte) != currWord) {
             writeErrors++;
-            myFile.close();
+            closeCurrentFile();
             return 0;
           }
         }
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     if (writeErrors == 0) {
       return 1;
     } else {
@@ -2803,7 +2803,7 @@ void read369in1(byte blockNumber, byte fileSizeByte) {
     }
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 
 // Erase 369-in-1 repro
@@ -2983,7 +2983,7 @@ void flashRepro_GBA(boolean option) {
 
     // Launch file browser
     filePath[0] = '\0';
-    sd.chdir("/");
+    changeToStorageRoot();
     fileBrowser(F("Select gba file"));
     display_Clear();
     display_Update();
@@ -3074,7 +3074,7 @@ void flashRepro_GBA(boolean option) {
       }
 
       // Close the file:
-      myFile.close();
+      closeCurrentFile();
       if (flashid != 0x8812) {
         // Verify
         print_STR(verifying_STR, 0);

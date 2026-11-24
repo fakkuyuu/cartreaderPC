@@ -119,9 +119,9 @@ void a2600Menu() {
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_2600();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -190,7 +190,7 @@ void readSegmentF8_2600(uint16_t startaddr, uint16_t endaddr, uint16_t bankaddr)
       uint8_t temp = readData_2600(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -369,7 +369,7 @@ void readROM_2600() {
           sdBuffer[y] = readData_2600(0x1008);  // Data Fetcher 0
           readData_2600(0x1009);                // Data Fetcher 1
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
       break;
 
@@ -547,7 +547,7 @@ void readROM_2600() {
     default:
       break;
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

@@ -104,9 +104,9 @@ void arcMenu() {
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_ARC();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -146,7 +146,7 @@ void readSegment_ARC(uint16_t startaddr, uint16_t endaddr) {
       uint8_t temp = readData_ARC(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -163,7 +163,7 @@ void readROM_ARC() {
       }
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

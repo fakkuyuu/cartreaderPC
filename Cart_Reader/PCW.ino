@@ -147,23 +147,23 @@ void pcwMenu()
   switch (mainMenu) {
     case 0:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       check_multi_PCW();
       if (multipack)
         readMultiROM_PCW();
       else
         readSingleROM_PCW();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 1:
       // Read SRAM
-      sd.chdir("/");
+      changeToStorageRoot();
       display_Clear();
       println_Msg(FS(SharedFlashText::textReadingSRAM));
       display_Update();
       readSRAM_PCW();
-      sd.chdir("/");
+      changeToStorageRoot();
       // Wait for user input
       // Prints string out of the common strings array either with or without newline
       print_STR(press_button_STR, 1);
@@ -172,7 +172,7 @@ void pcwMenu()
 
     case 2:
       // Write SRAM
-      sd.chdir("/");
+      changeToStorageRoot();
       fileBrowser(FS(SharedFlashText::textSelectSRMFile));
       display_Clear();
       writeSRAM_PCW();
@@ -450,12 +450,12 @@ void readSingleROM_PCW()
     for (unsigned int x = 0; x < 512; x++) {
       sdBuffer[x] = read_rom_byte_PCW(address + x);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     progress += 512;
     draw_progressbar(progress, rom_size);
   }
   myFile.flush();
-  myFile.close();
+  closeCurrentFile();
 
   // Compare CRC32 to database and rename ROM if found
   // Arguments: database name, precalculated crc string or 0 to calculate, rename rom or not, starting offset
@@ -583,7 +583,7 @@ void readMultiROM_PCW()
     for (unsigned int x = 0; x < 512; x++) {
       sdBuffer[x] = read_rom_byte_PCW(address + x);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     progress += 512;
     draw_progressbar(progress, rom_size);
   }
@@ -595,13 +595,13 @@ void readMultiROM_PCW()
     for (unsigned int x = 0; x < 512; x++) {
       sdBuffer[x] = read_rom_byte_PCW(address + x);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     progress += 512;
     draw_progressbar(progress, rom_size);
   }
 
   myFile.flush();
-  myFile.close();
+  closeCurrentFile();
 
   // Reset Bank
   switchBank_PCW(0);
@@ -635,10 +635,10 @@ void readSRAM_PCW()
     for (unsigned int x = 0; x < 512; x++) {
       sdBuffer[x] = read_ram_byte_1A_PCW(address + x);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
   myFile.flush();
-  myFile.close();
+  closeCurrentFile();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   println_Msg(FS(SharedFlashText::pathSeparator));
@@ -666,12 +666,12 @@ void writeSRAM_PCW()
     if (openSelectedFileForRead()) {
       read_setup_PCW();
       for (unsigned int address = 0x0; address < 0x8000; address += 512) {  // 32K
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (unsigned int x = 0; x < 512; x++) {
           write_ram_byte_1A_PCW(address + x, sdBuffer[x]);
         }
       }
-      myFile.close();
+      closeCurrentFile();
       print_STR(done_STR, 1);
       display_Update();
     } else {
@@ -700,7 +700,7 @@ unsigned long verifySRAM_PCW()
         }
       }
     }
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_FatalError(sd_error_STR);
   }

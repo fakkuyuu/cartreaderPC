@@ -227,7 +227,7 @@ void n64ControllerMenu() {
       display_Update();
       // Change to root
       filePath[0] = '\0';
-      sd.chdir("/");
+      changeToStorageRoot();
       // Launch file browser
       fileBrowser(F("Select mpk file"));
       display_Clear();
@@ -262,11 +262,11 @@ void n64CartMenu() {
   switch (mainMenu) {
     case 0:
       display_Clear();
-      sd.chdir("/");
+      changeToStorageRoot();
 #ifndef OPTION_N64_FASTCRC
       // Dumping ROM slow
       readRom_N64();
-      sd.chdir("/");
+      changeToStorageRoot();
       compareCRC("n64.txt", 0, 1, 0);
 #else
       // Dumping ROM fast
@@ -283,7 +283,7 @@ void n64CartMenu() {
       break;
 
     case 1:
-      sd.chdir("/");
+      changeToStorageRoot();
       display_Clear();
 
       if (saveType == 1) {
@@ -315,7 +315,7 @@ void n64CartMenu() {
 
     case 2:
       filePath[0] = '\0';
-      sd.chdir("/");
+      changeToStorageRoot();
       if (saveType == 1) {
         // Launch file browser
         fileBrowser(F("Select sra file"));
@@ -1683,7 +1683,7 @@ byte readBlock(byte* output, word myAddress) {
   interrupts();
 
   if (error) {
-    myFile.close();
+    closeCurrentFile();
     println_Msg(FS(SharedFlashText::textControllerPakWas));
     println_Msg(FS(SharedFlashText::textNotDumpedDueToA));
     print_FatalError(F("read timeout"));
@@ -1693,7 +1693,7 @@ byte readBlock(byte* output, word myAddress) {
   if (response_crc != dataCRC(output)) {
     display_Clear();
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     println_Msg(FS(SharedFlashText::textControllerPakWas));
     println_Msg(FS(SharedFlashText::textNotDumpedDueToA));
     print_FatalError(F("protocol CRC error"));
@@ -1705,7 +1705,7 @@ byte readBlock(byte* output, word myAddress) {
 // reads the MPK file to the sd card
 void readMPK() {
   // Change to root
-  sd.chdir("/");
+  changeToStorageRoot();
   // Make MPK directory
   sd.mkdir("N64/MPK", true);
   // Change to MPK directory
@@ -1769,7 +1769,7 @@ void readMPK() {
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   crcFile.close();
 }
 
@@ -1799,7 +1799,7 @@ void verifyCRC() {
   // Controller paks, which all have 32kB of space, are mapped between 0x0000 – 0x7FFF
   for (word currSdBuffer = 0x0000; currSdBuffer < 0x8000; currSdBuffer += 512) {
     // Read 32 bytes into SD buffer
-    myFile.read(sdBuffer, 512);
+    readSdBufferBlock();
 
     // Compare 32 byte block CRC to CRC from file
     for (word currBlock = 0; currBlock < 512; currBlock += 32) {
@@ -1815,7 +1815,7 @@ void verifyCRC() {
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   crcFile.close();
 
   if (writeErrors == 0) {
@@ -1957,7 +1957,7 @@ void writeMPK() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_FatalError(open_file_STR);
   }
@@ -2010,7 +2010,7 @@ void verifyMPK() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   if (writeErrors == 0) {
     println_Msg(F("Written successfully"));
     display_Update();
@@ -2104,7 +2104,7 @@ void printCartInfo_N64() {
   char tempStr[5];
 
   // Change to root dir
-  sd.chdir("/");
+  changeToStorageRoot();
 
   if (myFile.open("n64.txt", O_READ)) {
     if (myFile.isPc()) myFile.findRecord(1, checksumStr);
@@ -2144,7 +2144,7 @@ void printCartInfo_N64() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     return result;
   }
   else {
@@ -2213,7 +2213,7 @@ void getCartInfo_N64() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_FatalError(FS(SharedFlashText::textN64TxtMissing));
   }
@@ -2403,7 +2403,7 @@ void writeEeprom_N64() {
       }
 
       // Close the file:
-      myFile.close();
+      closeCurrentFile();
       print_STR(done_STR, 1);
       display_Update();
       delay(600);
@@ -2472,7 +2472,7 @@ void readEeprom_N64() {
       myFile.write(sdBuffer, sizeof(sdBuffer));
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_FatalError(FS(SharedFlashText::textSavetypeError));
   }
@@ -2502,7 +2502,7 @@ unsigned long verifyEeprom_N64() {
         }
       }
       // Close the file:
-      myFile.close();
+      closeCurrentFile();
     } else {
       // SD Error
       writeErrors = 999999;
@@ -2533,7 +2533,7 @@ void writeSram(unsigned long sramSize) {
       for (unsigned long currByte = sramBase; currByte < (sramBase + sramSize); currByte += 512) {
 
         // Read save from SD into buffer
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
 
         // Set the address for the next 512 bytes
         setAddress_N64(currByte);
@@ -2547,7 +2547,7 @@ void writeSram(unsigned long sramSize) {
         }
       }
       // Close the file:
-      myFile.close();
+      closeCurrentFile();
       print_STR(done_STR, 1);
       display_Update();
     } else {
@@ -2598,7 +2598,7 @@ void readSram(unsigned long sramSize, byte flashramType) {
     myFile.write(sdBuffer, bufferSize);
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 
 unsigned long verifySram(unsigned long sramSize, byte flashramType) {
@@ -2635,7 +2635,7 @@ unsigned long verifySram(unsigned long sramSize, byte flashramType) {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_FatalError(sd_error_STR);
   }
@@ -2743,7 +2743,7 @@ void writeFram(byte flashramType) {
       }
       println_Msg("");
       // Close the file:
-      myFile.close();
+      closeCurrentFile();
     } else {
       print_FatalError(sd_error_STR);
     }
@@ -2993,7 +2993,7 @@ void readRom_N64() {
                         PcLink::RETRY_PROFILE_N64, nullptr, true, n64RetryProgress)) {
     // The retry transport returns only after the N64-specific 2 Mbps handoff is acknowledged.
     PcConsole.println(F("[Reader] N64 2M close request"));
-    myFile.close();
+    closeCurrentFile();
     PcConsole.println(F("[Reader] N64 2M close response received"));
     return;
   }
@@ -3011,7 +3011,7 @@ void readRom_N64() {
       sdBuffer[c] = myWord >> 8;
       sdBuffer[c + 1] = myWord & 0xFF;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
 
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
@@ -3020,7 +3020,7 @@ void readRom_N64() {
     PORTC |= (1 << 1);
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 #else
 // dumping rom fast
@@ -3057,7 +3057,7 @@ uint32_t readRom_N64() {
                         PcLink::RETRY_PROFILE_N64, nullptr, true, n64RetryProgress)) {
     // The retry transport returns only after the N64-specific 2 Mbps handoff is acknowledged.
     PcConsole.println(F("[Reader] N64 2M close request"));
-    myFile.close();
+    closeCurrentFile();
     PcLink::profileEnd();
     PcConsole.println(F("[Reader] N64 2M close response received"));
     return oldcrc32;
@@ -3101,7 +3101,7 @@ uint32_t readRom_N64() {
     }
 
     PcLink::profileReadEnd(readStart);
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
 
     // Set the address for the next 512 bytes to dump
     readStart=PcLink::profileReadStart();
@@ -3134,14 +3134,14 @@ uint32_t readRom_N64() {
     }
 
     PcLink::profileReadEnd(readStart);
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
 
     processedProgressBar += 1024;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   // Return checksum
   PcLink::profileEnd();
@@ -3224,7 +3224,7 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
   myFile.println(FS(FSTRING_SPACE));
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 #endif
 
@@ -3407,7 +3407,7 @@ void flashRepro_N64() {
 
   // Launch file browser
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(FS(SharedFlashText::textSelectZ64File));
   display_Clear();
   display_Update();
@@ -3510,7 +3510,7 @@ void flashRepro_N64() {
       }
 
       // Close the file:
-      myFile.close();
+      closeCurrentFile();
 
       // Verify
       print_STR(verifying_STR, 1);
@@ -3524,7 +3524,7 @@ void flashRepro_N64() {
       }
     } else {
       // Close the file
-      myFile.close();
+      closeCurrentFile();
       print_Error(FS(SharedFlashText::textFailed));
     }
   } else {
@@ -3973,7 +3973,7 @@ void writeIntel4400_N64() {
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
       // Fill SD buffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       // Write 32 words at a time
       for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 64) {
@@ -4034,7 +4034,7 @@ void writeMSP55LV100_N64(unsigned long sectorSize) {
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < sectorSize; currSdBuffer += 512) {
       // Fill SD buffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       // Write 32 bytes at a time
       for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 32) {
@@ -4103,7 +4103,7 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < sectorSize; currSdBuffer += 512) {
       // Fill SD buffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       // Write 32 bytes at a time
       for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += bufferSize) {
@@ -4172,7 +4172,7 @@ void writeFlashrom_N64(unsigned long sectorSize) {
     // Write to flashrom
     for (unsigned long currSdBuffer = 0; currSdBuffer < sectorSize; currSdBuffer += 512) {
       // Fill SD buffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       for (int currByte = 0; currByte < 512; currByte += 2) {
         // Join two bytes into one word
         word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
@@ -4211,7 +4211,7 @@ unsigned long verifyFlashrom_N64() {
       blinkLED();
       for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
         // Fill SD buffer
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (int currByte = 0; currByte < 512; currByte += 2) {
           // Join two bytes into one word
           word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
@@ -4224,7 +4224,7 @@ unsigned long verifyFlashrom_N64() {
             if (writeErrors > 20) {
               print_Msg(F("More than "));
               // Close the file:
-              myFile.close();
+              closeCurrentFile();
               return writeErrors;
             }
           }
@@ -4234,7 +4234,7 @@ unsigned long verifyFlashrom_N64() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     return writeErrors;
   } else {
     print_STR(open_file_STR, 1);
@@ -4283,7 +4283,7 @@ void flashGameshark_N64() {
 
     // Launch file browser
     filePath[0] = '\0';
-    sd.chdir("/");
+    changeToStorageRoot();
     fileBrowser(FS(SharedFlashText::textSelectZ64File));
     display_Update();
 
@@ -4321,7 +4321,7 @@ void flashGameshark_N64() {
       writeGameshark_N64();
 
       // Close the file:
-      myFile.close();
+      closeCurrentFile();
 
       // Verify
       print_STR(verifying_STR, 0);
@@ -4427,10 +4427,10 @@ void backupGameshark_N64() {
       sdBuffer[c] = hiByte;
       sdBuffer[c + 1] = loByte;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 
 void eraseGameshark_N64() {
@@ -4588,7 +4588,7 @@ unsigned long verifyGameshark_N64() {
     for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
       for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
         // Fill SD buffer
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (int currByte = 0; currByte < 512; currByte += 2) {
           // Join two bytes into one word
           word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
@@ -4605,7 +4605,7 @@ unsigned long verifyGameshark_N64() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     return writeErrors;
   } else {
     print_STR(open_file_STR, 1);
@@ -4640,7 +4640,7 @@ void flashXplorer_N64() {
 
     // Launch file browser
     filePath[0] = '\0';
-    sd.chdir("/");
+    changeToStorageRoot();
     fileBrowser(F("Select XP64 rom file"));
     display_Update();
 
@@ -4674,7 +4674,7 @@ void flashXplorer_N64() {
       writeXplorer_N64();
 
       // Close the file:
-      myFile.close();
+      closeCurrentFile();
 
       // Verify
       print_STR(verifying_STR, 0);
@@ -4764,10 +4764,10 @@ void backupXplorer_N64() {
       sdBuffer[c] = hiByte;
       sdBuffer[c + 1] = loByte;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   println_Msg(F("Done."));
 }
 
@@ -4895,7 +4895,7 @@ unsigned long verifyXplorer_N64() {
     for (unsigned long currSector = 0; currSector < 262144; currSector += 131072) {
       for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
         // Fill SD buffer
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (int currByte = 0; currByte < 512; currByte += 2) {
           // Join two bytes into one word
           word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
@@ -4912,7 +4912,7 @@ unsigned long verifyXplorer_N64() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     return writeErrors;
   } else {
     print_STR(open_file_STR, 1);

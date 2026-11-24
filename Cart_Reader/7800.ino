@@ -163,9 +163,9 @@ void a7800Menu() {
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_7800();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -230,7 +230,7 @@ void readSegment_7800(uint16_t startaddr, uint32_t endaddr) {
       uint8_t temp = readData_7800(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -436,7 +436,7 @@ void readROM_7800() {
       readSegment_7800(0xC000, 0x10000);  // Bank 7   + 16K
       break;
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

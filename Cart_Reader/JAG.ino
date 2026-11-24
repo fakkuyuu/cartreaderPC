@@ -125,7 +125,7 @@ void jagMenu() {
     case 4:
       if (jagSaveType == 0) {
         // Launch file browser
-        sd.chdir("/");
+        changeToStorageRoot();
         fileBrowser(FS(FSTRING_SELECT_FILE));
         display_Clear();
         writeJagEEP();
@@ -151,7 +151,7 @@ void jagMenu() {
       display_Clear();
       if (jagSaveType == 1) {
         // Launch file browser
-        sd.chdir("/");
+        changeToStorageRoot();
         fileBrowser(FS(FSTRING_SELECT_FILE));
         display_Clear();
         writeJagFLASH();
@@ -632,13 +632,13 @@ void readJagROM() {
       sdBuffer[d + 3] = tempDataLO & 0xFF;
       d += 4;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     d = 0;
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   compareCRC("jag.txt", 0, 1, 0);
 
@@ -944,7 +944,7 @@ void readJagEEP() {
         sdBuffer[(i * 2)] = jagEepBuf[1];
         sdBuffer[(i * 2) + 1] = jagEepBuf[0];
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
   } else {  // 93C46/93C56 - 64/128 WORDS
     for (word currWord = 0; currWord < eepEnd; currWord++) {
@@ -956,7 +956,7 @@ void readJagEEP() {
   }
   EepromresetArduino();
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   println_Msg(F(""));
   print_Msg(FS(SharedFlashText::textSavedTo));
   println_Msg(folder);
@@ -981,7 +981,7 @@ void writeJagEEP() {
     word eepEnd = int_pow(2, jagEepSize) * 64;  // WORDS
     if (jagEepSize > 1) {                       // 93C66/93C76/93C86
       for (word currWord = 0; currWord < eepEnd; currWord += 256) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (int i = 0; i < 256; i++) {
           jagEepBuf[0] = sdBuffer[(i * 2)];
           jagEepBuf[1] = sdBuffer[(i * 2) + 1];
@@ -999,7 +999,7 @@ void writeJagEEP() {
     EepromEWDS();  // ERASE/WRITE DISABLE
     EepromresetArduino();
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     println_Msg(F(""));
     println_Msg(F("DONE"));
     display_Update();
@@ -1345,12 +1345,12 @@ void readJagMEMORY() {
     for (int currByte = 0; currByte < 512; currByte++) {
       sdBuffer[currByte] = readBYTE_MEMROM(currBuffer + currByte);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   println_Msg(FS(SharedFlashText::textPressButton));
   wait();
@@ -1405,12 +1405,12 @@ void readJagFLASH() {
     for (int i = 0; i < 512; i++) {
       sdBuffer[i] = readBYTE_FLASH((currByte + i) * 4);  // Address Shift A2..A18
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   println_Msg(FS(SharedFlashText::pathSeparator));
@@ -1449,7 +1449,7 @@ void writeJagFLASH() {
       draw_progressbar(processedProgressBar, totalProgressBar);
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     println_Msg(F("WRITE COMPLETE"));
     display_Update();
   } else {
@@ -1483,7 +1483,7 @@ unsigned long verifyJagFLASH() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   } else {
     println_Msg(FS(SharedFlashText::textSDERROR));
     println_Msg(FS(SharedFlashText::textPressButtonToReset));

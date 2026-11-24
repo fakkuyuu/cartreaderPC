@@ -133,9 +133,9 @@ void ljproMenu()
   {
     case 0:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_LJPRO();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 1:
@@ -345,7 +345,7 @@ void readSerialData_U1(uint32_t startaddr, uint32_t endaddr)
     for (int x = 0; x < 512; x++) {
       sdBuffer[x] = readSerial_U1();
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -355,7 +355,7 @@ void readSerialData_U2(uint32_t startaddr, uint32_t endaddr)
     for (int x = 0; x < 512; x++) {
       sdBuffer[x] = readSerial_U2();
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -402,7 +402,7 @@ void readData_U1(uint32_t startaddr, uint32_t endaddr)
       pulseClock_LJPRO(1);
       sdBuffer[x] = PINF;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -413,7 +413,7 @@ void readData_U2(uint32_t startaddr, uint32_t endaddr)
       pulseClock_LJPRO(1);
       sdBuffer[x] = PINC;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -604,7 +604,7 @@ void readROM_LJPRO()
       CS2_HIGH; // U2 HIGH
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

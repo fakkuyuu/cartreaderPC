@@ -83,7 +83,7 @@ bool gbxFlashCFI() {
   mode = CORE_GB;
 
   // Change working dir to root
-  sd.chdir("/");
+  changeToStorageRoot();
   // Launch filebrowser
   filePath[0] = '\0';
 
@@ -289,7 +289,7 @@ void gbxMenu() {
 
               //Flash first bank with erase
               // Change working dir to root
-              sd.chdir("/");
+              changeToStorageRoot();
               //MBC3, standard command set, with erase
               writeFlash_GB(3, 0, 1);
               // Prints string out of the common strings array either with or without newline
@@ -309,7 +309,7 @@ void gbxMenu() {
 
               // Flash second bank without erase
               // Change working dir to root
-              sd.chdir("/");
+              changeToStorageRoot();
               //MBC3, standard command set, without erase
               writeFlash_GB(3, 0, 0);
 
@@ -335,7 +335,7 @@ void gbxMenu() {
               }
 
               // Change working dir to root
-              sd.chdir("/");
+              changeToStorageRoot();
               //MBC, command set, with/without erase
               writeFlash_GB(selectedMBC, selectedCommand, selectedErase);
               feedbackPressAndReset();
@@ -531,7 +531,7 @@ void gbMenu() {
     case 0:
       display_Clear();
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_GB();
       if (!PcLink::usingPcStorage()) compare_checksums_GB();
 #ifdef ENABLE_GLOBAL_LOG
@@ -544,7 +544,7 @@ void gbMenu() {
       // Does cartridge have SRAM
       if (lastByte > 0) {
         // Change working dir to root
-        sd.chdir("/");
+        changeToStorageRoot();
         if (romType == 32)
           readSRAMFLASH_MBC6_GB();
         else if (romType == 34)
@@ -562,7 +562,7 @@ void gbMenu() {
       // Does cartridge have SRAM
       if (lastByte > 0) {
         // Change working dir to root
-        sd.chdir("/");
+        changeToStorageRoot();
         filePath[0] = '\0';
         fileBrowser(FS(SharedFlashText::textSelectSavFile));
 
@@ -1283,7 +1283,7 @@ void readROM_GB() {
       for (int i = 0; i < 512; i++) {
         sdBuffer[i] = readByte_GB(romAddress + i);
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
       romAddress += 512;
       processedProgressBar += 512;
       draw_progressbar(processedProgressBar, totalProgressBar);
@@ -1291,7 +1291,7 @@ void readROM_GB() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 
 // Calculate checksum
@@ -1305,12 +1305,12 @@ unsigned int calc_checksum_GB(char* fileName) {
   if (myFile.open(fileName, O_READ)) {
     //calcFilesize = myFile.fileSize() * 8 / 1024 / 1024; // unused
     for (i = 0; i < (myFile.fileSize() / 512); i++) {
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       for (c = 0; c < 512; c++) {
         calcChecksum += sdBuffer[c];
       }
     }
-    myFile.close();
+    closeCurrentFile();
     // Subtract checksum bytes
     calcChecksum -= eepbit[6];
     calcChecksum -= eepbit[7];
@@ -1411,7 +1411,7 @@ void readSRAM_GB() {
     writeByte_GB(0x0000, 0x00);
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
 
     // Signal end of process
     print_Msg(FS(SharedFlashText::textSavedTo));
@@ -1456,7 +1456,7 @@ void writeSRAM_GB() {
       writeByte_GB(0x0000, 0x00);
 
       // Close the file:
-      myFile.close();
+      closeCurrentFile();
       display_Clear();
       println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
       display_Update();
@@ -1509,7 +1509,7 @@ unsigned long verifySRAM_GB() {
       writeByte_GB(0x0000, 0x00);
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     return writeErrors;
   } else {
     print_FatalError(open_file_STR);
@@ -1568,7 +1568,7 @@ void readSRAMFLASH_MBC6_GB() {
       for (int i = 0; i < 512; i++) {
         sdBuffer[i] = readByte_GB(romAddress + i);
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
       romAddress += 512;
       processedProgressBar += 512;
       draw_progressbar(processedProgressBar, totalProgressBar);
@@ -1578,7 +1578,7 @@ void readSRAMFLASH_MBC6_GB() {
   disableFlashSaveMemory();
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   // Signal end of process
   println_Msg(FS(FSTRING_OK));
@@ -1654,7 +1654,7 @@ void writeSRAMFLASH_MBC6_GB() {
           delay(1);
           if (lives-- <= 0) {
             disableFlashSaveMemory();
-            myFile.close();
+            closeCurrentFile();
             display_Clear();
             print_FatalError(F("Error erasing FLASH sector."));
           }
@@ -1688,7 +1688,7 @@ void writeSRAMFLASH_MBC6_GB() {
           delay(1);
           if (lives-- <= 0) {
             disableFlashSaveMemory();
-            myFile.close();
+            closeCurrentFile();
             display_Clear();
             print_FatalError(F("Error writing to FLASH."));
           }
@@ -1702,7 +1702,7 @@ void writeSRAMFLASH_MBC6_GB() {
     disableFlashSaveMemory();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     println_Msg(F("Save writing finished"));
     display_Update();
   } else {
@@ -1761,7 +1761,7 @@ void readEEPROM_MBC7_GB() {
   writeByte_GB(0x4000, 0x00);
 
   myFile.write(sdBuffer, lastByte);
-  myFile.close();
+  closeCurrentFile();
 
   print_STR(done_STR, true);
   display_Update();
@@ -1776,7 +1776,7 @@ void writeEEPROM_MBC7_GB() {
     print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
 
   myFile.read(sdBuffer, lastByte);
-  myFile.close();
+  closeCurrentFile();
 
   display_Clear();
 
@@ -1950,7 +1950,7 @@ void busyCheck_GB(unsigned long address, byte data) {
 void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
   // Launch filebrowser
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
 
@@ -2134,7 +2134,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
         }
 
         while (currAddr <= endAddr) {
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
 
           for (int currByte = 0; currByte < 512; currByte++) {
             // Write command sequence
@@ -2190,7 +2190,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
         }
 
         while (currAddr <= endAddr) {
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
 
           for (int currByte = 0; currByte < 512; currByte++) {
             // Write command sequence
@@ -2237,7 +2237,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
         writeByte_GB(0x4000, 0x0);
 
         for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
 
           for (int currByte = 0; currByte < 512; currByte++) {
             // Write command sequence
@@ -2277,7 +2277,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
       draw_progressbar(0, totalProgressBar);
 
       for (unsigned int currAddr = 0; currAddr < 0x7FFF; currAddr += 512) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
 
         for (int currByte = 0; currByte < 512; currByte++) {
           // Write command sequence
@@ -2335,7 +2335,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
         // Read and verify current bank
         while (currAddr <= endAddr) {
           // Fill sdBuffer from file
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           // Compare with flash content
           for (int i = 0; i < 512; i++) {
             if (readByte_GB(currAddr + i) != sdBuffer[i]) {
@@ -2368,7 +2368,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
         // Read up to 7FFF per bank
         while (romAddress <= 0x7FFF) {
           // Fill sdBuffer
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           // Compare
           for (int i = 0; i < 512; i++) {
             if (readByte_GB(romAddress + i) != sdBuffer[i]) {
@@ -2381,7 +2381,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
     }
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
 
     if (writeErrors == 0) {
       println_Msg(FS(FSTRING_OK));
@@ -2632,7 +2632,7 @@ bool writeCFI_GB() {
       }
 
       while (currAddr <= endAddr) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
 
         for (int currByte = 0; currByte < 512; currByte++) {
           // Write command sequence
@@ -2699,7 +2699,7 @@ bool writeCFI_GB() {
       // Read up to 7FFF per bank
       while (romAddress <= 0x7FFF) {
         // Fill sdBuffer
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         // Compare
         for (int i = 0; i < 512; i++) {
           if (readByte_GB(romAddress + i) != sdBuffer[i]) {
@@ -2710,7 +2710,7 @@ bool writeCFI_GB() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
 
     if (writeErrors == 0) {
       println_Msg(FS(FSTRING_OK));
@@ -2823,7 +2823,7 @@ void readPelican_GB() {
       for (int i = 0; i < 512; i++) {
         sdBuffer[i] = readByte_GB(startAddress + i);
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
       startAddress += 512;
       processedProgressBar += 512;
       draw_progressbar(processedProgressBar, totalProgressBar);
@@ -2831,7 +2831,7 @@ void readPelican_GB() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 
 /******************************************
@@ -2852,7 +2852,7 @@ void send28LF040Potection_GB(bool enable) {
 void writePelican_GB() {
   // Launch filebrowser
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
 
@@ -3018,7 +3018,7 @@ void writePelican_GB() {
 
     if (flashid == 0xBF04) {
       while (currAddr <= endAddr) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
 
         for (int currByte = 0; currByte < 512; currByte++) {
 
@@ -3082,7 +3082,7 @@ void writePelican_GB() {
     // Read up to 3FFF per bank
     while (romAddress < 0x4000) {
       // Fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       // Compare
       for (int i = 0; i < 512; i++) {
         if (readByte_GB(romAddress + i) != sdBuffer[i]) {
@@ -3093,7 +3093,7 @@ void writePelican_GB() {
     }
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   if (writeErrors == 0) {
     println_Msg(FS(FSTRING_OK));
@@ -3149,14 +3149,14 @@ void readMegaMem_GB() {
     for (int i = 0; i < 512; i++) {
       sdBuffer[i] = readByte_GB(startAddress + i);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     startAddress += 512;
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   // Dump the Save Data SST28LF040
   strcpy(fileName, "SaveData");
@@ -3199,7 +3199,7 @@ void readMegaMem_GB() {
       for (int i = 0; i < 512; i++) {
         sdBuffer[i] = readByte_GB(startAddress + i);
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
       startAddress += 512;
       processedProgressBar += 512;
       draw_progressbar(processedProgressBar, totalProgressBar);
@@ -3207,7 +3207,7 @@ void readMegaMem_GB() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 
 /*******************************************************
@@ -3217,7 +3217,7 @@ void readMegaMem_GB() {
 void writeMegaMem_GB() {
   // Write Datel Mega Memory Card Save Storage Chip SST28LF040
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
 
@@ -3334,7 +3334,7 @@ void writeMegaMem_GB() {
 
     if (flashid == 0xBF04) {
       while (currAddr <= endAddr) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
 
         for (int currByte = 0; currByte < 512; currByte++) {
 
@@ -3405,7 +3405,7 @@ void writeMegaMem_GB() {
     // Read up to 3FFF per bank
     while (romAddress < 0x8000) {
       // Fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       // Compare
       for (int i = 0; i < 512; i++) {
         if (readByte_GB(romAddress + i) != sdBuffer[i]) {
@@ -3416,7 +3416,7 @@ void writeMegaMem_GB() {
     }
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   if (writeErrors == 0) {
     println_Msg(FS(FSTRING_OK));
@@ -3506,7 +3506,7 @@ void readGameshark_GB() {
       for (int i = 0; i < 512; i++) {
         sdBuffer[i] = readByte_GB(startAddress + i);
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
       startAddress += 512;
       processedProgressBar += 512;
       draw_progressbar(processedProgressBar, totalProgressBar);
@@ -3514,7 +3514,7 @@ void readGameshark_GB() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 
 /****************************************************
@@ -3550,7 +3550,7 @@ void writeGameshark_GB() {
 
   // Launch filebrowser
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
 
@@ -3619,7 +3619,7 @@ void writeGameshark_GB() {
     currAddr = 0x4000;
 
     while (currAddr <= endAddr) {
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       for (int currByte = 0; currByte < 512; currByte++) {
 
@@ -3669,7 +3669,7 @@ void writeGameshark_GB() {
     // Read up to 1FFF per bank
     while (romAddress < 0x6000) {
       // Fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       // Compare
       for (int i = 0; i < 512; i++) {
         if (readByte_GB(romAddress + i) != sdBuffer[i]) {
@@ -3680,7 +3680,7 @@ void writeGameshark_GB() {
     }
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   if (writeErrors == 0) {
     println_Msg(FS(FSTRING_OK));

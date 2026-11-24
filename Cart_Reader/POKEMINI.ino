@@ -88,9 +88,9 @@ void pokeMenu() {
   switch (mainMenu) {
     case 0:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_POKE();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 1:
@@ -249,11 +249,11 @@ void readROM_POKE() {
       uint8_t temp = readData_POKE(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     progress += 512;
     draw_progressbar(progress, 0x80000);
   }
-  myFile.close();
+  closeCurrentFile();
 
   // compare dump CRC with db values
   compareCRC("pkmn.txt", 0, 1, 0);

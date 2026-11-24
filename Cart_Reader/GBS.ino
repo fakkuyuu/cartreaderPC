@@ -181,7 +181,7 @@ void gbSmartGameOptions() {
     case 0:  // Read Game
       {
         display_Clear();
-        sd.chdir("/");
+        changeToStorageRoot();
         readROM_GB();
         compare_checksum_GBS();
         break;
@@ -189,14 +189,14 @@ void gbSmartGameOptions() {
     case 1:  // Read SRAM
       {
         display_Clear();
-        sd.chdir("/");
+        changeToStorageRoot();
         readSRAM_GB();
         break;
       }
     case 2:  // Write SRAM
       {
         display_Clear();
-        sd.chdir("/");
+        changeToStorageRoot();
         writeSRAM_GB();
         uint32_t wrErrors = verifySRAM_GB();
         if (wrErrors == 0) {
@@ -279,7 +279,7 @@ void gbSmartFlashMenu() {
       {
         // read flash
         display_Clear();
-        sd.chdir("/");
+        changeToStorageRoot();
 
         EEPROM_readAnything(0, foldern);
         sprintf(fileName, "GBS%d.bin", foldern);
@@ -306,7 +306,7 @@ void gbSmartFlashMenu() {
 
         display_Clear();
         filePath[0] = '\0';
-        sd.chdir("/");
+        changeToStorageRoot();
         fileBrowser(FS(SharedFlashText::textSelect4MBFile));
 
         sprintf(filePath, "%s/%s", filePath, fileName);
@@ -412,7 +412,7 @@ void gbSmartReadFlash() {
     for (uint16_t c = 0; c < 512; c++)
       sdBuffer[c] = readByte_GBS(addr + c);
 
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 
   // read rest banks
@@ -425,14 +425,14 @@ void gbSmartReadFlash() {
       for (uint16_t c = 0; c < 512; c++)
         sdBuffer[c] = readByte_GBS(addr + c);
 
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
   }
 
   // back to initial state
   writeByte_GB(0x2100, 0x01);
 
-  myFile.close();
+  closeCurrentFile();
   println_Msg("");
   println_Msg(FS(SharedFlashText::textFinishedReading));
   display_Update();
@@ -505,7 +505,7 @@ void gbSmartWriteFlash(uint32_t start_bank) {
     gbSmartWriteFlashFromMyFile(0x4000);
   }
 
-  myFile.close();
+  closeCurrentFile();
   println_Msg("");
 }
 
@@ -551,7 +551,7 @@ uint32_t gbSmartVerifyFlash() {
     // verify bank 0x00
     dataIn();
     for (uint16_t addr = 0x0000; addr <= 0x3fff; addr += 512) {
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       for (uint16_t c = 0; c < 512; c++) {
         if (readByte_GBS(addr + c) != sdBuffer[c])
@@ -566,7 +566,7 @@ uint32_t gbSmartVerifyFlash() {
 
       dataIn();
       for (uint16_t addr = 0x4000; addr <= 0x7fff; addr += 512) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
 
         for (uint16_t c = 0; c < 512; c++) {
           if (readByte_GBS(addr + c) != sdBuffer[c])
@@ -578,7 +578,7 @@ uint32_t gbSmartVerifyFlash() {
     // back to initial state
     writeByte_GB(0x2100, 0x01);
 
-    myFile.close();
+    closeCurrentFile();
   }
 
   return verified;

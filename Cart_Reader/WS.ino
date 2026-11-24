@@ -134,15 +134,15 @@ void wsMenu() {
     case 0:
       {
         // Read Rom
-        sd.chdir("/");
+        changeToStorageRoot();
         compareChecksum_WS(readROM_WS(filePath, FILEPATH_LENGTH));
-        sd.chdir("/");
+        changeToStorageRoot();
         break;
       }
     case 1:
       {
         // Read Save
-        sd.chdir("/");
+        changeToStorageRoot();
         switch (saveType) {
           case 0: println_Msg(FS(SharedFlashText::textNoSaveForThisGame)); break;
           case 1: readSRAM_WS(); break;
@@ -155,7 +155,7 @@ void wsMenu() {
     case 2:
       {
         // Write Save
-        sd.chdir("/");
+        changeToStorageRoot();
         switch (saveType) {
           case 0: println_Msg(FS(SharedFlashText::textNoSaveForThisGame)); break;
           case 1:
@@ -540,14 +540,14 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
         checksum += sdBuffer[w + 1];
       }
 
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
       progress += 512;
     }
 
     draw_progressbar(progress, cartSize);
   }
 
-  myFile.close();
+  closeCurrentFile();
 
   // turn off LEDs (only for BANC33)
   if (wsGameChecksum == 0xeafd) {
@@ -584,11 +584,11 @@ static void readSRAM_WS() {
       for (uint32_t w = 0; w < 512; w++)
         sdBuffer[w] = readByte_WS(0x10000 + addr + w);
 
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
   } while (++bank < end_bank);
 
-  myFile.close();
+  closeCurrentFile();
 
   print_STR(done_STR, 1);
   display_Update();
@@ -613,7 +613,7 @@ static void verifySRAM_WS() {
 
       dataIn_WS();
       for (uint32_t addr = 0; addr < bank_size && myFile.available(); addr += 512) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
 
         // SRAM data on D0-D7, with A-1 to select high/low byte
         for (uint32_t w = 0; w < 512; w++) {
@@ -623,7 +623,7 @@ static void verifySRAM_WS() {
       }
     } while (++bank < end_bank);
 
-    myFile.close();
+    closeCurrentFile();
 
     if (write_errors == 0) {
       println_Msg(FS(SharedFlashText::textPassed));
@@ -641,7 +641,7 @@ static void verifySRAM_WS() {
 
 static void writeSRAM_WS() {
   filePath[0] = 0;
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(FS(SharedFlashText::textSelectSavFile));
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
@@ -668,7 +668,7 @@ static void writeSRAM_WS() {
         if ((addr & ((1 << 14) - 1)) == 0)
           blinkLED();
 
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
 
         // SRAM data on D0-D7, with A-1 to select high/low byte
         for (uint32_t w = 0; w < 512; w++)
@@ -676,7 +676,7 @@ static void writeSRAM_WS() {
       }
     } while (++bank < end_bank);
 
-    myFile.close();
+    closeCurrentFile();
 
     println_Msg(F("Writing finished"));
     display_Update();
@@ -717,7 +717,7 @@ static void readEEPROM_WS() {
     myFile.write(sdBuffer, bufSize);
   }
 
-  myFile.close();
+  closeCurrentFile();
 
   print_STR(done_STR, 1);
 }
@@ -759,7 +759,7 @@ static void verifyEEPROM_WS() {
       }
     }
 
-    myFile.close();
+    closeCurrentFile();
 
     if (write_errors == 0) {
       println_Msg(FS(SharedFlashText::textPassed));
@@ -777,7 +777,7 @@ static void verifyEEPROM_WS() {
 
 static void writeEEPROM_WS() {
   filePath[0] = 0;
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(FS(SharedFlashText::textSelectEepFile));
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
@@ -818,7 +818,7 @@ static void writeEEPROM_WS() {
       }
     }
 
-    myFile.close();
+    closeCurrentFile();
 
     print_STR(done_STR, 1);
   } else {
@@ -839,7 +839,7 @@ static void writeWitchOS_WS() {
     print_Error(F("OS sectors are protected!"));
   } else {
     filePath[0] = 0;
-    sd.chdir("/");
+    changeToStorageRoot();
     fileBrowser(F("Select fbin file"));
     snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
@@ -907,7 +907,7 @@ static void writeWitchOS_WS() {
       writeWord_WS(0xe0000, 0x9090);
       writeWord_WS(0xe0000, 0xf0f0);
 
-      myFile.close();
+      closeCurrentFile();
 
       print_STR(done_STR, 1);
     } else {

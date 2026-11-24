@@ -442,7 +442,7 @@ void nesMenu() {
     case 0:
       display_Clear();
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       readRom_NES();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
@@ -518,7 +518,7 @@ void nesChipMenu() {
     case 0:
       display_Clear();
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       readRaw_NES();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
@@ -971,7 +971,7 @@ void read_NES(const char* fileSuffix, const byte* header, const uint8_t headersi
   draw_progressbar(processedProgressBar, totalProgressBar);
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   // Compare CRC32 with database
   compareCRC("nes.txt", 0, renamerom, headersize);
@@ -1249,7 +1249,7 @@ void dumpPRG_pulsem2(word base, word address) {
   for (size_t x = 0; x < 512; x++) {
     sdBuffer[x] = read_prg_pulsem2(base + address + x);
   }
-  myFile.write(sdBuffer, 512);
+  writeSdBufferBlock();
 }
 
 // Multicart Mapper 332
@@ -1278,7 +1278,7 @@ void dumpCHR_pulsem2(word address) {
   for (int x = 0; x < 512; x++) {
     sdBuffer[x] = read_chr_pulsem2(address + x);
   }
-  myFile.write(sdBuffer, 512);
+  writeSdBufferBlock();
 }
 
 /******************************************
@@ -1340,7 +1340,7 @@ void CreateRAMFileInSD() {
   }
 
   snprintf(fileName, FILENAME_LENGTH, "%s.sav", title);
-  sd.chdir("/");
+  changeToStorageRoot();
   EEPROM_readAnything(0, foldern);
   for (uint8_t attempt = 0; attempt < 100; ++attempt) {
     snprintf(filePath, FILEPATH_LENGTH, "NES/SAVE/%s/%d", title, foldern);
@@ -1356,7 +1356,7 @@ void CreateRAMFileInSD() {
         EEPROM_writeAnything(0, foldern);
         return;
       }
-      sd.chdir("/");
+      changeToStorageRoot();
     }
     foldern = (foldern == 32767) ? 0 : foldern + 1;
   }
@@ -2104,14 +2104,14 @@ void dumpPRG(word base, word address) {
   for (size_t x = 0; x < 512; x++) {
     sdBuffer[x] = read_prg_byte(base + address + x);
   }
-  myFile.write(sdBuffer, 512);
+  writeSdBufferBlock();
 }
 
 void dumpCHR(word address) {
   for (size_t x = 0; x < 512; x++) {
     sdBuffer[x] = read_chr_byte(address + x);
   }
-  myFile.write(sdBuffer, 512);
+  writeSdBufferBlock();
 }
 
 void dumpCHR_M2(word address) {  // MAPPER 45 - PULSE M2 LO/HI
@@ -2119,7 +2119,7 @@ void dumpCHR_M2(word address) {  // MAPPER 45 - PULSE M2 LO/HI
     PHI2_LOW;
     sdBuffer[x] = read_chr_byte(address + x);
   }
-  myFile.write(sdBuffer, 512);
+  writeSdBufferBlock();
 }
 
 void dumpMMC5RAM(word base, word address) {  // MMC5 SRAM DUMP - PULSE M2 LO/HI
@@ -2127,12 +2127,12 @@ void dumpMMC5RAM(word base, word address) {  // MMC5 SRAM DUMP - PULSE M2 LO/HI
     PHI2_LOW;
     sdBuffer[x] = read_prg_byte(base + address + x);
   }
-  myFile.write(sdBuffer, 512);
+  writeSdBufferBlock();
 }
 
 void writeMMC5RAM(word base, word address) {  // MMC5 SRAM WRITE
   uint8_t bytecheck;
-  myFile.read(sdBuffer, 512);
+  readSdBufferBlock();
   for (size_t x = 0; x < 512; x++) {
     do {
       write_prg_byte(0x5102, 2);  // PRG RAM PROTECT1
@@ -3507,7 +3507,7 @@ void readPRG(bool readrom) {
     }
     if (!readrom) {
       myFile.flush();
-      myFile.close();
+      closeCurrentFile();
 
       println_Msg(F("PRG FILE DUMPED!"));
       printBlankLine();
@@ -4256,7 +4256,7 @@ void readCHR(bool readrom) {
                 sdBuffer[x] = read_chr_byte(address + x);
               }
               if (chrcheck != 0xFF)
-                myFile.write(sdBuffer, 512);
+                writeSdBufferBlock();
             }
           }
           break;
@@ -4448,7 +4448,7 @@ void readCHR(bool readrom) {
       }
       if (!readrom) {
         myFile.flush();
-        myFile.close();
+        closeCurrentFile();
 
         println_Msg(F("CHR FILE DUMPED!"));
         printBlankLine();
@@ -4497,7 +4497,7 @@ static void writeNesSaveLog(uint32_t saveSize, uint32_t saveCrc) {
       myFile.print(F("ROM identification CRC32 ($E000): "));
       myFile.println(crcText);
     }
-    myFile.close();
+    closeCurrentFile();
   } else {
     println_Msg(F("Could not write save TXT"));
   }
@@ -4666,7 +4666,7 @@ void readRAM() {
       }
       myFile.flush();
       uint32_t saveSize = myFile.fileSize();
-      myFile.close();
+      closeCurrentFile();
 
       println_Msg(F("RAM FILE DUMPED!"));
       printBlankLine();
@@ -4686,7 +4686,7 @@ void readRAM() {
 
 void writeBankPRG(const size_t from, const size_t to, const size_t base) {
   for (size_t address = from; address < to; address += 512) {
-    myFile.read(sdBuffer, 512);
+    readSdBufferBlock();
     for (size_t x = 0; x < 512; x++) {
       write_prg_byte(base + address + x, sdBuffer[x]);
     }
@@ -4695,7 +4695,7 @@ void writeBankPRG(const size_t from, const size_t to, const size_t base) {
 
 void writeBankWRAM(const size_t from, const size_t to, const size_t base) {
   for (size_t address = from; address < to; address += 512) {
-    myFile.read(sdBuffer, 512);
+    readSdBufferBlock();
     for (size_t x = 0; x < 512; x++) {
       write_wram_byte(base + address + x, sdBuffer[x]);
     }
@@ -4840,11 +4840,11 @@ void writeRAM() {
           write_prg_byte(0x7EF8, 0x69);                                    // PRG RAM ENABLE 1 ($6800-$6FFF)
           write_prg_byte(0x7EF9, 0x84);                                    // PRG RAM ENABLE 2 ($7000-$73FF)
           for (size_t address = 0x0; address < 0x1400; address += 1024) {  // PRG RAM 5K ($6000-$73FF)
-            myFile.read(sdBuffer, 512);
+            readSdBufferBlock();
             uint8_t firstbyte = sdBuffer[0];
             for (size_t x = 0; x < 512; x++)
               write_prg_byte(base + address + x, sdBuffer[x]);
-            myFile.read(sdBuffer, 512);
+            readSdBufferBlock();
             for (size_t x = 0; x < 512; x++)
               write_prg_byte(base + address + x + 512, sdBuffer[x]);
             write_prg_byte(base + address, firstbyte);  // REWRITE 1ST BYTE
@@ -4885,7 +4885,7 @@ void writeRAM() {
             write_reg_byte(0xE000, 0);  // PRG RAM DISABLE [WRITE RAM SAFE]
           break;
       }
-      myFile.close();
+      closeCurrentFile();
       rgbLed(green_color);
 
       printBlankLine();
@@ -5183,7 +5183,7 @@ void writeFLASH() {
           }
           // Program Byte
           for (size_t addr = 0x0; addr < 0x1000; addr += 512) {
-            myFile.read(sdBuffer, 512);
+            readSdBufferBlock();
             for (size_t x = 0; x < 512; x++) {
               word location = base + sector + addr + x;
               NESmaker_ByteProgram(i, location, sdBuffer[x]);
@@ -5207,7 +5207,7 @@ void writeFLASH() {
           PcConsole.println(FS(FSTRING_EMPTY));
 #endif
       }
-      myFile.close();
+      closeCurrentFile();
       rgbLed(green_color);
 
       printBlankLine();
@@ -5446,7 +5446,7 @@ void A29040B_writeFLASH() {
             println_Msg(FS(SharedFlashText::textWriteError));
             sprintf(data_str, "%02X", readByte);
             println_Msg(data_str);
-            myFile.close();
+            closeCurrentFile();
             break;
           }
         }
@@ -5494,14 +5494,14 @@ void A29040B_writeFLASH() {
             println_Msg(FS(SharedFlashText::textWriteError));
             sprintf(data_str, "%02X", readByte);
             println_Msg(data_str);
-            myFile.close();
+            closeCurrentFile();
             break;
           }
         }
         bytesProcessed += bytesRead;
       }
       delay(3000);
-      myFile.close();
+      closeCurrentFile();
       rgbLed(green_color);
       display_Clear();
       println_Msg(F(A29040B_TITLE));

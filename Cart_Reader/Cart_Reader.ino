@@ -653,7 +653,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
 #endif  // ENABLE_NES
 
         // Close the file:
-        myFile.close();
+        closeCurrentFile();
 
         //Write iNES header
 #ifdef ENABLE_NES
@@ -666,7 +666,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
           for (byte z = 0; z < 16; z++) {
             myFile.write(iNES_HEADER[z]);
           }
-          myFile.close();
+          closeCurrentFile();
         }
 #endif  // ENABLE_NES
         print_Msg(F(" -> "));
@@ -681,7 +681,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
           if (myFile.open(fileName, O_READ)) {
             myFile.rename(gamename);
             // Close the file:
-            myFile.close();
+            closeCurrentFile();
           }
         } else {
           println_Msg(FS(FSTRING_OK));
@@ -743,7 +743,7 @@ void setDbSaveTitle(const char* input) {
 void createDbSaveFolder(const char* system, const char* suffix) {
   const char* title = *dbSaveTitle ? dbSaveTitle : romName;
   snprintf(fileName, FILENAME_LENGTH, "%s.%s", title, suffix);
-  sd.chdir("/");
+  changeToStorageRoot();
   EEPROM_readAnything(0, foldern);
   if (foldern < 0)
     foldern = 0;
@@ -773,14 +773,14 @@ static void __attribute__((noinline)) finishDbSaveLog(uint32_t startedAt) {
     const size_t wanted = remaining > sizeof(sdBuffer) ? sizeof(sdBuffer) : remaining;
     const int count = myFile.read(sdBuffer, wanted);
     if (count <= 0) {
-      myFile.close();
+      closeCurrentFile();
       print_Error(FS(SharedFlashText::textCannotReadSavedFileForCRC32));
       return;
     }
     crc = updateCRC(sdBuffer, count, crc);
     remaining -= count;
   }
-  myFile.close();
+  closeCurrentFile();
   if (!size) {
     print_Error(F("Empty save file"));
     return;
@@ -814,7 +814,7 @@ static void __attribute__((noinline)) finishDbSaveLog(uint32_t startedAt) {
     myLog.flush();
   }
 #endif
-  myFile.close();
+  closeCurrentFile();
 }
 
 void showDbSaveFolder(const __FlashStringHelper* label) {
@@ -2434,7 +2434,7 @@ void savetofile() {
   myFile.print(cal_factor);
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   print_STR(done_STR, 1);
   display_Update();
   delay(1000);
@@ -2901,7 +2901,7 @@ void save_log() {
     if (myLog.available() >= 512) {
       for (word i = 0; i < 512; i++) {        sdBuffer[i] = myLog.read();
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     } else {
       int i = 0;
       for (; i < 512 && myLog.available(); i++) {
@@ -2911,7 +2911,7 @@ void save_log() {
     }
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 #endif
 
@@ -3124,6 +3124,22 @@ void println_Msg(long unsigned int message) {
 #ifdef ENABLE_GLOBAL_LOG
   if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(message);
 #endif
+}
+
+void changeToStorageRoot() {
+  sd.chdir("/");
+}
+
+void closeCurrentFile() {
+  myFile.close();
+}
+
+void readSdBufferBlock() {
+  myFile.read(sdBuffer, 512);
+}
+
+void writeSdBufferBlock() {
+  myFile.write(sdBuffer, 512);
 }
 
 bool openSelectedFileForRead() {
@@ -4105,7 +4121,7 @@ static bool browserOpenEntry(FsFile& dir, int16_t ordinal) {
   while (myFile.openNext(&dir, O_READ)) {
     if (browserVisibleEntry() && ordinal-- == 0)
       return true;
-    myFile.close();
+    closeCurrentFile();
   }
   return false;
 }
@@ -4141,7 +4157,7 @@ browserstart:
     if (browserVisibleEntry()) {
       currFile++;
     }
-    myFile.close();
+    closeCurrentFile();
   }
   myDir.close();
 
@@ -4191,7 +4207,7 @@ page:
         bool isDir = myFile.isDir();
         if ((!pass && isDir) || (pass && !isDir))
           setRow(filled++, index, isDir);
-        myFile.close();
+        closeCurrentFile();
       }
     }
   }
@@ -4210,7 +4226,7 @@ page:
           setRow(filled++, ordinal, isDir);
         ordinal++;
       }
-      myFile.close();
+      closeCurrentFile();
     }
   }
 #endif
@@ -4242,7 +4258,7 @@ page:
     // Change working dir to root
     filePath[0] = '/';
     filePath[1] = '\0';
-    sd.chdir("/");
+    changeToStorageRoot();
     // Start again
     root = 0;
     goto browserstart;
@@ -4256,7 +4272,7 @@ page:
     name[0] = '\0';
     myFile.getName(name, sizeof(sdBuffer));
     const bool directory = myFile.isDir();
-    myFile.close();
+    closeCurrentFile();
     myDir.close();
     if (!name[0] || browserNameId(name, directory) != nameIds[answer])
       goto browserstart;
@@ -4274,7 +4290,7 @@ page:
     }
     memcpy(fileName, name, length + 1);
   }
-  sd.chdir("/");
+  changeToStorageRoot();
   filebrowse = 0;
 }
 

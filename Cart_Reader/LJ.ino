@@ -112,9 +112,9 @@ void ljMenu()
 
     // Read ROM
     case 1:
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_LJ();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     // Set Size
@@ -208,7 +208,7 @@ void readSegment_LJ(uint32_t startaddr, uint32_t endaddr)
       uint8_t temp = readData_LJ(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -230,7 +230,7 @@ void readROM_LJ()
       readSegment_LJ(0x200000, 0x400000); // +2MB = 4MB
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

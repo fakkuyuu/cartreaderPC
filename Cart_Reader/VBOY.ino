@@ -116,20 +116,20 @@ void vboyMenu() {
   switch (mainMenu) {
     case 0:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_VB();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 1:
       // Read SRAM
       if (sramSize) {
-        sd.chdir("/");
+        changeToStorageRoot();
         display_Clear();
         println_Msg(FS(SharedFlashText::textReadingSRAM));
         display_Update();
         readSRAM_VB();
-        sd.chdir("/");
+        changeToStorageRoot();
       } else {
         print_Error(FS(SharedFlashText::textCartHasNoSRAM));
       }
@@ -145,7 +145,7 @@ void vboyMenu() {
       // Write SRAM
       if (sramSize) {
         // Change working dir to root
-        sd.chdir("/");
+        changeToStorageRoot();
         fileBrowser(FS(SharedFlashText::textSelectSRMFile));
         display_Clear();
         writeSRAM_VB();
@@ -456,7 +456,7 @@ void readROM_VB() {
         sdBuffer[d + 1] = (myWord & 0xFF);
         d += 2;
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
       d = 0;
       progress += 512;
       draw_progressbar(progress, cartSize);
@@ -470,13 +470,13 @@ void readROM_VB() {
         sdBuffer[d + 1] = (myWord & 0xFF);
         d += 2;
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
       d = 0;
       progress += 512;
       draw_progressbar(progress, cartSize);
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   // Compare CRC32 to database and rename ROM if found
   // Arguments: database name, precalculated crc string or 0 to calculate, rename rom or not, starting offset
@@ -508,7 +508,7 @@ void writeSRAM_VB() {
       //        writeWord_VB(currByte, ((myFile.read() << 8 ) & 0xFF));
       writeByte_VB(currByte, (myFile.read()));
     }
-    myFile.close();
+    closeCurrentFile();
     print_STR(done_STR, 1);
     display_Update();
   } else {
@@ -533,9 +533,9 @@ void readSRAM_VB() {
       byte myByte = readByte_VB(currBuffer + currByte);
       sdBuffer[currByte] = myByte;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
-  myFile.close();
+  closeCurrentFile();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   println_Msg(FS(SharedFlashText::pathSeparator));
@@ -558,7 +558,7 @@ unsigned long verifySRAM_VB() {
         }
       }
     }
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_FatalError(sd_error_STR);
   }

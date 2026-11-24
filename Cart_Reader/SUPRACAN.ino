@@ -191,14 +191,14 @@ static void readROM_Acan() {
       UPDATE_CRC(crc32, sdBuffer[i + 1]);
     }
 
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
 
     if ((addr & ((1 << 14) - 1)) == 0)
       blinkLED();
   }
 
   crc32 = ~crc32;
-  myFile.close();
+  closeCurrentFile();
 
   print_Msg(F("CRC32: "));
   print_Msg_PaddedHex32(crc32);
@@ -214,10 +214,10 @@ static void readSRAM_Acan() {
     for (uint32_t j = 0; j < 1024; j += 2)
       sdBuffer[(j >> 1)] = readWord_Acan(0xec0000 + i + j);
 
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 
-  myFile.close();
+  closeCurrentFile();
   print_STR(done_STR, 1);
 }
 
@@ -231,13 +231,13 @@ static void writeSRAM_Acan() {
 
   dataOut_Acan();
   for (uint32_t i = 0; i < 0x10000 && myFile.available(); i += 1024) {
-    myFile.read(sdBuffer, 512);
+    readSdBufferBlock();
 
     for (uint32_t j = 0; j < 1024; j += 2)
       writeWord_Acan(0xec0000 + i + j, sdBuffer[(j >> 1)]);
   }
 
-  myFile.close();
+  closeCurrentFile();
 
   dataIn_Acan();
   print_STR(done_STR, 1);
@@ -256,7 +256,7 @@ static void verifySRAM_Acan() {
 
   dataIn_Acan();
   for (uint32_t i = 0; i < 0x10000 && myFile.available(); i += 1024) {
-    myFile.read(sdBuffer, 512);
+    readSdBufferBlock();
 
     for (uint32_t j = 0; j < 1024; j += 2) {
       if (readWord_Acan(0xec0000 + i + j) != sdBuffer[(j >> 1)])
@@ -264,7 +264,7 @@ static void verifySRAM_Acan() {
     }
   }
 
-  myFile.close();
+  closeCurrentFile();
 
   if (write_errors == 0) {
     println_Msg(FS(SharedFlashText::textPassed));
@@ -289,7 +289,7 @@ static void readUM6650() {
   }
 
   myFile.write(sdBuffer, 256);
-  myFile.close();
+  closeCurrentFile();
 
   print_STR(done_STR, 1);
 }
@@ -305,7 +305,7 @@ static void verifyUM6650() {
 
   uint16_t write_errors = 0;
   uint16_t len = myFile.read(sdBuffer, 256);
-  myFile.close();
+  closeCurrentFile();
 
   for (uint16_t i = 0; i < len; i++) {
     dataOut_Acan();
@@ -331,7 +331,7 @@ static void writeUM6650() {
   openFile_Acan();
 
   uint16_t len = myFile.read(sdBuffer, 256);
-  myFile.close();
+  closeCurrentFile();
 
   print_Msg(FS(SharedFlashText::textWriting));
   print_Msg(filePath);
@@ -379,7 +379,7 @@ static void flashCart_Acan() {
       ;
 
     for (j = 0; j < *flash_size; j += 512) {
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       for (k = 0; k < 512; k += 2) {
         data = *((uint16_t *)(sdBuffer + k));
@@ -403,7 +403,7 @@ static void flashCart_Acan() {
   PORTG &= ~(1 << 5);
   DDRG &= ~(1 << 5);
 
-  myFile.close();
+  closeCurrentFile();
   print_STR(done_STR, 1);
 
   checkRomExist_Acan();

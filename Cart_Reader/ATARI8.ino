@@ -93,18 +93,18 @@ void atari8Menu()
 
     // Read LEFT Slot Cart
     case 1:
-      sd.chdir("/");
+      changeToStorageRoot();
       atari8right = 0; // LEFT Slot
       readROM_ATARI8();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     // Read RIGHT Slot Cart
     case 2:
-      sd.chdir("/");
+      changeToStorageRoot();
       atari8right = 1; // RIGHT Slot
       readROM_ATARI8();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 3:
@@ -220,7 +220,7 @@ void readSegment_ATARI8(uint16_t startaddr, uint16_t endaddr)
       uint8_t temp = readData_ATARI8(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -362,7 +362,7 @@ void readROM_ATARI8()
     readSegment_ATARI8(0xA000, 0xC000); // 8K
     DISABLE_S5;
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

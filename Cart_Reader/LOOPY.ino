@@ -134,26 +134,26 @@ void loopyMenu() {
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_LOOPY();
-      sd.chdir("/");
+      changeToStorageRoot();
       waitForInput = true;
       break;
 
     case 2:
       // Read SRAM
-      sd.chdir("/");
+      changeToStorageRoot();
       println_Msg(FS(SharedFlashText::textReadingSRAM));
       display_Update();
       readSRAM_LOOPY();
-      sd.chdir("/");
+      changeToStorageRoot();
       waitForInput = true;
       break;
 
     case 3:
       // Write SRAM
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       fileBrowser(F("Select SAV file"));
       display_Clear();
       writeSRAM_LOOPY();
@@ -459,7 +459,7 @@ bool setRomName_LOOPY(const char* database, char* crcStr, int stripExtensionChar
       break;
     }
   }
-  myFile.close();
+  closeCurrentFile();
   return found;
 }
 
@@ -552,7 +552,7 @@ void readROM_LOOPY() {
     }
   }
   // TODO this assumes size is divisible by 512
-  myFile.close();
+  closeCurrentFile();
 
   digitalWrite(LOOPY_ROMCE, HIGH);
 
@@ -599,7 +599,7 @@ void writeSRAM_LOOPY() {
         blinkLED();
       }
     }
-    myFile.close();
+    closeCurrentFile();
 
     print_STR(done_STR, 1);
     display_Update();
@@ -663,7 +663,7 @@ void readSRAM_LOOPY() {
   digitalWrite(LOOPY_OE, HIGH);
   digitalWrite(LOOPY_RAMCS1, HIGH);
 
-  myFile.close();
+  closeCurrentFile();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   display_Update();
@@ -689,7 +689,7 @@ unsigned long verifySRAM_LOOPY() {
         }
       }
     }
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_FatalError(sd_error_STR);
   }

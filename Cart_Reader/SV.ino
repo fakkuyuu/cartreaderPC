@@ -52,28 +52,28 @@ void svMenu() {
     // Read memory pack
     case 0:
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_SV();
       break;
 
     // Write memory pack
     case 1:
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       writeROM_SV();
       break;
 
     // Read BS-X Sram
     case 2:
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       readSRAM_SV();
       break;
 
     // Write BS-X Sram
     case 3:
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       writeSRAM_SV();
       unsigned long wrErrors;
       wrErrors = verifySRAM_SV();
@@ -308,11 +308,11 @@ void readSRAM_SV() {
       for (unsigned long c = 0; c < 512; c++) {
         sdBuffer[c] = readBank_SV(BSBank, currByte + c);
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   // Signal end of process
   display_Clear();
@@ -324,7 +324,7 @@ void readSRAM_SV() {
 
 void writeSRAM_SV() {
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(FS(SharedFlashText::textSelectSrmFile));
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
@@ -346,7 +346,7 @@ void writeSRAM_SV() {
     for (byte currBank = 0x10; currBank < 0x18; currBank++) {
       //startAddr = 0x5000
       for (long currByte = 0x5000; currByte < 0x6000; currByte += 512) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (unsigned long c = 0; c < 512; c++) {
           //startBank = 0x10; CS low
           writeBank_SV(currBank, currByte + c, sdBuffer[c]);
@@ -361,7 +361,7 @@ void writeSRAM_SV() {
     dataIn();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     println_Msg("");
     println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
     display_Update();
@@ -385,7 +385,7 @@ unsigned long verifySRAM_SV() {
       //startAddr = 0x5000
       for (long currByte = 0x5000; currByte < 0x6000; currByte += 512) {
         //fill sdBuffer
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (unsigned long c = 0; c < 512; c++) {
           if ((readBank_SV(BSBank, currByte + c)) != sdBuffer[c]) {
             writeErrors++;
@@ -394,7 +394,7 @@ unsigned long verifySRAM_SV() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     return writeErrors;
   } else {
     print_Error(open_file_STR);
@@ -422,13 +422,13 @@ void readROM_SV() {
       for (int c = 0; c < 512; c++) {
         sdBuffer[c] = readBank_SV(currBank, currByte + c);
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
   }
   draw_progressbar(0x100000, 0x100000);  //Finish drawing progress bar
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   println_Msg(F("Read pack completed"));
   updateDisplayAndWait();
 }
@@ -447,7 +447,7 @@ void writeROM_SV(void) {
 
   //Display file Browser and wait user to select a file. Size must be 1MB.
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(F("Select BS file"));
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
@@ -460,7 +460,7 @@ void writeROM_SV(void) {
     if (fileSize != 0x100000) {
       println_Msg(F("File must be 1MB"));
       display_Update();
-      myFile.close();
+      closeCurrentFile();
       wait();
       return;
     }
@@ -489,7 +489,7 @@ void writeROM_SV(void) {
           printBlankLine();
           println_Msg(FS(SharedFlashText::textEraseFailed));
           display_Update();
-          myFile.close();
+          closeCurrentFile();
           wait();
           return;
         }
@@ -532,7 +532,7 @@ void writeROM_SV(void) {
           printBlankLine();
           println_Msg(F("Verify failed"));
           display_Update();
-          myFile.close();
+          closeCurrentFile();
           wait();
           return;
         }
@@ -540,7 +540,7 @@ void writeROM_SV(void) {
     }
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     draw_progressbar(0x100000, 0x100000);
     println_Msg(F("Finished successfully"));
     updateDisplayAndWait();

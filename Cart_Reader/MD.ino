@@ -205,7 +205,7 @@ void mdLoadConf() {
         }
       }
     }
-    myFile.close();
+    closeCurrentFile();
   }
 }
 #endif
@@ -266,7 +266,7 @@ void mdMenu() {
       mode = CORE_MD_CART;
       // Change working dir to root
       filePath[0] = '\0';
-      sd.chdir("/");
+      changeToStorageRoot();
       fileBrowser(FS(FSTRING_SELECT_FILE));
       display_Clear();
       // Setting CS(PH3) LOW
@@ -316,7 +316,7 @@ void mdMenu() {
       mode = CORE_MD_CART;
       // Change working dir to root
       filePath[0] = '\0';
-      sd.chdir("/");
+      changeToStorageRoot();
       fileBrowser(FS(FSTRING_SELECT_FILE));
       display_Clear();
       sprintf(filePath, "%s/%s", filePath, fileName);
@@ -367,7 +367,7 @@ void mdCartMenu() {
       // largest known game so far is supposedly "Paprium" at 10MB, so cap sanity check at 16MB
       if (cartSize != 0 && cartSize <= 16777216) {
         // Change working dir to root
-        sd.chdir("/");
+        changeToStorageRoot();
         if (realtec) {
           readRealtec_MD();
         } else {
@@ -392,7 +392,7 @@ void mdCartMenu() {
       // Does cartridge have SRAM
       if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
         // Change working dir to root
-        sd.chdir("/");
+        changeToStorageRoot();
         println_Msg(F("Reading Sram..."));
         display_Update();
         enableSram_MD(1);
@@ -410,7 +410,7 @@ void mdCartMenu() {
       // Does cartridge have SRAM
       if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
         // Change working dir to root
-        sd.chdir("/");
+        changeToStorageRoot();
         // Launch file browser
         fileBrowser(FS(SharedFlashText::textSelectSrmFile));
         display_Clear();
@@ -1599,7 +1599,7 @@ void readROM_MD() {
         }
 
         if (!mdBatchBuffer) {
-          myFile.write(sdBuffer, 512);
+          writeSdBufferBlock();
         }
       }
 
@@ -1720,7 +1720,7 @@ void readROM_MD() {
       }
       d += 2;
       if (d == 512) {
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
         d = 0;
       }
     }
@@ -1787,7 +1787,7 @@ void readROM_MD() {
         }
         d += 2;
         if (d == 512) {
-          myFile.write(sdBuffer, 512);
+          writeSdBufferBlock();
           d = 0;
         }
       }
@@ -1852,7 +1852,7 @@ void readROM_MD() {
         calcCKSSonic2 += ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
         d += 2;
         if (d == 512) {
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
           d = 0;
         }
       }
@@ -1868,7 +1868,7 @@ void readROM_MD() {
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
 
-  myFile.close();
+  closeCurrentFile();
   // Reset SSF2 Banks
   if (cartSize > 0x400000) {
     writeSSF2Map(0x50987E, 6);  // 0xA130FD
@@ -1996,7 +1996,7 @@ void writeSram_MD() {
       print_Error(FS(SharedFlashText::textUnknownSaveType));
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     print_STR(done_STR, 1);
     display_Update();
   } else {
@@ -2047,7 +2047,7 @@ void readSram_MD() {
       }
     }
     if (saveType == 3 || segaSram16bit > 0)
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     else
       myFile.write(sdBuffer, 256);
   }
@@ -2059,11 +2059,11 @@ void readSram_MD() {
     unsigned long padsize = (1UL << 16) - (sramSize << 1);
     unsigned long padblockcount = padsize >> 9;  // number of 512 byte blocks
     for (unsigned long i = 0; i < padblockcount; i++) {
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
   println_Msg(FS(SharedFlashText::pathSeparator));
@@ -2110,7 +2110,7 @@ unsigned long verifySram_MD() {
     }
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_FatalError(sd_error_STR);
   }
@@ -2194,7 +2194,7 @@ void write29F1610_MD() {
     dataIn_MD();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_STR(open_file_STR, 1);
     display_Update();
@@ -2225,7 +2225,7 @@ void write29GL_MD() {
     draw_progressbar(0, totalProgressBar);
 
     for (unsigned long currSdBuffer = 0; currSdBuffer < fileSize; currSdBuffer += 512) {
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       // Blink led
       if (currSdBuffer % 4096 == 0) {
@@ -2274,7 +2274,7 @@ void write29GL_MD() {
     dataIn_MD();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_STR(open_file_STR, 1);
     display_Update();
@@ -2366,7 +2366,7 @@ void verifyFlash_MD() {
         blinkLED();
       }
       //fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       for (int c = 0; c < 256; c++) {
         word currWord = ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
 
@@ -2387,7 +2387,7 @@ void verifyFlash_MD() {
       print_Error(did_not_verify_STR);
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_STR(open_file_STR, 1);
     display_Update();
@@ -2986,7 +2986,7 @@ void readEEP_MD() {
     myFile.write(sdBuffer, eepSize);
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   printBlankLine();
   display_Clear();
   print_Msg(FS(SharedFlashText::textSavedTo));
@@ -3027,7 +3027,7 @@ void writeEEP_MD() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     printBlankLine();
     display_Clear();
     print_STR(done_STR, 1);
@@ -3063,11 +3063,11 @@ void readBram_MD() {
     for (int i = 0; i < 512; i++) {
       sdBuffer[i] = readWord_MD(0x300000 + currByte + i);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   printBlankLine();
   display_Clear();
   print_Msg(FS(SharedFlashText::textSavedTo));
@@ -3092,14 +3092,14 @@ void writeBram_MD() {
     writeWord_MD(0x380000, 1);  // Enable BRAM Writes
 
     for (unsigned long currByte = 0; currByte < bramSize; currByte += 512) {
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       for (int i = 0; i < 512; i++) {
         writeWord_MD(0x300000 + currByte + i, sdBuffer[i]);
       }
     }
     writeWord_MD(0x380000, 0);  // Disable BRAM Writes
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     printBlankLine();
     display_Clear();
     print_STR(done_STR, 1);
@@ -3155,11 +3155,11 @@ void readRealtec_MD() {
       sdBuffer[d + 1] = (myWord & 0xFF);
       d += 2;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     d = 0;
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 
 void printRomSize_MD(int index) {
@@ -3247,7 +3247,7 @@ void writeCFI_MD() {
       currChip++;
     }
 
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_FatalError(sd_error_STR);
   }
@@ -3275,7 +3275,7 @@ void writeCFIChip_MD(byte currChip, unsigned long toFlash, unsigned long fileSiz
 
   resetFlashCFIChip_MD(currChip);
   for (unsigned long a = 0; a < toFlash / 2; a += 256) {
-    myFile.read(sdBuffer, 512);
+    readSdBufferBlock();
 
     for (int c = 0; c < 256; c++) {
       dataOut_MD();
@@ -3317,7 +3317,7 @@ void verifyFlashCFI_MD() {
       currChip++;
     }
 
-    myFile.close();
+    closeCurrentFile();
   } else {
     print_STR(open_file_STR, 1);
     display_Update();
@@ -3334,7 +3334,7 @@ void verifyFlashCFIChip_MD(byte currChip, unsigned long toVerify) {
   word d = 0;
   dataIn_MD();
   for (unsigned long a = 0; a < toVerify / 2; a += 256) {
-    myFile.read(sdBuffer, 512);
+    readSdBufferBlock();
 
     for (int c = 0; c < 256; c++) {
       word currWord = ((sdBuffer[c*2] & 0xFF) << 8) | (sdBuffer[c*2 + 1] & 0xFF);

@@ -465,7 +465,7 @@ void read_bank_PCE_ROM(uint32_t address_start, uint32_t address_end, uint32_t *p
     if (crcp != NULL) {
       *crcp = calculate_crc32(512, sdBuffer, *crcp);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     *processed_size += 512;
     draw_progressbar(*processed_size, total_size);
   }
@@ -498,7 +498,7 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((u
   flag = CHKSUM_SKIP;
 
   //Open list file. If no list file found, just skip
-  sd.chdir("/");  //Set read directry to root
+  changeToStorageRoot();  //Set read directry to root
   if (script.open("pce.txt", O_READ)) {
     //Calculate CRC of ROM file
     sd.chdir(folder_p);
@@ -575,7 +575,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
 
   // create a new folder for the save file
   EEPROM_readAnything(0, foldern);
-  sd.chdir("/");
+  changeToStorageRoot();
   sprintf(folder, "PCE/RAM/%d", foldern);
   sd.mkdir(folder, true);
   sd.chdir(folder);
@@ -642,13 +642,13 @@ void read_tennokoe_bank_PCE(int bank_index) {
         println_Msg(F("Header is correct"));
       }
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 
   pin_init_PCE();
 
   //Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   printBlankLine();
   promptAndWaitForButton();
@@ -657,7 +657,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
 void write_tennokoe_bank_PCE(int bank_index) {
   //Display file Browser and wait user to select a file. Size must be 2KB.
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(F("Select RAM file"));
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
@@ -670,7 +670,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
     if (fileSize != 2 * 1024UL) {
       println_Msg(F("File must be 2KB"));
       display_Update();
-      myFile.close();
+      closeCurrentFile();
       wait();
       return;
     }
@@ -741,7 +741,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
     pin_init_PCE();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     println_Msg(F("Finished"));
 
   } else {
@@ -770,7 +770,7 @@ void read_rom_PCE(void) {
   println_Msg(FS(SharedFlashText::unitKB));
 
   // Get name, add extension and convert to char array for sd lib
-  sd.chdir("/");
+  changeToStorageRoot();
   createFolder("PCE", "ROM", "PCEROM", "pce");
   printAndIncrementFolder();
 
@@ -816,7 +816,7 @@ void read_rom_PCE(void) {
   pin_init_PCE();
 
   //Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   //CRC search and rename ROM
   compareCRC("pce.txt", 0, 1, 0);
@@ -919,7 +919,7 @@ void flash_PCE() {
   }
 
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
 
@@ -968,7 +968,7 @@ void flash_PCE() {
       processedProgressBar += BUFSIZE;
       draw_progressbar(processedProgressBar, totalProgressBar);
     }
-    myFile.close();
+    closeCurrentFile();
     pin_init_PCE();
     print_STR(done_STR, true);
   }

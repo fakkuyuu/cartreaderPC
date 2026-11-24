@@ -119,9 +119,9 @@ void ody2Menu() {
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_ODY2();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -166,7 +166,7 @@ void readSegment_ODY2(uint16_t startaddr, uint16_t endaddr) {
       uint8_t temp = readData_ODY2(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -240,7 +240,7 @@ void readROM_ODY2() {
       }
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

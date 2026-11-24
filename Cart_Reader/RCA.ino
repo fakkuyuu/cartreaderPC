@@ -79,9 +79,9 @@ void rcaMenu()
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_RCA();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -186,7 +186,7 @@ void readSegment_RCA(uint16_t startaddr, uint16_t endaddr)
       uint8_t temp = readData_RCA(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -201,7 +201,7 @@ void readROM_RCA()
   readSegment_RCA(0x0400, 0x0600); // 512B
   if (rcasize > 0)
     readSegment_RCA(0x0600, 0x0800); // +512B = 1K
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

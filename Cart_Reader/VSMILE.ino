@@ -86,9 +86,9 @@ void vsmileMenu()
 
     // Read ROM
     case 1:
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_VSMILE();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     // Set Size
@@ -207,7 +207,7 @@ void readROM_VSMILE()
       sdBuffer[x * 2] = (tempword >> 0x8) & 0xFF;
       sdBuffer[(x * 2) + 1] = tempword & 0xFF;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
   if (vsmilesize == 1) { // 6MB - 2 EPOXY CHIPS [4MB + 2MB] Alphabet Park/Care Bears
     for (unsigned long address = 0; address < 0x100000; address += 256) { // +2MB HIGH = 6MB
@@ -216,7 +216,7 @@ void readROM_VSMILE()
         sdBuffer[x * 2] = (tempword >> 0x8) & 0xFF;
         sdBuffer[(x * 2) + 1] = tempword & 0xFF;
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
   }
   else if (vsmilesize > 1) { // Normal 8MB
@@ -226,7 +226,7 @@ void readROM_VSMILE()
         sdBuffer[x * 2] = (tempword >> 0x8) & 0xFF;
         sdBuffer[(x * 2) + 1] = tempword & 0xFF;
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
     if (vsmilesize > 2) { // Motion 16MB [8MB + 8MB] - Cars 2/Shrek Forever After/Super WHY!/Toy Story 3
       for (unsigned long address = 0; address < 0x400000; address += 256) { // +8MB HIGH = 16MB
@@ -235,11 +235,11 @@ void readROM_VSMILE()
           sdBuffer[x * 2] = (tempword >> 0x8) & 0xFF;
           sdBuffer[(x * 2) + 1] = tempword & 0xFF;
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

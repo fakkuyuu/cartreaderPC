@@ -103,9 +103,9 @@ void colMenu() {
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_COL();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -157,7 +157,7 @@ void readSegment_COL(uint16_t startaddr, uint32_t endaddr) {
       uint8_t temp = readData_COL(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -182,7 +182,7 @@ void readROM_COL() {
       }
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   // RESET ALL CS PINS HIGH (DISABLE)
   PORTH |= (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);

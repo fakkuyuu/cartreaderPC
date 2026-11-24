@@ -145,9 +145,9 @@ void a5200Menu() {
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_5200();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -190,7 +190,7 @@ void readSegment_5200(uint16_t startaddr, uint16_t endaddr) {
       uint8_t temp = readData_5200(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -279,7 +279,7 @@ void readROM_5200() {
       cycleDelay(15);
       break;
   }
-  myFile.close();
+  closeCurrentFile();
 
   compareCRC("5200.txt", 0, 1, 0);
 

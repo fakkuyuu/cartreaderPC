@@ -132,7 +132,7 @@ void readSlot(bool cartSlot) {
   // Set control
   dataIn();
   controlIn_SNES();
-  sd.chdir("/");
+  changeToStorageRoot();
   display_Clear();
 
   if (!cartSlot) {           // Slot A was selected
@@ -170,7 +170,7 @@ void readRom_ST(unsigned int bankStart, unsigned int bankEnd) {
   readLoRomBanks(bankStart + 0x80, bankEnd + 0x80, &myFile);
 
   // Close file:
-  myFile.close();
+  closeCurrentFile();
 
   // Compare dump CRC with db values
   compareCRC("st.txt", 0, 1, 0);

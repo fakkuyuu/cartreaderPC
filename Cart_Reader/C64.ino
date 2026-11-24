@@ -132,9 +132,9 @@ void c64Menu() {
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_C64();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -544,7 +544,7 @@ void readROM_C64() {
         readSegment16k_C64();
       }
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

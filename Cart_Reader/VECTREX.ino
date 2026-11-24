@@ -86,9 +86,9 @@ void vectrexMenu()
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_VECTREX();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -197,7 +197,7 @@ void readSegment_VECTREX(uint16_t startaddr, uint16_t endaddr)
       uint8_t temp = readData_VECTREX(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -231,7 +231,7 @@ void readROM_VECTREX()
       PB6_DISABLE;                          // Reset PB6
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

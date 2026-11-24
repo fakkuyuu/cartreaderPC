@@ -78,9 +78,9 @@ void pv1000Menu()
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_PV1000();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -176,7 +176,7 @@ void readSegment_PV1000(uint32_t startaddr, uint32_t endaddr)
       uint8_t temp = readData_PV1000(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -198,7 +198,7 @@ void readROM_PV1000()
     readSegment_PV1000(0x0000, 0x4000); // 16K
     PORTH |= (1 << 3); // /CS2(PH3) HIGH
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

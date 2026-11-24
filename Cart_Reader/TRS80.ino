@@ -84,9 +84,9 @@ void trs80Menu()
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_TRS80();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -179,7 +179,7 @@ void readSegment_TRS80(uint32_t startaddr, uint32_t endaddr)
       uint8_t temp = readData_TRS80(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -272,7 +272,7 @@ void readROM_TRS80()
       }
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

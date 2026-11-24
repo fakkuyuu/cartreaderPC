@@ -155,7 +155,7 @@ void flashromCPS_Cartridge() {
       if (flashromType != 0) {
         // Set cartridge region
         filePath[0] = '\0';
-        sd.chdir("/");
+        changeToStorageRoot();
         fileBrowser(FS(FSTRING_SELECT_FILE));
         // Calculate CRC32 of BIOS
         display_Clear();
@@ -329,7 +329,7 @@ void flashromCPS_SIMM2x8() {
       if (flashromType != 0) {
         // Set cartridge region
         filePath[0] = '\0';
-        sd.chdir("/");
+        changeToStorageRoot();
         fileBrowser(FS(FSTRING_SELECT_FILE));
         display_Clear();
         time = millis();
@@ -458,7 +458,7 @@ void flashromCPS_SIMM4x8() {
       if (flashromType != 0) {
         // Set cartridge region
         filePath[0] = '\0';
-        sd.chdir("/");
+        changeToStorageRoot();
         fileBrowser(FS(FSTRING_SELECT_FILE));
         display_Clear();
         time = millis();
@@ -641,7 +641,7 @@ void writeByteCommand_Flash2x8(uint32_t bank, byte command) {
 *****************************************/
 void readCartridge() {
   // Reset to root directory
-  sd.chdir("/");
+  changeToStorageRoot();
 
   createFolderAndOpenFile("CPS3", "Cartridge", "29f400", "u2");
 
@@ -654,7 +654,7 @@ void readCartridge() {
     for (int c = 0; c < 512; c++) {
       sdBuffer[c] = readByte_Flash(currByte + c);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     // Update progress bar
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
@@ -664,7 +664,7 @@ void readCartridge() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   // Compare dump CRC with db values
   compareCRC("cps3.txt", 0, 1, 0);
   println_Msg(FS(SharedFlashText::textFinishedReading));
@@ -683,7 +683,7 @@ void writeCartridge() {
 
     // Fill sdBuffer
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       // Blink led
       if (currByte % 2048 == 0)
         blinkLED();
@@ -728,7 +728,7 @@ void writeCartridge() {
     dataIn8();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -743,7 +743,7 @@ void verifyCartridge() {
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       //fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       for (int c = 0; c < 512; c++) {
         // Verify patch to avoid region menu
         if ((currByte + c) == 0x405F && cartRegion > 0 && multiCart == 1 && readByte_Flash(currByte + c) == multiCartPatch1 & 0xFF) {
@@ -777,7 +777,7 @@ void verifyCartridge() {
       print_Error(did_not_verify_STR);
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -788,7 +788,7 @@ void setCartridgePatchData(char crcStr[9]) {
   char crc_search[9];
   char tmpDWord[9];
   //go to root
-  sd.chdir("/");
+  changeToStorageRoot();
   if (myFile.open("cps3.txt", O_READ)) {
     while (myFile.available()) {
       // Skip first line with name
@@ -858,7 +858,7 @@ void setCartridgePatchData(char crcStr[9]) {
         skip_line(&myFile);
       }
     }
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -995,7 +995,7 @@ void blankcheckSIMM2x8() {
 // From readFlash
 void readSIMM2x8() {
   // Reset to root directory
-  sd.chdir("/");
+  changeToStorageRoot();
 
   createFolderAndOpenFile("CPS3", "SIMM", "128M", "bin");
 
@@ -1019,7 +1019,7 @@ void readSIMM2x8() {
       sdBuffer[d] = (currWord & 0xFF);
       d += 2;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     d = 0;
     // Update progress bar
     processedProgressBar += 512;
@@ -1030,7 +1030,7 @@ void readSIMM2x8() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   println_Msg(FS(SharedFlashText::textFinishedReading));
   display_Update();
 }
@@ -1038,7 +1038,7 @@ void readSIMM2x8() {
 // From readFlash16
 void readSIMM2x8B() {
   // Reset to root directory
-  sd.chdir("/");
+  changeToStorageRoot();
 
   createFolderAndOpenFile("CPS3", "SIMM", "128M", "bin");
   //Initialize progress bar
@@ -1060,7 +1060,7 @@ void readSIMM2x8B() {
       sdBuffer[d] = (currWord & 0xFF);
       d += 2;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     d = 0;
     // Update progress bar
     processedProgressBar += 512;
@@ -1071,7 +1071,7 @@ void readSIMM2x8B() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   println_Msg(F("Finished reading."));
   display_Update();
 }
@@ -1097,7 +1097,7 @@ void writeSIMM2x8() {
     // Fill sdBuffer LSB
     unsigned long simmAddress = 0;
     for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 256) {
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       // Blink led
       if (currByte % 4096 == 0)
         blinkLED();
@@ -1129,7 +1129,7 @@ void writeSIMM2x8() {
     dataIn16();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -1145,7 +1145,7 @@ void verifySIMM2x8() {
     draw_progressbar(0, totalProgressBar);
     for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 256) {
       //fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       for (int c = 0; c < 256; c++) {
         // Set address
         simmAddress = currByte + c;
@@ -1175,7 +1175,7 @@ void verifySIMM2x8() {
       print_Error(did_not_verify_STR);
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -1316,7 +1316,7 @@ void eraseSIMM4x8() {
 // From readFlash16
 void readSIMM4x8() {
   // Reset to root directory
-  sd.chdir("/");
+  changeToStorageRoot();
 
   createFolderAndOpenFile("CPS3", "SIMM", "64M", "bin");
   //Initialize progress bar
@@ -1344,7 +1344,7 @@ void readSIMM4x8() {
       sdBuffer[d + 2] = (currWord & 0xFF);
       d += 4;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     d = 0;
     // Update progress bar
     processedProgressBar += 512;
@@ -1355,7 +1355,7 @@ void readSIMM4x8() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   println_Msg(F("Finished reading."));
   display_Update();
 }
@@ -1372,7 +1372,7 @@ void writeSIMM4x8() {
 
     // Fill sdBuffer
     for (unsigned long currByte = 0; currByte < fileSize / 4; currByte += 128) {
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       // Blink led
       if (currByte % 2048 == 0)
         blinkLED();
@@ -1408,7 +1408,7 @@ void writeSIMM4x8() {
     dataIn16();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -1423,7 +1423,7 @@ void verifySIMM4x8() {
 
     for (unsigned long currByte = 0; currByte < fileSize / 4; currByte += 128) {
       //fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       for (int c = 0; c < 128; c++) {
         enable64MSB();
         word currWord = ((sdBuffer[d + 1] << 8) | sdBuffer[d]);
@@ -1458,7 +1458,7 @@ void verifySIMM4x8() {
       print_Error(did_not_verify_STR);
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 

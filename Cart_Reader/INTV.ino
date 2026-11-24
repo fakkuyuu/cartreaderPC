@@ -144,9 +144,9 @@ void intvMenu() {
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_INTV();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -297,7 +297,7 @@ void readSegment_INTV(uint32_t startaddr, uint32_t endaddr) {
       sdBuffer[w * 2] = (temp >> 8) & 0xFF;
       sdBuffer[(w * 2) + 1] = temp & 0xFF;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -396,7 +396,7 @@ void readROM_INTV() {
       //      readSegment_INTV(0xD000,0xE000); // +8K = 44K
       break;
   }
-  myFile.close();
+  closeCurrentFile();
 
   // Compare CRC32 to database and rename ROM if found
   compareCRC("intv.txt", 0, 1, 0);

@@ -59,9 +59,9 @@ void ngpMenu() {
 
   switch (mainMenu) {
     case 0:
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_NGP(filePath, FILEPATH_LENGTH);
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 1:
@@ -235,12 +235,12 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
     for (uint32_t i = 0; i < 512; i++)
       sdBuffer[i] = readByte_NGP(addr + i);
 
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     progress += 512;
     draw_progressbar(progress, cartSize);
   }
 
-  myFile.close();
+  closeCurrentFile();
 }
 
 void scanChip_NGP() {
@@ -312,7 +312,7 @@ void scanChip_NGP() {
         sectorID += 1;
       }
     }
-    myFile.close();
+    closeCurrentFile();
     writeByte_NGP(0x00, 0xf0);
   }
 }

@@ -150,7 +150,7 @@ void sfmGameOptions() {
     case 0:
       display_Clear();
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       readSRAM();
       break;
 
@@ -158,7 +158,7 @@ void sfmGameOptions() {
     case 1:
       display_Clear();
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_SFM();
       if (!PcLink::usingPcStorage()) {
         compare_checksum();
@@ -170,7 +170,7 @@ void sfmGameOptions() {
     case 2:
       display_Clear();
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       writeSRAM(1);
       unsigned long wrErrors;
       wrErrors = verifySRAM();
@@ -219,7 +219,7 @@ void sfmFlashMenu() {
       display_Clear();
 
       // Reset to root directory
-      sd.chdir("/");
+      changeToStorageRoot();
 
       // Reset to HIROM ALL
       romType = 1;
@@ -271,7 +271,7 @@ void sfmFlashMenu() {
       display_Clear();
 
       filePath[0] = '\0';
-      sd.chdir("/");
+      changeToStorageRoot();
       // Launch file browser
       fileBrowser(FS(SharedFlashText::textSelect4MBFile));
       display_Clear();
@@ -295,7 +295,7 @@ void sfmFlashMenu() {
       display_Clear();
 
       // Reset to root directory
-      sd.chdir("/");
+      changeToStorageRoot();
 
       // Reset to HIROM ALL
       romType = 1;
@@ -334,7 +334,7 @@ void sfmFlashMenu() {
       display_Clear();
 
       // Reset to root directory
-      sd.chdir("/");
+      changeToStorageRoot();
 
       // Reset to HIROM ALL
       romType = 1;
@@ -383,7 +383,7 @@ void sfmFlashMenu() {
       display_Clear();
 
       // Reset to root directory
-      sd.chdir("/");
+      changeToStorageRoot();
 
       // Erase mapping
       eraseMapping(0xD0);
@@ -405,7 +405,7 @@ void sfmFlashMenu() {
       filePath[0] = '\0';
 
       // Reset to root directory
-      sd.chdir("/");
+      changeToStorageRoot();
 
       // Launch file browser
       fileBrowser(FS(SharedFlashText::textSelectMAPFile));
@@ -913,7 +913,7 @@ void readROM_SFM() {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SFM(currBank, currByte + c);
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
     }
   }
@@ -927,12 +927,12 @@ void readROM_SFM() {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SFM(currBank, currByte + c);
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
     }
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   // Signal end of process
   print_Msg(F("Saved as "));
@@ -1085,7 +1085,7 @@ void writeFlash_SFM(int startBank, uint32_t pos) {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     println_Msg("");
   } else {
     print_FatalError(open_file_STR);
@@ -1205,7 +1205,7 @@ unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
       for (word currBank = startBank; currBank < startBank + numBanks; currBank++) {
         for (unsigned long currByte = 0; currByte < 0x10000; currByte += 512) {
           // Fill SDBuffer
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           for (int c = 0; c < 512; c++) {
             if (readBank_SFM(currBank, currByte + c) != sdBuffer[c]) {
               verified++;
@@ -1217,7 +1217,7 @@ unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
       for (word currBank = 0; currBank < numBanks; currBank++) {
         for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte += 512) {
           // Fill SDBuffer
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           for (int c = 0; c < 512; c++) {
             if (readBank_SFM(currBank, currByte + c) != sdBuffer[c]) {
               verified++;
@@ -1227,7 +1227,7 @@ unsigned long verifyFlash_SFM(int startBank, uint32_t pos) {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   } else {
     // SD Error
     verified = 999999;
@@ -1259,7 +1259,7 @@ void readFlash_SFM() {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SFM(currBank, currByte + c);
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
     }
   } else {
@@ -1268,12 +1268,12 @@ void readFlash_SFM() {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SFM(currBank, currByte + c);
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
     }
   }
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   println_Msg("");
   println_Msg(FS(SharedFlashText::textFinishedReading));
   display_Update();
@@ -1427,7 +1427,7 @@ void readMapping() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   // Switch to write
   dataOut();
@@ -1606,7 +1606,7 @@ void writeMapping_SFM(byte startBank, uint32_t pos) {
         }
 
         // Close the file:
-        myFile.close();
+        closeCurrentFile();
         println_Msg("");
       } else {
         print_Error(FS(SharedFlashText::textCanTOpenFileOnSD));

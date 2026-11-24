@@ -172,9 +172,9 @@ void leapMenu()
 
     // Read ROM
     case 1:
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_LEAP();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     // Set Size
@@ -184,9 +184,9 @@ void leapMenu()
 
     // Read EEPROM
     case 3:
-      sd.chdir("/");
+      changeToStorageRoot();
       readEEP_LEAP();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     // Write EEPROM
@@ -198,9 +198,9 @@ void leapMenu()
     case 5:
       idFLASH_LEAP();
       if (strcmp(flashid_str, "BFD7") == 0) {
-        sd.chdir("/");
+        changeToStorageRoot();
         readFLASH_LEAP();
-        sd.chdir("/");
+        changeToStorageRoot();
       }
       break;
 
@@ -469,7 +469,7 @@ void readROM_LEAP()
       sdBuffer[x * 2] = (tempword >> 0x8) & 0xFF;
       sdBuffer[(x * 2) + 1] = tempword & 0xFF;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
   if (leapsize > 0) {
     for (unsigned long address = 0x200000; address < 0x400000; address += 256) { // +4MB = 8MB
@@ -478,7 +478,7 @@ void readROM_LEAP()
         sdBuffer[x * 2] = (tempword >> 0x8) & 0xFF;
         sdBuffer[(x * 2) + 1] = tempword & 0xFF;
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
     if (leapsize > 1) {
       for (unsigned long address = 0x400000; address < 0x800000; address += 256) { // +8MB = 16MB
@@ -487,11 +487,11 @@ void readROM_LEAP()
           sdBuffer[x * 2] = (tempword >> 0x8) & 0xFF;
           sdBuffer[(x * 2) + 1] = tempword & 0xFF;
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 
@@ -691,10 +691,10 @@ void readFLASH_LEAP()
         while (tempbyte != tempcheck);
         sdBuffer[x] = tempbyte;
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
     myFile.flush();
-    myFile.close();
+    closeCurrentFile();
     FL_CE_HIGH;
     OE_HIGH;
     printBlankLine();
@@ -724,7 +724,7 @@ void writeFLASH_LEAP()
     statusFLASH_LEAP();
     delay(100); // WORKS ~75 OK
     for (unsigned long address = 0x0; address < 0x80000; address += 512) { // 512K
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       if ((address % 0x10000) == 0) {
         print_Msg(F("*"));
         display_Update();
@@ -735,7 +735,7 @@ void writeFLASH_LEAP()
       }
     }
     dataIn_LEAP();
-    myFile.close();
+    closeCurrentFile();
     printBlankLine();
     println_Msg(FS(SharedFlashText::textFLASHFILEWRITTEN));
     display_Update();
@@ -971,7 +971,7 @@ void readEEP_LEAP()
     //      readEepromByte_LEAP(currByte);
     //    }
     //    myFile.write(sdBuffer, 256);
-    myFile.close();
+    closeCurrentFile();
 
     printCRC(fileName, NULL, 0); // 2048
   }
@@ -1004,7 +1004,7 @@ void writeEEP_LEAP()
       display_Update();
     }
     WP_HIGH;
-    myFile.close();
+    closeCurrentFile();
     printBlankLine();
     println_Msg(F("EEPROM FILE WRITTEN!"));
     display_Update();

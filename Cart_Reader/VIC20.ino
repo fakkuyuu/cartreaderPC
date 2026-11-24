@@ -117,11 +117,11 @@ void vic20Menu()
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       CreateROMFolder_VIC20();
       readROM_VIC20();
       FinishROMFolder_VIC20();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -209,7 +209,7 @@ void readSegment_VIC20(uint32_t startaddr, uint32_t endaddr)
       uint8_t temp = readData_VIC20(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -308,7 +308,7 @@ void readROM_VIC20()
         readSegment_VIC20(0xB800, 0xC000); // +2K = 4K
       PORTH |= (1 << 6); // BLK5(PH6) HIGH
     }
-    myFile.close();
+    closeCurrentFile();
 
     print_Msg(F("ROM"));
     print_Msg(x);

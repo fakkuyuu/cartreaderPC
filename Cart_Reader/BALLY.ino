@@ -83,9 +83,9 @@ void ballyMenu()
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_BALLY();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -176,7 +176,7 @@ void readSegment_BALLY(uint16_t startaddr, uint16_t endaddr)
       uint8_t temp = readData_BALLY(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -195,7 +195,7 @@ void readROM_BALLY()
       readSegment_BALLY(0x1000, 0x2000); // +4K = 8K
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

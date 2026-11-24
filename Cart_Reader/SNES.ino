@@ -403,7 +403,7 @@ void snesMenu() {
         if (numBanks > 0) {
           display_Clear();
           // Change working dir to root
-          sd.chdir("/");
+          changeToStorageRoot();
           // start reading from cart
           readROM_SNES();
           if (!PcLink::usingPcStorage()) {
@@ -425,7 +425,7 @@ void snesMenu() {
       if (sramSize > 0) {
         display_Clear();
         // Change working dir to root
-        sd.chdir("/");
+        changeToStorageRoot();
         readSRAM();
       } else {
         display_Clear();
@@ -437,7 +437,7 @@ void snesMenu() {
       if (sramSize > 0) {
         display_Clear();
         // Change working dir to root
-        sd.chdir("/");
+        changeToStorageRoot();
         writeSRAM(1);
         unsigned long wrErrors;
         wrErrors = verifySRAM();
@@ -469,7 +469,7 @@ void snesMenu() {
         updateDisplayAndWait();
         display_Clear();
         // Change working dir to root
-        sd.chdir("/");
+        changeToStorageRoot();
         readSRAM();
         eraseSRAM(0x0F);
         eraseSRAM(0xF0);
@@ -1173,7 +1173,7 @@ void checkAltConf(char crcStr[9]) {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -1368,7 +1368,7 @@ unsigned int calc_checksum(char* fileName, char* folder) {
     // Read up to 0x60000 then add FFs to 0x80000
     if (NP == true) {
       for (i = 0; i < (0x60000 / 512); i++) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (c = 0; c < 512; c++) {
           calcChecksumChunk += sdBuffer[c];
         }
@@ -1389,7 +1389,7 @@ unsigned int calc_checksum(char* fileName, char* folder) {
       // Momotarou Dentetsu Happy Fix 3MB (24Mbit)
       if ((calcFilesize == 24) && (romChips == 245)) {
         for (i = 0; i < (myFile.fileSize() / 512); i++) {
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           for (c = 0; c < 512; c++) {
             calcChecksumChunk += sdBuffer[c];
           }
@@ -1398,7 +1398,7 @@ unsigned int calc_checksum(char* fileName, char* folder) {
       } else {
         // Base 8/16 Mbit chunk
         for (j = 0; j < (calcBase / 512); j++) {
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           for (c = 0; c < 512; c++) {
             calcChecksumChunk += sdBuffer[c];
           }
@@ -1407,7 +1407,7 @@ unsigned int calc_checksum(char* fileName, char* folder) {
         calcChecksumChunk = 0;
         // Add the mirrored chunk
         for (j = 0; j < (calcMirror / 512); j++) {
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           for (c = 0; c < 512; c++) {
             calcChecksumChunk += sdBuffer[c];
           }
@@ -1418,7 +1418,7 @@ unsigned int calc_checksum(char* fileName, char* folder) {
       // Daikaijuu Monogatari 2 Fix 5MB (40Mbit)
       // Add the 4MB (32Mbit) start
       for (j = 0; j < (4194304 / 512); j++) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (c = 0; c < 512; c++) {
           calcChecksumChunk += sdBuffer[c];
         }
@@ -1427,7 +1427,7 @@ unsigned int calc_checksum(char* fileName, char* folder) {
       calcChecksumChunk = 0;
       // Add the 1MB (8Mbit) end
       for (j = 0; j < (1048576 / 512); j++) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (c = 0; c < 512; c++) {
           calcChecksumChunk += sdBuffer[c];
         }
@@ -1437,7 +1437,7 @@ unsigned int calc_checksum(char* fileName, char* folder) {
       // Star Ocean/Tales of Phantasia Fix 6MB (48Mbit)
       // Add the 4MB (32Mbit) start
       for (j = 0; j < (4194304 / 512); j++) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (c = 0; c < 512; c++) {
           calcChecksumChunk += sdBuffer[c];
         }
@@ -1446,7 +1446,7 @@ unsigned int calc_checksum(char* fileName, char* folder) {
       calcChecksumChunk = 0;
       // Add the 2MB (16Mbit) end
       for (j = 0; j < (2097152 / 512); j++) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (c = 0; c < 512; c++) {
           calcChecksumChunk += sdBuffer[c];
         }
@@ -1455,14 +1455,14 @@ unsigned int calc_checksum(char* fileName, char* folder) {
     } else {
       //calcFilesize == 2 || 4 || 8 || 16 || 32 || 40 || etc
       for (i = 0; i < (myFile.fileSize() / 512); i++) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (c = 0; c < 512; c++) {
           calcChecksumChunk += sdBuffer[c];
         }
         calcChecksum = calcChecksumChunk;
       }
     }
-    myFile.close();
+    closeCurrentFile();
     sd.chdir();
     return (calcChecksum);
   } else {
@@ -1684,7 +1684,7 @@ void readROM_SNES() {
       numBanks > 0 && numBanks <= 64 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
                        beginC0BankRetry_SNES, readC0BankRetryWord_SNES, true)) {
-    myFile.close();
+    closeCurrentFile();
     return;
   }
 
@@ -1696,7 +1696,7 @@ void readROM_SNES() {
       numBanks > 0 && numBanks <= 64 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
                        beginC0BankRetry_SNES, readC0BankRetryWord_SNES, true)) {
-    myFile.close();
+    closeCurrentFile();
     return;
   }
 
@@ -1747,7 +1747,7 @@ void readROM_SNES() {
       controlIn_SNES();
     }
     if (transferred) {
-      myFile.close();
+      closeCurrentFile();
       return;
     }
   }
@@ -1756,7 +1756,7 @@ void readROM_SNES() {
   if (romType == LO && romChips <= 2 && numBanks > 0 && numBanks <= 64 &&
       myFile.romRetry2M((uint32_t)numBanks * 32768UL,
                        beginLoRomRetry_SNES, readLoRomRetryWord_SNES, true)) {
-    myFile.close();
+    closeCurrentFile();
     return;
   }
 
@@ -1769,7 +1769,7 @@ void readROM_SNES() {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SNES(currBank, currByte + c);
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
     }
     //Read Bank 0x80-9F for the 3rd MB
@@ -1779,7 +1779,7 @@ void readROM_SNES() {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SNES(currBank, currByte + c);
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
     }
   }
@@ -1832,7 +1832,7 @@ void readROM_SNES() {
     if (transferred) {
       writeSnesRegister_SNES(0x4807, originalSOMap);
       sdd1RetryMap = originalSOMap;
-      myFile.close();
+      closeCurrentFile();
       return;
     }
     sdd1RetryMap = originalSOMap;
@@ -1893,7 +1893,7 @@ void readROM_SNES() {
     }
     spc7110RetryMode = 0xff;
     if (transferred) {
-      myFile.close();
+      closeCurrentFile();
       return;
     }
   }
@@ -1961,7 +1961,7 @@ void readROM_SNES() {
   if (romType == EX && numBanks > 0 && numBanks <= 128 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
                        beginExHiRomRetry_SNES, readExHiRomRetryWord_SNES, true, true)) {
-    myFile.close();
+    closeCurrentFile();
     return;
   }
 
@@ -1971,7 +1971,7 @@ void readROM_SNES() {
     const uint32_t srtcBanks = (numBanks < 64) ? 64UL : (uint32_t)numBanks;
     if (myFile.romRetry2M(srtcBanks * 65536UL,
                           beginSrtcRetry_SNES, readSrtcRetryWord_SNES, true, true)) {
-      myFile.close();
+      closeCurrentFile();
       return;
     }
   }
@@ -1991,7 +1991,7 @@ void readROM_SNES() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 }
 
 /******************************************
@@ -2001,7 +2001,7 @@ void readROM_SNES() {
 void writeSRAM(boolean browseFile) {
   if (browseFile) {
     filePath[0] = '\0';
-    sd.chdir("/");
+    changeToStorageRoot();
     fileBrowser(FS(SharedFlashText::textSelectSrmFile));
     // Create filepath
     sprintf(filePath, "%s/%s", filePath, fileName);
@@ -2143,7 +2143,7 @@ void writeSRAM(boolean browseFile) {
         // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
         writeBank_SNES(0, 0x2226, 0x80);
         for (long currByte = 0x6000; currByte < 0x8000; currByte += 512) {
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           for (int c = 0; c < 512; c++) {
             writeBank_SNES(0, currByte + c, sdBuffer[c]);
           }
@@ -2167,7 +2167,7 @@ void writeSRAM(boolean browseFile) {
     dataIn();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
     display_Update();
 
@@ -2290,7 +2290,7 @@ void readSRAM() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
 
   // Signal end of process
   display_Clear();
@@ -2319,7 +2319,7 @@ unsigned long verifySRAM() {
           for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
             for (long currByte = 0; currByte < 0x10000; currByte += 512) {
               //fill sdBuffer
-              myFile.read(sdBuffer, 512);
+              readSdBufferBlock();
               for (int c = 0; c < 512; c++) {
                 if ((readBank_SNES(currBank, currByte + c)) != sdBuffer[c]) {
                   writeErrors++;
@@ -2330,7 +2330,7 @@ unsigned long verifySRAM() {
         } else {  // SuperFX SRAM
           for (long currByte = 0; currByte < lastByte; currByte += 512) {
             //fill sdBuffer
-            myFile.read(sdBuffer, 512);
+            readSdBufferBlock();
             for (int c = 0; c < 512; c++) {
               if ((readBank_SNES(0x70, currByte + c)) != sdBuffer[c]) {
                 writeErrors++;
@@ -2343,7 +2343,7 @@ unsigned long verifySRAM() {
         for (int currBank = 0x70; currBank < sramBanks + 0x70; currBank++) {
           for (long currByte = 0; currByte < 0x8000; currByte += 512) {
             //fill sdBuffer
-            myFile.read(sdBuffer, 512);
+            readSdBufferBlock();
             for (int c = 0; c < 512; c++) {
               if ((readBank_SNES(currBank, currByte + c)) != sdBuffer[c]) {
                 writeErrors++;
@@ -2354,7 +2354,7 @@ unsigned long verifySRAM() {
       } else {
         for (long currByte = 0; currByte < lastByte; currByte += 512) {
           //fill sdBuffer
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           for (int c = 0; c < 512; c++) {
             if ((readBank_SNES(0x70, currByte + c)) != sdBuffer[c]) {
               writeErrors++;
@@ -2373,7 +2373,7 @@ unsigned long verifySRAM() {
         long lastByte = (long(sramSize) * 128) + 0x6000;
         for (long currByte = 0x6000; currByte < lastByte; currByte += 512) {
           //fill sdBuffer
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           for (int c = 0; c < 512; c++) {
             if ((readBank_SNES(0x30, currByte + c)) != sdBuffer[c]) {
               writeErrors++;
@@ -2394,7 +2394,7 @@ unsigned long verifySRAM() {
           for (int currBank = 0x30; currBank < sramBanks + 0x30; currBank++) {
             for (long currByte = 0x6000; currByte < 0x8000; currByte += 512) {
               //fill sdBuffer
-              myFile.read(sdBuffer, 512);
+              readSdBufferBlock();
               for (int c = 0; c < 512; c++) {
                 if ((readBank_SNES(currBank, currByte + c)) != sdBuffer[c]) {
                   writeErrors++;
@@ -2406,7 +2406,7 @@ unsigned long verifySRAM() {
           lastByte += 0x6000;
           for (long currByte = 0x6000; currByte < lastByte; currByte += 512) {
             //fill sdBuffer
-            myFile.read(sdBuffer, 512);
+            readSdBufferBlock();
             for (int c = 0; c < 512; c++) {
               if ((readBank_SNES(0x30, currByte + c)) != sdBuffer[c]) {
                 writeErrors++;
@@ -2425,7 +2425,7 @@ unsigned long verifySRAM() {
         for (int currBank = 0xB0; currBank < sramBanks + 0xB0; currBank++) {
           for (long currByte = 0x6000; currByte < 0x8000; currByte += 512) {
             //fill sdBuffer
-            myFile.read(sdBuffer, 512);
+            readSdBufferBlock();
             for (int c = 0; c < 512; c++) {
               if ((readBank_SNES(currBank, currByte + c)) != sdBuffer[c]) {
                 writeErrors++;
@@ -2437,7 +2437,7 @@ unsigned long verifySRAM() {
         lastByte += 0x6000;
         for (long currByte = 0x6000; currByte < lastByte; currByte += 512) {
           //fill sdBuffer
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           for (int c = 0; c < 512; c++) {
             if ((readBank_SNES(0xB0, currByte + c)) != sdBuffer[c]) {
               writeErrors++;
@@ -2456,7 +2456,7 @@ unsigned long verifySRAM() {
         for (int currBank = 0x40; currBank < sramBanks + 0x40; currBank++) {
           for (long currByte = 0x0; currByte < 0x10000; currByte += 512) {
             //fill sdBuffer
-            myFile.read(sdBuffer, 512);
+            readSdBufferBlock();
             for (int c = 0; c < 512; c++) {
               if ((readBank_SNES(currBank, currByte + c)) != sdBuffer[c]) {
                 writeErrors++;
@@ -2467,7 +2467,7 @@ unsigned long verifySRAM() {
       } else {
         for (long currByte = 0x0; currByte < lastByte; currByte += 512) {
           //fill sdBuffer
-          myFile.read(sdBuffer, 512);
+          readSdBufferBlock();
           for (int c = 0; c < 512; c++) {
             if ((readBank_SNES(0x40, currByte + c)) != sdBuffer[c]) {
               writeErrors++;
@@ -2479,7 +2479,7 @@ unsigned long verifySRAM() {
       // Set pins to input
       dataIn();
       // Close the file:
-      myFile.close();
+      closeCurrentFile();
       if (writeErrors == 0) {
         println_Msg(FS(SharedFlashText::textVerifiedOK));
       } else {
@@ -2499,7 +2499,7 @@ unsigned long verifySRAM() {
       resetArduino();
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     return writeErrors;
   } else {
     print_Error(open_file_STR);

@@ -217,7 +217,7 @@ static void readROM_LYNX() {
       uint8_t byte = readByte_LYNX(addr);
       sdBuffer[i % 512] = byte;
       if ((i + 1) % 512 == 0) {
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
     }
   }
@@ -397,7 +397,7 @@ static void eraseFlash_LYNX() {
 
 static void writeROM_LYNX() {
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(FS(FSTRING_SELECT_FILE));
   display_Clear();
 
@@ -449,7 +449,7 @@ static void writeROM_LYNX() {
   }
   draw_progressbar(upto, upto);
 
-  myFile.close();
+  closeCurrentFile();
   dataDir_LYNX(INPUT);
   print_STR(done_STR, true);
   waitPressButton_LYNX();
@@ -471,13 +471,13 @@ void lynxMenu() {
 
   switch (mainMenu) {
     case 0:
-      sd.chdir("/");
+      changeToStorageRoot();
       createFolderAndOpenFile(LYNX, "ROM", romName, "lnx");
       detectCart_LYNX();
       writeHeader_LYNX();
       readROM_LYNX();
-      myFile.close();
-      sd.chdir("/");
+      closeCurrentFile();
+      changeToStorageRoot();
       compareCRC("lynx.txt", 0, true, LYNX_HEADER_SIZE);
       print_STR(done_STR, true);
       waitPressButton_LYNX();

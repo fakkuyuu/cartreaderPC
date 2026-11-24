@@ -170,7 +170,7 @@ void setupCFI() {
   display_Clear();
   display_Update();
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(F("Select file"));
   display_Clear();
   setup_Flash8();
@@ -242,7 +242,7 @@ void flashromMenu8() {
     case 3:
       if (flashromType != 0) {
         filePath[0] = '\0';
-        sd.chdir("/");
+        changeToStorageRoot();
         fileBrowser(FS(FSTRING_SELECT_FILE));
         display_Clear();
         time = millis();
@@ -367,7 +367,7 @@ void flashromMenu16() {
 
     case 3:
       filePath[0] = '\0';
-      sd.chdir("/");
+      changeToStorageRoot();
       fileBrowser(FS(FSTRING_SELECT_FILE));
       display_Clear();
       time = millis();
@@ -447,7 +447,7 @@ void epromMenu() {
 
     case 2:
       filePath[0] = '\0';
-      sd.chdir("/");
+      changeToStorageRoot();
       fileBrowser(FS(FSTRING_SELECT_FILE));
       display_Clear();
       time = millis();
@@ -458,7 +458,7 @@ void epromMenu() {
 
     case 3:
       filePath[0] = '\0';
-      sd.chdir("/");
+      changeToStorageRoot();
       fileBrowser(F("Verify against"));
       sprintf(filePath, "%s/%s", filePath, fileName);
       display_Clear();
@@ -1614,7 +1614,7 @@ void writeFlash29F032() {
       //   printBlankLine();
       // }
       if (!noread) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
       }
       // Blink led
       if (currByte % 2048 == 0)
@@ -1661,7 +1661,7 @@ void writeFlash29F032() {
     dataIn8();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -1772,7 +1772,7 @@ void writeFlash29F1610() {
     dataIn8();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -1823,7 +1823,7 @@ void writeFlash29F1601() {
     dataIn8();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -1925,7 +1925,7 @@ void writeFlash29LV640() {
 
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
       // Fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       // Blink led
       if (currByte % 4096 == 0)
         blinkLED();
@@ -1946,7 +1946,7 @@ void writeFlash29LV640() {
     // Set data pins to input again
     dataIn8();
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -1970,7 +1970,7 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
       // Write to flashrom
       for (unsigned long currSdBuffer = 0; currSdBuffer < sectorSize; currSdBuffer += 512) {
         // Fill SD buffer
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
 
         // Write bufferSize bytes at a time
         for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += bufferSize) {
@@ -2006,7 +2006,7 @@ void writeFlash29GL(unsigned long sectorSize, byte bufferSize) {
     // Set data pins to input again
     dataIn8();
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -2025,7 +2025,7 @@ void writeFlash29F800() {
 
     // Fill sdBuffer
     for (unsigned long currByte = 0; currByte < fileSize; currByte += 512) {
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       // Blink led
       if (currByte % 2048 == 0)
         blinkLED();
@@ -2046,7 +2046,7 @@ void writeFlash29F800() {
     dataIn8();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -2105,7 +2105,7 @@ void writeFlash28FXXX() {
       writeFlashE28FXXXJ3A();
     }
 
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -2120,7 +2120,7 @@ void writeFlashE28FXXXJ3A() {
 
   // Fill sdBuffer
   for (uint32_t currByte = 0; currByte < fileSize; currByte += 512) {
-    myFile.read(sdBuffer, 512);
+    readSdBufferBlock();
 
     // Blink led
     if (currByte % 2048 == 0)
@@ -2171,7 +2171,7 @@ void writeFlashLH28F0XX() {
 
   // Fill sdBuffer
   for (uint32_t currByte = 0; currByte < fileSize; currByte += 512) {
-    myFile.read(sdBuffer, 512);
+    readSdBufferBlock();
     // Blink led
     if (currByte % 2048 == 0)
       blinkLED();
@@ -2272,7 +2272,7 @@ void verifyFlash(byte currChip, byte totalChips, boolean reversed) {
       }
 
       //fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       for (int c = 0; c < 512; c++) {
         if (readByte_Flash(currByte + c) != sdBuffer[c]) {
           blank++;
@@ -2295,13 +2295,13 @@ void verifyFlash(byte currChip, byte totalChips, boolean reversed) {
       print_Error(did_not_verify_STR);
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
 void readFlash() {
   // Reset to root directory
-  sd.chdir("/");
+  changeToStorageRoot();
 
   createFolderAndOpenFile("FLASH", NULL, "FL", "bin");
 
@@ -2314,7 +2314,7 @@ void readFlash() {
     for (int c = 0; c < 512; c++) {
       sdBuffer[c] = readByte_Flash(currByte + c);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     // Update progress bar
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
@@ -2324,7 +2324,7 @@ void readFlash() {
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   println_Msg(FS(SharedFlashText::textFinishedReading));
   display_Update();
 }
@@ -2406,7 +2406,7 @@ void writeFlash16() {
     dataIn16();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -2452,7 +2452,7 @@ void writeFlash16_29F1601() {
     dataIn16();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -2527,7 +2527,7 @@ void verifyFlash16() {
     word d = 0;
     for (unsigned long currByte = 0; currByte < fileSize / 2; currByte += 256) {
       //fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       for (int c = 0; c < 256; c++) {
         word currWord = ((sdBuffer[d + 1] << 8) | sdBuffer[d]);
 
@@ -2548,13 +2548,13 @@ void verifyFlash16() {
       display_Update();
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
 void readFlash16() {
   // Reset to root directory
-  sd.chdir("/");
+  changeToStorageRoot();
 
   createFolderAndOpenFile("FLASH", NULL, "FL", "bin");
 
@@ -2569,12 +2569,12 @@ void readFlash16() {
       sdBuffer[d] = (currWord & 0xFF);
       d += 2;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     d = 0;
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   println_Msg(F("Finished reading."));
   display_Update();
 }
@@ -2653,7 +2653,7 @@ void writeFlash16_29LV640() {
     int d = 0;
     for (unsigned long currWord = 0; currWord < fileSize / 2; currWord += 256) {
       // Fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       // Blink led
       if (currWord % 4096 == 0)
@@ -2676,7 +2676,7 @@ void writeFlash16_29LV640() {
     dataIn16();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -2809,7 +2809,7 @@ void blankcheck_Eprom() {
 
 void read_Eprom() {
   // Reset to root directory
-  sd.chdir("/");
+  changeToStorageRoot();
 
   createFolderAndOpenFile("FLASH", NULL, "FL", "bin");
 
@@ -2824,12 +2824,12 @@ void read_Eprom() {
       sdBuffer[d] = (myWord & 0xFF);
       d += 2;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     d = 0;
   }
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   println_Msg(F("Finished reading."));
   display_Update();
 }
@@ -2842,7 +2842,7 @@ void write_Eprom() {
 
     for (unsigned long currWord = 0; currWord < fileSize / 2; currWord += 256) {
       // Fill SD buffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       int d = 0;
 
       // Blink led
@@ -2877,7 +2877,7 @@ void write_Eprom() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -2887,7 +2887,7 @@ void verify_Eprom() {
     word d = 0;
     for (unsigned long currWord = 0; currWord < (fileSize / 2); currWord += 256) {
       //fill sdBuffer
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
       for (int c = 0; c < 256; c++) {
         word myWord = (((sdBuffer[d + 1] & 0xFF) << 8) | (sdBuffer[d] & 0xFF));
 
@@ -2908,7 +2908,7 @@ void verify_Eprom() {
       display_Update();
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
 }
 
@@ -3235,7 +3235,7 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
         fileSize = 8388608;
       }
 
-      myFile.read(sdBuffer, 512);
+      readSdBufferBlock();
 
       // Blink led
       if (currAddr % 4096 == 0)
@@ -3262,7 +3262,7 @@ void writeCFI_Flash(byte currChip, byte totalChips, boolean reversed) {
       draw_progressbar(processedProgressBar, totalProgressBar);
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
   }
   // Reset flash
   dataOut();

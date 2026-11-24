@@ -116,9 +116,9 @@ void wsvMenu() {
 
     case 1:
       // Read Rom
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_WSV();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -200,9 +200,9 @@ void readROM_WSV() {
   for (uint32_t addr = 0; addr < romEnd; addr += 512) {
     for (uint16_t w = 0; w < 512; w++)
       sdBuffer[w] = readByte_WSV(romStart + addr + w);
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
-  myFile.close();
+  closeCurrentFile();
 
   // Compare CRC32 to database and rename ROM if found
   // Arguments: database name, precalculated crc string or 0 to calculate, rename rom or not, starting offset

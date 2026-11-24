@@ -44,14 +44,14 @@ void gpcMenu() {
     // Read ram
     case 0:
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       readRAM_GPC();
       break;
 
     // Write ram
     case 1:
       // Change working dir to root
-      sd.chdir("/");
+      changeToStorageRoot();
       writeRAM_GPC();
       unsigned long wrErrors;
       wrErrors = verifyRAM_GPC();
@@ -297,13 +297,13 @@ void readRAM_GPC() {
       for (int c = 0; c < 512; c++) {
         sdBuffer[c] = readBank_GPC(currBank, currByte + c);
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
   }
   draw_progressbar(0x80000, 0x80000);  //Finish drawing progress bar
 
   // Close the file:
-  myFile.close();
+  closeCurrentFile();
   println_Msg(F("Read ram completed"));
   updateDisplayAndWait();
 }
@@ -311,7 +311,7 @@ void readRAM_GPC() {
 void writeRAM_GPC(void) {
   //Display file Browser and wait user to select a file. Size must be 512KB.
   filePath[0] = '\0';
-  sd.chdir("/");
+  changeToStorageRoot();
   fileBrowser(F("Select SFC file"));
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
@@ -324,7 +324,7 @@ void writeRAM_GPC(void) {
     if (fileSize != 0x80000) {
       println_Msg(F("File must be 512KB"));
       display_Update();
-      myFile.close();
+      closeCurrentFile();
       wait();
       return;
     }
@@ -344,7 +344,7 @@ void writeRAM_GPC(void) {
     for (int currBank = 0xC0; currBank < 0xC8; currBank++) {
       //startAddr = 0x0000
       for (long currByte = 0x0000; currByte < 0x10000; currByte += 512) {
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (unsigned long c = 0; c < 512; c++) {
           //startBank = 0x10; CS low
           writeBank_GPC(currBank, currByte + c, sdBuffer[c]);
@@ -368,7 +368,7 @@ void writeRAM_GPC(void) {
     dataIn();
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     println_Msg("");
     println_Msg(F("RAM writing finished"));
     display_Update();
@@ -392,7 +392,7 @@ unsigned long verifyRAM_GPC() {
       //startAddr = 0x0000
       for (long currByte = 0x0000; currByte < 0x10000; currByte += 512) {
         //fill sdBuffer
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (unsigned long c = 0; c < 512; c++) {
           if ((readBank_GPC(currBank, currByte + c)) != sdBuffer[c]) {
             writeErrors++;
@@ -401,7 +401,7 @@ unsigned long verifyRAM_GPC() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     return writeErrors;
   } else {
     print_Error(open_file_STR);

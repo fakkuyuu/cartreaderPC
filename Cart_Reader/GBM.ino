@@ -51,7 +51,7 @@ void gbmMenu() {
       display_Clear();
 
       // Reset to root directory
-      sd.chdir("/");
+      changeToStorageRoot();
 
       // Enable access to ports 0120h
       send_GBM(0x09);
@@ -101,7 +101,7 @@ void gbmMenu() {
       display_Clear();
 
       filePath[0] = '\0';
-      sd.chdir("/");
+      changeToStorageRoot();
       // Launch file browser
       fileBrowser(F("Select 1MB file"));
       display_Clear();
@@ -117,7 +117,7 @@ void gbmMenu() {
       display_Clear();
 
       // Reset to root directory
-      sd.chdir("/");
+      changeToStorageRoot();
 
       // Read mapping
       readMapping_GBM();
@@ -139,7 +139,7 @@ void gbmMenu() {
       updateDisplayAndWait();
 
       // Reset to root directory
-      sd.chdir("/");
+      changeToStorageRoot();
 
       // Clear screen
       display_Clear();
@@ -148,7 +148,7 @@ void gbmMenu() {
       filePath[0] = '\0';
 
       // Reset to root directory
-      sd.chdir("/");
+      changeToStorageRoot();
 
       // Launch file browser
       fileBrowser(FS(SharedFlashText::textSelectMAPFile));
@@ -361,12 +361,12 @@ void readROM_GBM(word numBanks) {
         for (int currByte = 0; currByte < 512; currByte++) {
           sdBuffer[currByte] = readByte_GBM(currAddress + currByte);
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
     }
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
 
     // Signal end of process
     print_Msg(FS(SharedFlashText::textSavedToNP));
@@ -695,7 +695,7 @@ void writeFlash_GBM() {
       }
     }
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     print_STR(done_STR, 1);
   } else {
     print_Error(open_file_STR);
@@ -743,7 +743,7 @@ void readMapping_GBM() {
     myFile.write(sdBuffer, 128);
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
 
     // Signal end of process
     printSdBuffer(0, 20);
@@ -909,7 +909,7 @@ void writeMapping_GBM() {
     writeByte_GBM(127, 0xFF);
 
     // Close the file:
-    myFile.close();
+    closeCurrentFile();
     print_STR(done_STR, 1);
   } else {
     print_Error(open_file_STR);

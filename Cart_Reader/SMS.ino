@@ -570,7 +570,7 @@ void manual_selectRomSize() {
 //  Read ROM and save it to the SD card
 //******************************************
 void readROM_SMS() {
-  sd.chdir("/");
+  changeToStorageRoot();
   // Get name, add extension depending on the system and convert to char array for sd lib
   if (system_sms) {
     createFolder("SMS", "ROM", romName, "sms");
@@ -633,7 +633,7 @@ void readROM_SMS() {
       //     }
       //   }
       // }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
 
     // Update progress bar
@@ -642,7 +642,7 @@ void readROM_SMS() {
   }
 
   // Close file
-  myFile.close();
+  closeCurrentFile();
 
   // Compare dump checksum with database values
   if (system_sms) {
@@ -689,11 +689,11 @@ void readSRAM_SMS() {
       for (int currByte = 0; currByte < 512; currByte++) {
         sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
       }
-      myFile.write(sdBuffer, 512);
+      writeSdBufferBlock();
     }
   }
   // Close file
-  myFile.close();
+  closeCurrentFile();
   print_STR(press_button_STR, 1);
   display_Update();
 }
@@ -731,14 +731,14 @@ void writeSRAM_SMS() {
         writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
         // Blink led
         blinkLED();
-        myFile.read(sdBuffer, 512);
+        readSdBufferBlock();
         for (int x = 0; x < 512; x++) {
           writeByte_SMS(0x8000 + page_address + x, sdBuffer[x]);
         }
       }
 
       // Close file
-      myFile.close();
+      closeCurrentFile();
       print_STR(press_button_STR, 1);
       display_Update();
     } else {

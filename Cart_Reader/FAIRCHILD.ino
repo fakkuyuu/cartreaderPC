@@ -137,9 +137,9 @@ void fairchildMenu() {
 
     case 1:
       // Read ROM
-      sd.chdir("/");
+      changeToStorageRoot();
       readROM_FAIRCHILD();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 2:
@@ -149,9 +149,9 @@ void fairchildMenu() {
 
     case 3:
       // Read 16K
-      sd.chdir("/");
+      changeToStorageRoot();
       read16K_FAIRCHILD();
-      sd.chdir("/");
+      changeToStorageRoot();
       break;
 
     case 4:
@@ -415,7 +415,7 @@ void readROM_FAIRCHILD() {
           startbyte = readData_FAIRCHILD();
           sdBuffer[w] = startbyte;
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
         delay(1);  // Added delay
         startbyte = sdBuffer[1]; // Restore byte for 3K Hangman Check
         for (int z = 1; z < blocks; z++) {
@@ -441,14 +441,14 @@ void readROM_FAIRCHILD() {
             uint8_t temp = readData_FAIRCHILD();
             sdBuffer[w] = temp;
           }
-          myFile.write(sdBuffer, 512);
+          writeSdBufferBlock();
           delay(1);  // Added delay
         }
         break;
       }
     }
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 
@@ -475,10 +475,10 @@ void read16K_FAIRCHILD() { // Read 16K Bytes
       uint8_t temp = readData_FAIRCHILD();
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
     delay(1);  // Added delay
   }
-  myFile.close();
+  closeCurrentFile();
 
   printCRC(fileName, NULL, 0);
 

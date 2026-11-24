@@ -274,7 +274,7 @@ void readSegment_TI99(uint16_t startaddr, uint16_t endaddr)
       uint8_t temp = readROM_TI99(addr + w);
       sdBuffer[w] = temp;
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -359,7 +359,7 @@ void readSegmentGROM_TI99(uint32_t startaddr, uint32_t endaddr)
       DISABLE_GROM;
       pulseGRC(16);
     }
-    myFile.write(sdBuffer, 512);
+    writeSdBufferBlock();
   }
 }
 
@@ -488,7 +488,7 @@ void readGROM_TI99()
         else if (x == 7)
           readSegmentGROM_TI99(0xE000, 0xF800); // +6K = 30K
         DISABLE_GROM;
-        myFile.close();
+        closeCurrentFile();
 
         printCRC(fileName, NULL, 0);
       }
@@ -534,7 +534,7 @@ void readCROM_TI99()
         for (int x = 0; x < 512; x++) {
           sdBuffer[x] = 0xFF; // Replace Random RAM Contents with 0xFF
         }
-        myFile.write(sdBuffer, 512);
+        writeSdBufferBlock();
       }
       for (int y = 1; y < 4; y++) {
         writeData_TI99(0x6FFE, y); // Set Bank 1/2/3
@@ -575,7 +575,7 @@ void readCROM_TI99()
       }
     }
     DISABLE_ROM;
-    myFile.close();
+    closeCurrentFile();
 
     printCRC(fileName, NULL, 0);
   }
