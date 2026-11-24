@@ -214,7 +214,7 @@ void readROM_PV1000()
 void printRomSize_PV1000(int index)
 {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(PV1000[index]);
 }
 #endif
@@ -231,7 +231,7 @@ void setROMSize_PV1000()
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(PV1000[newpv1000size]);
   println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
@@ -279,9 +279,9 @@ void checkStatus_PV1000()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("CASIO PV-1000"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(PV1000[pv1000size]);
   println_Msg(FS(SharedFlashText::unitKB));
   updateDisplayAndWait();

@@ -216,7 +216,7 @@ void n64ControllerMenu() {
       validateMPK();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -237,7 +237,7 @@ void n64ControllerMenu() {
       verifyMPK();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -278,7 +278,7 @@ void n64CartMenu() {
 #endif
 
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -309,7 +309,7 @@ void n64CartMenu() {
       }
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -329,7 +329,7 @@ void n64CartMenu() {
         } else {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
-          print_STR(_bytes_STR, 1);
+          printBytesLine();
           print_Error(did_not_verify_STR);
         }
       } else if (saveType == 2) {
@@ -345,7 +345,7 @@ void n64CartMenu() {
         } else {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
-          print_STR(_bytes_STR, 1);
+          printBytesLine();
           print_Error(did_not_verify_STR);
         }
       } else if (saveType == 4) {
@@ -358,13 +358,13 @@ void n64CartMenu() {
         display_Update();
         writeErrors = verifyFram(flashramType);
         if (writeErrors == 0) {
-          println_Msg(FS(FSTRING_OK));
+          printOkLine();
           display_Update();
         } else {
           println_Msg("");
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
-          print_STR(_bytes_STR, 1);
+          printBytesLine();
           print_Error(did_not_verify_STR);
         }
       } else if ((saveType == 5) || (saveType == 6)) {
@@ -382,7 +382,7 @@ void n64CartMenu() {
         } else {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
-          print_STR(_bytes_STR, 1);
+          printBytesLine();
           print_Error(did_not_verify_STR);
         }
       } else {
@@ -390,7 +390,7 @@ void n64CartMenu() {
         print_Error(F("Save Type Error"));
       }
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -2017,7 +2017,7 @@ void verifyMPK() {
   } else {
     print_STR(error_STR, 0);
     print_Msg(writeErrors);
-    print_STR(_bytes_STR, 1);
+    printBytesLine();
     print_Error(did_not_verify_STR);
   }
 }
@@ -2038,7 +2038,7 @@ void printCartInfo_N64() {
     println_Msg(cartID);
     print_Msg(FS(FSTRING_REVISION));
     println_Msg(romVersion);
-    print_Msg(FS(FSTRING_ROM_SIZE));
+    printRomSizeLabel();
     print_Msg(cartSize);
     println_Msg(FS(SharedFlashText::unitMBWithSpace));
     print_Msg(FS(SharedFlashText::textSaveType));
@@ -2071,7 +2071,7 @@ void printCartInfo_N64() {
     // Wait for user input
     println_Msg(FS(FSTRING_SPACE));
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     updateDisplayAndWait();
   } else {
     // Display error
@@ -2090,7 +2090,7 @@ void printCartInfo_N64() {
     print_Error(F("Cartridge unknown"));
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     updateDisplayAndWait();
     cartSize = 2;
   }
@@ -2404,7 +2404,7 @@ void writeEeprom_N64() {
 
       // Close the file:
       closeCurrentFile();
-      print_STR(done_STR, 1);
+      printDoneLine();
       display_Update();
       delay(600);
     } else {
@@ -2548,7 +2548,7 @@ void writeSram(unsigned long sramSize) {
       }
       // Close the file:
       closeCurrentFile();
-      print_STR(done_STR, 1);
+      printDoneLine();
       display_Update();
     } else {
       print_FatalError(sd_error_STR);
@@ -2681,7 +2681,7 @@ void writeFram(byte flashramType) {
 
     // Check if empty
     if (blankcheck_N64(flashramType) == 0) {
-      println_Msg(FS(FSTRING_OK));
+      printOkLine();
       display_Update();
     } else {
       println_Msg(F("FAIL"));
@@ -3278,7 +3278,7 @@ void flashRepro_N64() {
     println_Msg(FS(SharedFlashText::textAttentionUse33V));
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     updateDisplayAndWait();
   } else {
     println_Msg(FS(SharedFlashText::textUnknownFlashrom));
@@ -3475,7 +3475,7 @@ void flashRepro_N64() {
     // Check if erase was successful
     if (blankcheckFlashrom_N64()) {
       // Write flashrom
-      println_Msg(FS(FSTRING_OK));
+      printOkLine();
       print_Msg(FS(SharedFlashText::textWriting));
       println_Msg(filePath);
       display_Update();
@@ -3532,7 +3532,7 @@ void flashRepro_N64() {
   }
 
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
   display_Clear();
   display_Update();
@@ -4278,7 +4278,7 @@ void flashGameshark_N64() {
     println_Msg(FS(SharedFlashText::textAttentionUse33V));
     println_Msg(FS(SharedFlashText::textPowerOFFIfUnsure));
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     updateDisplayAndWait();
 
     // Launch file browser
@@ -4351,7 +4351,7 @@ void flashGameshark_N64() {
   }
 
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
   display_Clear();
   display_Update();
@@ -4635,7 +4635,7 @@ void flashXplorer_N64() {
     println_Msg(FS(SharedFlashText::textAttentionUse33V));
     println_Msg(FS(SharedFlashText::textPowerOFFIfUnsure));
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     updateDisplayAndWait();
 
     // Launch file browser
@@ -4704,7 +4704,7 @@ void flashXplorer_N64() {
   }
 
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
   display_Clear();
   display_Update();

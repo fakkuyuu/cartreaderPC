@@ -507,7 +507,7 @@ void readROM_LEAP()
 void printRomSize_LEAP(int index)
 {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(LEAPSTER[index]);
 }
 #endif
@@ -524,7 +524,7 @@ void setROMSize_LEAP()
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(LEAPSTER[newleapsize]);
   println_Msg(FS(SharedFlashText::unitMB));
   display_Update();
@@ -572,13 +572,13 @@ void checkStatus_LEAP()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("LEAPSTER READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
   print_Msg(FS(SharedFlashText::textTITLE));
   println_Msg(ROMTitle);
   print_Msg(FS(SharedFlashText::textVER));
   println_Msg(ROMVersion);
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(LEAPSTER[leapsize]);
   println_Msg(FS(SharedFlashText::unitMB));
   updateDisplayAndWait();

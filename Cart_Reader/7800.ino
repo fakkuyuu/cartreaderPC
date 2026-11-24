@@ -442,7 +442,7 @@ void readROM_7800() {
 
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -501,7 +501,7 @@ void println_Mapper7800(byte mapper) {
 
 void printRomSize_7800(int index) {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(a7800[index]);
 }
 #endif
@@ -518,7 +518,7 @@ void setROMSize_7800() {
     new7800size = navigateMenu(a7800lo, a7800hi, &printRomSize_7800);
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(a7800[new7800size]);
   println_Msg(FS(SharedFlashText::unitK));
   display_Update();
@@ -570,12 +570,12 @@ void checkStatus_7800() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ATARI 7800 READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
   print_Msg(F("MAPPER:   "));
   println_Msg(a7800mapper);
   println_Mapper7800(a7800mapper);
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(a7800[a7800size]);
   println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();

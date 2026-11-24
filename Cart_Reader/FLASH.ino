@@ -758,7 +758,7 @@ idtheflash:
   }
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   display_Update();
   resetFlash8();
 }
@@ -830,7 +830,7 @@ void id_Flash16() {
   }
   println_Msg("");
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   display_Update();
 }
 #endif
@@ -1458,11 +1458,11 @@ bool openFileOnSD() {
       print_Msg(FS(FSTRING_SPACE));
       print_Msg(FS(FSTRING_SPACE));
       print_Msg(fileSize);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_Msg(F("Flash:"));
       print_Msg(FS(FSTRING_SPACE));
       print_Msg(flashSize);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_FatalError(file_too_big_STR);
     }
     return true;
@@ -2291,7 +2291,7 @@ void verifyFlash(byte currChip, byte totalChips, boolean reversed) {
     } else {
       print_STR(error_STR, 0);
       print_Msg(blank);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_Error(did_not_verify_STR);
     }
     // Close the file:

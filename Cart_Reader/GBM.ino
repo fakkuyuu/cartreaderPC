@@ -45,7 +45,7 @@ void gbmMenu() {
       println_Msg(F("before reading"));
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       // Clear screen
       display_Clear();
@@ -75,7 +75,7 @@ void gbmMenu() {
       println_Msg("");
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       // Clear screen
       display_Clear();
@@ -87,7 +87,7 @@ void gbmMenu() {
       // Clear screen
       display_Clear();
       if (blankcheckFlash_GBM()) {
-        println_Msg(FS(FSTRING_OK));
+        printOkLine();
         display_Update();
       } else {
         println_Msg(FS(SharedFlashText::textERROR));
@@ -135,7 +135,7 @@ void gbmMenu() {
       println_Msg(F("mapping data"));
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
 
       // Reset to root directory
@@ -162,7 +162,7 @@ void gbmMenu() {
       // Erase mapping
       eraseMapping_GBM();
       if (blankcheckMapping_GBM()) {
-        println_Msg(FS(FSTRING_OK));
+        printOkLine();
         display_Update();
       } else {
         print_Error(F("Erasing failed"));
@@ -179,7 +179,7 @@ void gbmMenu() {
   }
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -696,7 +696,7 @@ void writeFlash_GBM() {
     }
     // Close the file:
     closeCurrentFile();
-    print_STR(done_STR, 1);
+    printDoneLine();
   } else {
     print_Error(open_file_STR);
   }
@@ -910,7 +910,7 @@ void writeMapping_GBM() {
 
     // Close the file:
     closeCurrentFile();
-    print_STR(done_STR, 1);
+    printDoneLine();
   } else {
     print_Error(open_file_STR);
   }

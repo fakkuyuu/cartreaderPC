@@ -285,7 +285,7 @@ void readROM_5200() {
 
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -326,7 +326,7 @@ void checkMapperSize_5200() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_5200(int index) {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(a5200[index]);
 }
 #endif
@@ -342,7 +342,7 @@ void setROMSize_5200() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(a5200[new5200size]);
   println_Msg(FS(SharedFlashText::unitK));
   display_Update();
@@ -394,12 +394,12 @@ void checkStatus_5200() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ATARI 5200 READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
   print_Msg(F("MAPPER:   "));
   println_Msg(a5200mapper);
   println_Mapper5200(a5200mapper);
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(a5200[a5200size]);
   println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();

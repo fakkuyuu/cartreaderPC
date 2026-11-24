@@ -83,7 +83,7 @@ void svMenu() {
       } else {
         print_STR(error_STR, 0);
         print_Msg(wrErrors);
-        print_STR(_bytes_STR, 1);
+        printBytesLine();
         print_Error(did_not_verify_STR);
       }
       wait();

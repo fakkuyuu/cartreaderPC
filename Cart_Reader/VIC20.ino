@@ -426,7 +426,7 @@ void checkStatus_VIC20()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("COMMODORE VIC-20"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
   print_Msg(F("ROM MAP:   "));
   println_Msg(VIC20MAP[vic20map], HEX);

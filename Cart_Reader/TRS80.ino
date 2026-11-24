@@ -288,7 +288,7 @@ void readROM_TRS80()
 void printRomSize_TRS80(int index)
 {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(TRS80[index]);
 }
 #endif
@@ -305,7 +305,7 @@ void setROMSize_TRS80()
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(TRS80[newtrs80size]);
   println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
@@ -353,9 +353,9 @@ void checkStatus_TRS80()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("TRS-80 COLOR COMPUTER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(TRS80[trs80size]);
   println_Msg(FS(SharedFlashText::unitKB));
   updateDisplayAndWait();

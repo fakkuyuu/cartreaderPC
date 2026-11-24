@@ -226,7 +226,7 @@ void gbSmartGameOptions() {
   if (gameSubMenu != 3) {
     printBlankLine();
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     updateDisplayAndWait();
   }
 }
@@ -301,7 +301,7 @@ void gbSmartFlashMenu() {
         println_Msg(F("GB Smart Cartridge."));
         printBlankLine();
         // Prints string out of the common strings array either with or without newline
-        print_STR(press_button_STR, 1);
+        printPressButtonPrompt();
         updateDisplayAndWait();
 
         display_Clear();
@@ -322,7 +322,7 @@ void gbSmartFlashMenu() {
 
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -448,7 +448,7 @@ void gbSmartWriteFlash() {
     gbSmartEraseFlash(bank);
     gbSmartResetFlash(bank);
 
-    print_STR(done_STR, 1);
+    printDoneLine();
     print_Msg(FS(SharedFlashText::blankCheckProgress));
     display_Update();
 
@@ -470,12 +470,12 @@ void gbSmartWriteFlash() {
 
   writeErrors = gbSmartVerifyFlash();
   if (writeErrors == 0) {
-    println_Msg(FS(FSTRING_OK));
+    printOkLine();
     display_Update();
   } else {
     print_STR(error_STR, 0);
     print_Msg(writeErrors);
-    print_STR(_bytes_STR, 1);
+    printBytesLine();
     print_FatalError(did_not_verify_STR);
   }
 }

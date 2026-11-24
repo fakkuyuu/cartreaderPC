@@ -305,7 +305,7 @@ void mdMenu() {
       // Set CS(PH3) HIGH
       PORTH |= (1 << 3);
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -336,7 +336,7 @@ void mdMenu() {
       // Set CS(PH3) HIGH
       PORTH |= (1 << 3);
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -424,7 +424,7 @@ void mdCartMenu() {
         } else {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
-          print_STR(_bytes_STR, 1);
+          printBytesLine();
           print_Error(did_not_verify_STR);
         }
       } else if (saveType == 4) {
@@ -462,7 +462,7 @@ void mdCartMenu() {
       break;
   }
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -503,7 +503,7 @@ void segaCDMenu() {
   }
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -1390,7 +1390,7 @@ void getCartInfo_MD() {
   // Wait for user input
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 #endif
 }
@@ -1879,7 +1879,7 @@ void readROM_MD() {
   print_Msg(F("Internal checksum..."));
   display_Update();
   if (chksum == calcCKS) {
-    println_Msg(FS(FSTRING_OK));
+    printOkLine();
     display_Update();
   } else {
     println_Msg(FS(SharedFlashText::textError));
@@ -1894,7 +1894,7 @@ void readROM_MD() {
   if (SnKmode >= 2) {
     print_Msg(F("Lock-on checksum..."));
     if (chksumLockon == calcCKSLockon) {
-      println_Msg(FS(FSTRING_OK));
+      printOkLine();
       display_Update();
     } else {
       print_Msg(FS(SharedFlashText::textError));
@@ -1908,7 +1908,7 @@ void readROM_MD() {
   if (SnKmode == 3) {
     print_Msg(F("Adittional checksum..."));
     if (chksumSonic2 == calcCKSSonic2) {
-      println_Msg(FS(FSTRING_OK));
+      printOkLine();
       display_Update();
     } else {
       print_Msg(FS(SharedFlashText::textError));
@@ -1997,7 +1997,7 @@ void writeSram_MD() {
 
     // Close the file:
     closeCurrentFile();
-    print_STR(done_STR, 1);
+    printDoneLine();
     display_Update();
   } else {
     print_FatalError(sd_error_STR);
@@ -2383,7 +2383,7 @@ void verifyFlash_MD() {
     } else {
       print_STR(error_STR, 0);
       print_Msg(blank);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_Error(did_not_verify_STR);
     }
     // Close the file:
@@ -3030,7 +3030,7 @@ void writeEEP_MD() {
     closeCurrentFile();
     printBlankLine();
     display_Clear();
-    print_STR(done_STR, 1);
+    printDoneLine();
     display_Update();
   } else {
     print_FatalError(sd_error_STR);
@@ -3102,7 +3102,7 @@ void writeBram_MD() {
     closeCurrentFile();
     printBlankLine();
     display_Clear();
-    print_STR(done_STR, 1);
+    printDoneLine();
     display_Update();
   } else {
     print_FatalError(sd_error_STR);
@@ -3167,7 +3167,7 @@ void printRomSize_MD(int index) {
   dont_log = true;
 #endif
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(pgm_read_byte(&(MDSize[index])));
   println_Msg(FS(SharedFlashText::textMbit));
 #ifdef ENABLE_GLOBAL_LOG
@@ -3181,7 +3181,7 @@ void force_cartSize_MD() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display.setCursor(0, 56);  // Display selection at bottom
 #endif
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(cartSize / 131072);
   println_Msg(FS(SharedFlashText::textMbit));
   display_Update();
@@ -3350,7 +3350,7 @@ void verifyFlashCFIChip_MD(byte currChip, unsigned long toVerify) {
   } else {
     print_STR(error_STR, 0);
     print_Msg(blank);
-    print_STR(_bytes_STR, 1);
+    printBytesLine();
     print_Error(did_not_verify_STR);
   }
 }

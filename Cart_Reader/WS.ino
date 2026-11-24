@@ -190,7 +190,7 @@ void wsMenu() {
 
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
 
   updateDisplayAndWait();
 }
@@ -384,7 +384,7 @@ static void showCartInfo_WS() {
   print_Msg(FS(SharedFlashText::textGame));
   println_Msg(romName);
 
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   if (cartSize == 0x00)
     println_Msg(romSize, HEX);
   else {
@@ -415,7 +415,7 @@ static void showCartInfo_WS() {
   println_Msg(checksumStr);
 
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -590,7 +590,7 @@ static void readSRAM_WS() {
 
   closeCurrentFile();
 
-  print_STR(done_STR, 1);
+  printDoneLine();
   display_Update();
 }
 
@@ -631,7 +631,7 @@ static void verifySRAM_WS() {
       println_Msg(FS(SharedFlashText::textFailed));
       print_STR(error_STR, 0);
       print_Msg(write_errors);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_Error(did_not_verify_STR);
     }
   } else {
@@ -719,7 +719,7 @@ static void readEEPROM_WS() {
 
   closeCurrentFile();
 
-  print_STR(done_STR, 1);
+  printDoneLine();
 }
 
 static void verifyEEPROM_WS() {
@@ -767,7 +767,7 @@ static void verifyEEPROM_WS() {
       println_Msg(FS(SharedFlashText::textFailed));
       print_STR(error_STR, 0);
       print_Msg(write_errors);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_Error(did_not_verify_STR);
     }
   } else {
@@ -820,7 +820,7 @@ static void writeEEPROM_WS() {
 
     closeCurrentFile();
 
-    print_STR(done_STR, 1);
+    printDoneLine();
   } else {
     print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
@@ -909,7 +909,7 @@ static void writeWitchOS_WS() {
 
       closeCurrentFile();
 
-      print_STR(done_STR, 1);
+      printDoneLine();
     } else {
       print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
     }

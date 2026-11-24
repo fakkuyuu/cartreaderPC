@@ -773,7 +773,7 @@ void verifyCartridge() {
     } else {
       print_STR(error_STR, 0);
       print_Msg(blank);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_Error(did_not_verify_STR);
     }
     // Close the file:
@@ -932,7 +932,7 @@ void id_SIMM2x8() {
   }
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   display_Update();
   resetSIMM2x8();
 }
@@ -1171,7 +1171,7 @@ void verifySIMM2x8() {
     } else {
       print_STR(error_STR, 0);
       print_Msg(blank);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_Error(did_not_verify_STR);
     }
     // Close the file:
@@ -1241,7 +1241,7 @@ void id_SIMM4x8() {
   }
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   display_Update();
   resetSIMM4x8();
 }
@@ -1454,7 +1454,7 @@ void verifySIMM4x8() {
     } else {
       print_STR(error_STR, 0);
       print_Msg(blank);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_Error(did_not_verify_STR);
     }
     // Close the file:

@@ -447,7 +447,7 @@ void snesMenu() {
         } else {
           print_STR(error_STR, 0);
           print_Msg(wrErrors);
-          print_STR(_bytes_STR, 1);
+          printBytesLine();
           print_Error(did_not_verify_STR);
         }
       } else {
@@ -481,7 +481,7 @@ void snesMenu() {
         } else {
           print_STR(error_STR, 0);
           print_Msg(wrErrors);
-          print_STR(_bytes_STR, 1);
+          printBytesLine();
           print_Error(did_not_verify_STR);
         }
       } else {
@@ -521,7 +521,7 @@ void snesMenu() {
   }
   //printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -1004,7 +1004,7 @@ void getCartInfo_SNES() {
     printBlankLine();
 
 
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   if ((romSize >> 3) < 1) {
     print_Msg(1024 * romSize >> 3);
     print_Msg(FS(SharedFlashText::unitKBWithSpace));
@@ -1030,7 +1030,7 @@ void getCartInfo_SNES() {
   // Wait for user input
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 #endif
 #ifdef ENABLE_SERIAL
@@ -2485,7 +2485,7 @@ unsigned long verifySRAM() {
       } else {
         print_STR(error_STR, 0);
         print_Msg(writeErrors);
-        print_STR(_bytes_STR, 1);
+        printBytesLine();
         print_Error(did_not_verify_STR);
       }
       updateDisplayAndWait();
@@ -2811,7 +2811,7 @@ boolean eraseSRAM(byte b) {
     }
   }
   if (writeErrors == 0) {
-    println_Msg(FS(FSTRING_OK));
+    printOkLine();
     return 1;
   } else {
     println_Msg(FS(SharedFlashText::textERROR));

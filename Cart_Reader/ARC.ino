@@ -178,7 +178,7 @@ void readROM_ARC() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_ARC(int index) {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(ARC[index]);
 }
 #endif
@@ -194,7 +194,7 @@ void setROMSize_ARC() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(ARC[newarcsize]);
   println_Msg(FS(SharedFlashText::unitK));
   display_Update();
@@ -241,9 +241,9 @@ void checkStatus_ARC() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ARCADIA 2001 READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(ARC[arcsize]);
   println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();

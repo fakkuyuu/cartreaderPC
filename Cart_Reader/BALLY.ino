@@ -211,7 +211,7 @@ void readROM_BALLY()
 void printRomSize_BALLY(int index)
 {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(BALLY[index]);
 }
 #endif
@@ -228,7 +228,7 @@ void setROMSize_BALLY()
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(BALLY[newballysize]);
   println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
@@ -276,9 +276,9 @@ void checkStatus_BALLY()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("BALLY ASTROCADE"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(BALLY[ballysize]);
   println_Msg(FS(SharedFlashText::unitKB));
   updateDisplayAndWait();

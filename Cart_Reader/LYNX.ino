@@ -115,7 +115,7 @@ static uint8_t readByte_LYNX(uint32_t addr) {
 }
 
 static bool waitPressButton_LYNX(bool ret = false) {
-  print_STR(press_button_STR, true);
+  printPressButtonPrompt();
   updateDisplayAndWait();
   return ret;
 }
@@ -288,7 +288,7 @@ static bool readHeader_LYNX() {
   print_Msg(FS(SharedFlashText::textBLOCK));
   println_Msg(lynxBlockSize);
 
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(romSize / 1024);
   println_Msg(FS(SharedFlashText::unitKB));
 
@@ -313,7 +313,7 @@ static bool readHeader_LYNX() {
     return waitPressButton_LYNX();
   }
 
-  println_Msg(FS(FSTRING_OK));
+  printOkLine();
   display_Update();
   return true;
 }
@@ -391,7 +391,7 @@ static void eraseFlash_LYNX() {
   writeByte_LYNX(0x5555, 0x10);
   waitForDataComplement_LYNX(0xFF);
 
-  println_Msg(FS(FSTRING_OK));
+  printOkLine();
   display_Update();
 }
 
@@ -451,7 +451,7 @@ static void writeROM_LYNX() {
 
   closeCurrentFile();
   dataDir_LYNX(INPUT);
-  print_STR(done_STR, true);
+  printDoneLine();
   waitPressButton_LYNX();
 }
 
@@ -479,7 +479,7 @@ void lynxMenu() {
       closeCurrentFile();
       changeToStorageRoot();
       compareCRC("lynx.txt", 0, true, LYNX_HEADER_SIZE);
-      print_STR(done_STR, true);
+      printDoneLine();
       waitPressButton_LYNX();
       break;
 

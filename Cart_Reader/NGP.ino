@@ -79,7 +79,7 @@ void ngpMenu() {
 
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -187,7 +187,7 @@ void printCartInfo_NGP() {
   else
     println_Msg(FS(SharedFlashText::textUnknown));
 
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   if (cartSize == 0) {
     println_Msg(FS(SharedFlashText::textUnknown));
   } else {
@@ -196,7 +196,7 @@ void printCartInfo_NGP() {
   }
 
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 

@@ -609,7 +609,7 @@ void checkStatus_TI99()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("TI-99 READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
   print_Msg(F("MAPPER:     "));
   //  println_Msg(ti99mapper);
@@ -939,7 +939,7 @@ void setGROMMap_TI99()
 void printRomSize_TI99(int index)
 {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(CROM[index]);
 }
 #endif
@@ -956,7 +956,7 @@ void setCROMSize_TI99()
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(CROM[newcromsize]);
   println_Msg(FS(SharedFlashText::unitKB));
   display_Update();

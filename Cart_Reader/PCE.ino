@@ -734,7 +734,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
     } else {
       println_Msg(F("Verify failed..."));
       print_Msg(diffcnt);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_Error(did_not_verify_STR);
     }
 
@@ -822,7 +822,7 @@ void read_rom_PCE(void) {
   compareCRC("pce.txt", 0, 1, 0);
 
   printBlankLine();
-  print_STR(press_button_STR, true);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -970,7 +970,7 @@ void flash_PCE() {
     }
     closeCurrentFile();
     pin_init_PCE();
-    print_STR(done_STR, true);
+    printDoneLine();
   }
   updateDisplayAndWait();
 }

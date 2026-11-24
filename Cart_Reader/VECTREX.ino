@@ -237,7 +237,7 @@ void readROM_VECTREX()
 
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -249,7 +249,7 @@ void readROM_VECTREX()
 void printRomSize_VECTREX(int index)
 {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(VECTREX[index]);
 }
 #endif
@@ -266,7 +266,7 @@ void setROMSize_VECTREX()
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(VECTREX[newvectrexsize]);
   println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
@@ -314,9 +314,9 @@ void checkStatus_VECTREX()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("VECTREX READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(VECTREX[vectrexsize]);
   println_Msg(FS(SharedFlashText::unitKB));
   updateDisplayAndWait();

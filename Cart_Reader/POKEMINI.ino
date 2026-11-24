@@ -260,7 +260,7 @@ void readROM_POKE() {
   printBlankLine();
 
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 #endif

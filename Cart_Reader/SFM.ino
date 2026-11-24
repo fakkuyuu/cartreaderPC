@@ -180,7 +180,7 @@ void sfmGameOptions() {
       } else {
         print_STR(error_STR, 0);
         print_Msg(wrErrors);
-        print_STR(_bytes_STR, 1);
+        printBytesLine();
         print_Error(did_not_verify_STR);
       }
       break;
@@ -198,7 +198,7 @@ void sfmGameOptions() {
   if (gameSubMenu != 3) {
     printBlankLine();
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     updateDisplayAndWait();
   }
 }
@@ -226,7 +226,7 @@ void sfmFlashMenu() {
       print_Msg(FS(SharedFlashText::textSwitchToHiRom));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
-        println_Msg(FS(FSTRING_OK));
+        printOkLine();
         display_Update();
 
         // Reset flash
@@ -264,7 +264,7 @@ void sfmFlashMenu() {
       println_Msg(FS(SharedFlashText::textNPCartridge));
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
 
       // Clear screen
@@ -302,7 +302,7 @@ void sfmFlashMenu() {
       print_Msg(FS(SharedFlashText::textSwitchToHiRom));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
-        println_Msg(FS(FSTRING_OK));
+        printOkLine();
         display_Update();
         idFlash_SFM(0xC0);
         if (flashid == 0xc2f3) {
@@ -341,7 +341,7 @@ void sfmFlashMenu() {
       print_Msg(FS(SharedFlashText::textSwitchToHiRom));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
-        println_Msg(FS(FSTRING_OK));
+        printOkLine();
         display_Update();
         idFlash_SFM(0xC0);
         if (flashid == 0xc2f3) {
@@ -376,7 +376,7 @@ void sfmFlashMenu() {
       println_Msg(FS(SharedFlashText::textNPCartridge));
       println_Msg("");
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
 
       // Clear screen
@@ -391,7 +391,7 @@ void sfmFlashMenu() {
       print_Msg(FS(SharedFlashText::blankCheckProgress));
       display_Update();
       if (blankcheckMapping_SFM()) {
-        println_Msg(FS(FSTRING_OK));
+        printOkLine();
         display_Update();
       } else {
         println_Msg(FS(SharedFlashText::textNope));
@@ -426,7 +426,7 @@ void sfmFlashMenu() {
   if (flashSubMenu != 5) {
     printBlankLine();
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     updateDisplayAndWait();
   }
 }
@@ -766,7 +766,7 @@ void getCartInfo_SFM() {
   print_Msg(sramSize);
   println_Msg(F("Kbit"));
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   display_Update();
   // Wait for user input
   wait();
@@ -1632,14 +1632,14 @@ boolean unlockHirom() {
   print_Msg(FS(SharedFlashText::textSwitchToHiRom));
   display_Update();
   if (send_SFM(0x04) == 0x2A) {
-    println_Msg(FS(FSTRING_OK));
+    printOkLine();
     display_Update();
     // Unlock Write Protection
     print_Msg(F("Enable Write..."));
     display_Update();
     send_SFM(0x02);
     if (readBank_SFM(0, 0x2401) == 0x4) {
-      println_Msg(FS(FSTRING_OK));
+      printOkLine();
       display_Update();
       return 1;
     } else {
@@ -1711,7 +1711,7 @@ void write_SFM(int startBank, uint32_t pos) {
       print_Msg(FS(SharedFlashText::blankCheckProgress));
       display_Update();
       if (blankcheck_SFM(startBank)) {
-        println_Msg(FS(FSTRING_OK));
+        printOkLine();
         display_Update();
       } else {
         println_Msg(FS(SharedFlashText::textNope));
@@ -1720,11 +1720,11 @@ void write_SFM(int startBank, uint32_t pos) {
         display_Update();
         eraseFlash_SFM(startBank);
         resetFlash_SFM(startBank);
-        print_STR(done_STR, 1);
+        printDoneLine();
         print_Msg(FS(SharedFlashText::blankCheckProgress));
         display_Update();
         if (blankcheck_SFM(startBank)) {
-          println_Msg(FS(FSTRING_OK));
+          printOkLine();
           display_Update();
         } else {
           print_FatalError(FS(SharedFlashText::textCouldNotEraseFlash));
@@ -1741,12 +1741,12 @@ void write_SFM(int startBank, uint32_t pos) {
       display_Update();
       writeErrors = verifyFlash_SFM(startBank, pos);
       if (writeErrors == 0) {
-        println_Msg(FS(FSTRING_OK));
+        printOkLine();
         display_Update();
       } else {
         print_STR(error_STR, 0);
         print_Msg(writeErrors);
-        print_STR(_bytes_STR, 1);
+        printBytesLine();
         print_FatalError(did_not_verify_STR);
       }
     } else {

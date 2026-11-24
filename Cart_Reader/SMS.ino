@@ -493,7 +493,7 @@ void getCartInfo_SMS() {
   // Wait for user input
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 #endif
 
@@ -563,7 +563,7 @@ void manual_selectRomSize() {
   print_Msg(cartSize / 1024);
   println_Msg(FS(SharedFlashText::unitKB));
 
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
 }
 
 //******************************************
@@ -657,7 +657,7 @@ void readROM_SMS() {
   save_log();
 #endif
 
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
 }
 
 //******************************************
@@ -694,7 +694,7 @@ void readSRAM_SMS() {
   }
   // Close file
   closeCurrentFile();
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   display_Update();
 }
 
@@ -739,7 +739,7 @@ void writeSRAM_SMS() {
 
       // Close file
       closeCurrentFile();
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       display_Update();
     } else {
       print_FatalError(sd_error_STR);

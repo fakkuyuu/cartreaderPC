@@ -164,7 +164,7 @@ void loopyMenu() {
       } else {
         print_STR(error_STR, 0);
         print_Msg(writeErrors);
-        print_STR(_bytes_STR, 1);
+        printBytesLine();
         print_Error(did_not_verify_STR);
       }
       waitForInput = true;
@@ -189,7 +189,7 @@ void loopyMenu() {
     // Wait for user input
     printBlankLine();
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     updateDisplayAndWait();
   }
 #endif
@@ -508,7 +508,7 @@ void getCartInfo_LOOPY() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   // Wait for user input
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 #endif
 }
@@ -601,7 +601,7 @@ void writeSRAM_LOOPY() {
     }
     closeCurrentFile();
 
-    print_STR(done_STR, 1);
+    printDoneLine();
     display_Update();
   } else {
     print_FatalError(sd_error_STR);
@@ -630,7 +630,7 @@ void formatSRAM_LOOPY() {
   digitalWrite(LOOPY_RAMCS1, HIGH);
   digitalWrite(LOOPY_OE, HIGH);
   dataIn_LOOPY();
-  print_STR(done_STR, 1);
+  printDoneLine();
   display_Update();
 }
 

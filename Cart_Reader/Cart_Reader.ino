@@ -684,7 +684,7 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
             closeCurrentFile();
           }
         } else {
-          println_Msg(FS(FSTRING_OK));
+          printOkLine();
         }
         standaloneVerified();
         return 1;
@@ -2051,7 +2051,7 @@ void aboutScreen() {
   printBlankLine();
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   display_Update();
 #ifdef PC_MENU
   PcConsole.println(F("[Control] about"));
@@ -2435,7 +2435,7 @@ void savetofile() {
 
   // Close the file:
   closeCurrentFile();
-  print_STR(done_STR, 1);
+  printDoneLine();
   display_Update();
   delay(1000);
   resetArduino();
@@ -2923,6 +2923,12 @@ void println_Log(const __FlashStringHelper* string) {
 void println_Log(const __FlashStringHelper*) {}
 #endif
 
+#ifdef ENABLE_GLOBAL_LOG
+bool shouldWriteDisplayLog() {
+  return !dont_log && loggingEnabled && !PcLink::usingPcStorage();
+}
+#endif
+
 void print_Msg(const __FlashStringHelper* string) {
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   display.print(string);
@@ -2931,32 +2937,31 @@ void print_Msg(const __FlashStringHelper* string) {
   PcConsole.print(string);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(string);
+  if (shouldWriteDisplayLog()) myLog.print(string);
 #endif
 }
 
-void print_Msg(const char myString[]) {
-#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
-  // test for word wrap
-  size_t strPos = 0;
-  while (myString[strPos]) {
+#if defined(ENABLE_LCD) || defined(ENABLE_OLED)
+void printWrappedDisplayText(const char* text) {
+  while (*text) {
     if (display.tx >= 122) {
-      // Newline
-      if (display.ty + 8 > 56) {
-        break;
-      }
+      if (display.ty + 8 > 56) break;
       display.setCursor(0, display.ty + 8);
     }
-    // Print until end of display
-    display.print(myString[strPos++]);
+    display.print(*text++);
   }
+}
+#endif
 
+void print_Msg(const char myString[]) {
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
+  printWrappedDisplayText(myString);
 #endif
 #ifdef ENABLE_SERIAL
   PcConsole.print(myString);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(myString);
+  if (shouldWriteDisplayLog()) myLog.print(myString);
 #endif
 }
 
@@ -2968,7 +2973,7 @@ void print_Msg(long unsigned int message) {
   PcConsole.print(message);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(message);
+  if (shouldWriteDisplayLog()) myLog.print(message);
 #endif
 }
 
@@ -2980,7 +2985,7 @@ void print_Msg(byte message, int outputFormat) {
   PcConsole.print(message, outputFormat);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(message, outputFormat);
+  if (shouldWriteDisplayLog()) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -2992,7 +2997,7 @@ void print_Msg(word message, int outputFormat) {
   PcConsole.print(message, outputFormat);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(message, outputFormat);
+  if (shouldWriteDisplayLog()) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -3004,7 +3009,7 @@ void print_Msg(int message, int outputFormat) {
   PcConsole.print(message, outputFormat);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(message, outputFormat);
+  if (shouldWriteDisplayLog()) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -3016,7 +3021,7 @@ void print_Msg(long unsigned int message, int outputFormat) {
   PcConsole.print(message, outputFormat);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(message, outputFormat);
+  if (shouldWriteDisplayLog()) myLog.print(message, outputFormat);
 #endif
 }
 
@@ -3028,7 +3033,7 @@ void print_Msg(String string) {
   PcConsole.print(string);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.print(string);
+  if (shouldWriteDisplayLog()) myLog.print(string);
 #endif
 }
 
@@ -3057,7 +3062,7 @@ void println_Msg(String string) {
   PcConsole.println(string);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(string);
+  if (shouldWriteDisplayLog()) myLog.println(string);
 #endif
 }
 
@@ -3070,29 +3075,20 @@ void println_Msg(byte message, int outputFormat) {
   PcConsole.println(message, outputFormat);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(message, outputFormat);
+  if (shouldWriteDisplayLog()) myLog.println(message, outputFormat);
 #endif
 }
 
 void println_Msg(const char myString[]) {
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
-  // Do not call print_Msg() here: it also writes to PcConsole, which made
-  // every C-string appear twice in dual OLED/PC builds.
-  size_t strPos = 0;
-  while (myString[strPos]) {
-    if (display.tx >= 122) {
-      if (display.ty + 8 > 56) break;
-      display.setCursor(0, display.ty + 8);
-    }
-    display.print(myString[strPos++]);
-  }
+  printWrappedDisplayText(myString);
   display.setCursor(0, display.ty + 8);
 #endif
 #ifdef ENABLE_SERIAL
   PcConsole.println(myString);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(myString);
+  if (shouldWriteDisplayLog()) myLog.println(myString);
 #endif
 }
 
@@ -3108,7 +3104,7 @@ void println_Msg(const __FlashStringHelper* string) {
   char myBuffer[15];
   strlcpy_P(myBuffer, (char*)string, 15);
   if ((strncmp(myBuffer, "Press Button...", 14) != 0) && (strncmp(myBuffer, "Select file", 10) != 0)) {
-    if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(string);
+    if (shouldWriteDisplayLog()) myLog.println(string);
   }
 #endif
 }
@@ -3122,8 +3118,32 @@ void println_Msg(long unsigned int message) {
   PcConsole.println(message);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(message);
+  if (shouldWriteDisplayLog()) myLog.println(message);
 #endif
+}
+
+void printPressButtonPrompt() {
+  print_STR(press_button_STR, 1);
+}
+
+void printDoneLine() {
+  print_STR(done_STR, 1);
+}
+
+void printBytesLine() {
+  print_STR(_bytes_STR, 1);
+}
+
+void printRomSizeLabel() {
+  print_Msg(FS(FSTRING_ROM_SIZE));
+}
+
+void printCurrentSettingsLine() {
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+}
+
+void printOkLine() {
+  println_Msg(FS(FSTRING_OK));
 }
 
 void changeToStorageRoot() {
@@ -3171,7 +3191,7 @@ static void updateDisplay(bool waitForSerial) {
   if (waitForSerial) delay(100);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.flush();
+  if (shouldWriteDisplayLog()) myLog.flush();
 #endif
 }
 
@@ -3181,7 +3201,7 @@ void updateDisplayAndWait() {
 }
 
 void promptAndWaitForButton() {
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -3195,7 +3215,7 @@ void display_Clear() {
   display.setCursor(0, 8);
 #endif
 #ifdef ENABLE_GLOBAL_LOG
-  if (!dont_log && loggingEnabled && !PcLink::usingPcStorage()) myLog.println(FS(FSTRING_EMPTY));
+  if (shouldWriteDisplayLog()) myLog.println(FS(FSTRING_EMPTY));
 #endif
 }
 

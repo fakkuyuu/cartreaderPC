@@ -94,7 +94,7 @@ bool gbxFlashCFI() {
     display_Clear();
     println_Msg(F("Flashing failed, time out!"));
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     display_Update();
     return false;
   }
@@ -104,7 +104,7 @@ bool gbxFlashCFI() {
 
 void feedbackPressAndReset() {
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
   resetArduino();
 }
@@ -293,7 +293,7 @@ void gbxMenu() {
               //MBC3, standard command set, with erase
               writeFlash_GB(3, 0, 1);
               // Prints string out of the common strings array either with or without newline
-              print_STR(press_button_STR, 1);
+              printPressButtonPrompt();
               updateDisplayAndWait();
 
               display_Clear();
@@ -304,7 +304,7 @@ void gbxMenu() {
               println_Msg(F("a second game"));
               printBlankLine();
               // Prints string out of the common strings array either with or without newline
-              print_STR(press_button_STR, 1);
+              printPressButtonPrompt();
               updateDisplayAndWait();
 
               // Flash second bank without erase
@@ -389,7 +389,7 @@ void gbxMenu() {
                   } else {
                     print_STR(error_STR, 0);
                     print_Msg(wrErrors);
-                    print_STR(_bytes_STR, 1);
+                    printBytesLine();
                     print_Error(did_not_verify_STR);
                   }
                   break;
@@ -580,7 +580,7 @@ void gbMenu() {
           } else {
             print_STR(error_STR, 0);
             print_Msg(wrErrors);
-            print_STR(_bytes_STR, 1);
+            printBytesLine();
             print_Error(did_not_verify_STR);
           }
         }
@@ -595,7 +595,7 @@ void gbMenu() {
       break;
   }
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -678,7 +678,7 @@ void showCartInfo_GB() {
       print_Msg(F("M161"));
 
     printBlankLine();
-    print_Msg(FS(FSTRING_ROM_SIZE));
+    printRomSizeLabel();
     switch (romSize) {
       case 0:
         print_Msg(FS(SharedFlashText::text32KB));
@@ -769,7 +769,7 @@ void showCartInfo_GB() {
     // Wait for user input
     printBlankLine();
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     updateDisplayAndWait();
   } else {
     print_FatalError(FS(SharedFlashText::textGAMEPAKERROR));
@@ -1581,7 +1581,7 @@ void readSRAMFLASH_MBC6_GB() {
   closeCurrentFile();
 
   // Signal end of process
-  println_Msg(FS(FSTRING_OK));
+  printOkLine();
   display_Update();
 }
 
@@ -1763,7 +1763,7 @@ void readEEPROM_MBC7_GB() {
   myFile.write(sdBuffer, lastByte);
   closeCurrentFile();
 
-  print_STR(done_STR, true);
+  printDoneLine();
   display_Update();
 }
 
@@ -1846,7 +1846,7 @@ void writeEEPROM_MBC7_GB() {
   writeByte_GB(0x4000, 0x00);
 
   // done
-  print_STR(done_STR, true);
+  printDoneLine();
   display_Update();
 }
 
@@ -2384,12 +2384,12 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
     closeCurrentFile();
 
     if (writeErrors == 0) {
-      println_Msg(FS(FSTRING_OK));
+      printOkLine();
       display_Update();
     } else {
       println_Msg(FS(SharedFlashText::textError));
       print_Msg(writeErrors);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_FatalError(did_not_verify_STR);
     }
   } else {
@@ -2713,12 +2713,12 @@ bool writeCFI_GB() {
     closeCurrentFile();
 
     if (writeErrors == 0) {
-      println_Msg(FS(FSTRING_OK));
+      printOkLine();
       display_Update();
     } else {
       print_STR(error_STR, 0);
       print_Msg(writeErrors);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_Error(did_not_verify_STR);
     }
   } else {
@@ -2774,7 +2774,7 @@ void readPelican_GB() {
   if (flashid == 0xDA45 || flashid == 0xBF10) {
     println_Msg(FS(SharedFlashText::text29EE020W29C020));
     println_Msg(FS(SharedFlashText::textBanksUsed3264));
-    print_Msg(FS(FSTRING_ROM_SIZE));
+    printRomSizeLabel();
     println_Msg(FS(SharedFlashText::text256KB));
     romBanks = 32;
     display_Update();
@@ -2801,7 +2801,7 @@ void readPelican_GB() {
   if (flashid == 0xBF04) {
     println_Msg(FS(SharedFlashText::textSST28LF040));
     println_Msg(FS(SharedFlashText::textBanksUsed6464));
-    print_Msg(FS(FSTRING_ROM_SIZE));
+    printRomSizeLabel();
     println_Msg(FS(SharedFlashText::text512KB));
     romBanks = 64;
     display_Update();
@@ -3096,13 +3096,13 @@ void writePelican_GB() {
   closeCurrentFile();
 
   if (writeErrors == 0) {
-    println_Msg(FS(FSTRING_OK));
+    printOkLine();
     println_Msg(FS(SharedFlashText::textPleaseTurnOffThePower));
     display_Update();
   } else {
     println_Msg(FS(SharedFlashText::textError));
     print_Msg(writeErrors);
-    print_STR(_bytes_STR, 1);
+    printBytesLine();
     print_FatalError(did_not_verify_STR);
   }
 }
@@ -3419,13 +3419,13 @@ void writeMegaMem_GB() {
   closeCurrentFile();
 
   if (writeErrors == 0) {
-    println_Msg(FS(FSTRING_OK));
+    printOkLine();
     println_Msg(FS(SharedFlashText::textPleaseTurnOffThePower));
     display_Update();
   } else {
     println_Msg(FS(SharedFlashText::textError));
     print_Msg(writeErrors);
-    print_STR(_bytes_STR, 1);
+    printBytesLine();
     print_FatalError(did_not_verify_STR);
   }
 }
@@ -3469,7 +3469,7 @@ void readGameshark_GB() {
   if (flashid == 0xBFB5) {
     display_Clear();
     println_Msg(FS(SharedFlashText::textSST39SF010));
-    print_Msg(FS(FSTRING_ROM_SIZE));
+    printRomSizeLabel();
     println_Msg(FS(SharedFlashText::text128KB));
     display_Update();
   } else {
@@ -3683,13 +3683,13 @@ void writeGameshark_GB() {
   closeCurrentFile();
 
   if (writeErrors == 0) {
-    println_Msg(FS(FSTRING_OK));
+    printOkLine();
     println_Msg(FS(SharedFlashText::textPleaseTurnOffThePower));
     display_Update();
   } else {
     println_Msg(FS(SharedFlashText::textError));
     print_Msg(writeErrors);
-    print_STR(_bytes_STR, 1);
+    printBytesLine();
     print_FatalError(did_not_verify_STR);
   }
 }

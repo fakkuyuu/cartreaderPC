@@ -246,7 +246,7 @@ void readROM_LJ()
 void printRomSize_LJ(int index)
 {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(LJ[index]);
 }
 #endif
@@ -263,7 +263,7 @@ void setROMSize_LJ()
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(LJ[newljsize]);
   println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
@@ -311,9 +311,9 @@ void checkStatus_LJ()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("LITTLE JAMMER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(LJ[ljsize]);
   println_Msg(FS(SharedFlashText::unitMB));
   updateDisplayAndWait();

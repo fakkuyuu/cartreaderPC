@@ -203,7 +203,7 @@ static void readROM_Acan() {
   print_Msg(F("CRC32: "));
   print_Msg_PaddedHex32(crc32);
   printBlankLine();
-  print_STR(done_STR, 1);
+  printDoneLine();
 }
 
 static void readSRAM_Acan() {
@@ -218,7 +218,7 @@ static void readSRAM_Acan() {
   }
 
   closeCurrentFile();
-  print_STR(done_STR, 1);
+  printDoneLine();
 }
 
 static void writeSRAM_Acan() {
@@ -240,7 +240,7 @@ static void writeSRAM_Acan() {
   closeCurrentFile();
 
   dataIn_Acan();
-  print_STR(done_STR, 1);
+  printDoneLine();
 }
 
 static void verifySRAM_Acan() {
@@ -291,7 +291,7 @@ static void readUM6650() {
   myFile.write(sdBuffer, 256);
   closeCurrentFile();
 
-  print_STR(done_STR, 1);
+  printDoneLine();
 }
 
 static void verifyUM6650() {
@@ -347,7 +347,7 @@ static void writeUM6650() {
   }
 
   dataIn_Acan();
-  print_STR(done_STR, 1);
+  printDoneLine();
 }
 
 static void flashCart_Acan() {
@@ -404,7 +404,7 @@ static void flashCart_Acan() {
   DDRG &= ~(1 << 5);
 
   closeCurrentFile();
-  print_STR(done_STR, 1);
+  printDoneLine();
 
   checkRomExist_Acan();
 }
@@ -429,7 +429,7 @@ static void checkRomExist_Acan() {
   if (cartSize == 0)
     print_Error(F("Unable to find rom signature..."));
   else {
-    print_Msg(FS(FSTRING_ROM_SIZE));
+    printRomSizeLabel();
     print_Msg(romSize);
     println_Msg(F(" Mb"));
   }

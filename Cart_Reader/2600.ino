@@ -632,11 +632,11 @@ void checkStatus_2600() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ATARI 2600 READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
   print_Msg(F("MAPPER:   "));
   println_Mapper2600(a2600mapper);
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   if (a2600mapper == 0xD0)
     print_Msg(F("10"));
   else

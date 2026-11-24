@@ -403,7 +403,7 @@ void readROM_INTV() {
 
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -523,7 +523,7 @@ void checkMapperSize_INTV() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_INTV(int index) {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(pgm_read_byte(&(INTV[index])));
 }
 #endif
@@ -539,7 +539,7 @@ void setROMSize_INTV() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(pgm_read_byte(&(INTV[newintvsize])));
   println_Msg(FS(SharedFlashText::unitK));
   display_Update();
@@ -591,11 +591,11 @@ void checkStatus_INTV() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("INTELLIVISION READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
   print_Msg(F("MAPPER:   "));
   println_Msg(intvmapper);
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(pgm_read_byte(&(INTV[intvsize])));
   println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();

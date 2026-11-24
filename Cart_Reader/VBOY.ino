@@ -136,7 +136,7 @@ void vboyMenu() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
       // Wait for user input
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
 #endif
       break;
@@ -156,7 +156,7 @@ void vboyMenu() {
         } else {
           print_STR(error_STR, 0);
           print_Msg(writeErrors);
-          print_STR(_bytes_STR, 1);
+          printBytesLine();
           print_Error(did_not_verify_STR);
         }
       } else {
@@ -165,7 +165,7 @@ void vboyMenu() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
       // Wait for user input
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
 #endif
       break;
@@ -425,7 +425,7 @@ void getCartInfo_VB() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   // Wait for user input
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 #endif
 }
@@ -486,7 +486,7 @@ void readROM_VB() {
   // Wait for user input
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 #endif
 }
@@ -509,7 +509,7 @@ void writeSRAM_VB() {
       writeByte_VB(currByte, (myFile.read()));
     }
     closeCurrentFile();
-    print_STR(done_STR, 1);
+    printDoneLine();
     display_Update();
   } else {
     print_FatalError(sd_error_STR);

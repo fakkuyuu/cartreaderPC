@@ -217,7 +217,7 @@ void readROM_PYUUTA()
 void printRomSize_PYUUTA(int index)
 {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(PYUUTA[index]);
 }
 #endif
@@ -234,7 +234,7 @@ void setROMSize_PYUUTA()
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(PYUUTA[newpyuutasize]);
   println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
@@ -282,9 +282,9 @@ void checkStatus_PYUUTA()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("TOMY PYUUTA"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(PYUUTA[pyuutasize]);
   println_Msg(FS(SharedFlashText::unitKB));
   updateDisplayAndWait();

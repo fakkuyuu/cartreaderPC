@@ -255,7 +255,7 @@ void readROM_ODY2() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_ODY2(int index) {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(ODY2[index]);
 }
 #endif
@@ -271,7 +271,7 @@ void setROMSize_ODY2() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(ODY2[newody2size]);
   println_Msg(FS(SharedFlashText::unitK));
   display_Update();
@@ -323,11 +323,11 @@ void checkStatus_ODY2() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ODYSSEY 2 READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
   print_Msg(F("MAPPER:   "));
   println_Msg(ody2mapper);
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(ODY2[ody2size]);
   println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();

@@ -166,7 +166,7 @@ void pcwMenu()
       changeToStorageRoot();
       // Wait for user input
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -184,7 +184,7 @@ void pcwMenu()
       } else {
         print_STR(error_STR, 0);
         print_Msg(writeErrors);
-        print_STR(_bytes_STR, 1);
+        printBytesLine();
         print_Error(did_not_verify_STR);
       }
       break;
@@ -672,7 +672,7 @@ void writeSRAM_PCW()
         }
       }
       closeCurrentFile();
-      print_STR(done_STR, 1);
+      printDoneLine();
       display_Update();
     } else {
       print_FatalError(sd_error_STR);

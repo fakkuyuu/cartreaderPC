@@ -192,7 +192,7 @@ void readROM_COL() {
 
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -203,7 +203,7 @@ void readROM_COL() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_COL(int index) {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(pgm_read_byte(&(COL[index])));
 }
 #endif
@@ -220,7 +220,7 @@ void setROMSize_COL() {
     display.setCursor(0, 56);  // Display selection at bottom
   }
 
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(pgm_read_byte(&(COL[newcolsize])));
   println_Msg(FS(SharedFlashText::unitK));
   display_Update();
@@ -267,14 +267,14 @@ void checkStatus_COL() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("COLECOVISION READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(pgm_read_byte(&(COL[colsize])));
   println_Msg(FS(SharedFlashText::unitK));
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 #else
   PcConsole.print(FS(SharedFlashText::textCURRENTROMSIZE));

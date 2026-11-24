@@ -74,7 +74,7 @@ void gbaMenu() {
       save_log();
 #endif
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -127,7 +127,7 @@ void gbaMenu() {
       }
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -241,7 +241,7 @@ void gbaMenu() {
       setROM_GBA();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -266,7 +266,7 @@ void GBAReproMenu() {
   flashRepro_GBA(0);
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
   resetArduino();
 }
@@ -345,7 +345,7 @@ void setup_GBA() {
   println_Msg(cartID);
   print_Msg(FS(FSTRING_REVISION));
   println_Msg(romVersion);
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   if (cartSize == 0)
     println_Msg(FS(SharedFlashText::textUnknown));
   else {
@@ -384,7 +384,7 @@ void setup_GBA() {
   // Wait for user input
   println_Msg("");
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -422,7 +422,7 @@ static void printFlashTypeAndWait(const __FlashStringHelper* caption) {
   println_Msg(caption);
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
   display_Clear();
   display_Update();
@@ -786,7 +786,7 @@ void getCartInfo_GBA() {
             println_Msg(gamename);
             print_Msg(FS(FSTRING_SERIAL));
             println_Msg(tempStr);
-            print_Msg(FS(FSTRING_ROM_SIZE));
+            printRomSizeLabel();
             print_Msg(cartSize);
             println_Msg(FS(SharedFlashText::unitMBWithSpace));
             print_Msg(F("Save Lib: "));
@@ -883,7 +883,7 @@ void getCartInfo_GBA() {
       print_Error(FS(SharedFlashText::textChecksumError));
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
     }
 
@@ -1207,7 +1207,7 @@ void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   closeCurrentFile();
 
   // Signal end of process
-  print_STR(done_STR, 1);
+  printDoneLine();
   display_Update();
 }
 
@@ -1277,7 +1277,7 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
     } else {
       print_STR(error_STR, 0);
       print_Msg(writeErrors);
-      print_STR(_bytes_STR, 1);
+      printBytesLine();
       print_Error(did_not_verify_STR);
     }
 
@@ -1345,7 +1345,7 @@ void readFRAM_GBA(unsigned long framSize) {
   closeCurrentFile();
 
   // Signal end of process
-  print_STR(done_STR, 1);
+  printDoneLine();
   display_Update();
 }
 
@@ -1729,7 +1729,7 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, bool cl
   PORTH |= (1 << 0);
 
   // Signal end of process
-  print_STR(done_STR, 1);
+  printDoneLine();
   display_Update();
 }
 
@@ -1815,7 +1815,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
 
     // Close the file:
     closeCurrentFile();
-    print_STR(done_STR, 1);
+    printDoneLine();
     display_Update();
 
   } else {
@@ -1870,7 +1870,7 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
   PORTH |= (1 << 0);
 
   if (wrError == 0) {
-    println_Msg(FS(FSTRING_OK));
+    printOkLine();
   } else {
     print_Msg(wrError);
     print_Error(F(" Errors"));
@@ -1912,7 +1912,7 @@ void writeEeprom_GBA(word eepSize) {
 
     // Close the file:
     closeCurrentFile();
-    print_STR(done_STR, 1);
+    printDoneLine();
     display_Update();
   } else {
     println_Msg(FS(SharedFlashText::textError));
@@ -2195,7 +2195,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
   } else {
     print_STR(error_STR, 0);
     print_Msg(wrError);
-    print_STR(_bytes_STR, 1);
+    printBytesLine();
     print_Error(did_not_verify_STR);
   }
 
@@ -2978,7 +2978,7 @@ void flashRepro_GBA(boolean option) {
     printBlankLine();
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
-    print_STR(press_button_STR, 1);
+    printPressButtonPrompt();
     updateDisplayAndWait();
 
     // Launch file browser
@@ -3098,7 +3098,7 @@ void flashRepro_GBA(boolean option) {
           delay(1000);
         }
         if (verifyFlashrom_GBA() == 1) {
-          println_Msg(FS(FSTRING_OK));
+          printOkLine();
           display_Update();
         } else {
           print_FatalError(FS(SharedFlashText::textERROR));

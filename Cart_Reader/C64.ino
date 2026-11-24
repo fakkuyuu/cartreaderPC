@@ -550,7 +550,7 @@ void readROM_C64() {
 
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 
@@ -628,7 +628,7 @@ void checkMapperSize_C64() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_C64(int index) {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(C64[index]);
 }
 #endif
@@ -644,7 +644,7 @@ void setROMSize_C64() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(C64[newc64size]);
   println_Msg(FS(SharedFlashText::unitK));
   display_Update();
@@ -699,7 +699,7 @@ void checkStatus_C64() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("C64 READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
   print_Msg(F("MAPPER:     "));
   println_Msg(c64mapper);

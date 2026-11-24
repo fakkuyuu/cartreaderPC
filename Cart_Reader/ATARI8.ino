@@ -378,7 +378,7 @@ void readROM_ATARI8()
 void printRomSize_ATARI8(int index)
 {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(ATARI8[index]);
 }
 #endif
@@ -395,7 +395,7 @@ void setROMSize_ATARI8()
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(ATARI8[newatari8size]);
   println_Msg(FS(SharedFlashText::unitKB));
   display_Update();
@@ -448,14 +448,14 @@ void checkStatus_ATARI8()
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ATARI 8-BIT READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
   print_Msg(F("SLOT:     "));
   if (atari8right)
     println_Msg(F("RIGHT"));
   else
     println_Msg(F("LEFT"));
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(ATARI8[atari8size]);
   println_Msg(FS(SharedFlashText::unitKB));
   updateDisplayAndWait();

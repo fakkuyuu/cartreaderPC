@@ -446,7 +446,7 @@ void nesMenu() {
       readRom_NES();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
 #ifdef ENABLE_GLOBAL_LOG
       save_log();
 #endif
@@ -465,7 +465,7 @@ void nesMenu() {
       resetROM();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -475,7 +475,7 @@ void nesMenu() {
       resetROM();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -522,7 +522,7 @@ void nesChipMenu() {
       readRaw_NES();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
 #ifdef ENABLE_GLOBAL_LOG
       save_log();
 #endif
@@ -537,7 +537,7 @@ void nesChipMenu() {
       resetROM();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -548,7 +548,7 @@ void nesChipMenu() {
       resetROM();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      print_STR(press_button_STR, 1);
+      printPressButtonPrompt();
       updateDisplayAndWait();
       break;
 
@@ -577,7 +577,7 @@ void nesFlashMenu() {
         println_Msg(FS(SharedFlashText::textCanTWriteToThisCartridge));
         printBlankLine();
         // Prints string out of the common strings array either with or without newline
-        print_STR(press_button_STR, 1);
+        printPressButtonPrompt();
         display_Update();
       }
       wait();
@@ -593,7 +593,7 @@ void nesFlashMenu() {
         println_Msg(FS(SharedFlashText::textCanTWriteToThisCartridge));
         println_Msg(mapper);
         // Prints string out of the common strings array either with or without newline
-        print_STR(press_button_STR, 1);
+        printPressButtonPrompt();
         updateDisplayAndWait();
       }
 
@@ -2056,12 +2056,12 @@ void checkStatus_NES() {
   display_Clear();
   println_Msg(FS(SharedFlashText::textNESCARTREADER));
   printBlankLine();
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
   printNESSettings();
   printBlankLine();
   // Prints string out of the common strings array either with or without newline
-  print_STR(press_button_STR, 1);
+  printPressButtonPrompt();
   updateDisplayAndWait();
 }
 

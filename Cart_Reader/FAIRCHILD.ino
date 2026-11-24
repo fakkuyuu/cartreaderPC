@@ -493,7 +493,7 @@ void read16K_FAIRCHILD() { // Read 16K Bytes
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
 void printRomSize_FAIRCHILD(int index) {
   display_Clear();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   println_Msg(FAIRCHILD[index]);
 }
 #endif
@@ -509,7 +509,7 @@ void setROMSize_FAIRCHILD() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(FAIRCHILD[newfairchildsize]);
   println_Msg(FS(SharedFlashText::unitK));
   display_Update();
@@ -556,9 +556,9 @@ void checkStatus_FAIRCHILD() {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("CHANNEL F READER"));
-  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  printCurrentSettingsLine();
   printBlankLine();
-  print_Msg(FS(FSTRING_ROM_SIZE));
+  printRomSizeLabel();
   print_Msg(FAIRCHILD[fairchildsize]);
   println_Msg(FS(SharedFlashText::unitK));
   updateDisplayAndWait();
