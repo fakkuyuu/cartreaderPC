@@ -703,6 +703,17 @@ void setRomnameFromString(const char* input) {
   }
 }
 
+// Shared mapper-4 detection for database and EEPROM settings.
+void checkMMC6();
+static void applyMmc6RamSize_NES() __attribute__((noinline));
+static void applyMmc6RamSize_NES() {
+  checkMMC6();
+  if (mmc6) {
+    ram = 1;      // 1K
+    ramsize = 1;  // Must be a non-zero value
+  }
+}
+
 static void calculateMemorySizes_NES() __attribute__((noinline));
 static void calculateMemorySizes_NES() {
   prg = (int_pow(2, prgsize)) * 16;
@@ -765,11 +776,7 @@ void printDataLine_NES(void* entry) {
   // Mapper Variants
   // Identify variant for use across multiple functions
   if (mapper == 4) {  // Check for MMC6/MMC3
-    checkMMC6();
-    if (mmc6) {
-      ram = 1;      // 1K
-      ramsize = 1;  // Must be a non-zero value
-    }
+    applyMmc6RamSize_NES();
   }
   printNESSettings();
 }
@@ -2029,11 +2036,7 @@ void checkStatus_NES() {
   // Mapper Variants
   // Identify variant for use across multiple functions
   if (mapper == 4) {  // Check for MMC6/MMC3
-    checkMMC6();
-    if (mmc6) {
-      ram = 1;      // 1K
-      ramsize = 1;  // Must be a non-zero value
-    }
+    applyMmc6RamSize_NES();
   } else if (mapper == 30) {  // Check for Flashable/Non-Flashable
 #if defined(ENABLE_FLASH)
     NESmaker_ID();  // Flash ID
