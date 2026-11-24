@@ -2475,30 +2475,39 @@ void readSram(unsigned long sramSize, byte flashramType) {
   closeCurrentFile();
 }
 
-unsigned long verifySram(unsigned long sramSize, byte flashramType) {
-  writeErrors = 0;
-
+static void compareSram_N64(unsigned long sramSize, byte flashramType, bool blank) __attribute__((noinline));
+static void compareSram_N64(unsigned long sramSize, byte flashramType, bool blank) {
   int offset = 512;
   int bufferSize = 512;
   if (flashramType == 2) {
     offset = 64;
     bufferSize = 128;
   }
-
-  // Open file on sd card
-  if (openSelectedFileForRead()) {
-    for (unsigned long currByte = sramBase; currByte < (sramBase + (sramSize / flashramType)); currByte += offset) {
-      // Set the address
-      setAddress_N64(currByte);
-
-      readN64WordsToBuffer(bufferSize);
-      // Check sdBuffer content against file on sd card
+  for (unsigned long currByte = sramBase; currByte < (sramBase + (sramSize / flashramType)); currByte += offset) {
+    setAddress_N64(currByte);
+    readN64WordsToBuffer(bufferSize);
+    if (blank) {
+      for (int i = 0; i < bufferSize; i++) {
+        if (0xFF != sdBuffer[i]) {
+          writeErrors++;
+        }
+      }
+    } else {
       for (int i = 0; i < bufferSize; i++) {
         if (myFile.read() != sdBuffer[i]) {
           writeErrors++;
         }
       }
     }
+  }
+}
+
+unsigned long verifySram(unsigned long sramSize, byte flashramType) {
+  writeErrors = 0;
+
+  // Open file on sd card
+  if (openSelectedFileForRead()) {
+    compareSram_N64(sramSize, flashramType, false);
     // Close the file:
     closeCurrentFile();
   } else {
@@ -2667,30 +2676,9 @@ unsigned long verifyFram(byte flashramType) {
 unsigned long blankcheck_N64(byte flashramType) {
   writeErrors = 0;
 
-  int offset = 512;
-  int bufferSize = 512;
-  if (flashramType == 2) {
-    offset = 64;
-    bufferSize = 128;
-  }
-
-  // Put flashram into read mode
-  // FRAM_READ_MODE_CMD
+  // Put FlashRAM into read mode.
   sendFramCmd(0xF0000000);
-
-  // Read Flashram
-  for (unsigned long currByte = sramBase; currByte < (sramBase + (131072 / flashramType)); currByte += offset) {
-    // Set the address for the next 512 bytes
-    setAddress_N64(currByte);
-
-    readN64WordsToBuffer(bufferSize);
-    // Check sdBuffer content against file on sd card
-    for (int i = 0; i < bufferSize; i++) {
-      if (0xFF != sdBuffer[i]) {
-        writeErrors++;
-      }
-    }
-  }
+  compareSram_N64(131072, flashramType, true);
   // Return 0 if verified ok, or number of errors
   return writeErrors;
 }
