@@ -1254,7 +1254,8 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
   GBA FRAM SAVE Functions
 *****************************************/
 // MB85R256 FRAM (Ferroelectric Random Access Memory) 32,768 words x 8 bits
-void readFRAM_GBA(unsigned long framSize) {
+static void setupFramRead_GBA() __attribute__((noinline));
+static void setupFramRead_GBA() {
   // Output a HIGH signal on CS_ROM(PH3) WE_SRAM(PH5)
   PORTH |= (1 << 3) | (1 << 5);
 
@@ -1267,6 +1268,10 @@ void readFRAM_GBA(unsigned long framSize) {
 
   // Output a LOW signal on  CE_SRAM(PH0) and OE_SRAM(PH6)
   PORTH &= ~((1 << 0) | (1 << 6));
+}
+
+void readFRAM_GBA(unsigned long framSize) {
+  setupFramRead_GBA();
 
   // Get name, add extension and convert to char array for sd lib
   createDbSaveFolder("GBA", "srm");
@@ -1374,18 +1379,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
 
 // Check if the SRAM was written without any error
 unsigned long verifyFRAM_GBA(unsigned long framSize) {
-  // Output a HIGH signal on CS_ROM(PH3) WE_SRAM(PH5)
-  PORTH |= (1 << 3) | (1 << 5);
-
-  // Set address ports to output
-  DDRF = 0xFF;
-  DDRK = 0xFF;
-
-  // Set data pins to input
-  DDRC = 0x00;
-
-  // Output a LOW signal on  CE_SRAM(PH0) and OE_SRAM(PH6)
-  PORTH &= ~((1 << 0) | (1 << 6));
+  setupFramRead_GBA();
 
   //open file on sd card
   if (openSelectedFileForRead()) {
