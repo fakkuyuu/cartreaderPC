@@ -56,7 +56,7 @@ jobs:
             Write-Host "=== Config: $short ==="
             Get-Content $config | Select-String '^\s*#define\s+(HW\d|ENABLE_|OPTION_|PC_)'
             $log = Join-Path $temp "$short-build.log"
-            $args = @('-compile','-verbose','-hardware',"$ide/hardware",'-tools',"$ide/tools-builder",'-tools',"$ide/hardware/tools/avr",'-built-in-libraries',"$ide/libraries",'-libraries',"$sketchbook/libraries",'-fqbn','arduino:avr:mega:cpu=atmega2560','-build-path',$build,"$src/Cart_Reader/Cart_Reader.ino")
+            $args = @('-compile','-verbose','-hardware',"$ide/hardware",'-tools',"$ide/tools-builder",'-tools',"$ide/hardware/tools/avr",'-built-in-libraries',"$ide/libraries",'-libraries',"$sketchbook/libraries",'-fqbn','arduino:avr:mega:cpu=atmega2560','-prefs','compiler.c.elf.extra_flags=-flto-partition=none','-build-path',$build,"$src/Cart_Reader/Cart_Reader.ino")
             & "$ide/arduino-builder.exe" @args 2>&1 | Tee-Object -FilePath $log | Out-Host
             $logText = Get-Content -LiteralPath $log -Raw
             foreach ($flag in @('-Os','-mcall-prologues','--relax','-flto-partition=none')) {
