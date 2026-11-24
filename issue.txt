@@ -1269,3 +1269,5 @@ Unimplemented options:
 Verify all affected shared and console-specific callers (including GB/GBC, NES, SNES, GBA, MD and N64), matched/unmatched/missing DBs, last records, long names, multiple matches and host disconnection. Compare DB time and complete Post time, CRC32, final names and result indicators. #055 is the GB/GBC end-to-end speed issue; this one tracks shared DB lookup work. Neither is completed by creating this proposal.
 
 2026-11-23 | PC134 firmware size reduction (base fe33183, companion PC133). Shared flash strings and compact NES mapper logic. HW3 candidate: MOTHER, mapper 4, CRC32 20CC079D matched. Other mappers unverified.
+
+2026-11-24 | PC135 firmware: compact shared display, menu and storage calls, NES bank operations, SNES SRAM traversal and MD cartridge corrections. Companion PC tool: PC133. HW3 size-test build: 224844 bytes flash and 6267 bytes static RAM. All 58 MD correction records checked against the earlier source. PC135 hardware validation pending.
