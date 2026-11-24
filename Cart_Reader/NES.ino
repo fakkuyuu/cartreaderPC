@@ -712,25 +712,19 @@ static void applyMmc6RamSize_NES() {
   }
 }
 
-// Match the AVR int result of int_pow(2, exponent), without multiplication.
-static int nesPowerOfTwo(uint8_t exponent) __attribute__((noinline));
-static int nesPowerOfTwo(uint8_t exponent) {
-  return exponent < 16 ? static_cast<int>(uint16_t(1) << exponent) : 0;
-}
-
 static void calculateMemorySizes_NES() __attribute__((noinline));
 static void calculateMemorySizes_NES() {
-  prg = (nesPowerOfTwo(prgsize)) * 16;
+  prg = (int_pow(2, prgsize)) * 16;
   if (chrsize == 0)
     chr = 0;  // 0K
   else
-    chr = (nesPowerOfTwo(chrsize)) * 4;
+    chr = (int_pow(2, chrsize)) * 4;
   if (ramsize == 0)
     ram = 0;  // 0K
   else if (mapper == 82)
     ram = 5;  // 5K
   else
-    ram = (nesPowerOfTwo(ramsize)) * 4;
+    ram = (int_pow(2, ramsize)) * 4;
 }
 
 // Preserve the existing uint8_t capacity input and floor(log2) index.
@@ -1288,7 +1282,7 @@ void dumpCHR_pulsem2(word address) {
  *****************************************/
 void CreateROMFolderInSD() {
   resetStorageDirectory();
-  strcpy(folder, "NES/ROM");
+  sprintf(folder, "NES/ROM");
   sd.mkdir(folder, true);
   sd.chdir(folder);
 }
@@ -1334,8 +1328,7 @@ void CreateRAMFileInSD() {
     if (crc == blankCrc || crc == 0xFFFFFFFF)
       crc = mapper == 4 ? oldcrc32 : oldcrc32MMC3;
     if (crc != blankCrc && crc != 0xFFFFFFFF) {
-      strcpy(fallback, "CRC_");
-      formatFixedHex(fallback + 4, crc, 8);
+      snprintf(fallback, sizeof(fallback), "CRC_%08lX", crc);
     } else {
       snprintf(fallback, sizeof(fallback), "Mapper%03u_PRG%uK_CHR%uK_RAM%uK", mapper, prg, chr, static_cast<unsigned>(ram));
     }
@@ -2170,7 +2163,7 @@ void readPRG(bool readrom) {
   uint16_t banks;
 
   if (myFile) {
-    const int prgBanks16K = nesPowerOfTwo(prgsize);
+    const int prgBanks16K = int_pow(2, prgsize);
     switch (mapper) {
       case 0:
       case 3:
@@ -3497,7 +3490,7 @@ void readCHR(bool readrom) {
       CreateCHRFileInSD();
     }
     if (myFile) {
-      const int chrBanks4K = nesPowerOfTwo(chrsize);
+      const int chrBanks4K = int_pow(2, chrsize);
       switch (mapper) {
 
         case 0:  // 8K
@@ -4452,7 +4445,7 @@ void readRAM() {
 
         case 1:
         case 155:                               // 8K/16K/32K
-          banks = nesPowerOfTwo(ramsize) / 2;      // banks = 1,2,4
+          banks = int_pow(2, ramsize) / 2;      // banks = 1,2,4
           for (size_t i = 0; i < banks; i++) {  // 8K Banks ($6000-$7FFF)
             write_prg_byte(0x8000, 0x80);       // Clear Register
             write_mmc1_byte(0x8000, 1 << 3);
@@ -4486,7 +4479,7 @@ void readRAM() {
 
         case 5:                                         // 8K/16K/32K
           write_prg_byte(0x5100, 3);                    // 8K PRG Banks
-          banks = nesPowerOfTwo(ramsize) / 2;              // banks = 1,2,4
+          banks = int_pow(2, ramsize) / 2;              // banks = 1,2,4
           if (banks == 2) {                             // 16K - Split SRAM Chips 8K/8K
             for (size_t i = 0; i < (banks / 2); i++) {  // Chip 1
               write_prg_byte(0x5113, i);
@@ -4648,7 +4641,7 @@ void writeRAM() {
 
         case 1:
         case 155:
-          banks = nesPowerOfTwo(ramsize) / 2;      // banks = 1,2,4
+          banks = int_pow(2, ramsize) / 2;      // banks = 1,2,4
           for (size_t i = 0; i < banks; i++) {  // 8K Banks ($6000-$7FFF)
             write_prg_byte(0x8000, 0x80);       // Clear Register
             write_mmc1_byte(0x8000, 1 << 3);    // PRG ROM MODE 32K
@@ -4681,7 +4674,7 @@ void writeRAM() {
 
         case 5:                                         // 8K/16K/32K
           write_prg_byte(0x5100, 3);                    // 8K PRG Banks
-          banks = nesPowerOfTwo(ramsize) / 2;              // banks = 1,2,4
+          banks = int_pow(2, ramsize) / 2;              // banks = 1,2,4
           if (banks == 2) {                             // 16K - Split SRAM Chips 8K/8K [ETROM = 16K (ONLY 1ST 8K BATTERY BACKED)]
             for (size_t i = 0; i < (banks / 2); i++) {  // Chip 1
               write_prg_byte(0x5113, i);
@@ -5081,7 +5074,7 @@ void writeFLASH() {
 
     //open file on sd card
     if (openSelectedFileForRead()) {
-      banks = nesPowerOfTwo(prgsize);                                    // 256K/512K
+      banks = int_pow(2, prgsize);                                    // 256K/512K
       for (size_t i = 0; i < banks; i++) {                            // 16K Banks
         for (size_t sector = 0; sector < 0x4000; sector += 0x1000) {  // 4K Sectors ($8000/$9000/$A000/$B000)
           // Sector Erase
