@@ -1,76 +1,234 @@
 {
-  "schema": 1,
-  "run_id": "45410022171",
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45412394809",
   "run_attempt": "1",
-  "workflow_commit": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
-  "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-  "status": "ok",
+  "workflow_commit": "8d02cbe6a17f42c485e6fb5539e3783c1a7554af",
   "request": {
-    "id": "parallel-001-integration",
-    "base": "f6ed847c17a7015d405a9f3774bd6b1c9e7b1c5a",
-    "head": "9568123f6bb428d40537a6639401882bef432319",
-    "expected_base_flash": 214982,
-    "expected_base_ram": 6281
+    "id": "parallel-002",
+    "base": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
+    "expected_base_flash": 214620,
+    "expected_base_ram": 6281,
+    "candidates": [
+      {
+        "id": "nes-mapper162-163",
+        "head": "55f99db73f280c038ab3a7a21704aaddcf2f35c9",
+        "path": "Cart_Reader/NES.ino"
+      },
+      {
+        "id": "gba-fram-setup",
+        "head": "19f622e0ada1178a3814884b1e89359b8cf28f34",
+        "path": "Cart_Reader/GBA.ino"
+      },
+      {
+        "id": "gb-sram-enable",
+        "head": "5c71ee4f99c6aa12d03c3304564b2fa338084370",
+        "path": "Cart_Reader/GB.ino"
+      },
+      {
+        "id": "md-eeprom-bit-count",
+        "head": "29421f687112bca76f5416be0d1c78401a0eaef2",
+        "path": "Cart_Reader/MD.ino"
+      }
+    ]
   },
-  "baseline_matches_local": true,
-  "head_matches_local": null,
-  "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-  "results": [
+  "status": "ok",
+  "candidates": [
     {
-      "commit": "f6ed847c17a7015d405a9f3774bd6b1c9e7b1c5a",
-      "subject": "Launch four independent HW3 size candidates in parallel",
+      "schema": 1,
+      "run_id": "45412394809",
+      "run_attempt": "1",
+      "workflow_commit": "8d02cbe6a17f42c485e6fb5539e3783c1a7554af",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
-      "flash": 214982,
-      "ram": 6281,
-      "delta_previous": null,
-      "delta_base": 0,
-      "classification": "baseline",
-      "error": null
+      "request": {
+        "id": "nes-mapper162-163",
+        "head": "55f99db73f280c038ab3a7a21704aaddcf2f35c9",
+        "path": "Cart_Reader/NES.ino",
+        "base": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
+        "expected_base_flash": 214620,
+        "expected_base_ram": 6281
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
+          "subject": "Verify combined and incremental savings of four accepted parallel candidates",
+          "status": "ok",
+          "flash": 214620,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "55f99db73f280c038ab3a7a21704aaddcf2f35c9",
+          "subject": "Share identical PRG traversal for NES mappers 162 and 163",
+          "status": "ok",
+          "flash": 214542,
+          "ram": 6281,
+          "delta_previous": -78,
+          "delta_base": -78,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "nes-mapper162-163",
+        "head": "55f99db73f280c038ab3a7a21704aaddcf2f35c9",
+        "path": "Cart_Reader/NES.ino"
+      }
     },
     {
-      "commit": "adb597585d1e76c502521963e13c6de2b534cbd2",
-      "subject": "Adopt gb-mbc7-bits (isolated -62 B; c881ea9)",
+      "schema": 1,
+      "run_id": "45412394809",
+      "run_attempt": "1",
+      "workflow_commit": "8d02cbe6a17f42c485e6fb5539e3783c1a7554af",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
-      "flash": 214920,
-      "ram": 6281,
-      "delta_previous": -62,
-      "delta_base": -62,
-      "classification": "reduced",
-      "error": null
+      "request": {
+        "id": "gba-fram-setup",
+        "head": "19f622e0ada1178a3814884b1e89359b8cf28f34",
+        "path": "Cart_Reader/GBA.ino",
+        "base": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
+        "expected_base_flash": 214620,
+        "expected_base_ram": 6281
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
+          "subject": "Verify combined and incremental savings of four accepted parallel candidates",
+          "status": "ok",
+          "flash": 214620,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "19f622e0ada1178a3814884b1e89359b8cf28f34",
+          "subject": "Share GBA FRAM read and verify bus initialization",
+          "status": "ok",
+          "flash": 214620,
+          "ram": 6281,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gba-fram-setup",
+        "head": "19f622e0ada1178a3814884b1e89359b8cf28f34",
+        "path": "Cart_Reader/GBA.ino"
+      }
     },
     {
-      "commit": "7abf84ccff9b7f2829fb5e28c9508f5053c5ca19",
-      "subject": "Adopt md-eeprom-address (isolated -134 B; 3479a69)",
+      "schema": 1,
+      "run_id": "45412394809",
+      "run_attempt": "1",
+      "workflow_commit": "8d02cbe6a17f42c485e6fb5539e3783c1a7554af",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
-      "flash": 214786,
-      "ram": 6281,
-      "delta_previous": -134,
-      "delta_base": -196,
-      "classification": "reduced",
-      "error": null
+      "request": {
+        "id": "gb-sram-enable",
+        "head": "5c71ee4f99c6aa12d03c3304564b2fa338084370",
+        "path": "Cart_Reader/GB.ino",
+        "base": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
+        "expected_base_flash": 214620,
+        "expected_base_ram": 6281
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
+          "subject": "Verify combined and incremental savings of four accepted parallel candidates",
+          "status": "ok",
+          "flash": 214620,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "5c71ee4f99c6aa12d03c3304564b2fa338084370",
+          "subject": "Share GB SRAM initialization preserving MBC-specific verification behavior",
+          "status": "ok",
+          "flash": 214666,
+          "ram": 6281,
+          "delta_previous": 46,
+          "delta_base": 46,
+          "classification": "increased",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gb-sram-enable",
+        "head": "5c71ee4f99c6aa12d03c3304564b2fa338084370",
+        "path": "Cart_Reader/GB.ino"
+      }
     },
     {
-      "commit": "cac4bf24135df59bfbfa3e76301a72d2972d933b",
-      "subject": "Adopt snes-special-lorom (isolated -66 B; 932f394)",
+      "schema": 1,
+      "run_id": "45412394809",
+      "run_attempt": "1",
+      "workflow_commit": "8d02cbe6a17f42c485e6fb5539e3783c1a7554af",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
-      "flash": 214720,
-      "ram": 6281,
-      "delta_previous": -66,
-      "delta_base": -262,
-      "classification": "reduced",
-      "error": null
-    },
-    {
-      "commit": "9568123f6bb428d40537a6639401882bef432319",
-      "subject": "Adopt n64-sram-verify (isolated -100 B; 5fbde3c)",
-      "status": "ok",
-      "flash": 214620,
-      "ram": 6281,
-      "delta_previous": -100,
-      "delta_base": -362,
-      "classification": "reduced",
-      "error": null
+      "request": {
+        "id": "md-eeprom-bit-count",
+        "head": "29421f687112bca76f5416be0d1c78401a0eaef2",
+        "path": "Cart_Reader/MD.ino",
+        "base": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
+        "expected_base_flash": 214620,
+        "expected_base_ram": 6281
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
+          "subject": "Verify combined and incremental savings of four accepted parallel candidates",
+          "status": "ok",
+          "flash": 214620,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "29421f687112bca76f5416be0d1c78401a0eaef2",
+          "subject": "Unify MD EEPROM seven and eight bit address output",
+          "status": "ok",
+          "flash": 214628,
+          "ram": 6281,
+          "delta_previous": 8,
+          "delta_base": 8,
+          "classification": "increased",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "md-eeprom-bit-count",
+        "head": "29421f687112bca76f5416be0d1c78401a0eaef2",
+        "path": "Cart_Reader/MD.ino"
+      }
     }
-  ],
-  "fatal_error": null
+  ]
 }
