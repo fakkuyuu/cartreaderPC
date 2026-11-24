@@ -64,6 +64,25 @@
 #include "BootDumpCursor.h"
 
 void pcVerificationResult(uint8_t code);
+void print_Msg(const __FlashStringHelper* string) __attribute__((noinline));
+void print_Msg(const char myString[]) __attribute__((noinline));
+void print_Msg(long unsigned int message) __attribute__((noinline));
+void print_Msg(byte message, int outputFormat) __attribute__((noinline));
+void print_Msg(word message, int outputFormat) __attribute__((noinline));
+void print_Msg(int message, int outputFormat) __attribute__((noinline));
+void print_Msg(long unsigned int message, int outputFormat) __attribute__((noinline));
+void print_Msg(String string) __attribute__((noinline));
+void print_Msg_PaddedHexByte(byte message) __attribute__((noinline));
+void print_Msg_PaddedHex16(word message) __attribute__((noinline));
+void print_Msg_PaddedHex32(unsigned long message) __attribute__((noinline));
+void println_Msg(String string) __attribute__((noinline));
+void println_Msg(byte message, int outputFormat) __attribute__((noinline));
+void println_Msg(const char myString[]) __attribute__((noinline));
+void println_Msg(const __FlashStringHelper* string) __attribute__((noinline));
+void println_Msg(long unsigned int message) __attribute__((noinline));
+#if defined(ENABLE_LCD) || defined(ENABLE_OLED)
+void printWrappedDisplayText(const char* text) __attribute__((noinline));
+#endif
 void showFlashIdAndBlank() __attribute__((noinline));
 void showSavingFolderLine() __attribute__((noinline));
 void showFatalWriteVerification() __attribute__((noinline, noreturn));
