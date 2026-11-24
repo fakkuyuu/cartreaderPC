@@ -1314,9 +1314,7 @@ void compare_checksums_GB() {
   if (strcmp(calcsumStr, checksumStr) == 0) {
     println_Msg(FS(SharedFlashText::textOK));
   } else {
-    print_Msg(F(" != "));
-    println_Msg(checksumStr);
-    print_Error(FS(SharedFlashText::textInvalidChecksum));
+    showInvalidChecksumTail();
   }
   compareCRC("gb.txt", 0, 1, 0);
   display_Update();
@@ -1692,9 +1690,7 @@ void readEEPROM_MBC7_GB() {
   }
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(FS(SharedFlashText::pathEllipsis));
+  showSavingFolderLine();
   display_Update();
 
   uint16_t* data = (uint16_t*)sdBuffer;
@@ -2009,7 +2005,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
       display_Update();
     } else {
       print_Msg(FS(SharedFlashText::textFlashID));
-      sprintf(flashid_str, "%04X", flashid);
+      formatFlashId();
       println_Msg(flashid_str);
       display_Update();
       print_FatalError(FS(SharedFlashText::textUnknownFlashrom));
@@ -2346,10 +2342,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
     if (writeErrors == 0) {
       showOkAndUpdate();
     } else {
-      println_Msg(FS(SharedFlashText::textError));
-      print_Msg(writeErrors);
-      printBytesLine();
-      print_FatalError(did_not_verify_STR);
+      showFatalWriteVerification();
     }
   } else {
     showOpenFileErrorAndUpdate();
@@ -2743,9 +2736,7 @@ void readPelican_GB() {
     writeByte_GB(0x3555, 0xFF);
     delay(100);
     if (flashid != 0xBF04) {
-      println_Msg(FS(SharedFlashText::textUnknownFlashID));
-      println_Msg(flashid);
-      promptAndWaitForButton();
+      showUnknownFlashIdAndWait();
       mainMenu();
     }
   }
@@ -2833,9 +2824,7 @@ void writePelican_GB() {
       println_Msg(FS(SharedFlashText::text29EE020W29C020));
       println_Msg(FS(SharedFlashText::textBanksUsed3264));
       romBanks = 32;
-      display_Update();
-      println_Msg(F("Erasing flash..."));
-      display_Update();
+      showFlashErasing();
 
       if (flashid == 0xDA45) {
         // Disable BootBlock
@@ -2863,9 +2852,7 @@ void writePelican_GB() {
       writeByte_GB(0x3555, 0xFF);
       delay(100);
       if (flashid != 0xBF04) {
-        println_Msg(FS(SharedFlashText::textUnknownFlashID));
-        println_Msg(flashid);
-        promptAndWaitForButton();
+        showUnknownFlashIdAndWait();
         mainMenu();
       }
     }
@@ -2874,9 +2861,7 @@ void writePelican_GB() {
       println_Msg(FS(SharedFlashText::textSST28LF040));
       println_Msg(FS(SharedFlashText::textBanksUsed6464));
       romBanks = 64;
-      display_Update();
-      println_Msg(F("Erasing flash..."));
-      display_Update();
+      showFlashErasing();
 
       //Unprotect flash
       send28LF040Potection_GB(false);
@@ -3042,14 +3027,9 @@ void writePelican_GB() {
   closeCurrentFile();
 
   if (writeErrors == 0) {
-    printOkLine();
-    println_Msg(FS(SharedFlashText::textPleaseTurnOffThePower));
-    display_Update();
+    showTurnOffPowerAndUpdate();
   } else {
-    println_Msg(FS(SharedFlashText::textError));
-    print_Msg(writeErrors);
-    printBytesLine();
-    print_FatalError(did_not_verify_STR);
+    showFatalWriteVerification();
   }
 }
 
@@ -3071,9 +3051,7 @@ void readMegaMem_GB() {
   createFolder("GB", "ROM", "MegaMem", "GB");
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(FS(SharedFlashText::pathEllipsis));
+  showSavingFolderLine();
   println_Msg(F("Rom.GB"));
   display_Update();
 
@@ -3109,9 +3087,7 @@ void readMegaMem_GB() {
   strcat(fileName, ".bin");
 
   display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(FS(SharedFlashText::pathEllipsis));
+  showSavingFolderLine();
   println_Msg(F("SaveData.bin"));
   display_Update();
 
@@ -3183,9 +3159,7 @@ void writeMegaMem_GB() {
     writeByte_GB(0x5555, 0xFF);
     delay(100);
     if (flashid != 0xBF04) {
-      println_Msg(FS(SharedFlashText::textUnknownFlashID));
-      println_Msg(flashid);
-      promptAndWaitForButton();
+      showUnknownFlashIdAndWait();
       mainMenu();
     }
   }
@@ -3193,9 +3167,7 @@ void writeMegaMem_GB() {
   if (flashid == 0xBF04) {
     println_Msg(FS(SharedFlashText::textSST28LF040));
     romBanks = 32;
-    display_Update();
-    println_Msg(F("Erasing flash..."));
-    display_Update();
+    showFlashErasing();
 
     //Unprotect flash
     writeByte_GB(0x2000, 0x0);
@@ -3359,14 +3331,9 @@ void writeMegaMem_GB() {
   closeCurrentFile();
 
   if (writeErrors == 0) {
-    printOkLine();
-    println_Msg(FS(SharedFlashText::textPleaseTurnOffThePower));
-    display_Update();
+    showTurnOffPowerAndUpdate();
   } else {
-    println_Msg(FS(SharedFlashText::textError));
-    print_Msg(writeErrors);
-    printBytesLine();
-    print_FatalError(did_not_verify_STR);
+    showFatalWriteVerification();
   }
 }
 
@@ -3503,9 +3470,7 @@ void writeGameshark_GB() {
   if (flashid == 0xBFB5) {
     println_Msg(FS(SharedFlashText::textSST39SF010));
     romBanks = 16;
-    display_Update();
-    println_Msg(F("Erasing flash..."));
-    display_Update();
+    showFlashErasing();
 
     //Erase flash
     sendGamesharkCommand_GB(0x80);
@@ -3617,14 +3582,9 @@ void writeGameshark_GB() {
   closeCurrentFile();
 
   if (writeErrors == 0) {
-    printOkLine();
-    println_Msg(FS(SharedFlashText::textPleaseTurnOffThePower));
-    display_Update();
+    showTurnOffPowerAndUpdate();
   } else {
-    println_Msg(FS(SharedFlashText::textError));
-    print_Msg(writeErrors);
-    printBytesLine();
-    print_FatalError(did_not_verify_STR);
+    showFatalWriteVerification();
   }
 }
 

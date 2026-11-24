@@ -480,9 +480,7 @@ void snesMenu() {
       // But if that's false, uncomment this:
       // stopSnesClocks_resetCic_resetCart();
 
-      display_Clear();
-      print_Msg(FS(SharedFlashText::textResetting));
-      display_Update();
+      showResettingAndUpdate();
       delay(3000);  // wait 3 secs to switch to next game
       resetArduino();
       break;
@@ -1460,9 +1458,7 @@ boolean compare_checksum() {
     display_Update();
     return 1;
   } else {
-    print_Msg(F(" != "));
-    println_Msg(checksumStr);
-    print_Error(FS(SharedFlashText::textInvalidChecksum));
+    showInvalidChecksumTail();
     display_Update();
     return 0;
   }
@@ -2115,9 +2111,7 @@ void writeSRAM(boolean browseFile) {
     dataIn();
 
     // Close the file:
-    closeCurrentFile();
-    println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
-    display_Update();
+    closeAndShowSramWritten();
 
   } else {
     reportMissingFile();
@@ -2274,9 +2268,7 @@ unsigned long verifySRAM() {
 
       stopSnesClocks_resetCic_resetCart();
 
-      display_Clear();
-      print_Msg(FS(SharedFlashText::textResetting));
-      display_Update();
+      showResettingAndUpdate();
       delay(3000);  // wait 3 secs
       resetArduino();
     }

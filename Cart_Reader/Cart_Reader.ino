@@ -64,6 +64,19 @@
 #include "BootDumpCursor.h"
 
 void pcVerificationResult(uint8_t code);
+void showFlashIdAndBlank() __attribute__((noinline));
+void showSavingFolderLine() __attribute__((noinline));
+void showFatalWriteVerification() __attribute__((noinline, noreturn));
+void showFlashErasing() __attribute__((noinline));
+void closeBlankAndClear() __attribute__((noinline));
+void showInvalidChecksumTail() __attribute__((noinline));
+void showUnknownFlashIdAndWait() __attribute__((noinline));
+void showTurnOffPowerAndUpdate() __attribute__((noinline));
+void showRomNameAndSerial() __attribute__((noinline));
+void closeAndShowSramWritten() __attribute__((noinline));
+void showResettingAndUpdate() __attribute__((noinline));
+void showFlashingFileAndUpdate() __attribute__((noinline));
+void formatFlashId() __attribute__((noinline));
 
 void showVerificationErrorCount(unsigned long errors) __attribute__((noinline));
 void browseRootFileAndClear() __attribute__((noinline));
@@ -867,9 +880,7 @@ void printAndIncrementFolder(bool displayClear = false) {
   if (displayClear) {
     display_Clear();
   }
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(FS(SharedFlashText::pathEllipsis));
+  showSavingFolderLine();
   display_Update();
   // write new folder number back to eeprom
   foldern = foldern + 1;
@@ -3226,6 +3237,85 @@ void printBlankLine() {
 
 
 /* Compact shared UI/storage sequences. Keep operation order unchanged. */
+void __attribute__((noinline)) showFlashIdAndBlank() {
+  print_Msg(FS(SharedFlashText::textFlashID));
+  println_Msg(flashid_str);
+  printBlankLine();
+}
+
+void __attribute__((noinline)) showSavingFolderLine() {
+  print_STR(saving_to_STR, 0);
+  print_Msg(folder);
+  println_Msg(FS(SharedFlashText::pathEllipsis));
+}
+
+void __attribute__((noinline)) showFatalWriteVerification() {
+  println_Msg(FS(SharedFlashText::textError));
+  print_Msg(writeErrors);
+  printBytesLine();
+  print_FatalError(did_not_verify_STR);
+}
+
+void __attribute__((noinline)) showFlashErasing() {
+  display_Update();
+  println_Msg(F("Erasing flash..."));
+  display_Update();
+}
+
+void __attribute__((noinline)) closeBlankAndClear() {
+  closeCurrentFile();
+  printBlankLine();
+  display_Clear();
+}
+
+void __attribute__((noinline)) showInvalidChecksumTail() {
+  print_Msg(F(" != "));
+  println_Msg(checksumStr);
+  print_Error(FS(SharedFlashText::textInvalidChecksum));
+}
+
+void __attribute__((noinline)) showUnknownFlashIdAndWait() {
+  println_Msg(FS(SharedFlashText::textUnknownFlashID));
+  println_Msg(flashid);
+  promptAndWaitForButton();
+}
+
+void __attribute__((noinline)) showTurnOffPowerAndUpdate() {
+  printOkLine();
+  println_Msg(FS(SharedFlashText::textPleaseTurnOffThePower));
+  display_Update();
+}
+
+void __attribute__((noinline)) showRomNameAndSerial() {
+  print_Msg(FS(FSTRING_NAME));
+  println_Msg(romName);
+  print_Msg(FS(FSTRING_SERIAL));
+  println_Msg(cartID);
+}
+
+void __attribute__((noinline)) closeAndShowSramWritten() {
+  closeCurrentFile();
+  println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
+  display_Update();
+}
+
+void __attribute__((noinline)) showResettingAndUpdate() {
+  display_Clear();
+  print_Msg(FS(SharedFlashText::textResetting));
+  display_Update();
+}
+
+void __attribute__((noinline)) showFlashingFileAndUpdate() {
+  print_STR(flashing_file_STR, 0);
+  print_Msg(filePath);
+  println_Msg(FS(SharedFlashText::ellipsis));
+  display_Update();
+}
+
+void __attribute__((noinline)) formatFlashId() {
+  sprintf(flashid_str, "%04X", flashid);
+}
+
 void __attribute__((noinline)) showVerificationErrorCount(unsigned long errors) {
   print_STR(error_STR, 0);
   print_Msg(errors);

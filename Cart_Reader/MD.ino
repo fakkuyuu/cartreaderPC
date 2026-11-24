@@ -432,9 +432,7 @@ void mdCartMenu() {
       // Switch RST(PH0) to LOW
       PORTH &= ~(1 << 0);
 
-      display_Clear();
-      print_Msg(FS(SharedFlashText::textResetting));
-      display_Update();
+      showResettingAndUpdate();
       delay(3000);  // wait 3 secs to switch to next game
       resetArduino();
       break;
@@ -1995,10 +1993,7 @@ void resetFlash_MD() {
 void write29F1610_MD() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 0);
-  print_Msg(filePath);
-  println_Msg(FS(SharedFlashText::ellipsis));
-  display_Update();
+  showFlashingFileAndUpdate();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -2060,10 +2055,7 @@ void write29F1610_MD() {
 void write29GL_MD() {
   // Create filepath
   sprintf(filePath, "%s/%s", filePath, fileName);
-  print_STR(flashing_file_STR, 0);
-  print_Msg(filePath);
-  println_Msg(FS(SharedFlashText::ellipsis));
-  display_Update();
+  showFlashingFileAndUpdate();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -2151,7 +2143,7 @@ void idFlash_MD() {
   // Read the two id bytes into a string
   flashid = (readFlash_MD(0) & 0xFF) << 8;
   flashid |= readFlash_MD(1) & 0xFF;
-  sprintf(flashid_str, "%04X", flashid);
+  formatFlashId();
 }
 
 byte readStatusReg_MD() {
@@ -2837,9 +2829,7 @@ void readEEP_MD() {
     myFile.write(sdBuffer, eepSize);
   }
   // Close the file:
-  closeCurrentFile();
-  printBlankLine();
-  display_Clear();
+  closeBlankAndClear();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
 
@@ -2876,9 +2866,7 @@ void writeEEP_MD() {
       }
     }
     // Close the file:
-    closeCurrentFile();
-    printBlankLine();
-    display_Clear();
+    closeBlankAndClear();
     showDoneAndUpdate();
   } else {
     fatalSdError();
@@ -2915,9 +2903,7 @@ void readBram_MD() {
   }
 
   // Close the file:
-  closeCurrentFile();
-  printBlankLine();
-  display_Clear();
+  closeBlankAndClear();
   print_Msg(FS(SharedFlashText::textSavedTo));
   print_Msg(folder);
 
@@ -2945,9 +2931,7 @@ void writeBram_MD() {
     }
     writeWord_MD(0x380000, 0);  // Disable BRAM Writes
     // Close the file:
-    closeCurrentFile();
-    printBlankLine();
-    display_Clear();
+    closeBlankAndClear();
     showDoneAndUpdate();
   } else {
     fatalSdError();

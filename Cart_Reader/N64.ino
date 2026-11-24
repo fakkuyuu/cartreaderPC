@@ -1994,10 +1994,7 @@ void printCartInfo_N64() {
   // Print start page
   if (cartSize != 0) {
     display_Clear();
-    print_Msg(FS(FSTRING_NAME));
-    println_Msg(romName);
-    print_Msg(FS(FSTRING_SERIAL));
-    println_Msg(cartID);
+    showRomNameAndSerial();
     print_Msg(FS(FSTRING_REVISION));
     println_Msg(romVersion);
     printRomSizeLabel();
@@ -2039,10 +2036,7 @@ void printCartInfo_N64() {
     display_Clear();
     println_Msg(FS(SharedFlashText::textGAMEPAKERROR));
     println_Msg("");
-    print_Msg(FS(FSTRING_NAME));
-    println_Msg(romName);
-    print_Msg(FS(FSTRING_SERIAL));
-    println_Msg(cartID);
+    showRomNameAndSerial();
     print_Msg(FS(SharedFlashText::textCRC1));
     println_Msg(checksumStr);
     display_Update();
@@ -3520,7 +3514,7 @@ void idFlashrom_N64() {
   sprintf(vendorID, "%02X", readWord_N64());
   // Read 2 bytes flashrom ID
   flashid = readWord_N64();
-  sprintf(flashid_str, "%04X", flashid);
+  formatFlashId();
   // Read 2 bytes secondary flashrom ID
   setAddress_N64(romBase + 0x1C);
   sprintf(cartID, "%04X", ((readWord_N64() << 8) | (readWord_N64() & 0xFF)));
@@ -4311,11 +4305,11 @@ void idGameshark_N64() {
   } else {
     println_Msg(FS(SharedFlashText::textCheckCartConnection));
     println_Msg(FS(SharedFlashText::textUnknownFlashID));
-    sprintf(flashid_str, "%04X", flashid);
+    formatFlashId();
     promptAndWaitForButton();
     mainMenu();
   }
-  sprintf(flashid_str, "%04X", flashid);
+  formatFlashId();
   // Reset flashrom
   resetGameshark_N64();
 }
@@ -4640,11 +4634,11 @@ void idXplorer_N64() {
   if (flashid != 0x0808) {
     println_Msg(FS(SharedFlashText::textCheckCartConnection));
     println_Msg(FS(SharedFlashText::textUnknownFlashID));
-    sprintf(flashid_str, "%04X", flashid);
+    formatFlashId();
     promptAndWaitForButton();
     mainMenu();
   }
-  sprintf(flashid_str, "%04X", flashid);
+  formatFlashId();
   // Reset flashrom
   resetXplorer_N64();
 }

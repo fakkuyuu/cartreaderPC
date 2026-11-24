@@ -330,10 +330,7 @@ void setup_GBA() {
   display_Clear();
 
   // Print start page
-  print_Msg(FS(FSTRING_NAME));
-  println_Msg(romName);
-  print_Msg(FS(FSTRING_SERIAL));
-  println_Msg(cartID);
+  showRomNameAndSerial();
   print_Msg(FS(FSTRING_REVISION));
   println_Msg(romVersion);
   printRomSizeLabel();
@@ -1147,9 +1144,7 @@ boolean compare_checksum_GBA() {
       display_Update();
       return 1;
     } else {
-      print_Msg(F(" != "));
-      println_Msg(checksumStr);
-      print_Error(FS(SharedFlashText::textInvalidChecksum));
+      showInvalidChecksumTail();
       return 0;
     }
   }
@@ -1222,9 +1217,7 @@ void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
       }
     }
     // Close the file:
-    closeCurrentFile();
-    println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
-    display_Update();
+    closeAndShowSramWritten();
 
   } else {
     reportMissingFile();
@@ -1387,9 +1380,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
       }
     }
     // Close the file:
-    closeCurrentFile();
-    println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
-    display_Update();
+    closeAndShowSramWritten();
 
   } else {
     reportMissingFile();
@@ -1499,7 +1490,7 @@ void idFlash_GBA() {
   // Read the two id bytes into a string
   flashid = readByteFlash_GBA(0) << 8;
   flashid |= readByteFlash_GBA(1);
-  sprintf(flashid_str, "%04X", flashid);
+  formatFlashId();
 
   // Set CS_FLASH(PH0) high
   PORTH |= (1 << 0);
@@ -2212,7 +2203,7 @@ void idFlashrom_GBA() {
   // Read flashrom ID
   flashid = readWord_GBA(0x2) & 0xFF00;
   flashid |= readWord_GBA(0x4) & 0xFF;
-  sprintf(flashid_str, "%04X", flashid);
+  formatFlashId();
 
   // Intel Strataflash
   if (flashid == 0x8802 || (flashid == 0x8816)) {
@@ -2237,7 +2228,7 @@ void idFlashrom_GBA() {
 
     // Read flashrom ID
     flashid = readWord_GAB(0x2);
-    sprintf(flashid_str, "%04X", flashid);
+    formatFlashId();
 
     // MX29GL128E or MSP55LV128
     if (flashid == 0x227E) {
@@ -2249,9 +2240,7 @@ void idFlashrom_GBA() {
       println_Msg(FS(SharedFlashText::textError));
       printBlankLine();
       println_Msg(FS(SharedFlashText::textUnknownFlash));
-      print_Msg(FS(SharedFlashText::textFlashID));
-      println_Msg(flashid_str);
-      printBlankLine();
+      showFlashIdAndBlank();
       print_FatalError(FS(SharedFlashText::textCheckVoltage));
     }
   }
@@ -3069,9 +3058,7 @@ void flashRepro_GBA(boolean option) {
     println_Msg(FS(SharedFlashText::textError));
     printBlankLine();
     println_Msg(FS(SharedFlashText::textUnknownFlash));
-    print_Msg(FS(SharedFlashText::textFlashID));
-    println_Msg(flashid_str);
-    printBlankLine();
+    showFlashIdAndBlank();
     print_FatalError(FS(SharedFlashText::textCheckVoltage));
   }
 }

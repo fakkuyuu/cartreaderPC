@@ -5124,7 +5124,7 @@ void NESmaker_ID() {   // Read Flash ID
   NESmaker_Cmd(0x90);  // Software ID Entry
   flashid = read_prg_byte(0x8000) << 8;
   flashid |= read_prg_byte(0x8001);
-  sprintf(flashid_str, "%04X", flashid);
+  formatFlashId();
   NESmaker_Cmd(0xF0);     // Software ID Exit
   if (flashid == 0xBFB7)  // SST 39SF040
     flashfound = 1;
@@ -5159,9 +5159,7 @@ void writeFLASH() {
     println_Msg(F("FLASH NOT DETECTED"));
     display_Update();
   } else {
-    print_Msg(FS(SharedFlashText::textFlashID));
-    println_Msg(flashid_str);
-    printBlankLine();
+    showFlashIdAndBlank();
     println_Msg(F("NESmaker Flash Found"));
     printBlankLine();
     display_Update();
@@ -5254,7 +5252,7 @@ void A29040B_ID() {  // Read Flash ID
 
   flashid = read_prg_byte(0x8000) << 8;
   flashid |= read_prg_byte(0x8001);
-  sprintf(flashid_str, "%04X", flashid);
+  formatFlashId();
   if (flashid == 0x3786)  // A29040B
     flashfound = 1;
 
@@ -5364,17 +5362,13 @@ void A29040B_writeFLASH() {
     rgbLed(red_color);
     println_Msg(F(A29040B_TITLE));
     printBlankLine();
-    print_Msg(FS(SharedFlashText::textFlashID));
-    println_Msg(flashid_str);
-    printBlankLine();
+    showFlashIdAndBlank();
     println_Msg(F("FLASH NOT FOUND"));
     updateDisplayAndWait();
   } else {
     println_Msg(F(A29040B_TITLE));
     printBlankLine();
-    print_Msg(FS(SharedFlashText::textFlashID));
-    println_Msg(flashid_str);
-    printBlankLine();
+    showFlashIdAndBlank();
     println_Msg(F("Flash Found"));
     printBlankLine();
     display_Update();
