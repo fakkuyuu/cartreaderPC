@@ -1,0 +1,234 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45413874218",
+  "run_attempt": "1",
+  "workflow_commit": "be58724c7ed1b52504324000bd760ba42c69dfdf",
+  "request": {
+    "id": "parallel-003",
+    "base": "72f2c4265751a7daa6114d48a2237d0f076ed775",
+    "expected_base_flash": 214542,
+    "expected_base_ram": 6281,
+    "candidates": [
+      {
+        "id": "ws-eeprom-read-command",
+        "head": "da0c1f86b4140f74acf372e45764a72cb4e9a0be",
+        "path": "Cart_Reader/WS.ino"
+      },
+      {
+        "id": "pce-tennokoe-read-block",
+        "head": "d02effd89c3e8ca02ae049bbbc14329c587c5021",
+        "path": "Cart_Reader/PCE.ino"
+      },
+      {
+        "id": "snes-sram-verify-ranges",
+        "head": "d6c6c759a4d13bdbc1afc3f494d24dc940bd7207",
+        "path": "Cart_Reader/SNES.ino"
+      },
+      {
+        "id": "n64-accessory-backup",
+        "head": "08479e98c88256add7f0c074ce1c16a86a1d3e52",
+        "path": "Cart_Reader/N64.ino"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45413874218",
+      "run_attempt": "1",
+      "workflow_commit": "be58724c7ed1b52504324000bd760ba42c69dfdf",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "ws-eeprom-read-command",
+        "head": "da0c1f86b4140f74acf372e45764a72cb4e9a0be",
+        "path": "Cart_Reader/WS.ino",
+        "base": "72f2c4265751a7daa6114d48a2237d0f076ed775",
+        "expected_base_flash": 214542,
+        "expected_base_ram": 6281
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "72f2c4265751a7daa6114d48a2237d0f076ed775",
+          "subject": "Adopt mapper 162/163 PRG traversal (isolated -78 B; 55f99db)",
+          "status": "ok",
+          "flash": 214542,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "da0c1f86b4140f74acf372e45764a72cb4e9a0be",
+          "subject": "Share WS EEPROM read command sequence between dump and verification",
+          "status": "ok",
+          "flash": 214434,
+          "ram": 6281,
+          "delta_previous": -108,
+          "delta_base": -108,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "ws-eeprom-read-command",
+        "head": "da0c1f86b4140f74acf372e45764a72cb4e9a0be",
+        "path": "Cart_Reader/WS.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45413874218",
+      "run_attempt": "1",
+      "workflow_commit": "be58724c7ed1b52504324000bd760ba42c69dfdf",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "pce-tennokoe-read-block",
+        "head": "d02effd89c3e8ca02ae049bbbc14329c587c5021",
+        "path": "Cart_Reader/PCE.ino",
+        "base": "72f2c4265751a7daa6114d48a2237d0f076ed775",
+        "expected_base_flash": 214542,
+        "expected_base_ram": 6281
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "72f2c4265751a7daa6114d48a2237d0f076ed775",
+          "subject": "Adopt mapper 162/163 PRG traversal (isolated -78 B; 55f99db)",
+          "status": "ok",
+          "flash": 214542,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "d02effd89c3e8ca02ae049bbbc14329c587c5021",
+          "subject": "Share Tennokoe RAM protected read block sequence",
+          "status": "ok",
+          "flash": 214396,
+          "ram": 6281,
+          "delta_previous": -146,
+          "delta_base": -146,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "pce-tennokoe-read-block",
+        "head": "d02effd89c3e8ca02ae049bbbc14329c587c5021",
+        "path": "Cart_Reader/PCE.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45413874218",
+      "run_attempt": "1",
+      "workflow_commit": "be58724c7ed1b52504324000bd760ba42c69dfdf",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "snes-sram-verify-ranges",
+        "head": "d6c6c759a4d13bdbc1afc3f494d24dc940bd7207",
+        "path": "Cart_Reader/SNES.ino",
+        "base": "72f2c4265751a7daa6114d48a2237d0f076ed775",
+        "expected_base_flash": 214542,
+        "expected_base_ram": 6281
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "72f2c4265751a7daa6114d48a2237d0f076ed775",
+          "subject": "Adopt mapper 162/163 PRG traversal (isolated -78 B; 55f99db)",
+          "status": "ok",
+          "flash": 214542,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "d6c6c759a4d13bdbc1afc3f494d24dc940bd7207",
+          "subject": "Share SNES SRAM verification range traversal",
+          "status": "ok",
+          "flash": 214542,
+          "ram": 6281,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "snes-sram-verify-ranges",
+        "head": "d6c6c759a4d13bdbc1afc3f494d24dc940bd7207",
+        "path": "Cart_Reader/SNES.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45413874218",
+      "run_attempt": "1",
+      "workflow_commit": "be58724c7ed1b52504324000bd760ba42c69dfdf",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "n64-accessory-backup",
+        "head": "08479e98c88256add7f0c074ce1c16a86a1d3e52",
+        "path": "Cart_Reader/N64.ino",
+        "base": "72f2c4265751a7daa6114d48a2237d0f076ed775",
+        "expected_base_flash": 214542,
+        "expected_base_ram": 6281
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "72f2c4265751a7daa6114d48a2237d0f076ed775",
+          "subject": "Adopt mapper 162/163 PRG traversal (isolated -78 B; 55f99db)",
+          "status": "ok",
+          "flash": 214542,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "08479e98c88256add7f0c074ce1c16a86a1d3e52",
+          "subject": "Share N64 GameShark and Xplorer backup block traversal",
+          "status": "ok",
+          "flash": 214494,
+          "ram": 6281,
+          "delta_previous": -48,
+          "delta_base": -48,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "n64-accessory-backup",
+        "head": "08479e98c88256add7f0c074ce1c16a86a1d3e52",
+        "path": "Cart_Reader/N64.ino"
+      }
+    }
+  ]
+}
