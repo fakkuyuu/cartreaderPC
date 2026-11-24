@@ -1001,7 +1001,7 @@ void getCartInfo_GB() {
   // Get Checksum as string
   eepbit[6] = sdBuffer[0x14E];
   eepbit[7] = sdBuffer[0x14F];
-  sprintf(checksumStr, "%02X%02X", eepbit[6], eepbit[7]);
+  formatFixedHex(checksumStr, (uint16_t(eepbit[6]) << 8) | eepbit[7], 4);
 
   // ROM banks
   romBanks = 2;
@@ -1305,7 +1305,7 @@ void compare_checksums_GB() {
 
   // Internal ROM checksum
   char calcsumStr[5];
-  sprintf(calcsumStr, "%04X", calc_checksum_GB(fileName));
+  formatFixedHex(calcsumStr, calc_checksum_GB(fileName), 4);
 
   print_Msg(FS(FSTRING_CHECKSUM));
   print_Msg(calcsumStr);

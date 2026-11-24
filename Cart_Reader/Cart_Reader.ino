@@ -64,6 +64,8 @@
 #include "BootDumpCursor.h"
 
 void pcVerificationResult(uint8_t code);
+void formatFixedHex(char* dest, uint32_t value, uint8_t digits) __attribute__((noinline));
+void browseRootFileWithPathAndClear(const __FlashStringHelper* label) __attribute__((noinline));
 void appendSelectedFilePath() __attribute__((noinline));
 void clearAndRootDirectory() __attribute__((noinline));
 void showRomRevision() __attribute__((noinline));
@@ -556,7 +558,7 @@ void printCRC(char* checkFile, uint32_t* crcCopy, unsigned long offset, char* di
     *crcCopy = crc;
   }
 
-  sprintf(tempCRC, "%08lX", crc);
+  formatFixedHex(tempCRC, crc, 8);
   print_Msg(F("CRC: "));
   println_Msg(tempCRC);
   display_Update();
@@ -650,10 +652,10 @@ boolean compareCRC(const char* database, uint32_t crc32sum, boolean renamerom, i
     //go to root
     resetStorageDirectory();
     // Calculate CRC32
-    sprintf(crcStr, "%08lX", calculateCRC(fileName, folder, offset));
+    formatFixedHex(crcStr, calculateCRC(fileName, folder, offset), 8);
   } else {
     // Convert precalculated crc to string
-    sprintf(crcStr, "%08lX", ~crc32sum);
+    formatFixedHex(crcStr, ~crc32sum, 8);
   }
   // Print checksum
   print_Msg(crcStr);
@@ -3249,6 +3251,24 @@ void printBlankLine() {
 
 
 /* Compact shared UI/storage sequences. Keep operation order unchanged. */
+/* Fixed-width uppercase hex for byte/word/CRC fields whose values fit their width. */
+void __attribute__((noinline)) formatFixedHex(char* dest, uint32_t value, uint8_t digits) {
+  dest += digits;
+  *dest = '\0';
+  while (digits--) {
+    const uint8_t nibble = value & 0x0F;
+    *--dest = nibble < 10 ? '0' + nibble : 'A' + nibble - 10;
+    value >>= 4;
+  }
+}
+
+void __attribute__((noinline)) browseRootFileWithPathAndClear(const __FlashStringHelper* label) {
+  resetFileBrowserToRoot();
+  fileBrowser(label);
+  appendSelectedFilePath();
+  display_Clear();
+}
+
 void __attribute__((noinline)) appendSelectedFilePath() {
   sprintf(filePath, "%s/%s", filePath, fileName);
 }
@@ -3412,7 +3432,7 @@ void __attribute__((noinline)) showFlashingFileAndUpdate() {
 }
 
 void __attribute__((noinline)) formatFlashId() {
-  sprintf(flashid_str, "%04X", flashid);
+  formatFixedHex(flashid_str, flashid, 4);
 }
 
 void __attribute__((noinline)) showVerificationErrorCount(unsigned long errors) {

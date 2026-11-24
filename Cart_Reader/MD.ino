@@ -1744,7 +1744,7 @@ void readROM_MD() {
   } else {
     println_Msg(FS(SharedFlashText::textError));
     char calcsumStr[5];
-    sprintf(calcsumStr, "%04X", calcCKS);
+    formatFixedHex(calcsumStr, calcCKS, 4);
     println_Msg(calcsumStr);
     print_Error(FS(FSTRING_EMPTY));
     display_Update();
@@ -1758,7 +1758,7 @@ void readROM_MD() {
     } else {
       print_Msg(FS(SharedFlashText::textError));
       char calcsumStr[5];
-      sprintf(calcsumStr, "%04X", calcCKSLockon);
+      formatFixedHex(calcsumStr, calcCKSLockon, 4);
       println_Msg(calcsumStr);
       print_Error(FS(FSTRING_EMPTY));
       display_Update();
@@ -1771,7 +1771,7 @@ void readROM_MD() {
     } else {
       print_Msg(FS(SharedFlashText::textError));
       char calcsumStr[5];
-      sprintf(calcsumStr, "%04X", calcCKSSonic2);
+      formatFixedHex(calcsumStr, calcCKSSonic2, 4);
       println_Msg(calcsumStr);
       print_Error(FS(FSTRING_EMPTY));
       display_Update();

@@ -1172,10 +1172,10 @@ boolean checkcart_SNES() {
 
   // Calculate CRC32 of header
   char crcStr[9];
-  sprintf(crcStr, "%08lX", calculateCRC(snesHeader, 80));
+  formatFixedHex(crcStr, calculateCRC(snesHeader, 80), 8);
 
   // Get Checksum as string
-  sprintf(checksumStr, "%02X%02X", snesHeader[0xFFDF - headerStart], snesHeader[0xFFDE - headerStart]);
+  formatFixedHex(checksumStr, (uint16_t(snesHeader[0xFFDF - headerStart]) << 8) | snesHeader[0xFFDE - headerStart], 4);
 
   romType = snesHeader[0xFFD5 - headerStart];
   if ((romType >> 5) != 1) {  // Detect invalid romType byte due to too long ROM name (22 chars)
@@ -1424,7 +1424,7 @@ boolean compare_checksum() {
   display_Update();
 
   char calcsumStr[5];
-  sprintf(calcsumStr, "%04X", calc_checksum(fileName, folder));
+  formatFixedHex(calcsumStr, calc_checksum(fileName, folder), 4);
   print_Msg(calcsumStr);
 
   if (strcmp(calcsumStr, checksumStr) == 0) {
@@ -1970,11 +1970,7 @@ void visitSramBanks_SNES(byte bank, long start, long capacity, long size,
 
 void writeSRAM(boolean browseFile) {
   if (browseFile) {
-    resetFileBrowserToRoot();
-    fileBrowser(FS(SharedFlashText::textSelectSrmFile));
-    // Create filepath
-    appendSelectedFilePath();
-    display_Clear();
+    browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectSrmFile));
   } else
     sprintf(filePath, "%s", fileName);
 

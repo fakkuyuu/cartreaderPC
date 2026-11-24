@@ -844,7 +844,7 @@ void getCartInfo_GBA() {
     // Convert checksum from header into string
     // (used in compare_checksum_GBA... it should just exchange an integer
     // instead)
-    sprintf(checksumStr, "%02X", sdBuffer[0xBD]);
+    formatFixedHex(checksumStr, sdBuffer[0xBD], 2);
 
     // Compare checksum
     if (sdBuffer[0xBD] != calcChecksum) {
@@ -852,7 +852,7 @@ void getCartInfo_GBA() {
       display_Clear();
       print_Msg(FS(SharedFlashText::textResult));
       // Turn into string
-      sprintf(calcChecksumStr, "%02X", calcChecksum);
+      formatFixedHex(calcChecksumStr, calcChecksum, 2);
       println_Msg(calcChecksumStr);
       print_Error(FS(SharedFlashText::textChecksumError));
       printBlankLine();
@@ -1126,7 +1126,7 @@ boolean compare_checksum_GBA() {
 
     // Calculate Checksum and turn into string
     char calcChecksumStr[3];
-    sprintf(calcChecksumStr, "%02X", checksumHeader_GBA(sdBuffer));
+    formatFixedHex(calcChecksumStr, checksumHeader_GBA(sdBuffer), 2);
     print_Msg(calcChecksumStr);
 
     if (strcmp(calcChecksumStr, checksumStr) == 0) {
@@ -1183,11 +1183,7 @@ void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
 
 void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
-    resetFileBrowserToRoot();
-    fileBrowser(FS(SharedFlashText::textSelectSrmFile));
-    // Create filepath
-    appendSelectedFilePath();
-    display_Clear();
+    browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectSrmFile));
   }
 
   //open file on sd card
@@ -1327,11 +1323,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
   PORTH &= ~((1 << 0) | (1 << 5));
 
   if (browseFile) {
-    resetFileBrowserToRoot();
-    fileBrowser(FS(SharedFlashText::textSelectSrmFile));
-    // Create filepath
-    appendSelectedFilePath();
-    display_Clear();
+    browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectSrmFile));
   } else
     sprintf(filePath, "%s", fileName);
 
@@ -1715,11 +1707,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
   DDRC = 0xFF;
 
   if (browseFile) {
-    resetFileBrowserToRoot();
-    fileBrowser(FS(SharedFlashText::textSelectFlaFile));
-    // Create filepath
-    appendSelectedFilePath();
-    display_Clear();
+    browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectFlaFile));
   }
 
   print_Msg(FS(SharedFlashText::textWritingFlash));
@@ -1840,11 +1828,7 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
 // Write eeprom from file
 void writeEeprom_GBA(word eepSize) {
   // Launch Filebrowser
-  resetFileBrowserToRoot();
-  fileBrowser(FS(SharedFlashText::textSelectEepFile));
-  // Create filepath
-  appendSelectedFilePath();
-  display_Clear();
+  browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectEepFile));
 
   print_Msg(FS(SharedFlashText::textWritingEEPROM));
   display_Update();

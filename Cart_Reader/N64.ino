@@ -2213,7 +2213,7 @@ void idCart() {
   PORTC |= (1 << 1);
 
   // CRC1
-  sprintf(checksumStr, "%02X%02X%02X%02X", sdBuffer[0x10], sdBuffer[0x11], sdBuffer[0x12], sdBuffer[0x13]);
+  formatFixedHex(checksumStr, (uint32_t(sdBuffer[0x10]) << 24) | (uint32_t(sdBuffer[0x11]) << 16) | (uint32_t(sdBuffer[0x12]) << 8) | sdBuffer[0x13], 8);
 
   // Get cart id
   cartID[0] = sdBuffer[0x3B];
@@ -2274,7 +2274,7 @@ void idCart() {
     PORTC |= (1 << 1);
 
     // CRC1
-    sprintf(checksumStr, "%02X%02X%02X%02X", sdBuffer[0x10], sdBuffer[0x11], sdBuffer[0x12], sdBuffer[0x13]);
+    formatFixedHex(checksumStr, (uint32_t(sdBuffer[0x10]) << 24) | (uint32_t(sdBuffer[0x11]) << 16) | (uint32_t(sdBuffer[0x12]) << 8) | sdBuffer[0x13], 8);
 
     // Get cart id
     cartID[0] = sdBuffer[0x3B];
@@ -3519,7 +3519,7 @@ void idFlashrom_N64() {
     // Read manufacturer ID
     readWord_N64();
     // Read flashrom ID
-    sprintf(tempID, "%04X", readWord_N64());
+    formatFixedHex(tempID, readWord_N64(), 4);
 
     // Check if second flashrom chip is present
     if (strcmp(tempID, "227E") == 0) {
@@ -3542,7 +3542,7 @@ void idFlashrom_N64() {
     // Read manufacturer ID
     readWord_N64();
     // Read flashrom ID
-    sprintf(tempID, "%04X", readWord_N64());
+    formatFixedHex(tempID, readWord_N64(), 4);
 
     // Check if second flashrom chip is present
     if ((strcmp(tempID, "22C9") == 0) || (strcmp(tempID, "22CB") == 0)) {
@@ -3564,7 +3564,7 @@ void idFlashrom_N64() {
     setAddress_N64(romBase + 0x2000000);
     readWord_N64();
     // Read flashrom ID
-    sprintf(cartID, "%04X", readWord_N64());
+    formatFixedHex(cartID, readWord_N64(), 4);
     if (strcmp(cartID, "8813") == 0) {
       cartSize = 64;
       flashid = 0x8813;
@@ -3624,7 +3624,7 @@ void idFlashrom_N64() {
     // Read 1 byte vendor ID
     readWord_N64();
     // Read 2 bytes flashrom ID
-    sprintf(cartID, "%04X", readWord_N64());
+    formatFixedHex(cartID, readWord_N64(), 4);
 
     if (strcmp(cartID, "7E7E") == 0) {
       resetMSP55LV100_N64(romBase);

@@ -826,11 +826,11 @@ void getMapping() {
     char crcStrAlt[9];
     println_Msg(F("Searching database"));
     print_Msg(F("for "));
-    sprintf(crcStr, "%08lX", oldcrc32);
+    formatFixedHex(crcStr, oldcrc32, 8);
     print_Msg(crcStr);
     if (oldcrc32 != oldcrc32MMC3) {
       print_Msg(F(" or "));
-      sprintf(crcStrAlt, "%08lX", oldcrc32MMC3);
+      formatFixedHex(crcStrAlt, oldcrc32MMC3, 8);
       print_Msg(crcStrAlt);
     }
     println_Msg(FS(SharedFlashText::ellipsis));
@@ -4490,16 +4490,16 @@ static void writeNesSaveLog(uint32_t saveSize, uint32_t saveCrc) {
     myFile.print(saveSize);
     myFile.println(FS(SharedFlashText::textBytes));
     char crcText[9];
-    snprintf(crcText, sizeof(crcText), "%08lX", saveCrc);
+    formatFixedHex(crcText, saveCrc, 8);
     myFile.print(FS(SharedFlashText::textSaveCRC32));
     myFile.println(crcText);
     if (oldcrc32 != 0xBD7BC39F && oldcrc32 != 0xFFFFFFFF) {
-      snprintf(crcText, sizeof(crcText), "%08lX", oldcrc32);
+      formatFixedHex(crcText, oldcrc32, 8);
       myFile.print(F("ROM identification CRC32 ($8000): "));
       myFile.println(crcText);
     }
     if (oldcrc32MMC3 != oldcrc32 && oldcrc32MMC3 != 0xBD7BC39F && oldcrc32MMC3 != 0xFFFFFFFF) {
-      snprintf(crcText, sizeof(crcText), "%08lX", oldcrc32MMC3);
+      formatFixedHex(crcText, oldcrc32MMC3, 8);
       myFile.print(F("ROM identification CRC32 ($E000): "));
       myFile.println(crcText);
     }
@@ -5408,7 +5408,7 @@ void A29040B_writeFLASH() {
       uint8_t erase_check = read_prg_byte(0x8000);
       if (erase_check != 0xFF) {
         println_Msg(F("SECTOR NOT ERASED"));
-        sprintf(data_str, "%02X", erase_check);
+        formatFixedHex(data_str, erase_check, 2);
         println_Msg(data_str);
         return;
       }
@@ -5438,7 +5438,7 @@ void A29040B_writeFLASH() {
           delayMicroseconds(14);  // Typical 14us
           if (readByte != sdBuffer[i]) {
             println_Msg(FS(SharedFlashText::textWriteError));
-            sprintf(data_str, "%02X", readByte);
+            formatFixedHex(data_str, readByte, 2);
             println_Msg(data_str);
             closeCurrentFile();
             break;
@@ -5486,7 +5486,7 @@ void A29040B_writeFLASH() {
           delayMicroseconds(14);  // Typical 14us
           if (readByte != sdBuffer[i]) {
             println_Msg(FS(SharedFlashText::textWriteError));
-            sprintf(data_str, "%02X", readByte);
+            formatFixedHex(data_str, readByte, 2);
             println_Msg(data_str);
             closeCurrentFile();
             break;
