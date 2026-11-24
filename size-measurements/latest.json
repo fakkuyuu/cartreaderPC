@@ -1,26 +1,26 @@
 {
   "schema": 1,
-  "run_id": "45403936757",
+  "run_id": "45405320283",
   "run_attempt": "1",
-  "workflow_commit": "279c47ee9df48b78c5a3d23a4136c4f60af17b0a",
+  "workflow_commit": "3776db829354b7e9ae8b69ce3cdc7cd5a55dcbd4",
   "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-  "status": "calibration_mismatch",
+  "status": "ok",
   "request": {
-    "id": "trial-mmc5-001",
-    "base": "6b306f9bdabc5eb6a06310d810aa1c0f4bda841c",
-    "head": "87cb8e4d805ff3a21d27c74a57254d7ff2c0861a",
-    "expected_base_flash": 214558,
-    "expected_base_ram": 6255
+    "id": "trial-mmc1-002",
+    "base": "279c47ee9df48b78c5a3d23a4136c4f60af17b0a",
+    "head": "30ac12fb03f4fc63b816ed8d68236fefb2b67a0b",
+    "expected_base_flash": 215072,
+    "expected_base_ram": 6281
   },
-  "baseline_matches_local": false,
+  "baseline_matches_local": true,
   "head_matches_local": null,
   "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
   "results": [
     {
-      "commit": "6b306f9bdabc5eb6a06310d810aa1c0f4bda841c",
-      "subject": "Fix generated PowerShell configuration check and remove duplicated build block",
+      "commit": "279c47ee9df48b78c5a3d23a4136c4f60af17b0a",
+      "subject": "Calibrate full HW3 core profile and linker relaxation; measure MMC5 trial commit",
       "status": "ok",
-      "flash": 215134,
+      "flash": 215072,
       "ram": 6281,
       "delta_previous": null,
       "delta_base": 0,
@@ -28,13 +28,13 @@
       "error": null
     },
     {
-      "commit": "87cb8e4d805ff3a21d27c74a57254d7ff2c0861a",
-      "subject": "Share NES MMC5 SRAM bank traversal between read and write",
+      "commit": "30ac12fb03f4fc63b816ed8d68236fefb2b67a0b",
+      "subject": "Share NES MMC1 SRAM bank traversal between read and write",
       "status": "ok",
-      "flash": 215072,
+      "flash": 215050,
       "ram": 6281,
-      "delta_previous": -62,
-      "delta_base": -62,
+      "delta_previous": -22,
+      "delta_base": -22,
       "classification": "reduced",
       "error": null
     }
