@@ -2716,9 +2716,8 @@ void EepromSetAddress(word address) {
   }
 }
 
-void readEepromByte(word address) {
-  addrhi = address >> 8;
-  addrlo = address & 0xFF;
+static void addressEepromByte_MD() __attribute__((noinline));
+static void addressEepromByte_MD() {
   dataOut_MD();
   if (eepType == 2)
     EepromInit(0);  // Enable EEPROM
@@ -2735,6 +2734,12 @@ void readEepromByte(word address) {
     }
   }
   EepromSetAddress(addrlo);
+}
+
+void readEepromByte(word address) {
+  addrhi = address >> 8;
+  addrlo = address & 0xFF;
+  addressEepromByte_MD();
   if (eepSize > 0x80) {
     EepromStart();        // START
     EepromDevice();       // DEVICE [1010]
@@ -2758,25 +2763,9 @@ void writeEepromByte(word address) {
   addrhi = address >> 8;
   addrlo = address & 0xFF;
   eeptemp = sdBuffer[addrlo];
-  dataOut_MD();
-  if (eepType == 2)
-    EepromInit(0);  // Enable EEPROM
-  EepromStart();    // START
-  if (eepSize > 0x80) {
-    EepromDevice();                    // DEVICE [1010]
-    if (eepSize > 0x800) {             // MODE 3 [24C65]
-      EepromSetDeviceAddress(0);       // [A2-A0] = 000
-      EepromWriteMode();               // WRITE
-      EepromSetAddress(addrhi);        // ADDR [A15-A8]
-    } else {                           // MODE 2 [24C02/24C08/24C16]
-      EepromSetDeviceAddress(addrhi);  // ADDR [A10-A8]
-      EepromWriteMode();               // WRITE
-    }
-    EepromSetAddress(addrlo);
-  } else {  // 24C01
-    EepromSetAddress(addrlo);
-    EepromWriteMode();  // WRITE
-  }
+  addressEepromByte_MD();
+  if (eepSize <= 0x80)
+    EepromWriteMode();  // 24C01
   EepromWriteData(eeptemp);
   EepromStop();  // STOP
   if (eepType == 2)
