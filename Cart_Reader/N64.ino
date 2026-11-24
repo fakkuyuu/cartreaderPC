@@ -2712,28 +2712,15 @@ byte waitForFram(byte flashramType) {
   // Read Status
   readN64WordsToBuffer(8);
 
+  const byte* status = nullptr;
   if (flashramType == 2) {
-    for (byte c = 0; c < 8; c++) {
-      if (statusMXL1100[c] != sdBuffer[c]) {
-        framStatus = 1;
-      }
-    }
+    status = statusMXL1100;
   } else if (flashramType == 1) {
-    //MX29L1101
-    if (MN63F81MPN == false) {
-      for (byte c = 0; c < 8; c++) {
-        if (statusMXL1101[c] != sdBuffer[c]) {
-          framStatus = 1;
-        }
-      }
-    }
-    //MN63F81MPN
-    else if (MN63F81MPN == true) {
-      for (byte c = 0; c < 8; c++) {
-        if (statusMN63F81[c] != sdBuffer[c]) {
-          framStatus = 1;
-        }
-      }
+    status = MN63F81MPN ? statusMN63F81 : statusMXL1101;
+  }
+  if (status) {
+    for (byte c = 0; c < 8; c++) {
+      if (status[c] != sdBuffer[c]) framStatus = 1;
     }
   }
   // Pull ale_H(PC1) high
@@ -4159,6 +4146,25 @@ void backupGameshark_N64() {
   closeCurrentFile();
 }
 
+static void setGamesharkFlashProtection_N64(unsigned long lastAddress) __attribute__((noinline));
+static void setGamesharkFlashProtection_N64(unsigned long lastAddress) {
+  setAddress_N64(0x1EF03044);
+  readWord_N64();
+  setAddress_N64(0x1EE03040);
+  readWord_N64();
+  setAddress_N64(0x1EE03044);
+  readWord_N64();
+  setAddress_N64(0x1EE00830);
+  readWord_N64();
+  setAddress_N64(0x1EF00834);
+  readWord_N64();
+  setAddress_N64(0x1EF00830);
+  readWord_N64();
+  setAddress_N64(lastAddress);
+  readWord_N64();
+  delay(1000);
+}
+
 void eraseGameshark_N64() {
   showErasingAndUpdate();
 
@@ -4172,21 +4178,7 @@ void eraseGameshark_N64() {
 
   if (flashid == 0x0404) {
     //Unprotect flash
-    setAddress_N64(0x1EF03044);
-    readWord_N64();
-    setAddress_N64(0x1EE03040);
-    readWord_N64();
-    setAddress_N64(0x1EE03044);
-    readWord_N64();
-    setAddress_N64(0x1EE00830);
-    readWord_N64();
-    setAddress_N64(0x1EF00834);
-    readWord_N64();
-    setAddress_N64(0x1EF00830);
-    readWord_N64();
-    setAddress_N64(0x1EE00834);
-    readWord_N64();
-    delay(1000);
+    setGamesharkFlashProtection_N64(0x1EE00834);
 
     //Erase flash
     sendFlashromGamesharkCommand_N64(0x3030);
@@ -4281,21 +4273,7 @@ void writeGameshark_N64() {
     }
 
     //Protect flash
-    setAddress_N64(0x1EF03044);
-    readWord_N64();
-    setAddress_N64(0x1EE03040);
-    readWord_N64();
-    setAddress_N64(0x1EE03044);
-    readWord_N64();
-    setAddress_N64(0x1EE00830);
-    readWord_N64();
-    setAddress_N64(0x1EF00834);
-    readWord_N64();
-    setAddress_N64(0x1EF00830);
-    readWord_N64();
-    setAddress_N64(0x1EE00814);
-    readWord_N64();
-    delay(1000);
+    setGamesharkFlashProtection_N64(0x1EE00814);
   }
 }
 
