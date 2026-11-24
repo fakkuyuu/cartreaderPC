@@ -1480,6 +1480,15 @@ unsigned long verifySRAM_GB() {
 }
 
 // Read SRAM + FLASH save data of MBC6
+static void enableMbc6FlashSave_GB(byte writeMode) __attribute__((noinline));
+static void enableMbc6FlashSave_GB(byte writeMode) {
+  writeByte_GB(0x1000, 0x01);
+  writeByte_GB(0x0C00, 0x01);
+  writeByte_GB(0x1000, writeMode);
+  writeByte_GB(0x2800, 0x08);
+  writeByte_GB(0x3800, 0x08);
+}
+
 void readSRAMFLASH_MBC6_GB() {
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("GB", "SAVE", romName, "sav");
@@ -1511,12 +1520,7 @@ void readSRAMFLASH_MBC6_GB() {
   // Disable SRAM
   writeByte_GB(0x0000, 0x00);
 
-  // Enable flash save memory (map to ROM)
-  writeByte_GB(0x1000, 0x01);
-  writeByte_GB(0x0C00, 0x01);
-  writeByte_GB(0x1000, 0x00);
-  writeByte_GB(0x2800, 0x08);
-  writeByte_GB(0x3800, 0x08);
+  enableMbc6FlashSave_GB(0x00);
 
   // Switch FLASH banks
   for (byte currBank = 0; currBank < 128; currBank++) {
@@ -1582,12 +1586,7 @@ void writeSRAMFLASH_MBC6_GB() {
     // Disable SRAM
     writeByte_GB(0x0000, 0x00);
 
-    // Enable flash save memory (map to ROM)
-    writeByte_GB(0x1000, 0x01);
-    writeByte_GB(0x0C00, 0x01);
-    writeByte_GB(0x1000, 0x01);
-    writeByte_GB(0x2800, 0x08);
-    writeByte_GB(0x3800, 0x08);
+    enableMbc6FlashSave_GB(0x01);
 
     for (byte currBank = 0; currBank < 128; currBank++) {
       word romAddress = 0x4000;
@@ -1669,6 +1668,17 @@ void writeSRAMFLASH_MBC6_GB() {
   }
 }
 
+static void enableMbc7Eeprom_GB() __attribute__((noinline));
+static void enableMbc7Eeprom_GB() {
+  // enable 0xa000 - 0xbfff access
+  writeByte_GB(0x0000, 0x0a);
+  writeByte_GB(0x4000, 0x40);
+
+  // set CS high
+  writeByte_GB(0xa080, 0x00);
+  writeByte_GB(0xa080, 0x80);
+}
+
 void readEEPROM_MBC7_GB() {
 
   // Get name, add extension and convert to char array for sd lib
@@ -1688,13 +1698,7 @@ void readEEPROM_MBC7_GB() {
 
   uint16_t* data = (uint16_t*)sdBuffer;
 
-  // enable 0xa000 - 0xbfff access
-  writeByte_GB(0x0000, 0x0a);
-  writeByte_GB(0x4000, 0x40);
-
-  // set CS high
-  writeByte_GB(0xa080, 0x00);
-  writeByte_GB(0xa080, 0x80);
+  enableMbc7Eeprom_GB();
 
   sendMBC7EEPROM_Inst_GB(2, 0, 0);
 
@@ -1722,6 +1726,16 @@ void readEEPROM_MBC7_GB() {
   showDoneAndUpdate();
 }
 
+static void waitMbc7EepromReady_GB() __attribute__((noinline));
+static void waitMbc7EepromReady_GB() {
+  writeByte_GB(0xa080, 0x00);
+  writeByte_GB(0xa080, 0x80);
+  do {
+    writeByte_GB(0xa080, 0x80);
+    writeByte_GB(0xa080, 0xc0);
+  } while ((readByte_GB(0xa080) & 0x01) == 0);
+}
+
 void writeEEPROM_MBC7_GB() {
 
   appendSelectedFilePath();
@@ -1737,13 +1751,7 @@ void writeEEPROM_MBC7_GB() {
 
   uint16_t* data = (uint16_t*)sdBuffer;
 
-  // enable 0xa000 - 0xbfff access
-  writeByte_GB(0x0000, 0x0a);
-  writeByte_GB(0x4000, 0x40);
-
-  // set CS high
-  writeByte_GB(0xa080, 0x00);
-  writeByte_GB(0xa080, 0x80);
+  enableMbc7Eeprom_GB();
 
   println_Msg(F("Unlocking EEPROM..."));
   display_Update();
@@ -1759,16 +1767,7 @@ void writeEEPROM_MBC7_GB() {
   // erase entire EEPROM by sending ERAL instruction
   sendMBC7EEPROM_Inst_GB(0, 0x80, 0);
 
-  // set CS low
-  writeByte_GB(0xa080, 0x00);
-  // set CS high
-  writeByte_GB(0xa080, 0x80);
-
-  // wait for erase complete
-  do {
-    writeByte_GB(0xa080, 0x80);
-    writeByte_GB(0xa080, 0xc0);
-  } while ((readByte_GB(0xa080) & 0x01) == 0);
+  waitMbc7EepromReady_GB();
 
   println_Msg(FS(SharedFlashText::textWritingEEPROM));
   display_Update();
@@ -1777,16 +1776,7 @@ void writeEEPROM_MBC7_GB() {
   for (uint16_t i = 0; i < lastByte; i += 2, data++) {
     sendMBC7EEPROM_Inst_GB(1, (i >> 1), *data);
 
-    // set CS low
-    writeByte_GB(0xa080, 0x00);
-    // set CS high
-    writeByte_GB(0xa080, 0x80);
-
-    // wait for writing complete
-    do {
-      writeByte_GB(0xa080, 0x80);
-      writeByte_GB(0xa080, 0xc0);
-    } while ((readByte_GB(0xa080) & 0x01) == 0);
+    waitMbc7EepromReady_GB();
   }
 
   println_Msg(F("Locking EEPROM..."));
