@@ -727,6 +727,18 @@ static void calculateMemorySizes_NES() {
     ram = (int_pow(2, ramsize)) * 4;
 }
 
+// Preserve the existing uint8_t capacity input and floor(log2) index.
+// Zero retains its original index of zero.
+static uint8_t nesSizeIndex(uint8_t value) __attribute__((noinline));
+static uint8_t nesSizeIndex(uint8_t value) {
+  uint8_t index = 0;
+  while (value > 1) {
+    value >>= 1;
+    ++index;
+  }
+  return index;
+}
+
 void printDataLine_NES(void* entry) {
   struct database_entry* castEntry = (struct database_entry*)entry;
   uint8_t iNES[16];
@@ -741,8 +753,7 @@ void printDataLine_NES(void* entry) {
     // exponent-multiplier notation
     prgsize = (((1 << (iNES[4] >> 2)) * ((iNES[4] & 0b11) * 2 + 1)) >> 14);  //*16
   }
-  if (prgsize != 0)
-    prgsize = (int(log(prgsize) / log(2)));
+  prgsize = nesSizeIndex(prgsize);
 
   if ((iNES[9] & 0xF0) != 0xF0) {
     // simple notation
@@ -751,12 +762,10 @@ void printDataLine_NES(void* entry) {
     // exponent-multiplier notation
     chrsize = (((1 << (iNES[5] >> 2)) * ((iNES[5] & 0b11) * 2 + 1)) >> 13) * 2;  //*4
   }
-  if (chrsize != 0)
-    chrsize = (int(log(chrsize) / log(2)));
+  chrsize = nesSizeIndex(chrsize);
 
   ramsize = ((iNES[10] & 0xF0) ? (64 << ((iNES[10] & 0xF0) >> 4)) : 0) / 4096;  //*4
-  if (ramsize != 0)
-    ramsize = (int(log(ramsize) / log(2)));
+  ramsize = nesSizeIndex(ramsize);
 
   calculateMemorySizes_NES();
 
