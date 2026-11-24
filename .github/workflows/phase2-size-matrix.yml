@@ -87,7 +87,6 @@ jobs:
               $row = [ordered]@{commit=$ref; subject=''; status='failed'; flash=$null; ram=$null; delta_previous=$null; delta_base=$null; classification='unavailable'; error=$null}
               try {
                 $row.subject = (git -C $repo show -s --format=%s $ref)
-                $short = $ref.Substring(0,7)
                 $src = Join-Path $temp "src-$short"
                 $build = Join-Path $temp "build-$short"
                 $zip = Join-Path $temp "$short.zip"
@@ -100,33 +99,13 @@ jobs:
                 if ([regex]::Matches($cfg,$pattern).Count -ne 1) { throw 'Expected one commented HW3 definition' }
                 $cfg = $cfg -replace $pattern, '$1$2'
                 $active = [regex]::Replace($cfg, '(?s)/\*.*?\*/', '')
-                $active = [regex]::Replace($active, '(?m)//.*
-                Write-Host "=== Config: $short ==="
-                Get-Content $config | Select-String '^\s*#define\s+(HW\d|ENABLE_|OPTION_|PC_)'
-                $log = Join-Path $out "$short-build.log"
-                $args = @('-compile','-verbose','-hardware',"$ide/hardware",'-tools',"$ide/tools-builder",'-tools',"$ide/hardware/tools/avr",'-built-in-libraries',"$ide/libraries",'-libraries',"$sketchbook/libraries",'-fqbn','arduino:avr:mega:cpu=atmega2560','-prefs','compiler.c.elf.extra_flags=-flto-partition=none','-build-path',$build,"$src/Cart_Reader/Cart_Reader.ino")
-                & "$ide/arduino-builder.exe" @args 2>&1 | Tee-Object -FilePath $log | Out-Host
-                $logText = Get-Content -LiteralPath $log -Raw
-                foreach ($flag in @('-Os','-mcall-prologues','--relax','-flto-partition=none')) {
-                  if (!$logText.Contains($flag)) { throw "Missing expected compiler/linker flag $flag" }
-                }
-                $elf = Join-Path $build 'Cart_Reader.ino.elf'
-                $sections = & $sizeTool -A $elf
-                $sections | Out-Host
-                $sizes = @{}
-                foreach ($line in $sections) {
-                  if ($line -match '^\s*(\.[\w.]+)\s+(\d+)\s+') { $sizes[$Matches[1]] = [int]$Matches[2] }
-                }
-                if (!$sizes.ContainsKey('.text') -or !$sizes.ContainsKey('.data') -or !$sizes.ContainsKey('.bss')) { throw 'Missing ELF size sections' }
-                $flash = $sizes['.text'] + $sizes['.data']
-                $ram = $sizes['.data'] + $sizes['.bss'] + $sizes['.noinit']
-, '')
+                $active = [regex]::Replace($active, '(?m)//.*$', '')
                 if ($active -match '(?m)^\s*#define\s+HW[1245]\b') { throw 'Unexpected board define' }
                 if ($active -match '(?m)^\s*#define\s+ENABLE_FLASH(?:8|16)?\b') { throw 'FLASH configuration not OFF' }
                 [IO.File]::WriteAllText($config, $cfg)
                 Write-Host "=== Config: $short ==="
                 Get-Content $config | Select-String '^\s*#define\s+(HW\d|ENABLE_|OPTION_|PC_)'
-                $log = Join-Path $temp "$short-build.log"
+                $log = Join-Path $out "$short-build.log"
                 $args = @('-compile','-verbose','-hardware',"$ide/hardware",'-tools',"$ide/tools-builder",'-tools',"$ide/hardware/tools/avr",'-built-in-libraries',"$ide/libraries",'-libraries',"$sketchbook/libraries",'-fqbn','arduino:avr:mega:cpu=atmega2560','-prefs','compiler.c.elf.extra_flags=-flto-partition=none','-build-path',$build,"$src/Cart_Reader/Cart_Reader.ino")
                 & "$ide/arduino-builder.exe" @args 2>&1 | Tee-Object -FilePath $log | Out-Host
                 $logText = Get-Content -LiteralPath $log -Raw
