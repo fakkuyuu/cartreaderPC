@@ -1902,6 +1902,21 @@ void busyCheck_GB(unsigned long address, byte data) {
 // Write AMD type flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
+// Shared flash blank-check traversal; bank selection remains with the caller.
+static void blankCheckRange_GB(word start, word end) __attribute__((noinline));
+static void blankCheckRange_GB(word start, word end) {
+  for (word currAddr = start; currAddr < end; currAddr += 512) {
+    for (int currByte = 0; currByte < 512; currByte++) {
+      sdBuffer[currByte] = readByte_GB(currAddr + currByte);
+    }
+    for (int j = 0; j < 512; j++) {
+      if (sdBuffer[j] != 0xFF) {
+        showEraseFailed();
+      }
+    }
+  }
+}
+
 void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
   // Launch filebrowser
   browseRootFileAndClear();
@@ -2034,16 +2049,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
           // Set ROM bank
           writeByte_GB(0x2000, currBank);
         }
-        for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
-          for (int currByte = 0; currByte < 512; currByte++) {
-            sdBuffer[currByte] = readByte_GB(currAddr + currByte);
-          }
-          for (int j = 0; j < 512; j++) {
-            if (sdBuffer[j] != 0xFF) {
-              showEraseFailed();
-            }
-          }
-        }
+        blankCheckRange_GB(0x4000, 0x7FFF);
       }
     }
 
@@ -2542,16 +2548,7 @@ bool writeCFI_GB() {
       // Set ROM bank
       writeByte_GB(0x2000, currBank);
 
-      for (unsigned int currAddr = 0x4000; currAddr < 0x7FFF; currAddr += 512) {
-        for (int currByte = 0; currByte < 512; currByte++) {
-          sdBuffer[currByte] = readByte_GB(currAddr + currByte);
-        }
-        for (int j = 0; j < 512; j++) {
-          if (sdBuffer[j] != 0xFF) {
-            showEraseFailed();
-          }
-        }
-      }
+      blankCheckRange_GB(0x4000, 0x7FFF);
     }
 
     println_Msg(F("Writing flash MBC3/5"));
@@ -2685,6 +2682,20 @@ void sendW29C020CommandSufix_GB(byte cmd) {
 }
 
 // Read Pelican GBC Device - All Brainboys, MonsterBrains, Codebreakers
+// Shared accessory reads. Preserve the caller's address and progress updates.
+static void dumpAccessoryRange_GB(word& startAddress, word finalAddress, uint32_t& processedProgressBar, uint32_t totalProgressBar) __attribute__((noinline));
+static void dumpAccessoryRange_GB(word& startAddress, word finalAddress, uint32_t& processedProgressBar, uint32_t totalProgressBar) {
+  while (startAddress <= finalAddress) {
+    for (int i = 0; i < 512; i++) {
+      sdBuffer[i] = readByte_GB(startAddress + i);
+    }
+    writeSdBufferBlock();
+    startAddress += 512;
+    processedProgressBar += 512;
+    draw_progressbar(processedProgressBar, totalProgressBar);
+  }
+}
+
 void readPelican_GB() {
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("GB", "ROM", "Pelican", "GB");
@@ -2756,15 +2767,7 @@ void readPelican_GB() {
     writeByteSRAM_GB(bankAddress, (workBank & 0xFF));
 
     // Read banks and save to SD
-    while (startAddress <= finalAddress) {
-      for (int i = 0; i < 512; i++) {
-        sdBuffer[i] = readByte_GB(startAddress + i);
-      }
-      writeSdBufferBlock();
-      startAddress += 512;
-      processedProgressBar += 512;
-      draw_progressbar(processedProgressBar, totalProgressBar);
-    }
+    dumpAccessoryRange_GB(startAddress, finalAddress, processedProgressBar, totalProgressBar);
   }
 
   // Close the file:
@@ -2883,16 +2886,7 @@ void writePelican_GB() {
       // Set ROM bank
       writeByteSRAM_GB(0xA000, currBank);
 
-      for (word currAddr = 0x2000; currAddr < 0x4000; currAddr += 0x200) {
-        for (int currByte = 0; currByte < 512; currByte++) {
-          sdBuffer[currByte] = readByte_GB(currAddr + currByte);
-        }
-        for (int j = 0; j < 512; j++) {
-          if (sdBuffer[j] != 0xFF) {
-            showEraseFailed();
-          }
-        }
-      }
+      blankCheckRange_GB(0x2000, 0x4000);
     }
   }
 
@@ -3062,15 +3056,7 @@ void readMegaMem_GB() {
   startProgressBar(totalProgressBar);
 
   // Read banks and save to SD
-  while (startAddress <= finalAddress) {
-    for (int i = 0; i < 512; i++) {
-      sdBuffer[i] = readByte_GB(startAddress + i);
-    }
-    writeSdBufferBlock();
-    startAddress += 512;
-    processedProgressBar += 512;
-    draw_progressbar(processedProgressBar, totalProgressBar);
-  }
+  dumpAccessoryRange_GB(startAddress, finalAddress, processedProgressBar, totalProgressBar);
 
   // Close the file:
   closeCurrentFile();
@@ -3110,15 +3096,7 @@ void readMegaMem_GB() {
     writeByte_GB(bankAddress, (workBank & 0xFF));
 
     // Read banks and save to SD
-    while (startAddress <= finalAddress) {
-      for (int i = 0; i < 512; i++) {
-        sdBuffer[i] = readByte_GB(startAddress + i);
-      }
-      writeSdBufferBlock();
-      startAddress += 512;
-      processedProgressBar += 512;
-      draw_progressbar(processedProgressBar, totalProgressBar);
-    }
+    dumpAccessoryRange_GB(startAddress, finalAddress, processedProgressBar, totalProgressBar);
   }
 
   // Close the file:
@@ -3195,16 +3173,7 @@ void writeMegaMem_GB() {
     // Set ROM bank
     writeByte_GB(0x2000, currBank);
 
-    for (word currAddr = 0x4000; currAddr < 0x8000; currAddr += 0x200) {
-      for (int currByte = 0; currByte < 512; currByte++) {
-        sdBuffer[currByte] = readByte_GB(currAddr + currByte);
-      }
-      for (int j = 0; j < 512; j++) {
-        if (sdBuffer[j] != 0xFF) {
-          showEraseFailed();
-        }
-      }
-    }
+    blankCheckRange_GB(0x4000, 0x8000);
   }
 
   showWritingFlashAndUpdate();
@@ -3401,15 +3370,7 @@ void readGameshark_GB() {
     writeByte_GB(0x7FE1, (workBank & 0xFF));
 
     // Read banks and save to SD
-    while (startAddress <= finalAddress) {
-      for (int i = 0; i < 512; i++) {
-        sdBuffer[i] = readByte_GB(startAddress + i);
-      }
-      writeSdBufferBlock();
-      startAddress += 512;
-      processedProgressBar += 512;
-      draw_progressbar(processedProgressBar, totalProgressBar);
-    }
+    dumpAccessoryRange_GB(startAddress, finalAddress, processedProgressBar, totalProgressBar);
   }
 
   // Close the file:
@@ -3481,16 +3442,7 @@ void writeGameshark_GB() {
     // Set ROM bank
     writeByte_GB(0x7FE1, currBank);
 
-    for (word currAddr = 0x4000; currAddr < 0x6000; currAddr += 0x200) {
-      for (int currByte = 0; currByte < 512; currByte++) {
-        sdBuffer[currByte] = readByte_GB(currAddr + currByte);
-      }
-      for (int j = 0; j < 512; j++) {
-        if (sdBuffer[j] != 0xFF) {
-          showEraseFailed();
-        }
-      }
-    }
+    blankCheckRange_GB(0x4000, 0x6000);
   }
 
   showWritingFlashAndUpdate();

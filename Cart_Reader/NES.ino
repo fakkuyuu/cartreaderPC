@@ -2193,6 +2193,27 @@ static void dumpSequentialCHRBanks(uint16_t count, uint16_t reg, uint8_t shift,
   }
 }
 
+// Same initialization for PRG and CHR MMC3-family paths.
+static void initMmc3OuterBanks_NES() __attribute__((noinline));
+static void initMmc3OuterBanks_NES() {
+  write_prg_byte(0xA001, 0x80);  // Block Register - PRG RAM Chip Enable, Writable
+  if ((mapper == 126) || (mapper == 422) || (mapper == 534)) {
+    write_prg_byte(0x6803, 0);  // set MMC3 banking mode
+  }
+  if ((mapper == 115) || (mapper == 134) || (mapper == 248)) {
+    write_prg_byte(0x6000, 0);  // set MMC3 banking mode
+  }
+  if (mapper == 176) {
+    write_prg_byte(0x5FF3, 0);  // extended MMC3 mode: disabled
+    write_prg_byte(0x5FF0, 1);  // 256K outer bank mode
+  }
+  if (mapper == 351) {
+    write_prg_byte(0x5000, 0);
+    write_prg_byte(0x5001, 0);
+    write_prg_byte(0x5002, 0);
+  }
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2316,22 +2337,7 @@ void readPRG(bool readrom) {
           dumpPRG32KiB(base);
         } else {
           banks = prgBanks16K * 2;
-          write_prg_byte(0xA001, 0x80);  // Block Register - PRG RAM Chip Enable, Writable
-          if ((mapper == 126) || (mapper == 422) || (mapper == 534)) {
-            write_prg_byte(0x6803, 0);  // set MMC3 banking mode
-          }
-          if ((mapper == 115) || (mapper == 134) || (mapper == 248)) {
-            write_prg_byte(0x6000, 0);  // set MMC3 banking mode
-          }
-          if (mapper == 176) {
-            write_prg_byte(0x5FF3, 0);  // extended MMC3 mode: disabled
-            write_prg_byte(0x5FF0, 1);  // 256K outer bank mode
-          }
-          if (mapper == 351) {
-            write_prg_byte(0x5000, 0);
-            write_prg_byte(0x5001, 0);
-            write_prg_byte(0x5002, 0);
-          }
+          initMmc3OuterBanks_NES();
           for (size_t i = 0; i < banks; i++) {
             if (mapper == 37) {
               if (i == 0) {
@@ -3630,22 +3636,7 @@ void readCHR(bool readrom) {
         case 422:
         case 534:
           banks = chrBanks4K * 4;
-          write_prg_byte(0xA001, 0x80);
-          if ((mapper == 126) || (mapper == 422) || (mapper == 534)) {
-            write_prg_byte(0x6803, 0);  // set MMC3 banking mode
-          }
-          if ((mapper == 115) || (mapper == 134) || (mapper == 248)) {
-            write_prg_byte(0x6000, 0);  // set MMC3 banking mode
-          }
-          if (mapper == 176) {
-            write_prg_byte(0x5FF3, 0);  // extended MMC3 mode: disabled
-            write_prg_byte(0x5FF0, 1);  // 256K outer bank mode
-          }
-          if (mapper == 351) {
-            write_prg_byte(0x5000, 0);
-            write_prg_byte(0x5001, 0);
-            write_prg_byte(0x5002, 0);
-          }
+          initMmc3OuterBanks_NES();
           for (size_t i = 0; i < banks; i++) {
             if (mapper == 12) {
               write_prg_byte(0x4132, (i & 0x100) >> 8 | (i & 0x100) >> 4);

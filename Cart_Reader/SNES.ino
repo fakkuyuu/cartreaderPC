@@ -1313,11 +1313,21 @@ boolean checkcart_SNES() {
   }
 }
 
+// One block sum, with the original 16-bit wraparound and file-read behavior.
+static unsigned int checksumBlock_SNES() __attribute__((noinline));
+static unsigned int checksumBlock_SNES() {
+  readSdBufferBlock();
+  unsigned int sum = 0;
+  for (unsigned int c = 0; c < 512; c++) {
+    sum += sdBuffer[c];
+  }
+  return sum;
+}
+
 unsigned int calc_checksum(char* fileName, char* folder) {
   unsigned int calcChecksum = 0;
   unsigned int calcChecksumChunk = 0;
   int calcFilesize = 0;
-  unsigned int c = 0;
   unsigned long i = 0;
   unsigned long j = 0;
 
@@ -1332,10 +1342,7 @@ unsigned int calc_checksum(char* fileName, char* folder) {
     // Read up to 0x60000 then add FFs to 0x80000
     if (NP == true) {
       for (i = 0; i < (0x60000 / 512); i++) {
-        readSdBufferBlock();
-        for (c = 0; c < 512; c++) {
-          calcChecksumChunk += sdBuffer[c];
-        }
+        calcChecksumChunk += checksumBlock_SNES();
         calcChecksum = calcChecksumChunk;
       }
       calcChecksum += 0xF47C;  // FFs from 0x60000-0x80000
@@ -1353,28 +1360,19 @@ unsigned int calc_checksum(char* fileName, char* folder) {
       // Momotarou Dentetsu Happy Fix 3MB (24Mbit)
       if ((calcFilesize == 24) && (romChips == 245)) {
         for (i = 0; i < (myFile.fileSize() / 512); i++) {
-          readSdBufferBlock();
-          for (c = 0; c < 512; c++) {
-            calcChecksumChunk += sdBuffer[c];
-          }
+          calcChecksumChunk += checksumBlock_SNES();
         }
         calcChecksum = 2 * calcChecksumChunk;
       } else {
         // Base 8/16 Mbit chunk
         for (j = 0; j < (calcBase / 512); j++) {
-          readSdBufferBlock();
-          for (c = 0; c < 512; c++) {
-            calcChecksumChunk += sdBuffer[c];
-          }
+          calcChecksumChunk += checksumBlock_SNES();
         }
         calcChecksum = calcChecksumChunk;
         calcChecksumChunk = 0;
         // Add the mirrored chunk
         for (j = 0; j < (calcMirror / 512); j++) {
-          readSdBufferBlock();
-          for (c = 0; c < 512; c++) {
-            calcChecksumChunk += sdBuffer[c];
-          }
+          calcChecksumChunk += checksumBlock_SNES();
         }
         calcChecksum += calcMirrorCount * calcChecksumChunk;
       }
@@ -1382,47 +1380,32 @@ unsigned int calc_checksum(char* fileName, char* folder) {
       // Daikaijuu Monogatari 2 Fix 5MB (40Mbit)
       // Add the 4MB (32Mbit) start
       for (j = 0; j < (4194304 / 512); j++) {
-        readSdBufferBlock();
-        for (c = 0; c < 512; c++) {
-          calcChecksumChunk += sdBuffer[c];
-        }
+        calcChecksumChunk += checksumBlock_SNES();
         calcChecksum = calcChecksumChunk;
       }
       calcChecksumChunk = 0;
       // Add the 1MB (8Mbit) end
       for (j = 0; j < (1048576 / 512); j++) {
-        readSdBufferBlock();
-        for (c = 0; c < 512; c++) {
-          calcChecksumChunk += sdBuffer[c];
-        }
+        calcChecksumChunk += checksumBlock_SNES();
       }
       calcChecksum += 4 * calcChecksumChunk;
     } else if (calcFilesize == 48) {
       // Star Ocean/Tales of Phantasia Fix 6MB (48Mbit)
       // Add the 4MB (32Mbit) start
       for (j = 0; j < (4194304 / 512); j++) {
-        readSdBufferBlock();
-        for (c = 0; c < 512; c++) {
-          calcChecksumChunk += sdBuffer[c];
-        }
+        calcChecksumChunk += checksumBlock_SNES();
         calcChecksum = calcChecksumChunk;
       }
       calcChecksumChunk = 0;
       // Add the 2MB (16Mbit) end
       for (j = 0; j < (2097152 / 512); j++) {
-        readSdBufferBlock();
-        for (c = 0; c < 512; c++) {
-          calcChecksumChunk += sdBuffer[c];
-        }
+        calcChecksumChunk += checksumBlock_SNES();
       }
       calcChecksum += 2 * calcChecksumChunk;
     } else {
       //calcFilesize == 2 || 4 || 8 || 16 || 32 || 40 || etc
       for (i = 0; i < (myFile.fileSize() / 512); i++) {
-        readSdBufferBlock();
-        for (c = 0; c < 512; c++) {
-          calcChecksumChunk += sdBuffer[c];
-        }
+        calcChecksumChunk += checksumBlock_SNES();
         calcChecksum = calcChecksumChunk;
       }
     }
