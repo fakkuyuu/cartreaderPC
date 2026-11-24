@@ -1708,18 +1708,9 @@ void readROM_SNES() {
 
   //Dump Derby Stallion '96 (Japan) and Sound Novel Tsukuru (Japan) - Actual Size is 24Mb
   if ((romType == LO) && (numBanks == 96) && ((strcmp("CC86", checksumStr) == 0) || (strcmp("A77B", checksumStr) == 0))) {
-    // Read Banks 0x00-0x3F for the 1st/2nd MB
-    for (int currBank = 0; currBank < 64; currBank++) {
-      // Dump the bytes to SD 512B at a time
-      for (long currByte = 32768; currByte < 65536; currByte += 512) {
-        for (int c = 0; c < 512; c++) {
-          sdBuffer[c] = readBank_SNES(currBank, currByte + c);
-        }
-        writeSdBufferBlock();
-      }
-    }
-    //Read Bank 0x80-9F for the 3rd MB
-    for (int currBank = 128; currBank < 160; currBank++) {
+    // First 2 MiB: banks 0x00-0x3F; last 1 MiB: banks 0x80-0x9F.
+    for (int bank = 0; bank < 96; bank++) {
+      int currBank = bank < 64 ? bank : bank + 64;
       // Dump the bytes to SD 512B at a time
       for (long currByte = 32768; currByte < 65536; currByte += 512) {
         for (int c = 0; c < 512; c++) {
