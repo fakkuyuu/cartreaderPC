@@ -4476,6 +4476,29 @@ static void setMapper82SramAccess_NES(bool enabled) {
   write_prg_byte(0x7EF9, enabled ? 0x84 : 0xFF);
 }
 
+static void enableDefaultSram_NES(bool writing) __attribute__((noinline));
+static void enableDefaultSram_NES(bool writing) {
+  if (mapper == 118)               // 8K
+    write_prg_byte(0xA001, writing ? 0x80 : 0xC0);  // PRG RAM enable, read-only or writable
+  else if (!writing && mapper == 19) {
+    for (size_t i = 0; i < 64; i++) {  // Init Register
+      write_ram_byte(0xE000, 0);
+    }
+  } else if ((mapper == 21) || (mapper == 25))  // 8K
+    write_prg_byte(0x8000, 0);
+  else if (mapper == 26)           // 8K
+    write_prg_byte(0xB003, 0x80);  // PRG RAM ENABLE
+  else if (!writing && mapper == 68)           // 8K
+    write_reg_byte(0xF000, 0x10);  // PRG RAM ENABLE [WRITE RAM SAFE]
+  else if (mapper == 69) {         // 8K
+    write_prg_byte(0x8000, 8);     // Command Register - PRG Bank 0
+    write_prg_byte(0xA000, 0xC0);  // Parameter Register - PRG RAM Enabled, PRG RAM, Bank 0 to $6000-$7FFF
+  } else if (mapper == 85)         // 8K
+    write_ram_byte(0xE000, 0x80);  // PRG RAM ENABLE
+  else if (mapper == 153)          // 8K
+    write_prg_byte(0x800D, 0x20);  // PRG RAM Chip Enable
+}
+
 void readRAM() {
   clearAndUpdateDisplay();
 
@@ -4573,25 +4596,7 @@ void readRAM() {
           break;
 
         default:
-          if (mapper == 118)               // 8K
-            write_prg_byte(0xA001, 0xC0);  // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
-          else if (mapper == 19) {
-            for (size_t i = 0; i < 64; i++) {  // Init Register
-              write_ram_byte(0xE000, 0);
-            }
-          } else if ((mapper == 21) || (mapper == 25))  // 8K
-            write_prg_byte(0x8000, 0);
-          else if (mapper == 26)           // 8K
-            write_prg_byte(0xB003, 0x80);  // PRG RAM ENABLE
-          else if (mapper == 68)           // 8K
-            write_reg_byte(0xF000, 0x10);  // PRG RAM ENABLE [WRITE RAM SAFE]
-          else if (mapper == 69) {         // 8K
-            write_prg_byte(0x8000, 8);     // Command Register - PRG Bank 0
-            write_prg_byte(0xA000, 0xC0);  // Parameter Register - PRG RAM Enabled, PRG RAM, Bank 0 to $6000-$7FFF
-          } else if (mapper == 85)         // 8K
-            write_ram_byte(0xE000, 0x80);  // PRG RAM ENABLE
-          else if (mapper == 153)          // 8K
-            write_prg_byte(0x800D, 0x20);  // PRG RAM Chip Enable
+          enableDefaultSram_NES(false);
           dumpPRG8KiB(base);  // 8K
           if (mapper == 85)                // 8K
             write_reg_byte(0xE000, 0);     // PRG RAM DISABLE [WRITE RAM SAFE]
@@ -4745,21 +4750,7 @@ void writeRAM() {
           break;
 
         default:
-          if (mapper == 118)                          // 8K
-            write_prg_byte(0xA001, 0x80);             // PRG RAM CHIP ENABLE - Chip Enable, Allow Writes
-          else if ((mapper == 21) || (mapper == 25))  // 8K
-            write_prg_byte(0x8000, 0);
-          else if (mapper == 26)           // 8K
-            write_prg_byte(0xB003, 0x80);  // PRG RAM ENABLE
-          //            else if (mapper == 68) // 8K
-          //              write_reg_byte(0xF000, 0x10); // PRG RAM ENABLE [WRITE RAM SAFE]
-          else if (mapper == 69) {         // 8K
-            write_prg_byte(0x8000, 8);     // Command Register - PRG Bank 0
-            write_prg_byte(0xA000, 0xC0);  // Parameter Register - PRG RAM Enabled, PRG RAM, Bank 0 to $6000-$7FFF
-          } else if (mapper == 85)         // 8K
-            write_ram_byte(0xE000, 0x80);  // PRG RAM ENABLE
-          else if (mapper == 153)          // 8K
-            write_prg_byte(0x800D, 0x20);  // PRG RAM Chip Enable
+          enableDefaultSram_NES(true);
           writeBankPRG(0x0, 0x2000, base);
 
           if (mapper == 118)               // 8K
