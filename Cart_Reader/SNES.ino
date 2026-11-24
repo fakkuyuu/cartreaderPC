@@ -414,8 +414,7 @@ void snesMenu() {
         changeToStorageRoot();
         readSRAM();
       } else {
-        display_Clear();
-        print_Error(FS(SharedFlashText::textDoesNotHaveSRAM));
+        showNoSramError();
       }
       break;
 
@@ -433,8 +432,7 @@ void snesMenu() {
           showVerificationErrorCount(wrErrors);
         }
       } else {
-        display_Clear();
-        print_Error(FS(SharedFlashText::textDoesNotHaveSRAM));
+        showNoSramError();
       }
       break;
 
@@ -464,8 +462,7 @@ void snesMenu() {
           showVerificationErrorCount(wrErrors);
         }
       } else {
-        display_Clear();
-        print_Error(FS(SharedFlashText::textDoesNotHaveSRAM));
+        showNoSramError();
       }
       break;
 
@@ -639,8 +636,7 @@ void setup_Snes() {
   }
 #ifdef ENABLE_CLOCKGEN
   else {
-    display_Clear();
-    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
+    showClockGeneratorMissing();
   }
 #endif
 
@@ -912,11 +908,9 @@ void getCartInfo_SNES() {
   }
 
   display_Clear();
-  print_Msg(FS(FSTRING_NAME));
-  println_Msg(romName);
+  showRomNameLine();
 
-  print_Msg(FS(FSTRING_REVISION));
-  println_Msg(romVersion);
+  showRomRevision();
 
   print_Msg(FS(SharedFlashText::textType));
   if (romType == HI)
@@ -998,8 +992,7 @@ void getCartInfo_SNES() {
   println_Msg(FS(SharedFlashText::unitKBWithSpace));
 
   print_Msg(FS(FSTRING_CHECKSUM));
-  println_Msg(checksumStr);
-  display_Update();
+  showChecksumAndUpdate();
 
   // Wait for user input
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
@@ -1049,11 +1042,9 @@ void checkAltConf(char crcStr[9]) {
 
   if (myFile.open("snes.txt", O_READ)) {
     // Get cart info
-    display_Clear();
-    println_Msg(FS(SharedFlashText::textSearchingDatabase));
+    showSearchingDatabase();
     print_Msg(FS(FSTRING_CHECKSUM));
-    println_Msg(checksumStr);
-    display_Update();
+    showChecksumAndUpdate();
 
     bool unique = true;
     const bool hostLookup = myFile.isPc() && PcLink::hasHostSnesLookup();
@@ -1999,7 +1990,7 @@ void writeSRAM(boolean browseFile) {
     resetFileBrowserToRoot();
     fileBrowser(FS(SharedFlashText::textSelectSrmFile));
     // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
     display_Clear();
   } else
     sprintf(filePath, "%s", fileName);

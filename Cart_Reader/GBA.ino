@@ -77,8 +77,7 @@ void gbaMenu() {
 
     case 1:
       // Read save
-      display_Clear();
-      changeToStorageRoot();
+      clearAndRootDirectory();
       {
         const uint32_t startedAt = PcLink::hostTime();
         const byte detectedSaveType = getSaveType();
@@ -129,8 +128,7 @@ void gbaMenu() {
 
     case 2:
       // Write save
-      display_Clear();
-      changeToStorageRoot();
+      clearAndRootDirectory();
       switch (getSaveType()) {
         case 1:
           // 4K EEPROM
@@ -285,26 +283,22 @@ void repro369in1Menu() {
   // wait for user choice to come back from the question box menu
   switch (menu369) {
     case 0:
-      display_Clear();
-      changeToStorageRoot();
+      clearAndRootDirectory();
       read369in1(0, 0);
       break;
 
     case 1:
-      display_Clear();
-      changeToStorageRoot();
+      clearAndRootDirectory();
       flashRepro_GBA(0);
       break;
 
     case 2:
-      display_Clear();
-      changeToStorageRoot();
+      clearAndRootDirectory();
       read369in1(selectBlockNumber(1), selectBlockNumber(0));
       break;
 
     case 3:
-      display_Clear();
-      changeToStorageRoot();
+      clearAndRootDirectory();
       flashRepro_GBA(1);
       break;
 
@@ -331,14 +325,12 @@ void setup_GBA() {
 
   // Print start page
   showRomNameAndSerial();
-  print_Msg(FS(FSTRING_REVISION));
-  println_Msg(romVersion);
+  showRomRevision();
   printRomSizeLabel();
   if (cartSize == 0)
     println_Msg(FS(SharedFlashText::textUnknown));
   else {
-    print_Msg(cartSize);
-    println_Msg(FS(SharedFlashText::unitMBWithSpace));
+    showReproCartSizeMb();
   }
   print_Msg(FS(SharedFlashText::textSaveType));
   switch (saveType) {
@@ -702,8 +694,7 @@ void getCartInfo_GBA() {
       cartID[3] = '0';
     }
 
-    display_Clear();
-    println_Msg(FS(SharedFlashText::textSearchingDatabase));
+    showSearchingDatabase();
     display_Update();
 
     //go to root
@@ -771,8 +762,7 @@ void getCartInfo_GBA() {
             print_Msg(FS(FSTRING_SERIAL));
             println_Msg(tempStr);
             printRomSizeLabel();
-            print_Msg(cartSize);
-            println_Msg(FS(SharedFlashText::unitMBWithSpace));
+            showReproCartSizeMb();
             print_Msg(F("Save Lib: "));
             println_Msg(saveTypeStr);
 
@@ -1196,7 +1186,7 @@ void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
     resetFileBrowserToRoot();
     fileBrowser(FS(SharedFlashText::textSelectSrmFile));
     // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
     display_Clear();
   }
 
@@ -1340,7 +1330,7 @@ void writeFRAM_GBA(boolean browseFile, unsigned long framSize) {
     resetFileBrowserToRoot();
     fileBrowser(FS(SharedFlashText::textSelectSrmFile));
     // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
     display_Clear();
   } else
     sprintf(filePath, "%s", fileName);
@@ -1728,7 +1718,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
     resetFileBrowserToRoot();
     fileBrowser(FS(SharedFlashText::textSelectFlaFile));
     // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
     display_Clear();
   }
 
@@ -1853,7 +1843,7 @@ void writeEeprom_GBA(word eepSize) {
   resetFileBrowserToRoot();
   fileBrowser(FS(SharedFlashText::textSelectEepFile));
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
   display_Clear();
 
   print_Msg(FS(SharedFlashText::textWritingEEPROM));
@@ -2929,8 +2919,7 @@ void flashRepro_GBA(boolean option) {
       println_Msg(F("F0088H0"));
     }
     println_Msg("");
-    println_Msg(FS(SharedFlashText::textThisWillEraseYour));
-    println_Msg(FS(SharedFlashText::textReproCartridge));
+    showEraseReproWarning();
     printBlankLine();
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
@@ -2942,7 +2931,7 @@ void flashRepro_GBA(boolean option) {
     clearAndUpdateDisplay();
 
     // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
 
     // Open file on sd card
     if (openSelectedFileForRead()) {

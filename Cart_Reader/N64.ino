@@ -246,8 +246,7 @@ void n64CartMenu() {
   // wait for user choice to come back from the question box menu
   switch (mainMenu) {
     case 0:
-      display_Clear();
-      changeToStorageRoot();
+      clearAndRootDirectory();
 #ifndef OPTION_N64_FASTCRC
       // Dumping ROM slow
       readRom_N64();
@@ -491,8 +490,7 @@ void setup_N64_Cart() {
   initializeClockOffset();
 
   if (!i2c_found) {
-    display_Clear();
-    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
+    showClockGeneratorMissing();
   }
 
   // Set Eeprom clock to 2Mhz
@@ -1699,8 +1697,7 @@ void readMPK() {
   }
 
   print_Msg(F("Saving N64/MPK/"));
-  println_Msg(fileName);
-  display_Update();
+  showFileNameAndUpdate();
 
   // Dummy write because first write to file takes 1 second and messes up timing
   blinkLED();
@@ -1742,8 +1739,7 @@ void readMPK() {
 void verifyCRC() {
   writeErrors = 0;
 
-  print_STR(verifying_STR, 1);
-  display_Update();
+  showVerifyingLineAndUpdate();
 
   //open CRC file on sd card
   FsFile crcFile;
@@ -1883,11 +1879,9 @@ void writeMPK() {
   command[0] = 0x03;
 
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
   print_Msg(FS(SharedFlashText::textWriting));
-  print_Msg(filePath);
-  println_Msg(FS(SharedFlashText::ellipsis));
-  display_Update();
+  showPathEllipsisAndUpdate();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -1933,8 +1927,7 @@ void verifyMPK() {
   byte block[32];
   writeErrors = 0;
 
-  print_STR(verifying_STR, 1);
-  display_Update();
+  showVerifyingLineAndUpdate();
 
   //open file on sd card
   if (!openSelectedFileForRead()) {
@@ -1995,11 +1988,9 @@ void printCartInfo_N64() {
   if (cartSize != 0) {
     display_Clear();
     showRomNameAndSerial();
-    print_Msg(FS(FSTRING_REVISION));
-    println_Msg(romVersion);
+    showRomRevision();
     printRomSizeLabel();
-    print_Msg(cartSize);
-    println_Msg(FS(SharedFlashText::unitMBWithSpace));
+    showReproCartSizeMb();
     print_Msg(FS(SharedFlashText::textSaveType));
     switch (saveType) {
       case 1:
@@ -2038,8 +2029,7 @@ void printCartInfo_N64() {
     println_Msg("");
     showRomNameAndSerial();
     print_Msg(FS(SharedFlashText::textCRC1));
-    println_Msg(checksumStr);
-    display_Update();
+    showChecksumAndUpdate();
 
     strcpy(romName, "GPERROR");
     print_Error(F("Cartridge unknown"));
@@ -2119,8 +2109,7 @@ void getCartInfo_N64() {
   // Read cart id
   idCart();
 
-  display_Clear();
-  println_Msg(FS(SharedFlashText::textSearchingDatabase));
+  showSearchingDatabase();
   display_Update();
 #if defined(SERIAL_MONITOR)
   printBlankLine();
@@ -2326,7 +2315,7 @@ void writeEeprom_N64() {
   if ((saveType == 5) || (saveType == 6)) {
 
     // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
     showWritingProgressFilePath();
 
     // Open file on sd card
@@ -2472,7 +2461,7 @@ unsigned long verifyEeprom_N64() {
 void writeSram(unsigned long sramSize) {
   if (saveType == 1 || saveType == 2) {
     // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
     showWritingProgressFilePath();
 
     // Open file on sd card
@@ -2633,7 +2622,7 @@ void writeFram(byte flashramType) {
     }
 
     // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
     showWritingFilePath();
 
     // Open file on sd card
@@ -2697,8 +2686,7 @@ void writeFram(byte flashramType) {
 // Delete all 8 flashram banks
 void eraseFram() {
   if (saveType == 4) {
-    print_Msg(FS(SharedFlashText::textErasing));
-    display_Update();
+    showEraseLabelAndUpdate();
 
     // Init fram
     initFram();
@@ -3215,8 +3203,7 @@ void flashRepro_N64() {
     print_Msg(cartSize);
     println_Msg(FS(SharedFlashText::unitMB));
     println_Msg("");
-    println_Msg(FS(SharedFlashText::textThisWillEraseYour));
-    println_Msg(FS(SharedFlashText::textReproCartridge));
+    showEraseReproWarning();
     println_Msg(FS(SharedFlashText::textAttentionUse33V));
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
@@ -3232,8 +3219,7 @@ void flashRepro_N64() {
     println_Msg(FS(FSTRING_SPACE));
     println_Msg(FS(SharedFlashText::textPressButtonFor));
     println_Msg(F("manual config"));
-    println_Msg(FS(SharedFlashText::textThisWillEraseYour));
-    println_Msg(FS(SharedFlashText::textReproCartridge));
+    showEraseReproWarning();
     println_Msg(FS(SharedFlashText::textAttentionUse33V));
     updateDisplayAndWait();
 
@@ -3349,7 +3335,7 @@ void flashRepro_N64() {
   clearAndUpdateDisplay();
 
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -3446,8 +3432,7 @@ void flashRepro_N64() {
       closeCurrentFile();
 
       // Verify
-      print_STR(verifying_STR, 1);
-      display_Update();
+      showVerifyingLineAndUpdate();
       writeErrors = verifyFlashrom_N64();
       if (writeErrors != 0) {
         display_Clear();
@@ -3657,8 +3642,7 @@ void idFlashrom_N64() {
 void eraseIntel4400_N64() {
   unsigned long flashBase = romBase;
 
-  print_Msg(FS(SharedFlashText::textErasing));
-  display_Update();
+  showEraseLabelAndUpdate();
 
   // If the game is smaller than 32Mbit only erase the needed blocks
   unsigned long lastBlock = 0x1FFFFFF;
@@ -3771,8 +3755,7 @@ void eraseMSP55LV100_N64() {
   unsigned long flashBase = romBase;
   unsigned long sectorSize = 0x20000;
 
-  print_Msg(FS(SharedFlashText::textErasing));
-  display_Update();
+  showEraseLabelAndUpdate();
 
   for (unsigned long currSector = 0; currSector < fileSize; currSector += sectorSize) {
     // Blink led
@@ -4216,7 +4199,7 @@ void flashGameshark_N64() {
     display_Update();
 
     // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
 
     // Open file on sd card
     if (openSelectedFileForRead()) {
@@ -4560,7 +4543,7 @@ void flashXplorer_N64() {
     display_Update();
 
     // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
 
     // Open file on sd card
     if (openSelectedFileForRead()) {

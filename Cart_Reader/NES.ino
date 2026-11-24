@@ -3528,8 +3528,7 @@ void readPRG(bool readrom) {
       closeCurrentFile();
 
       println_Msg(F("PRG FILE DUMPED!"));
-      printBlankLine();
-      display_Update();
+      blankLineAndUpdate();
     }
   }
   set_address(0);
@@ -4468,8 +4467,7 @@ void readCHR(bool readrom) {
         closeCurrentFile();
 
         println_Msg(F("CHR FILE DUMPED!"));
-        printBlankLine();
-        display_Update();
+        blankLineAndUpdate();
       }
     }
   }
@@ -4685,8 +4683,7 @@ void readRAM() {
       closeCurrentFile();
 
       println_Msg(F("RAM FILE DUMPED!"));
-      printBlankLine();
-      display_Update();
+      blankLineAndUpdate();
 
       uint32_t saveCrc;
       printCRC(fileName, &saveCrc, 0, filePath);
@@ -4729,13 +4726,12 @@ void writeRAM() {
     uint16_t banks;
 
     resetStorageDirectory();
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
 
     display_Clear();
     println_Msg(FS(SharedFlashText::textWritingFile));
     println_Msg(filePath);
-    println_Msg(fileName);
-    display_Update();
+    showFileNameAndUpdate();
 
     //open file on sd card
     if (openSelectedFileForRead()) {
@@ -5161,22 +5157,20 @@ void writeFLASH() {
   } else {
     showFlashIdAndBlank();
     println_Msg(F("NESmaker Flash Found"));
-    printBlankLine();
-    display_Update();
+    blankLineAndUpdate();
     delay(100);
 
     fileBrowser(FS(SharedFlashText::textSelectFLASHFile));
     word base = 0x8000;
 
     resetStorageDirectory();
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
 
     rgbLed(red_color);
     display_Clear();
     println_Msg(FS(SharedFlashText::textWritingFile));
     println_Msg(filePath);
-    println_Msg(fileName);
-    display_Update();
+    showFileNameAndUpdate();
 
     uint8_t bytecheck;
     uint16_t banks;
@@ -5370,12 +5364,11 @@ void A29040B_writeFLASH() {
     printBlankLine();
     showFlashIdAndBlank();
     println_Msg(F("Flash Found"));
-    printBlankLine();
-    display_Update();
+    blankLineAndUpdate();
     delay(3000);
     fileBrowser(FS(SharedFlashText::textSelectFLASHFile));
     resetStorageDirectory();
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
 
     if (openSelectedFileForRead()) {
       // Step 1: Read the header and extract PRG and CHR sizes

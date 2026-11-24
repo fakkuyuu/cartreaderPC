@@ -64,6 +64,24 @@
 #include "BootDumpCursor.h"
 
 void pcVerificationResult(uint8_t code);
+void appendSelectedFilePath() __attribute__((noinline));
+void clearAndRootDirectory() __attribute__((noinline));
+void showRomRevision() __attribute__((noinline));
+void showSavedToFolder() __attribute__((noinline));
+void showSearchingDatabase() __attribute__((noinline));
+void showRomNameLine() __attribute__((noinline));
+void showVerifyingLineAndUpdate() __attribute__((noinline));
+void showChecksumAndUpdate() __attribute__((noinline));
+void showEraseLabelAndUpdate() __attribute__((noinline));
+void showClockGeneratorMissing() __attribute__((noinline, noreturn));
+void showNoSramError() __attribute__((noinline));
+void blankLineAndUpdate() __attribute__((noinline));
+void showWritingFlashAndUpdate() __attribute__((noinline));
+void showFileNameAndUpdate() __attribute__((noinline));
+void closeAndClearDisplay() __attribute__((noinline));
+void showEraseReproWarning() __attribute__((noinline));
+void showPathEllipsisAndUpdate() __attribute__((noinline));
+void showReproCartSizeMb() __attribute__((noinline));
 void showFlashIdAndBlank() __attribute__((noinline));
 void showSavingFolderLine() __attribute__((noinline));
 void showFatalWriteVerification() __attribute__((noinline, noreturn));
@@ -2287,8 +2305,7 @@ void clkcal() {
   }
 
   if (!i2c_found) {
-    display_Clear();
-    print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
+    showClockGeneratorMissing();
   }
 
   //clockgen.set_correction(cal_factor, SI5351_PLL_INPUT_XO);
@@ -3232,6 +3249,96 @@ void printBlankLine() {
 
 
 /* Compact shared UI/storage sequences. Keep operation order unchanged. */
+void __attribute__((noinline)) appendSelectedFilePath() {
+  sprintf(filePath, "%s/%s", filePath, fileName);
+}
+
+void __attribute__((noinline)) clearAndRootDirectory() {
+  display_Clear();
+  changeToStorageRoot();
+}
+
+void __attribute__((noinline)) showRomRevision() {
+  print_Msg(FS(FSTRING_REVISION));
+  println_Msg(romVersion);
+}
+
+void __attribute__((noinline)) showSavedToFolder() {
+  print_Msg(FS(SharedFlashText::textSavedTo));
+  print_Msg(folder);
+}
+
+void __attribute__((noinline)) showSearchingDatabase() {
+  display_Clear();
+  println_Msg(FS(SharedFlashText::textSearchingDatabase));
+}
+
+void __attribute__((noinline)) showRomNameLine() {
+  print_Msg(FS(FSTRING_NAME));
+  println_Msg(romName);
+}
+
+void __attribute__((noinline)) showVerifyingLineAndUpdate() {
+  print_STR(verifying_STR, 1);
+  display_Update();
+}
+
+void __attribute__((noinline)) showChecksumAndUpdate() {
+  println_Msg(checksumStr);
+  display_Update();
+}
+
+void __attribute__((noinline)) showEraseLabelAndUpdate() {
+  print_Msg(FS(SharedFlashText::textErasing));
+  display_Update();
+}
+
+void __attribute__((noinline)) showClockGeneratorMissing() {
+  display_Clear();
+  print_FatalError(FS(SharedFlashText::textClockGeneratorNotFound));
+}
+
+void __attribute__((noinline)) showNoSramError() {
+  display_Clear();
+  print_Error(FS(SharedFlashText::textDoesNotHaveSRAM));
+}
+
+void __attribute__((noinline)) blankLineAndUpdate() {
+  printBlankLine();
+  display_Update();
+}
+
+void __attribute__((noinline)) showWritingFlashAndUpdate() {
+  println_Msg(FS(SharedFlashText::textWritingFlash));
+  display_Update();
+}
+
+void __attribute__((noinline)) showFileNameAndUpdate() {
+  println_Msg(fileName);
+  display_Update();
+}
+
+void __attribute__((noinline)) closeAndClearDisplay() {
+  closeCurrentFile();
+  display_Clear();
+}
+
+void __attribute__((noinline)) showEraseReproWarning() {
+  println_Msg(FS(SharedFlashText::textThisWillEraseYour));
+  println_Msg(FS(SharedFlashText::textReproCartridge));
+}
+
+void __attribute__((noinline)) showPathEllipsisAndUpdate() {
+  print_Msg(filePath);
+  println_Msg(FS(SharedFlashText::ellipsis));
+  display_Update();
+}
+
+void __attribute__((noinline)) showReproCartSizeMb() {
+  print_Msg(cartSize);
+  println_Msg(FS(SharedFlashText::unitMBWithSpace));
+}
+
 void __attribute__((noinline)) showFlashIdAndBlank() {
   print_Msg(FS(SharedFlashText::textFlashID));
   println_Msg(flashid_str);
@@ -3282,8 +3389,7 @@ void __attribute__((noinline)) showTurnOffPowerAndUpdate() {
 }
 
 void __attribute__((noinline)) showRomNameAndSerial() {
-  print_Msg(FS(FSTRING_NAME));
-  println_Msg(romName);
+  showRomNameLine();
   print_Msg(FS(FSTRING_SERIAL));
   println_Msg(cartID);
 }
@@ -3302,9 +3408,7 @@ void __attribute__((noinline)) showResettingAndUpdate() {
 
 void __attribute__((noinline)) showFlashingFileAndUpdate() {
   print_STR(flashing_file_STR, 0);
-  print_Msg(filePath);
-  println_Msg(FS(SharedFlashText::ellipsis));
-  display_Update();
+  showPathEllipsisAndUpdate();
 }
 
 void __attribute__((noinline)) formatFlashId() {

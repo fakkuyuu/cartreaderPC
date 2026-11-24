@@ -307,7 +307,7 @@ void mdMenu() {
       mode = CORE_MD_CART;
       // Change working dir to root
       browseRootFileAndClear();
-      sprintf(filePath, "%s/%s", filePath, fileName);
+      appendSelectedFilePath();
       // Setting CS(PH3) LOW
       PORTH &= ~(1 << 3);
       display_Clear();
@@ -1187,8 +1187,7 @@ void getCartInfo_MD() {
   display_Clear();
   println_Msg(FS(SharedFlashText::textCartInfo));
   println_Msg(FS(FSTRING_SPACE));
-  print_Msg(FS(FSTRING_NAME));
-  println_Msg(romName);
+  showRomNameLine();
   if (bramCheck != 0x00FF) {
     print_Msg(F("bramCheck: "));
     print_Msg_PaddedHex16(bramCheck);
@@ -1815,7 +1814,7 @@ void writeSram_MD() {
   dataOut_MD();
 
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
   showWritingProgressFilePath();
 
   // Open file on sd card
@@ -1919,8 +1918,7 @@ void readSram_MD() {
   }
   // Close the file:
   closeCurrentFile();
-  print_Msg(FS(SharedFlashText::textSavedTo));
-  print_Msg(folder);
+  showSavedToFolder();
   println_Msg(FS(SharedFlashText::pathSeparator));
   display_Update();
 }
@@ -1992,7 +1990,7 @@ void resetFlash_MD() {
 
 void write29F1610_MD() {
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
   showFlashingFileAndUpdate();
 
   // Open file on sd card
@@ -2054,7 +2052,7 @@ void write29F1610_MD() {
 
 void write29GL_MD() {
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
   showFlashingFileAndUpdate();
 
   // Open file on sd card
@@ -2830,8 +2828,7 @@ void readEEP_MD() {
   }
   // Close the file:
   closeBlankAndClear();
-  print_Msg(FS(SharedFlashText::textSavedTo));
-  print_Msg(folder);
+  showSavedToFolder();
 
   display_Update();
 }
@@ -2840,7 +2837,7 @@ void writeEEP_MD() {
   dataOut_MD();
 
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
   showWritingProgressFilePath();
 
   // Open file on sd card
@@ -2904,8 +2901,7 @@ void readBram_MD() {
 
   // Close the file:
   closeBlankAndClear();
-  print_Msg(FS(SharedFlashText::textSavedTo));
-  print_Msg(folder);
+  showSavedToFolder();
 
   display_Update();
 }
@@ -2914,7 +2910,7 @@ void writeBram_MD() {
   dataOut_MD();
 
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
   showWritingProgressFilePath();
 
   // Open file on sd card

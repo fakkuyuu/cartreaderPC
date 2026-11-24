@@ -482,8 +482,7 @@ void getCartInfo_SMS() {
   }
 
   println_Msg(FS(FSTRING_SPACE));
-  print_Msg(FS(FSTRING_NAME));
-  println_Msg(romName);
+  showRomNameLine();
   print_Msg(cartSize / 1024);
   println_Msg(FS(SharedFlashText::unitKB));
   println_Msg(FS(FSTRING_SPACE));
@@ -702,7 +701,7 @@ void writeSRAM_SMS() {
     fileBrowser(FS(FSTRING_SELECT_FILE));
 
     resetStorageDirectory();
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
 
     display_Clear();
     println_Msg(F("Restoring from "));

@@ -605,14 +605,12 @@ void setup_GB() {
 void showCartInfo_GB() {
   display_Clear();
   if (strcmp(checksumStr, "00") != 0) {
-    print_Msg(FS(FSTRING_NAME));
-    println_Msg(romName);
+    showRomNameLine();
     if (cartID[0] != 0) {
       print_Msg(FS(FSTRING_SERIAL));
       println_Msg(cartID);
     }
-    print_Msg(FS(FSTRING_REVISION));
-    println_Msg(romVersion);
+    showRomRevision();
 
     print_Msg(FS(FSTRING_MAPPER));
     if ((romType == 0) || (romType == 8) || (romType == 9))
@@ -1380,8 +1378,7 @@ void readSRAM_GB() {
     closeCurrentFile();
 
     // Signal end of process
-    print_Msg(FS(SharedFlashText::textSavedTo));
-    print_Msg(folder);
+    showSavedToFolder();
     println_Msg(FS(SharedFlashText::pathSeparator));
     display_Update();
   } else {
@@ -1394,7 +1391,7 @@ void writeSRAM_GB() {
   // Does cartridge have SRAM
   if (lastByte > 0) {
     // Create filepath
-    sprintf(filePath, "%s/%s", filePath, fileName);
+    appendSelectedFilePath();
 
     //open file on sd card
     if (openSelectedFileForRead()) {
@@ -1422,8 +1419,7 @@ void writeSRAM_GB() {
       writeByte_GB(0x0000, 0x00);
 
       // Close the file:
-      closeCurrentFile();
-      display_Clear();
+      closeAndClearDisplay();
       println_Msg(FS(SharedFlashText::textSRAMWritingFinished));
       display_Update();
 
@@ -1553,7 +1549,7 @@ void readSRAMFLASH_MBC6_GB() {
 // Write RAM
 void writeSRAMFLASH_MBC6_GB() {
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
 
   //open file on sd card
   if (openSelectedFileForRead()) {
@@ -1619,8 +1615,7 @@ void writeSRAMFLASH_MBC6_GB() {
           delay(1);
           if (lives-- <= 0) {
             disableFlashSaveMemory();
-            closeCurrentFile();
-            display_Clear();
+            closeAndClearDisplay();
             print_FatalError(F("Error erasing FLASH sector."));
           }
         }
@@ -1653,8 +1648,7 @@ void writeSRAMFLASH_MBC6_GB() {
           delay(1);
           if (lives-- <= 0) {
             disableFlashSaveMemory();
-            closeCurrentFile();
-            display_Clear();
+            closeAndClearDisplay();
             print_FatalError(F("Error writing to FLASH."));
           }
         }
@@ -1731,7 +1725,7 @@ void readEEPROM_MBC7_GB() {
 
 void writeEEPROM_MBC7_GB() {
 
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
 
   // open file on sd card
   if (!openSelectedFileForRead())
@@ -1913,7 +1907,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
   browseRootFileAndClear();
 
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -2468,7 +2462,7 @@ void identifyCFI_GB() {
 // identifyFlash_GB() needs to be run before this!
 bool writeCFI_GB() {
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -2797,7 +2791,7 @@ void writePelican_GB() {
   browseRootFileAndClear();
 
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -2902,8 +2896,7 @@ void writePelican_GB() {
     }
   }
 
-  println_Msg(FS(SharedFlashText::textWritingFlash));
-  display_Update();
+  showWritingFlashAndUpdate();
 
   // Write flash
   word currAddr = 0x2000;
@@ -3141,7 +3134,7 @@ void writeMegaMem_GB() {
   browseRootFileAndClear();
 
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -3214,8 +3207,7 @@ void writeMegaMem_GB() {
     }
   }
 
-  println_Msg(FS(SharedFlashText::textWritingFlash));
-  display_Update();
+  showWritingFlashAndUpdate();
 
   // Write flash
   word currAddr = 0x4000;
@@ -3462,7 +3454,7 @@ void writeGameshark_GB() {
   bool toggle = true;
 
   // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
+  appendSelectedFilePath();
 
   // Open file on sd card
   openSelectedFileForRead();
@@ -3501,8 +3493,7 @@ void writeGameshark_GB() {
     }
   }
 
-  println_Msg(FS(SharedFlashText::textWritingFlash));
-  display_Update();
+  showWritingFlashAndUpdate();
 
   // Write flash
   word currAddr = 0x4000;
