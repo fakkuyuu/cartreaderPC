@@ -1015,6 +1015,14 @@ static void createRomFile_GBA() {
   }
 }
 
+static void showRomPadding_GBA(byte value) __attribute__((noinline));
+static void showRomPadding_GBA(byte value) {
+  char message[] = "Fixing ROM padding (0x00)";
+  formatFixedHex(message + sizeof(message) - 4, value, 2);
+  message[sizeof(message) - 2] = ')';
+  println_Msg(message);
+}
+
 // Dump ROM
 void readROM_GBA() {
   createRomFile_GBA();
@@ -1033,9 +1041,7 @@ void readROM_GBA() {
   retryPaddingBlockGBA=false;
   if (retrySucceeded) {
     if (needsPadding) {
-      char tempStr[32];
-      sprintf(tempStr, "Fixing ROM padding (0x%02X)", retryPaddingByteGBA);
-      println_Msg(tempStr);
+      showRomPadding_GBA(retryPaddingByteGBA);
     }
     closeCurrentFile();
     return;
@@ -1087,11 +1093,9 @@ void readROM_GBA() {
 
   // Fix unmapped ROM area of cartridges with 32 MB ROM + EEPROM save type
   if ((cartSize == 0x2000000) && ((saveType == 1) || (saveType == 2))) {
-    char tempStr[32];
     myFile.seek(0x1FFFEFF);
     myFile.read(sdBuffer, 1);
-    sprintf(tempStr, "Fixing ROM padding (0x%02X)", sdBuffer[0]);
-    println_Msg(tempStr);
+    showRomPadding_GBA(sdBuffer[0]);
     memset(sdBuffer + 1, sdBuffer[0], 255);
     myFile.write(sdBuffer, 256);
   }
