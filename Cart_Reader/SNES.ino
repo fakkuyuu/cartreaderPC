@@ -2001,6 +2001,48 @@ static void visitSramMapping_SNES(void (*visit)(byte, long, long, byte), byte va
   }
 }
 
+static void writeSa1SramBlocks_SNES(bool fromFile, byte value) __attribute__((noinline));
+static void writeSa1SramBlocks_SNES(bool fromFile, byte value) {
+  long lastByte = (long(sramSize) * 128);
+  if (i2c_found) {
+    // Enable CPU Clock
+    clockgen.output_enable(SI5351_CLK1, 1);
+    if (fromFile) clockgen.update_status();
+  }
+
+  // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work
+  // Break BW-RAM (SRAM) into 0x2000 blocks
+  byte lastBlock = 0;
+  lastBlock = lastByte / 0x2000;
+
+  // Writing SRAM on SA1 needs CS(PH3) to be high
+  // PORTH |=  (1 << 3);
+
+  // Setup BW-RAM
+  // Set 0x2224 (SNES BMAPS) to map SRAM Block 0 to 0x6000-0x7FFF
+  writeBank_SNES(0, 0x2224, 0);
+  // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
+  writeBank_SNES(0, 0x2226, 0x80);
+  // Set 0x2228 (SNES BWPA) to 0x00 BW-RAM Write-Protected Area
+  writeBank_SNES(0, 0x2228, 0);
+  delay(1000);
+
+  // Use $2224 (SNES) to map BW-RAM block to 0x6000-0x7FFF
+  // Use $2226 (SNES) to write enable the BW-RAM
+  for (byte currBlock = 0; currBlock < lastBlock; currBlock++) {
+    // Set 0x2224 (SNES BMAPS) to map SRAM Block to 0x6000-0x7FFF
+    writeBank_SNES(0, 0x2224, currBlock);
+    // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
+    writeBank_SNES(0, 0x2226, 0x80);
+    for (long currByte = 0x6000; currByte < 0x8000; currByte += 512) {
+      if (fromFile) readSdBufferBlock();
+      for (int c = 0; c < 512; c++) {
+        writeBank_SNES(0, currByte + c, fromFile ? sdBuffer[c] : value);
+      }
+    }
+  }
+}
+
 void writeSRAM(boolean browseFile) {
   if (browseFile) {
     browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectSrmFile));
@@ -2020,44 +2062,7 @@ void writeSRAM(boolean browseFile) {
     visitSramMapping_SNES(writeSramFileRange_SNES, 0, true);
     // SA1
     if (romType == SA) {
-      long lastByte = (long(sramSize) * 128);
-      if (i2c_found) {
-        // Enable CPU Clock
-        clockgen.output_enable(SI5351_CLK1, 1);
-        clockgen.update_status();
-      }
-
-      // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work
-      // Break BW-RAM (SRAM) into 0x2000 blocks
-      byte lastBlock = 0;
-      lastBlock = lastByte / 0x2000;
-
-      // Writing SRAM on SA1 needs CS(PH3) to be high
-      // PORTH |=  (1 << 3);
-
-      // Setup BW-RAM
-      // Set 0x2224 (SNES BMAPS) to map SRAM Block 0 to 0x6000-0x7FFF
-      writeBank_SNES(0, 0x2224, 0);
-      // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
-      writeBank_SNES(0, 0x2226, 0x80);
-      // Set 0x2228 (SNES BWPA) to 0x00 BW-RAM Write-Protected Area
-      writeBank_SNES(0, 0x2228, 0);
-      delay(1000);
-
-      // Use $2224 (SNES) to map BW-RAM block to 0x6000-0x7FFF
-      // Use $2226 (SNES) to write enable the BW-RAM
-      for (byte currBlock = 0; currBlock < lastBlock; currBlock++) {
-        // Set 0x2224 (SNES BMAPS) to map SRAM Block to 0x6000-0x7FFF
-        writeBank_SNES(0, 0x2224, currBlock);
-        // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
-        writeBank_SNES(0, 0x2226, 0x80);
-        for (long currByte = 0x6000; currByte < 0x8000; currByte += 512) {
-          readSdBufferBlock();
-          for (int c = 0; c < 512; c++) {
-            writeBank_SNES(0, currByte + c, sdBuffer[c]);
-          }
-        }
-      }
+      writeSa1SramBlocks_SNES(true, 0);
       // Rewrite first 16 bytes since they often get written incorrectly(fixes Super Bomberman Panic Bomber W), first byte needs to be written last(fixes PGA Tour 96)
       rewindCurrentFile();
       myFile.read(sdBuffer, 16);
@@ -2185,43 +2190,7 @@ boolean eraseSRAM(byte b) {
   visitSramMapping_SNES(fillSramRange_SNES, b, true);
   // SA1
   if (romType == SA) {
-    long lastByte = (long(sramSize) * 128);
-    if (i2c_found) {
-      // Enable CPU Clock
-      clockgen.output_enable(SI5351_CLK1, 1);
-    }
-
-    // Direct writes to BW-RAM (SRAM) in banks 0x40-0x43 don't work
-    // Break BW-RAM (SRAM) into 0x2000 blocks
-    // Use $2224 to map BW-RAM block to 0x6000-0x7FFF
-    byte lastBlock = 0;
-    lastBlock = lastByte / 0x2000;
-
-    // Writing SRAM on SA1 needs CS(PH3) to be high
-    // PORTH |=  (1 << 3);
-
-    // Setup BW-RAM
-    // Set 0x2224 (SNES BMAPS) to map SRAM Block 0 to 0x6000-0x7FFF
-    writeBank_SNES(0, 0x2224, 0);
-    // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
-    writeBank_SNES(0, 0x2226, 0x80);
-    // Set 0x2228 (SNES BWPA) to 0x00 BW-RAM Write-Protected Area
-    writeBank_SNES(0, 0x2228, 0);
-    delay(1000);
-
-    // Use $2224 (SNES) to map BW-RAM block to 0x6000-0x7FFF
-    // Use $2226 (SNES) to write enable the BW-RAM
-    for (byte currBlock = 0; currBlock < lastBlock; currBlock++) {
-      // Set 0x2224 (SNES BMAPS) to map SRAM Block to 0x6000-0x7FFF
-      writeBank_SNES(0, 0x2224, currBlock);
-      // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
-      writeBank_SNES(0, 0x2226, 0x80);
-      for (long currByte = 0x6000; currByte < 0x8000; currByte += 512) {
-        for (int c = 0; c < 512; c++) {
-          writeBank_SNES(0, currByte + c, b);
-        }
-      }
-    }
+    writeSa1SramBlocks_SNES(false, b);
     // Rewrite First Byte
     writeBank_SNES(0, 0x2224, 0);
     writeBank_SNES(0, 0x2226, 0x80);
