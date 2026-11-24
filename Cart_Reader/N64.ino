@@ -2168,21 +2168,21 @@ byte selectSlotNumber() {
 }
 
 // Read rom ID
+static void readN64WordsToBuffer(uint16_t count) __attribute__((noinline));
+static void readN64WordsToBuffer(uint16_t count) {
+  for (uint16_t c = 0; c < count; c += 2) {
+    word myWord = readWord_N64();
+    sdBuffer[c] = myWord >> 8;
+    sdBuffer[c + 1] = myWord & 0xFF;
+  }
+}
+
 static void readN64HeaderAndIdentity() __attribute__((noinline));
 static void readN64HeaderAndIdentity() {
   // Set the address
   setAddress_N64(romBase);
   // Read first 64 bytes of rom
-  for (int c = 0; c < 64; c += 2) {
-    // split word
-    word myWord = readWord_N64();
-    byte loByte = myWord & 0xFF;
-    byte hiByte = myWord >> 8;
-
-    // write to buffer
-    sdBuffer[c] = hiByte;
-    sdBuffer[c + 1] = loByte;
-  }
+  readN64WordsToBuffer(64);
   // Pull ale_H(PC1) high
   PORTC |= (1 << 1);
 
@@ -2441,7 +2441,6 @@ void writeSram(unsigned long sramSize) {
 
 // Read sram and save to the SD card
 void readSram(unsigned long sramSize, byte flashramType) {
-  word myWord;
   int offset = 512;
   int bufferSize = 512;
   if (flashramType == 2) {
@@ -2467,12 +2466,7 @@ void readSram(unsigned long sramSize, byte flashramType) {
     // Set the address
     setAddress_N64(currByte);
 
-    for (int c = 0; c < bufferSize; c += 2) {
-      // read, split and write word to buffer
-      myWord = readWord_N64();
-      sdBuffer[c] = myWord >> 8;
-      sdBuffer[c + 1] = myWord & 0xFF;
-    }
+    readN64WordsToBuffer(bufferSize);
     // Pull ale_H(PC1) high
     PORTC |= (1 << 1);
     myFile.write(sdBuffer, bufferSize);
@@ -2497,16 +2491,7 @@ unsigned long verifySram(unsigned long sramSize, byte flashramType) {
       // Set the address
       setAddress_N64(currByte);
 
-      for (int c = 0; c < bufferSize; c += 2) {
-        // split word
-        word myWord = readWord_N64();
-        byte loByte = myWord & 0xFF;
-        byte hiByte = myWord >> 8;
-
-        // write to buffer
-        sdBuffer[c] = hiByte;
-        sdBuffer[c + 1] = loByte;
-      }
+      readN64WordsToBuffer(bufferSize);
       // Check sdBuffer content against file on sd card
       for (int i = 0; i < bufferSize; i++) {
         if (myFile.read() != sdBuffer[i]) {
@@ -2698,16 +2683,7 @@ unsigned long blankcheck_N64(byte flashramType) {
     // Set the address for the next 512 bytes
     setAddress_N64(currByte);
 
-    for (int c = 0; c < bufferSize; c += 2) {
-      // split word
-      word myWord = readWord_N64();
-      byte loByte = myWord & 0xFF;
-      byte hiByte = myWord >> 8;
-
-      // write to buffer
-      sdBuffer[c] = hiByte;
-      sdBuffer[c + 1] = loByte;
-    }
+    readN64WordsToBuffer(bufferSize);
     // Check sdBuffer content against file on sd card
     for (int i = 0; i < bufferSize; i++) {
       if (0xFF != sdBuffer[i]) {
@@ -2734,16 +2710,7 @@ byte waitForFram(byte flashramType) {
   setAddress_N64(0x08000000);
 
   // Read Status
-  for (byte c = 0; c < 8; c += 2) {
-    // split word
-    word myWord = readWord_N64();
-    byte loByte = myWord & 0xFF;
-    byte hiByte = myWord >> 8;
-
-    // write to buffer
-    sdBuffer[c] = hiByte;
-    sdBuffer[c + 1] = loByte;
-  }
+  readN64WordsToBuffer(8);
 
   if (flashramType == 2) {
     for (byte c = 0; c < 8; c++) {
@@ -2785,16 +2752,7 @@ void getFramType() {
   setAddress_N64(0x08000000);
 
   // Read Status
-  for (byte c = 0; c < 8; c += 2) {
-    // split word
-    word myWord = readWord_N64();
-    byte loByte = myWord & 0xFF;
-    byte hiByte = myWord >> 8;
-
-    // write to buffer
-    sdBuffer[c] = hiByte;
-    sdBuffer[c + 1] = loByte;
-  }
+  readN64WordsToBuffer(8);
   //MX29L1100
   if (sdBuffer[7] == 0x1e) {
     flashramType = 2;
@@ -4194,16 +4152,7 @@ void backupGameshark_N64() {
     // Set the address for the next 512 bytes
     setAddress_N64(currByte);
 
-    for (int c = 0; c < 512; c += 2) {
-      // split word
-      word myWord = readWord_N64();
-      byte loByte = myWord & 0xFF;
-      byte hiByte = myWord >> 8;
-
-      // write to buffer
-      sdBuffer[c] = hiByte;
-      sdBuffer[c + 1] = loByte;
-    }
+    readN64WordsToBuffer(512);
     writeSdBufferBlock();
   }
   // Close the file:
@@ -4499,16 +4448,7 @@ void backupXplorer_N64() {
     // Set the address for the next 512 bytes
     setAddress_N64(currByte);
 
-    for (int c = 0; c < 512; c += 2) {
-      // split word
-      word myWord = readWord_N64();
-      byte loByte = myWord & 0xFF;
-      byte hiByte = myWord >> 8;
-
-      // write to buffer
-      sdBuffer[c] = hiByte;
-      sdBuffer[c + 1] = loByte;
-    }
+    readN64WordsToBuffer(512);
     writeSdBufferBlock();
   }
   // Close the file:
