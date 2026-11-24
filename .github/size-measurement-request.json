@@ -1,0 +1,7 @@
+{
+  "id": "trial-mmc1-002",
+  "base": "279c47ee9df48b78c5a3d23a4136c4f60af17b0a",
+  "head": "30ac12fb03f4fc63b816ed8d68236fefb2b67a0b",
+  "expected_base_flash": 215072,
+  "expected_base_ram": 6281
+}
