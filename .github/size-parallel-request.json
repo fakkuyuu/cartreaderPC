@@ -1,28 +1,28 @@
 {
-  "id": "parallel-002",
-  "base": "8f2053ad4f496f8a0351e64e2c5076f5aab7506b",
-  "expected_base_flash": 214620,
+  "id": "parallel-003",
+  "base": "72f2c4265751a7daa6114d48a2237d0f076ed775",
+  "expected_base_flash": 214542,
   "expected_base_ram": 6281,
   "candidates": [
     {
-      "id": "nes-mapper162-163",
-      "head": "55f99db73f280c038ab3a7a21704aaddcf2f35c9",
-      "path": "Cart_Reader/NES.ino"
+      "id": "ws-eeprom-read-command",
+      "head": "da0c1f86b4140f74acf372e45764a72cb4e9a0be",
+      "path": "Cart_Reader/WS.ino"
     },
     {
-      "id": "gba-fram-setup",
-      "head": "19f622e0ada1178a3814884b1e89359b8cf28f34",
-      "path": "Cart_Reader/GBA.ino"
+      "id": "pce-tennokoe-read-block",
+      "head": "d02effd89c3e8ca02ae049bbbc14329c587c5021",
+      "path": "Cart_Reader/PCE.ino"
     },
     {
-      "id": "gb-sram-enable",
-      "head": "5c71ee4f99c6aa12d03c3304564b2fa338084370",
-      "path": "Cart_Reader/GB.ino"
+      "id": "snes-sram-verify-ranges",
+      "head": "d6c6c759a4d13bdbc1afc3f494d24dc940bd7207",
+      "path": "Cart_Reader/SNES.ino"
     },
     {
-      "id": "md-eeprom-bit-count",
-      "head": "29421f687112bca76f5416be0d1c78401a0eaef2",
-      "path": "Cart_Reader/MD.ino"
+      "id": "n64-accessory-backup",
+      "head": "08479e98c88256add7f0c074ce1c16a86a1d3e52",
+      "path": "Cart_Reader/N64.ino"
     }
   ]
 }
