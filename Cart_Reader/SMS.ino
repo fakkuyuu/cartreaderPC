@@ -700,8 +700,7 @@ void writeSRAM_SMS() {
   } else {
     fileBrowser(FS(FSTRING_SELECT_FILE));
 
-    resetStorageDirectory();
-    appendSelectedFilePath();
+    resetStorageAndAppendPath();
 
     display_Clear();
     println_Msg(F("Restoring from "));

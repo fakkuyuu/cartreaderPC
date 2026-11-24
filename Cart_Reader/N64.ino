@@ -2315,8 +2315,7 @@ void writeEeprom_N64() {
   if ((saveType == 5) || (saveType == 6)) {
 
     // Create filepath
-    appendSelectedFilePath();
-    showWritingProgressFilePath();
+    appendPathAndShowWritingProgress();
 
     // Open file on sd card
     if (openSelectedFileForRead()) {
@@ -2461,8 +2460,7 @@ unsigned long verifyEeprom_N64() {
 void writeSram(unsigned long sramSize) {
   if (saveType == 1 || saveType == 2) {
     // Create filepath
-    appendSelectedFilePath();
-    showWritingProgressFilePath();
+    appendPathAndShowWritingProgress();
 
     // Open file on sd card
     if (openSelectedFileForRead()) {
@@ -3437,8 +3435,7 @@ void flashRepro_N64() {
       if (writeErrors != 0) {
         display_Clear();
         print_Msg(writeErrors);
-        print_Msg(F(" bytes "));
-        reportVerificationError();
+        showVerificationBytesTail();
       }
     } else {
       // Close the file
@@ -4248,8 +4245,7 @@ void flashGameshark_N64() {
         clearAndUpdateDisplay();
         println_Msg(FS(SharedFlashText::textVerificationFailed));
         println_Msg(writeErrors);
-        print_Msg(F(" bytes "));
-        reportVerificationError();
+        showVerificationBytesTail();
       }
     } else {
       print_Error(open_file_STR);
@@ -4588,8 +4584,7 @@ void flashXplorer_N64() {
         clearAndUpdateDisplay();
         println_Msg(FS(SharedFlashText::textVerificationFailed));
         println_Msg(writeErrors);
-        print_Msg(F(" bytes "));
-        reportVerificationError();
+        showVerificationBytesTail();
       }
     } else {
       print_Error(open_file_STR);

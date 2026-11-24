@@ -1683,8 +1683,7 @@ void readEEPROM_MBC7_GB() {
     fatalSdError();
   }
 
-  display_Clear();
-  showSavingFolderLine();
+  clearAndShowSavingFolder();
   display_Update();
 
   uint16_t* data = (uint16_t*)sdBuffer;
@@ -1917,6 +1916,14 @@ static void blankCheckRange_GB(word start, word end) {
   }
 }
 
+static void showFlashBankCount_GB(const __FlashStringHelper* suffix) __attribute__((noinline));
+static void showFlashBankCount_GB(const __FlashStringHelper* suffix) {
+  print_Msg(FS(SharedFlashText::textBanks));
+  print_Msg(romBanks);
+  println_Msg(suffix);
+  display_Update();
+}
+
 void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
   // Launch filebrowser
   browseRootFileAndClear();
@@ -1960,58 +1967,31 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
 
     if (flashid == 0x04D4) {
       println_Msg(F("MBM29F033C"));
-      print_Msg(FS(SharedFlashText::textBanks));
-      print_Msg(romBanks);
-      println_Msg(F("/256"));
-      display_Update();
+      showFlashBankCount_GB(F("/256"));
     } else if (flashid == 0x0141) {
       println_Msg(F("AM29F032B"));
-      print_Msg(FS(SharedFlashText::textBanks));
-      print_Msg(romBanks);
-      println_Msg(F("/256"));
-      display_Update();
+      showFlashBankCount_GB(F("/256"));
     } else if (flashid == 0x01AD) {
       println_Msg(F("AM29F016B"));
-      print_Msg(FS(SharedFlashText::textBanks));
-      print_Msg(romBanks);
-      println_Msg(F("/128"));
-      display_Update();
+      showFlashBankCount_GB(F("/128"));
     } else if (flashid == 0x04AD) {
       println_Msg(F("AM29F016D"));
-      print_Msg(FS(SharedFlashText::textBanks));
-      print_Msg(romBanks);
-      println_Msg(F("/128"));
-      display_Update();
+      showFlashBankCount_GB(F("/128"));
     } else if (flashid == 0x01D5) {
       println_Msg(F("AM29F080B"));
-      print_Msg(FS(SharedFlashText::textBanks));
-      print_Msg(romBanks);
-      println_Msg(F("/64"));
-      display_Update();
+      showFlashBankCount_GB(F("/64"));
     } else if (flashid == 0xBFB7) {
       println_Msg(F("SST 39SF040"));
-      print_Msg(FS(SharedFlashText::textBanks));
-      print_Msg(romBanks);
-      println_Msg(F("/32"));
-      display_Update();
+      showFlashBankCount_GB(F("/32"));
     } else if (flashid == 0xBFB6) {
       println_Msg(F("SST 39SF020"));
-      print_Msg(FS(SharedFlashText::textBanks));
-      print_Msg(romBanks);
-      println_Msg(F("/16"));
-      display_Update();
+      showFlashBankCount_GB(F("/16"));
     } else if (flashid == 0xBFB5) {
       println_Msg(FS(SharedFlashText::textSST39SF010));
-      print_Msg(FS(SharedFlashText::textBanks));
-      print_Msg(romBanks);
-      println_Msg(F("/8"));
-      display_Update();
+      showFlashBankCount_GB(F("/8"));
     } else if ((flashid == 0x01D2) || (flashid == 0x01D8)) {
       println_Msg(F("Micron M29F160FB/T"));
-      print_Msg(FS(SharedFlashText::textBanks));
-      print_Msg(romBanks);
-      println_Msg(F("/128"));
-      display_Update();
+      showFlashBankCount_GB(F("/128"));
     } else {
       print_Msg(FS(SharedFlashText::textFlashID));
       formatFlashId();
@@ -2978,8 +2958,7 @@ void writePelican_GB() {
     delay(100);
   }
 
-  display_Clear();
-  showVerifyingAndUpdate();
+  clearAndShowVerifying();
 
   // Go back to file beginning
   rewindCurrentFile();
@@ -3037,8 +3016,7 @@ void readMegaMem_GB() {
   // Dump the Rom
   createFolder("GB", "ROM", "MegaMem", "GB");
 
-  display_Clear();
-  showSavingFolderLine();
+  clearAndShowSavingFolder();
   println_Msg(F("Rom.GB"));
   display_Update();
 
@@ -3065,8 +3043,7 @@ void readMegaMem_GB() {
   strcpy(fileName, "SaveData");
   strcat(fileName, ".bin");
 
-  display_Clear();
-  showSavingFolderLine();
+  clearAndShowSavingFolder();
   println_Msg(F("SaveData.bin"));
   display_Update();
 
@@ -3256,8 +3233,7 @@ void writeMegaMem_GB() {
     delay(100);
   }
 
-  display_Clear();
-  showVerifyingAndUpdate();
+  clearAndShowVerifying();
 
   // Go back to file beginning
   rewindCurrentFile();
@@ -3489,8 +3465,7 @@ void writeGameshark_GB() {
     }
   }
 
-  display_Clear();
-  showVerifyingAndUpdate();
+  clearAndShowVerifying();
 
   // Go back to file beginning
   rewindCurrentFile();

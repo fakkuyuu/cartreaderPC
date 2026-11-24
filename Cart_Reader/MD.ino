@@ -1387,6 +1387,20 @@ static inline __attribute__((always_inline)) uint16_t readMdSdBlock_MD(uint32_t 
   return checksum;
 }
 
+static void showChecksumMismatch_MD(uint16_t checksum, bool newline) __attribute__((noinline));
+static void showChecksumMismatch_MD(uint16_t checksum, bool newline) {
+  if (newline) {
+    println_Msg(FS(SharedFlashText::textError));
+  } else {
+    print_Msg(FS(SharedFlashText::textError));
+  }
+  char calcsumStr[5];
+  formatFixedHex(calcsumStr, checksum, 4);
+  println_Msg(calcsumStr);
+  print_Error(FS(FSTRING_EMPTY));
+  display_Update();
+}
+
 void readROM_MD() {
   // Checksum
   uint16_t calcCKS = 0;
@@ -1742,12 +1756,7 @@ void readROM_MD() {
   if (chksum == calcCKS) {
     showOkAndUpdate();
   } else {
-    println_Msg(FS(SharedFlashText::textError));
-    char calcsumStr[5];
-    formatFixedHex(calcsumStr, calcCKS, 4);
-    println_Msg(calcsumStr);
-    print_Error(FS(FSTRING_EMPTY));
-    display_Update();
+    showChecksumMismatch_MD(calcCKS, true);
   }
 
   // More checksums
@@ -1756,12 +1765,7 @@ void readROM_MD() {
     if (chksumLockon == calcCKSLockon) {
       showOkAndUpdate();
     } else {
-      print_Msg(FS(SharedFlashText::textError));
-      char calcsumStr[5];
-      formatFixedHex(calcsumStr, calcCKSLockon, 4);
-      println_Msg(calcsumStr);
-      print_Error(FS(FSTRING_EMPTY));
-      display_Update();
+      showChecksumMismatch_MD(calcCKSLockon, false);
     }
   }
   if (SnKmode == 3) {
@@ -1769,12 +1773,7 @@ void readROM_MD() {
     if (chksumSonic2 == calcCKSSonic2) {
       showOkAndUpdate();
     } else {
-      print_Msg(FS(SharedFlashText::textError));
-      char calcsumStr[5];
-      formatFixedHex(calcsumStr, calcCKSSonic2, 4);
-      println_Msg(calcsumStr);
-      print_Error(FS(FSTRING_EMPTY));
-      display_Update();
+      showChecksumMismatch_MD(calcCKSSonic2, false);
     }
   }
 }
@@ -1814,8 +1813,7 @@ void writeSram_MD() {
   dataOut_MD();
 
   // Create filepath
-  appendSelectedFilePath();
-  showWritingProgressFilePath();
+  appendPathAndShowWritingProgress();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -2837,8 +2835,7 @@ void writeEEP_MD() {
   dataOut_MD();
 
   // Create filepath
-  appendSelectedFilePath();
-  showWritingProgressFilePath();
+  appendPathAndShowWritingProgress();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -2910,8 +2907,7 @@ void writeBram_MD() {
   dataOut_MD();
 
   // Create filepath
-  appendSelectedFilePath();
-  showWritingProgressFilePath();
+  appendPathAndShowWritingProgress();
 
   // Open file on sd card
   if (openSelectedFileForRead()) {

@@ -272,8 +272,7 @@ void repro369in1Menu() {
   println_Msg(F("This will overwrite SRAM"));
   printBlankLine();
   println_Msg(F("(Ignore if no battery)"));
-  printBlankLine();
-  promptAndWaitForButton();
+  blankLineAndWaitForButton();
 
   // create menu with title and 5 options to choose from
   unsigned char menu369;

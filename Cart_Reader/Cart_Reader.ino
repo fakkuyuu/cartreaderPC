@@ -64,6 +64,13 @@
 #include "BootDumpCursor.h"
 
 void pcVerificationResult(uint8_t code);
+void appendPathAndShowWritingProgress() __attribute__((noinline));
+void resetStorageAndAppendPath() __attribute__((noinline));
+void blankLineAndWaitForButton() __attribute__((noinline));
+void clearAndShowSavingFolder() __attribute__((noinline));
+void clearAndShowVerifying() __attribute__((noinline));
+void closeAndGreenLed() __attribute__((noinline));
+void showVerificationBytesTail() __attribute__((noinline));
 void formatFixedHex(char* dest, uint32_t value, uint8_t digits) __attribute__((noinline));
 void browseRootFileWithPathAndClear(const __FlashStringHelper* label) __attribute__((noinline));
 void appendSelectedFilePath() __attribute__((noinline));
@@ -1957,8 +1964,7 @@ void selfTest() {
   printBlankLine();
 #endif
   printBlankLine();
-  printBlankLine();
-  promptAndWaitForButton();
+  blankLineAndWaitForButton();
   display_Clear();
 
   // Test if pin 7 is held high by 1K resistor
@@ -3251,6 +3257,41 @@ void printBlankLine() {
 
 
 /* Compact shared UI/storage sequences. Keep operation order unchanged. */
+void __attribute__((noinline)) appendPathAndShowWritingProgress() {
+  appendSelectedFilePath();
+  showWritingProgressFilePath();
+}
+
+void __attribute__((noinline)) resetStorageAndAppendPath() {
+  resetStorageDirectory();
+  appendSelectedFilePath();
+}
+
+void __attribute__((noinline)) blankLineAndWaitForButton() {
+  printBlankLine();
+  promptAndWaitForButton();
+}
+
+void __attribute__((noinline)) clearAndShowSavingFolder() {
+  display_Clear();
+  showSavingFolderLine();
+}
+
+void __attribute__((noinline)) clearAndShowVerifying() {
+  display_Clear();
+  showVerifyingAndUpdate();
+}
+
+void __attribute__((noinline)) closeAndGreenLed() {
+  closeCurrentFile();
+  rgbLed(green_color);
+}
+
+void __attribute__((noinline)) showVerificationBytesTail() {
+  print_Msg(F(" bytes "));
+  reportVerificationError();
+}
+
 /* Fixed-width uppercase hex for byte/word/CRC fields whose values fit their width. */
 void __attribute__((noinline)) formatFixedHex(char* dest, uint32_t value, uint8_t digits) {
   dest += digits;
@@ -3518,8 +3559,7 @@ void __attribute__((noinline)) showBlankCheckAndUpdate() {
 }
 
 void __attribute__((noinline)) promptAndResetArduino() {
-  printBlankLine();
-  promptAndWaitForButton();
+  blankLineAndWaitForButton();
   resetArduino();
 }
 

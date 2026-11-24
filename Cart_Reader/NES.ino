@@ -4716,8 +4716,7 @@ void writeRAM() {
     word base = 0x6000;
     uint16_t banks;
 
-    resetStorageDirectory();
-    appendSelectedFilePath();
+    resetStorageAndAppendPath();
 
     display_Clear();
     println_Msg(FS(SharedFlashText::textWritingFile));
@@ -4888,8 +4887,7 @@ void writeRAM() {
             write_reg_byte(0xE000, 0);  // PRG RAM DISABLE [WRITE RAM SAFE]
           break;
       }
-      closeCurrentFile();
-      rgbLed(green_color);
+      closeAndGreenLed();
 
       printBlankLine();
       println_Msg(FS(SharedFlashText::textRAMFILEWRITTEN));
@@ -5154,8 +5152,7 @@ void writeFLASH() {
     fileBrowser(FS(SharedFlashText::textSelectFLASHFile));
     word base = 0x8000;
 
-    resetStorageDirectory();
-    appendSelectedFilePath();
+    resetStorageAndAppendPath();
 
     rgbLed(red_color);
     display_Clear();
@@ -5206,8 +5203,7 @@ void writeFLASH() {
           PcConsole.println(FS(FSTRING_EMPTY));
 #endif
       }
-      closeCurrentFile();
-      rgbLed(green_color);
+      closeAndGreenLed();
 
       printBlankLine();
       println_Msg(FS(SharedFlashText::textFLASHFILEWRITTEN));
@@ -5334,6 +5330,13 @@ void A29040B_CHR_ChipErase() {
   }
 }
 #define A29040B_TITLE "FLASH A29040B MAPPER 0"
+
+static void showA29040Title_NES() __attribute__((noinline));
+static void showA29040Title_NES() {
+  println_Msg(F(A29040B_TITLE));
+  printBlankLine();
+}
+
 void A29040B_writeFLASH() {
 
   display_Clear();
@@ -5345,21 +5348,18 @@ void A29040B_writeFLASH() {
 
   if (!flashfound) {
     rgbLed(red_color);
-    println_Msg(F(A29040B_TITLE));
-    printBlankLine();
+    showA29040Title_NES();
     showFlashIdAndBlank();
     println_Msg(F("FLASH NOT FOUND"));
     updateDisplayAndWait();
   } else {
-    println_Msg(F(A29040B_TITLE));
-    printBlankLine();
+    showA29040Title_NES();
     showFlashIdAndBlank();
     println_Msg(F("Flash Found"));
     blankLineAndUpdate();
     delay(3000);
     fileBrowser(FS(SharedFlashText::textSelectFLASHFile));
-    resetStorageDirectory();
-    appendSelectedFilePath();
+    resetStorageAndAppendPath();
 
     if (openSelectedFileForRead()) {
       // Step 1: Read the header and extract PRG and CHR sizes
@@ -5372,8 +5372,7 @@ void A29040B_writeFLASH() {
 
       // Output the sizes for verification
       display_Clear();
-      println_Msg(F(A29040B_TITLE));
-      printBlankLine();
+      showA29040Title_NES();
       println_Msg(F("PRG Size:"));
       sprintf(data_str, "%lu", prgSize);
       println_Msg(data_str);
@@ -5387,8 +5386,7 @@ void A29040B_writeFLASH() {
       // Step 2: Erase the entire PRG space
       rgbLed(red_color);
       display_Clear();
-      println_Msg(F(A29040B_TITLE));
-      printBlankLine();
+      showA29040Title_NES();
       A29040B_PRG_ResetFlash();
       println_Msg(F("ERASING PRG..."));
       display_Update();
@@ -5450,8 +5448,7 @@ void A29040B_writeFLASH() {
       // Step 4: Erase and Write CHR data
       A29040B_CHR_ResetFlash();
       display_Clear();
-      println_Msg(F(A29040B_TITLE));
-      printBlankLine();
+      showA29040Title_NES();
       println_Msg(F("ERASING CHR..."));
       display_Update();
       A29040B_CHR_ChipErase();
@@ -5495,11 +5492,9 @@ void A29040B_writeFLASH() {
         bytesProcessed += bytesRead;
       }
       delay(3000);
-      closeCurrentFile();
-      rgbLed(green_color);
+      closeAndGreenLed();
       display_Clear();
-      println_Msg(F(A29040B_TITLE));
-      printBlankLine();
+      showA29040Title_NES();
       println_Msg(FS(SharedFlashText::textFLASHFILEWRITTEN));
       display_Update();
     } else {
