@@ -3012,18 +3012,9 @@ void readPRG(bool readrom) {
         break;
 
       case 162:
-        banks = prgBanks16K / 2;
-        write_prg_byte(0x5300, 0x07);  // A16-A15 controlled by $5000
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x5200, (i & 0x30) >> 4);  // A20-A19
-          write_prg_byte(0x5000, i & 0x0F);         // A18-A15
-          dumpPRG32KiB(base);
-        }
-        break;
-
       case 163:
         banks = prgBanks16K / 2;
-        write_prg_byte(0x5300, 0x04);  // disable bit swap on writes to $5000-$5200
+        write_prg_byte(0x5300, mapper == 162 ? 0x07 : 0x04);
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5200, (i & 0x30) >> 4);  // A20-A19
           write_prg_byte(0x5000, i & 0x0F);         // A18-A15
