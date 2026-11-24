@@ -137,6 +137,18 @@ void setup_GBPort() {
 }
 
 // Start menu for both GB and GBA
+static void setupGbAccessoryMenu() __attribute__((noinline));
+static void setupGbAccessoryMenu() {
+  setup_GBPort();
+
+  delay(400);
+
+  // RST(PH0) to H
+  PORTH |= (1 << 0);
+  mode = CORE_GB;
+  clearAndUpdateDisplay();
+}
+
 void gbxMenu() {
   // create menu with title and 5 options to choose from
   unsigned char gbType;
@@ -421,14 +433,7 @@ void gbxMenu() {
 
     case 4:
       // Read or Write a Pelican Codebreaker or MonsterBrain
-      setup_GBPort();
-
-      delay(400);
-
-      // RST(PH0) to H
-      PORTH |= (1 << 0);
-      mode = CORE_GB;
-      clearAndUpdateDisplay();
+      setupGbAccessoryMenu();
       unsigned char gbPelican;
       // Copy menuOptions out of progmem
       gbPelican = chooseFlashMenuOption(FS(SharedFlashText::textSelectOperation), menuOptionsGBPelican, 2);
@@ -449,14 +454,7 @@ void gbxMenu() {
 
     case 5:
       // Read or Write a Datel Device (Mega Memory Card and Gameshark)
-      setup_GBPort();
-
-      delay(400);
-
-      // RST(PH0) to H
-      PORTH |= (1 << 0);
-      mode = CORE_GB;
-      clearAndUpdateDisplay();
+      setupGbAccessoryMenu();
       unsigned char gbDatel;
       // Copy menuOptions out of progmem
       gbDatel = chooseFlashMenuOption(FS(SharedFlashText::textSelectOperation), menuOptionsGBDatel, 4);
@@ -1332,21 +1330,26 @@ void disableFlashSaveMemory() {
 }
 
 // Read RAM
+static void openGbSaveOutput() __attribute__((noinline));
+static void openGbSaveOutput() {
+  createFolder("GB", "SAVE", romName, "sav");
+
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  //open file on sd card
+  if (!openNamedOutputFile()) {
+    fatalSdError();
+  }
+}
+
 void readSRAM_GB() {
   // Does cartridge have RAM
   if (lastByte > 0) {
 
     // Get name, add extension and convert to char array for sd lib
-    createFolder("GB", "SAVE", romName, "sav");
-
-    // write new folder number back to eeprom
-    foldern = foldern + 1;
-    EEPROM_writeAnything(0, foldern);
-
-    //open file on sd card
-    if (!openNamedOutputFile()) {
-      fatalSdError();
-    }
+    openGbSaveOutput();
 
     // MBC2 Fix
     readByte_GB(0x0134);
@@ -1682,16 +1685,7 @@ static void enableMbc7Eeprom_GB() {
 void readEEPROM_MBC7_GB() {
 
   // Get name, add extension and convert to char array for sd lib
-  createFolder("GB", "SAVE", romName, "sav");
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  //open file on sd card
-  if (!openNamedOutputFile()) {
-    fatalSdError();
-  }
+  openGbSaveOutput();
 
   clearAndShowSavingFolder();
   display_Update();
