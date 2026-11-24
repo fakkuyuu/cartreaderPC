@@ -730,18 +730,7 @@ static void calculateMemorySizes_NES() {
 void printDataLine_NES(void* entry) {
   struct database_entry* castEntry = (struct database_entry*)entry;
   uint8_t iNES[16];
-  uint8_t* output;
-  char* input;
-
-  input = castEntry->iNES_str;
-  output = iNES;
-  for (uint8_t i = 0; i < sizeof(iNES); i++) {
-    unsigned int buf;
-
-    sscanf(input, "%2X", &buf);
-    *(output++) = buf;
-    input += 2;
-  }
+  decodeNesHeader(castEntry->iNES_str, iNES);
 
   mapper = (iNES[6] >> 4) | (iNES[7] & 0xF0) | ((iNES[8] & 0x0F) << 8);
 
@@ -912,11 +901,7 @@ void readDataLine_NES(FsFile& database, void* e) {
   entry->iNES_str = &entry->crc_str[8 + 1 + 8 + 1];
 
   // Convert "4E4553" to (0x4E, 0x45, 0x53)
-  unsigned int iNES_BUF;
-  for (uint8_t j = 0; j < 16; j++) {
-    sscanf(entry->iNES_str + j * 2, "%2X", &iNES_BUF);
-    iNES_HEADER[j] = iNES_BUF;
-  }
+  decodeNesHeader(entry->iNES_str, iNES_HEADER);
 
   entry->crc = strtoul(entry->crc_str, NULL, 16);
   entry->crc512 = strtoul(entry->crc512_str, NULL, 16);
