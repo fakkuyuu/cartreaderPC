@@ -1854,6 +1854,35 @@ void sendMBC7EEPROM_Inst_GB(uint8_t op, uint8_t addr, uint16_t data) {
   }
 }
 
+// Shared flash blank-check traversal; bank selection remains with the caller.
+static void blankCheckRange_GB(word start, word end) __attribute__((noinline));
+static void blankCheckRange_GB(word start, word end) {
+  for (word currAddr = start; currAddr < end; currAddr += 512) {
+    for (int currByte = 0; currByte < 512; currByte++) {
+      sdBuffer[currByte] = readByte_GB(currAddr + currByte);
+    }
+    for (int j = 0; j < 512; j++) {
+      if (sdBuffer[j] != 0xFF) {
+        showEraseFailed();
+      }
+    }
+  }
+}
+
+// Keep the original file reads, cartridge reads and mismatch counter.
+static void verifyFlashRange_GB(word& romAddress, word end) __attribute__((noinline));
+static void verifyFlashRange_GB(word& romAddress, word end) {
+  while (romAddress < end) {
+    readSdBufferBlock();
+    for (int i = 0; i < 512; i++) {
+      if (readByte_GB(romAddress + i) != sdBuffer[i]) {
+        writeErrors++;
+      }
+    }
+    romAddress += 512;
+  }
+}
+
 #if defined(ENABLE_FLASH)
 /******************************************
   29F016/29F032/29F033/39SF040 flashrom functions
@@ -1901,41 +1930,12 @@ void busyCheck_GB(unsigned long address, byte data) {
 // Write AMD type flashrom
 // A0-A13 directly connected to cart edge -> 16384(0x0-0x3FFF) bytes per bank -> 256(0x0-0xFF) banks
 // A14-A21 connected to MBC5
-// Shared flash blank-check traversal; bank selection remains with the caller.
-static void blankCheckRange_GB(word start, word end) __attribute__((noinline));
-static void blankCheckRange_GB(word start, word end) {
-  for (word currAddr = start; currAddr < end; currAddr += 512) {
-    for (int currByte = 0; currByte < 512; currByte++) {
-      sdBuffer[currByte] = readByte_GB(currAddr + currByte);
-    }
-    for (int j = 0; j < 512; j++) {
-      if (sdBuffer[j] != 0xFF) {
-        showEraseFailed();
-      }
-    }
-  }
-}
-
 static void showFlashBankCount_GB(const __FlashStringHelper* suffix) __attribute__((noinline));
 static void showFlashBankCount_GB(const __FlashStringHelper* suffix) {
   print_Msg(FS(SharedFlashText::textBanks));
   print_Msg(romBanks);
   println_Msg(suffix);
   display_Update();
-}
-
-// Keep the original file reads, cartridge reads and mismatch counter.
-static void verifyFlashRange_GB(word& romAddress, word end) __attribute__((noinline));
-static void verifyFlashRange_GB(word& romAddress, word end) {
-  while (romAddress < end) {
-    readSdBufferBlock();
-    for (int i = 0; i < 512; i++) {
-      if (readByte_GB(romAddress + i) != sdBuffer[i]) {
-        writeErrors++;
-      }
-    }
-    romAddress += 512;
-  }
 }
 
 void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
