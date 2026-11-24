@@ -43,8 +43,8 @@ static void standaloneRelease() {
   while(standaloneRightDown()) { delay(5); }
   delay(25);
 #ifdef ENABLE_BUTTON2
-  buttonVal2 = buttonLast2 = HIGH;
-  DCwaiting2=DConUp2=false; ignoreUp2=true;
+  oledButton2.buttonVal = oledButton2.buttonLast = HIGH;
+  oledButton2.DCwaiting = oledButton2.DConUp = false; oledButton2.ignoreUp = true;
 #endif
 #ifdef ENABLE_ROTARY
   buttonState=lastButtonState=HIGH;
