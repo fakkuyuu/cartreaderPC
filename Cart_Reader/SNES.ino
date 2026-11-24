@@ -2047,7 +2047,7 @@ void writeSRAM(boolean browseFile) {
   if (browseFile) {
     browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectSrmFile));
   } else
-    strcpy(filePath, fileName);
+    sprintf(filePath, "%s", fileName);
 
   //open file on sd card
   if (openSelectedFileForRead()) {
