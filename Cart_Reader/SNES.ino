@@ -1960,6 +1960,47 @@ static void setSpc7110SramAccess_SNES(byte value) {
   dataIn();
 }
 
+// Shared SRAM mapping. Write callers already have the data bus set to output.
+// SA1 writes use their separate BW-RAM bank setup.
+static void visitSramMapping_SNES(void (*visit)(byte, long, long, byte), byte value, bool writing) __attribute__((noinline));
+static void visitSramMapping_SNES(void (*visit)(byte, long, long, byte), byte value, bool writing) {
+  if (romType == LO) {
+    // Sram size
+    long lastByte = (long(sramSize) * 128);
+    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
+      visitSramBanks_SNES(0x70, 0x0000, 0x10000L, lastByte, visit, value);
+    } else visitSramBanks_SNES(0x70, 0x0000, 0x8000L, lastByte, visit, value);
+  } else if (romType == HI) {
+    if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
+      // Configure SPC7110 SRAM Register
+      if (writing) writeBank_SNES(0, 0x4830, 0x80);
+      else setSpc7110SramAccess_SNES(0x80);
+      // Sram size
+      long lastByte = (long(sramSize) * 128) + 0x6000;
+      visit(0x30, 0x6000, lastByte, value);
+      setSpc7110SramAccess_SNES(0);
+    } else {
+      // Dumping SRAM on HiRom needs CS(PH3) to be high
+      PORTH |= (1 << 3);
+      // Sram size
+      long lastByte = (long(sramSize) * 128);
+      visitSramBanks_SNES(0x30, 0x6000, 0x2000L, lastByte, visit, value);
+    }
+  } else if (romType == EX) {
+    // Dumping SRAM on HiRom needs CS(PH3) to be high
+    PORTH |= (1 << 3);
+    // Sram size
+    long lastByte = (long(sramSize) * 128);
+    visitSramBanks_SNES(0xB0, 0x6000, 0x2000L, lastByte, visit, value);
+  } else if (romType == SA && !writing) {
+    // Dumping SRAM on HiRom needs CS(PH3) to be high
+    PORTH |= (1 << 3);
+    // Sram size
+    long lastByte = (long(sramSize) * 128);
+    visitSramBanks_SNES(0x40, 0, 0x10000L, lastByte, visit, value);
+  }
+}
+
 void writeSRAM(boolean browseFile) {
   if (browseFile) {
     browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectSrmFile));
@@ -1976,44 +2017,9 @@ void writeSRAM(boolean browseFile) {
     controlOut_SNES();
 
     // LoRom
-    if (romType == LO) {
-      // Sram size
-      long lastByte = (long(sramSize) * 128);
-
-      if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
-        visitSramBanks_SNES(0x70, 0x0000, 0x10000L, lastByte, writeSramFileRange_SNES, 0);
-      } else visitSramBanks_SNES(0x70, 0x0000, 0x8000L, lastByte, writeSramFileRange_SNES, 0);
-    }
-    // HiRom
-    else if (romType == HI) {
-      if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
-        // Configure SPC7110 SRAM Register
-        // Set 0x4830 to 0x80
-        writeBank_SNES(0, 0x4830, 0x80);
-        // Sram size
-        long lastByte = (long(sramSize) * 128) + 0x6000;
-        // Write to sram bank
-        writeSramFileRange_SNES(0x30, 0x6000, lastByte, 0);
-        // Reset SPC7110 SRAM Register
-        setSpc7110SramAccess_SNES(0);
-      } else {
-        // Writing SRAM on HiRom needs CS(PH3) to be high
-        PORTH |= (1 << 3);
-        // Sram size
-        long lastByte = (long(sramSize) * 128);
-        visitSramBanks_SNES(0x30, 0x6000, 0x2000L, lastByte, writeSramFileRange_SNES, 0);
-      }
-    }
-    // ExHiRom
-    else if (romType == EX) {
-      // Writing SRAM on HiRom needs CS(PH3) to be high
-      PORTH |= (1 << 3);
-      // Sram size
-      long lastByte = (long(sramSize) * 128);
-      visitSramBanks_SNES(0xB0, 0x6000, 0x2000L, lastByte, writeSramFileRange_SNES, 0);
-    }
+    visitSramMapping_SNES(writeSramFileRange_SNES, 0, true);
     // SA1
-    else if (romType == SA) {
+    if (romType == SA) {
       long lastByte = (long(sramSize) * 128);
       if (i2c_found) {
         // Enable CPU Clock
@@ -2077,45 +2083,6 @@ void writeSRAM(boolean browseFile) {
   }
 }
 
-// Shared read-side mapping for dump, file verification and fill verification.
-static void visitReadSramMapping_SNES(void (*visit)(byte, long, long, byte), byte value) __attribute__((noinline));
-static void visitReadSramMapping_SNES(void (*visit)(byte, long, long, byte), byte value) {
-  if (romType == LO) {
-    // Sram size
-    long lastByte = (long(sramSize) * 128);
-    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
-      visitSramBanks_SNES(0x70, 0x0000, 0x10000L, lastByte, visit, value);
-    } else visitSramBanks_SNES(0x70, 0x0000, 0x8000L, lastByte, visit, value);
-  } else if (romType == HI) {
-    if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
-      // Configure SPC7110 SRAM Register
-      setSpc7110SramAccess_SNES(0x80);
-      // Sram size
-      long lastByte = (long(sramSize) * 128) + 0x6000;
-      visit(0x30, 0x6000, lastByte, value);
-      setSpc7110SramAccess_SNES(0);
-    } else {
-      // Dumping SRAM on HiRom needs CS(PH3) to be high
-      PORTH |= (1 << 3);
-      // Sram size
-      long lastByte = (long(sramSize) * 128);
-      visitSramBanks_SNES(0x30, 0x6000, 0x2000L, lastByte, visit, value);
-    }
-  } else if (romType == EX) {
-    // Dumping SRAM on HiRom needs CS(PH3) to be high
-    PORTH |= (1 << 3);
-    // Sram size
-    long lastByte = (long(sramSize) * 128);
-    visitSramBanks_SNES(0xB0, 0x6000, 0x2000L, lastByte, visit, value);
-  } else if (romType == SA) {
-    // Dumping SRAM on HiRom needs CS(PH3) to be high
-    PORTH |= (1 << 3);
-    // Sram size
-    long lastByte = (long(sramSize) * 128);
-    visitSramBanks_SNES(0x40, 0, 0x10000L, lastByte, visit, value);
-  }
-}
-
 void readSRAM() {
   const uint32_t startedAt = PcLink::hostTime();
   // set control
@@ -2128,7 +2095,7 @@ void readSRAM() {
   if (!openNamedOutputFile()) {
     fatalSdError();
   }
-  visitReadSramMapping_SNES(readSramFileRange_SNES, 0);
+  visitSramMapping_SNES(readSramFileRange_SNES, 0, false);
 
   // Close the file:
   closeCurrentFile();
@@ -2173,7 +2140,7 @@ unsigned long verifySRAM() {
     // Set control
     controlIn_SNES();
 
-    visitReadSramMapping_SNES(verifySramFileRange_SNES, 0);
+    visitSramMapping_SNES(verifySramFileRange_SNES, 0, false);
     if (romType == SA) {
       // Reset SA1
       // Set pins to input
@@ -2215,42 +2182,9 @@ boolean eraseSRAM(byte b) {
   // Set control pins
   controlOut_SNES();
 
-  if (romType == LO) {
-    // Sram size
-    long lastByte = (long(sramSize) * 128);
-
-    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
-      visitSramBanks_SNES(0x70, 0x0000, 0x10000L, lastByte, fillSramRange_SNES, b);
-    } else visitSramBanks_SNES(0x70, 0x0000, 0x8000L, lastByte, fillSramRange_SNES, b);
-  } else if (romType == HI) {
-    if ((romChips == 245) || (romChips == 249)) {  // SPC7110 SRAM
-      // Configure SPC7110 SRAM Register
-      // Set 0x4830 to 0x80
-      writeBank_SNES(0, 0x4830, 0x80);
-      // Sram size
-      long lastByte = (long(sramSize) * 128) + 0x6000;
-      // Write to sram bank
-      fillSramRange_SNES(0x30, 0x6000, lastByte, b);
-      // Reset SPC7110 SRAM Register
-      setSpc7110SramAccess_SNES(0);
-    } else {
-      // Writing SRAM on HiRom needs CS(PH3) to be high
-      PORTH |= (1 << 3);
-      // Sram size
-      long lastByte = (long(sramSize) * 128);
-      visitSramBanks_SNES(0x30, 0x6000, 0x2000L, lastByte, fillSramRange_SNES, b);
-    }
-  }
-  // ExHiRom
-  else if (romType == EX) {
-    // Writing SRAM on HiRom needs CS(PH3) to be high
-    PORTH |= (1 << 3);
-    /// Sram size
-    long lastByte = (long(sramSize) * 128);
-    visitSramBanks_SNES(0xB0, 0x6000, 0x2000L, lastByte, fillSramRange_SNES, b);
-  }
+  visitSramMapping_SNES(fillSramRange_SNES, b, true);
   // SA1
-  else if (romType == SA) {
+  if (romType == SA) {
     long lastByte = (long(sramSize) * 128);
     if (i2c_found) {
       // Enable CPU Clock
@@ -2307,7 +2241,7 @@ boolean eraseSRAM(byte b) {
   // Set control
   controlIn_SNES();
 
-  visitReadSramMapping_SNES(verifySramFillRange_SNES, b);
+  visitSramMapping_SNES(verifySramFillRange_SNES, b, false);
   if (writeErrors == 0) {
     printOkLine();
     return 1;
