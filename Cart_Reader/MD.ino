@@ -2431,49 +2431,41 @@ void EepromStart() {
   }
 }
 
-void EepromSet0() {
-  if (eepType == 2) {               // Acclaim Type 2
-    writeWord_SDA(0x100000, 0x00);  // sda low
-    writeWord_SCL(0x100000, 0x01);  // scl high
-    writeWord_SDA(0x100000, 0x00);  // sda low
-    writeWord_SCL(0x100000, 0x00);  // scl low
-  } else if (eepType == 4) {        // EA
-    writeWord_MD(0x100000, 0x00);   // sda low, scl low
-    writeWord_MD(0x100000, 0x40);   // sda low, scl high // 0
-    writeWord_MD(0x100000, 0x00);   // sda low, scl low
-  } else if (eepType == 5) {        // Codemasters
-    writeWord_CM(0x180000, 0x00);   // sda low, scl low
-    writeWord_CM(0x180000, 0x02);   // sda low, scl high // 0
-    writeWord_CM(0x180000, 0x00);   // sda low, scl low
+static void setEepromBit_MD(byte bitValue) __attribute__((noinline));
+static void setEepromBit_MD(byte bitValue) {
+  if (eepType == 2) {
+    writeWord_SDA(0x100000, bitValue);
+    writeWord_SCL(0x100000, 0x01);
+    writeWord_SDA(0x100000, bitValue);
+    writeWord_SCL(0x100000, 0x00);
+  } else if (eepType == 4) {
+    byte value = bitValue ? 0x80 : 0x00;
+    writeWord_MD(0x100000, value);
+    writeWord_MD(0x100000, value | 0x40);
+    writeWord_MD(0x100000, value);
+    if (bitValue)
+      writeWord_MD(0x100000, 0x00);
+  } else if (eepType == 5) {
+    writeWord_CM(0x180000, bitValue);
+    writeWord_CM(0x180000, bitValue | 0x02);
+    writeWord_CM(0x180000, bitValue);
+    if (bitValue)
+      writeWord_CM(0x180000, 0x00);
   } else {
-    writeWord_MD(0x100000, 0x00);  // sda low, scl low
-    writeWord_MD(0x100000, 0x02);  // sda low, scl high // 0
-    writeWord_MD(0x100000, 0x00);  // sda low, scl low
+    writeWord_MD(0x100000, bitValue);
+    writeWord_MD(0x100000, bitValue | 0x02);
+    writeWord_MD(0x100000, bitValue);
+    if (bitValue)
+      writeWord_MD(0x100000, 0x00);
   }
 }
 
+void EepromSet0() {
+  setEepromBit_MD(0);
+}
+
 void EepromSet1() {
-  if (eepType == 2) {               // Acclaim Type 2
-    writeWord_SDA(0x100000, 0x01);  // sda high
-    writeWord_SCL(0x100000, 0x01);  // scl high
-    writeWord_SDA(0x100000, 0x01);  // sda high
-    writeWord_SCL(0x100000, 0x00);  // scl low
-  } else if (eepType == 4) {        // EA
-    writeWord_MD(0x100000, 0x80);   // sda high, scl low
-    writeWord_MD(0x100000, 0xC0);   // sda high, scl high // 1
-    writeWord_MD(0x100000, 0x80);   // sda high, scl low
-    writeWord_MD(0x100000, 0x00);   // sda low, scl low
-  } else if (eepType == 5) {        // Codemasters
-    writeWord_CM(0x180000, 0x01);   // sda high, scl low
-    writeWord_CM(0x180000, 0x03);   // sda high, scl high // 1
-    writeWord_CM(0x180000, 0x01);   // sda high, scl low
-    writeWord_CM(0x180000, 0x00);   // sda low, scl low
-  } else {
-    writeWord_MD(0x100000, 0x01);  // sda high, scl low
-    writeWord_MD(0x100000, 0x03);  // sda high, scl high // 1
-    writeWord_MD(0x100000, 0x01);  // sda high, scl low
-    writeWord_MD(0x100000, 0x00);  // sda low, scl low
-  }
+  setEepromBit_MD(1);
 }
 
 void EepromDevice() {  // 24C02+
