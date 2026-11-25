@@ -2770,6 +2770,12 @@ void readEEP_MD() {
   display_Update();
 }
 
+static void finishMdSaveP16() __attribute__((noinline));
+static void finishMdSaveP16() {
+  closeBlankAndClear();
+  showDoneAndUpdate();
+}
+
 void writeEEP_MD() {
   dataOut_MD();
 
@@ -2799,8 +2805,7 @@ void writeEEP_MD() {
       }
     }
     // Close the file:
-    closeBlankAndClear();
-    showDoneAndUpdate();
+    finishMdSaveP16();
   } else {
     fatalSdError();
   }
@@ -2852,8 +2857,7 @@ void writeBram_MD() {
     }
     writeWord_MD(0x380000, 0);  // Disable BRAM Writes
     // Close the file:
-    closeBlankAndClear();
-    showDoneAndUpdate();
+    finishMdSaveP16();
   } else {
     fatalSdError();
   }
