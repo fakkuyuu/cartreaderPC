@@ -2301,6 +2301,7 @@ void writeEeprom_N64() {
   }
 }
 
+boolean readEepromPageList(byte * output, byte page_number, byte page_count) __attribute__((noinline));
 boolean readEepromPageList(byte * output, byte page_number, byte page_count) {
   byte command[] = { 0x04, page_number };
 
