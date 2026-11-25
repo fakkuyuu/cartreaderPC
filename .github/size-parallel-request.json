@@ -1,28 +1,25 @@
 {
-  "id": "parallel-008",
-  "base": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+  "id": "parallel-008-integration",
+  "base": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
   "expected_base_flash": 213504,
   "expected_base_ram": 6281,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "msx-koei-sram-banks",
-      "head": "92b1426e6e60881c46f4df772157e6c2953c39c4",
-      "path": "Cart_Reader/MSX.ino"
+      "id": "integration-msx",
+      "head": "06716c600635c3f2d972c059cf4f52c3211c1a81"
     },
     {
-      "id": "pce-sf2-bank-loop",
-      "head": "5257a7de2eb8c589820ca35f7583d03481278d9d",
-      "path": "Cart_Reader/PCE.ino"
+      "id": "integration-msx-pce",
+      "head": "78688bca6252478024cebbd515bb1121e865d0cc"
     },
     {
-      "id": "n64-accessory-verify",
-      "head": "2ded500081a01939046703ea9bdab6ebca510506",
-      "path": "Cart_Reader/N64.ino"
+      "id": "integration-msx-pce-n64",
+      "head": "62545e9f449539071c96d0a9345814f0959caac1"
     },
     {
-      "id": "snes-rom-bank-reader",
-      "head": "941f44883e9661b0f00effeb05583ee1cb0461b4",
-      "path": "Cart_Reader/SNES.ino"
+      "id": "integration-msx-pce-n64-snes",
+      "head": "785ee15fd5bea75122dd7a55e9abd6f7f21cfccf"
     }
   ]
 }
