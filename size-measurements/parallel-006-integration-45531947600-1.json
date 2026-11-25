@@ -1,0 +1,175 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45531947600",
+  "run_attempt": "1",
+  "workflow_commit": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
+  "request": {
+    "id": "parallel-006-integration",
+    "base": "38206b07045f42b327d3d6128b1b8b416709dd70",
+    "expected_base_flash": 213992,
+    "expected_base_ram": 6281,
+    "endpoints_only": true,
+    "candidates": [
+      {
+        "id": "integration-nes",
+        "head": "d910cb9465006cdee4788de80e11c7194812b3ec"
+      },
+      {
+        "id": "integration-nes-snes",
+        "head": "5afe534c2e984dff3931b3aa658cc38342d30cf0"
+      },
+      {
+        "id": "integration-nes-snes-md",
+        "head": "7677e65321634a6c0ea0d3261c6a763dc2bf8acf"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45531947600",
+      "run_attempt": "1",
+      "workflow_commit": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-nes",
+        "head": "d910cb9465006cdee4788de80e11c7194812b3ec",
+        "base": "38206b07045f42b327d3d6128b1b8b416709dd70",
+        "expected_base_flash": 213992,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "38206b07045f42b327d3d6128b1b8b416709dd70",
+          "subject": "Measure sixth batch of four independent firmware size candidates",
+          "status": "ok",
+          "flash": 213992,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "d910cb9465006cdee4788de80e11c7194812b3ec",
+          "subject": "Adopt nes-mmc5-bank-loop (isolated -52 B; 5afa840)",
+          "status": "ok",
+          "flash": 213940,
+          "ram": 6281,
+          "delta_previous": -52,
+          "delta_base": -52,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-nes",
+        "head": "d910cb9465006cdee4788de80e11c7194812b3ec"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45531947600",
+      "run_attempt": "1",
+      "workflow_commit": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-nes-snes",
+        "head": "5afe534c2e984dff3931b3aa658cc38342d30cf0",
+        "base": "38206b07045f42b327d3d6128b1b8b416709dd70",
+        "expected_base_flash": 213992,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "38206b07045f42b327d3d6128b1b8b416709dd70",
+          "subject": "Measure sixth batch of four independent firmware size candidates",
+          "status": "ok",
+          "flash": 213992,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "5afe534c2e984dff3931b3aa658cc38342d30cf0",
+          "subject": "Adopt snes-checksum-mirror (isolated -4 B; 5dee11a)",
+          "status": "ok",
+          "flash": 213936,
+          "ram": 6281,
+          "delta_previous": -56,
+          "delta_base": -56,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-nes-snes",
+        "head": "5afe534c2e984dff3931b3aa658cc38342d30cf0"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45531947600",
+      "run_attempt": "1",
+      "workflow_commit": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-nes-snes-md",
+        "head": "7677e65321634a6c0ea0d3261c6a763dc2bf8acf",
+        "base": "38206b07045f42b327d3d6128b1b8b416709dd70",
+        "expected_base_flash": 213992,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "38206b07045f42b327d3d6128b1b8b416709dd70",
+          "subject": "Measure sixth batch of four independent firmware size candidates",
+          "status": "ok",
+          "flash": 213992,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "7677e65321634a6c0ea0d3261c6a763dc2bf8acf",
+          "subject": "Adopt md-eeprom-finish-stop (isolated -200 B; 9727f55)",
+          "status": "ok",
+          "flash": 213732,
+          "ram": 6281,
+          "delta_previous": -260,
+          "delta_base": -260,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-nes-snes-md",
+        "head": "7677e65321634a6c0ea0d3261c6a763dc2bf8acf"
+      }
+    }
+  ]
+}
