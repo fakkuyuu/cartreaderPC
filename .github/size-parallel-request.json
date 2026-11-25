@@ -1,25 +1,40 @@
 {
-  "id": "parallel-016-integration",
-  "base": "8278ad8d78671e04fb910b907c6f79c73bde3fb2",
-  "expected_base_flash": 210400,
+  "id": "parallel-017",
+  "base": "fbf015c6663d21f3e4c20c3a2c3c387eb5b42ab7",
+  "expected_base_flash": 210234,
   "expected_base_ram": 6123,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-nes",
-      "head": "d5c529ccec9ec0ee07e77febb0208cc8b04a13a8"
+      "id": "gb-unknown-flash",
+      "head": "56575e9a88dbd1a2df622daa3997dcbe949dff7b"
     },
     {
-      "id": "integration-nes-gb",
-      "head": "2bb0a1a94c1b2e86d2b732fbff3e36f23b59ac9a"
+      "id": "gba-missing-file",
+      "head": "fa4f2a7dbb2c0500759161c7653f86729b726c6a"
     },
     {
-      "id": "integration-nes-gb-snes",
-      "head": "e28c8c8c3ad3c9c8cb335904239a2fa6f8ee998c"
+      "id": "md-save-path",
+      "head": "89cd48a8bcf4cf51cb6a280d3b9bb624549568ae"
     },
     {
-      "id": "integration-nes-gb-snes-n64",
-      "head": "8db2f50c4b79dd727968beb8856df2064af0436d"
+      "id": "n64-flash-id",
+      "head": "c54387d54f205525b5aa2a04ccafee84b851f67c"
+    },
+    {
+      "id": "nes-write-display",
+      "head": "2e5bc485e357c7cd9281107d658c2e88c1f6373c"
+    },
+    {
+      "id": "snes-checksum-display",
+      "head": "42481f56a4aa3353b1f7f3e418b9e4689284b865"
+    },
+    {
+      "id": "pce-menu-display",
+      "head": "4d53d6190e5a5ab6e39373525d4cb8797f984a27"
+    },
+    {
+      "id": "ws-verify-start",
+      "head": "d7b2ff0bc5f0fc6465d50c790eebe8c1688fe0e5"
     }
   ]
 }
