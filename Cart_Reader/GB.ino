@@ -2782,6 +2782,7 @@ void readPelican_GB() {
 /******************************************
   Pelican Gameboy Device Write Function
 *****************************************/
+void send28LF040Potection_GB(bool enable) __attribute__((noinline));
 void send28LF040Potection_GB(bool enable) {
   writeByteSRAM_GB(0xA000, 0x0);
   readByte_GB(0x3823);
