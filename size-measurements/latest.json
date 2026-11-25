@@ -1,34 +1,23 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45526634081",
+  "run_id": "45529709637",
   "run_attempt": "1",
-  "workflow_commit": "ea0a96b82974f670f7b6c34ad28329741c621f91",
+  "workflow_commit": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
   "request": {
-    "id": "parallel-005",
-    "base": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
+    "id": "parallel-005-integration",
+    "base": "ea0a96b82974f670f7b6c34ad28329741c621f91",
     "expected_base_flash": 214096,
     "expected_base_ram": 6281,
+    "endpoints_only": true,
     "candidates": [
       {
-        "id": "ws-verify-result",
-        "head": "a02515bd48199f703afe0cc963f0e3a75f305753",
-        "path": "Cart_Reader/WS.ino"
+        "id": "integration-nes",
+        "head": "08343c0e1b1b3174beff1cdb59c59ea974f6bd98"
       },
       {
-        "id": "nes-mapper72-92",
-        "head": "7ee8871e601151590f0279abd565e913f3ad574b",
-        "path": "Cart_Reader/NES.ino"
-      },
-      {
-        "id": "pce-crc-result",
-        "head": "40cc4ad71bfdca897e12291728bfcff7288cb51f",
-        "path": "Cart_Reader/PCE.ino"
-      },
-      {
-        "id": "md-sram-read-block",
-        "head": "3c6c4d70fb07a1d7815e594f3773d4bd6d411a66",
-        "path": "Cart_Reader/MD.ino"
+        "id": "integration-nes-md",
+        "head": "d9161f565318aff36eb8fa41484b2728235491ad"
       }
     ]
   },
@@ -36,27 +25,26 @@
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45526634081",
+      "run_id": "45529709637",
       "run_attempt": "1",
-      "workflow_commit": "ea0a96b82974f670f7b6c34ad28329741c621f91",
+      "workflow_commit": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "ws-verify-result",
-        "head": "a02515bd48199f703afe0cc963f0e3a75f305753",
-        "path": "Cart_Reader/WS.ino",
-        "base": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
+        "id": "integration-nes",
+        "head": "08343c0e1b1b3174beff1cdb59c59ea974f6bd98",
+        "base": "ea0a96b82974f670f7b6c34ad28329741c621f91",
         "expected_base_flash": 214096,
         "expected_base_ram": 6281,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
-          "subject": "Verify cumulative integrated NES WS GB GBA size in parallel",
+          "commit": "ea0a96b82974f670f7b6c34ad28329741c621f91",
+          "subject": "Measure fifth batch of four independent firmware size candidates",
           "status": "ok",
           "flash": 214096,
           "ram": 6281,
@@ -66,58 +54,8 @@
           "error": null
         },
         {
-          "commit": "a02515bd48199f703afe0cc963f0e3a75f305753",
-          "subject": "Share WS save verification result display",
-          "status": "ok",
-          "flash": 214100,
-          "ram": 6281,
-          "delta_previous": 4,
-          "delta_base": 4,
-          "classification": "increased",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "ws-verify-result",
-        "head": "a02515bd48199f703afe0cc963f0e3a75f305753",
-        "path": "Cart_Reader/WS.ino"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45526634081",
-      "run_attempt": "1",
-      "workflow_commit": "ea0a96b82974f670f7b6c34ad28329741c621f91",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "ok",
-      "request": {
-        "id": "nes-mapper72-92",
-        "head": "7ee8871e601151590f0279abd565e913f3ad574b",
-        "path": "Cart_Reader/NES.ino",
-        "base": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
-        "expected_base_flash": 214096,
-        "expected_base_ram": 6281,
-        "endpoints_only": false
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
-          "subject": "Verify cumulative integrated NES WS GB GBA size in parallel",
-          "status": "ok",
-          "flash": 214096,
-          "ram": 6281,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "7ee8871e601151590f0279abd565e913f3ad574b",
-          "subject": "Share PRG banking sequence for NES mappers 72 and 92",
+          "commit": "08343c0e1b1b3174beff1cdb59c59ea974f6bd98",
+          "subject": "Adopt nes-mapper72-92 (isolated -36 B; 7ee8871)",
           "status": "ok",
           "flash": 214060,
           "ram": 6281,
@@ -129,34 +67,32 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "nes-mapper72-92",
-        "head": "7ee8871e601151590f0279abd565e913f3ad574b",
-        "path": "Cart_Reader/NES.ino"
+        "id": "integration-nes",
+        "head": "08343c0e1b1b3174beff1cdb59c59ea974f6bd98"
       }
     },
     {
       "schema": 1,
-      "run_id": "45526634081",
+      "run_id": "45529709637",
       "run_attempt": "1",
-      "workflow_commit": "ea0a96b82974f670f7b6c34ad28329741c621f91",
+      "workflow_commit": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "pce-crc-result",
-        "head": "40cc4ad71bfdca897e12291728bfcff7288cb51f",
-        "path": "Cart_Reader/PCE.ino",
-        "base": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
+        "id": "integration-nes-md",
+        "head": "d9161f565318aff36eb8fa41484b2728235491ad",
+        "base": "ea0a96b82974f670f7b6c34ad28329741c621f91",
         "expected_base_flash": 214096,
         "expected_base_ram": 6281,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
-          "subject": "Verify cumulative integrated NES WS GB GBA size in parallel",
+          "commit": "ea0a96b82974f670f7b6c34ad28329741c621f91",
+          "subject": "Measure fifth batch of four independent firmware size candidates",
           "status": "ok",
           "flash": 214096,
           "ram": 6281,
@@ -166,72 +102,21 @@
           "error": null
         },
         {
-          "commit": "40cc4ad71bfdca897e12291728bfcff7288cb51f",
-          "subject": "Share PCE CRC result path display without changing rename order",
+          "commit": "d9161f565318aff36eb8fa41484b2728235491ad",
+          "subject": "Adopt md-sram-read-block (isolated -68 B; 3c6c4d7)",
           "status": "ok",
-          "flash": 214096,
+          "flash": 213992,
           "ram": 6281,
-          "delta_previous": 0,
-          "delta_base": 0,
-          "classification": "unchanged",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "pce-crc-result",
-        "head": "40cc4ad71bfdca897e12291728bfcff7288cb51f",
-        "path": "Cart_Reader/PCE.ino"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45526634081",
-      "run_attempt": "1",
-      "workflow_commit": "ea0a96b82974f670f7b6c34ad28329741c621f91",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "ok",
-      "request": {
-        "id": "md-sram-read-block",
-        "head": "3c6c4d70fb07a1d7815e594f3773d4bd6d411a66",
-        "path": "Cart_Reader/MD.ino",
-        "base": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
-        "expected_base_flash": 214096,
-        "expected_base_ram": 6281,
-        "endpoints_only": false
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
-          "subject": "Verify cumulative integrated NES WS GB GBA size in parallel",
-          "status": "ok",
-          "flash": 214096,
-          "ram": 6281,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "3c6c4d70fb07a1d7815e594f3773d4bd6d411a66",
-          "subject": "Share MD SRAM buffer reading for dump and verification",
-          "status": "ok",
-          "flash": 214028,
-          "ram": 6281,
-          "delta_previous": -68,
-          "delta_base": -68,
+          "delta_previous": -104,
+          "delta_base": -104,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "md-sram-read-block",
-        "head": "3c6c4d70fb07a1d7815e594f3773d4bd6d411a66",
-        "path": "Cart_Reader/MD.ino"
+        "id": "integration-nes-md",
+        "head": "d9161f565318aff36eb8fa41484b2728235491ad"
       }
     }
   ]
