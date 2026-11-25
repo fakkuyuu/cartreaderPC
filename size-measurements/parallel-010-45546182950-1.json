@@ -1,0 +1,183 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45546182950",
+  "run_attempt": "1",
+  "workflow_commit": "37396fa8e5dcec8c8529c8b706bc92f9bac46310",
+  "request": {
+    "id": "parallel-010",
+    "base": "8807906a82ae1499511ee7e06382c63192a489c2",
+    "expected_base_flash": 212832,
+    "expected_base_ram": 6281,
+    "candidates": [
+      {
+        "id": "pce-tennokoe-lock",
+        "head": "5c5d53b01548e3ca09d99c0b0aa86e956b0e1ac9",
+        "path": "Cart_Reader/PCE.ino"
+      },
+      {
+        "id": "ws-eeprom-geometry",
+        "head": "1c603caf545542ceb9786c7d6163b40e56c6f839",
+        "path": "Cart_Reader/WS.ino"
+      },
+      {
+        "id": "msx-koei-read-banks",
+        "head": "2a5bc7ef23e94c4feec090ce331c314210c9b7ab",
+        "path": "Cart_Reader/MSX.ino"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45546182950",
+      "run_attempt": "1",
+      "workflow_commit": "37396fa8e5dcec8c8529c8b706bc92f9bac46310",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "pce-tennokoe-lock",
+        "head": "5c5d53b01548e3ca09d99c0b0aa86e956b0e1ac9",
+        "path": "Cart_Reader/PCE.ino",
+        "base": "8807906a82ae1499511ee7e06382c63192a489c2",
+        "expected_base_flash": 212832,
+        "expected_base_ram": 6281,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8807906a82ae1499511ee7e06382c63192a489c2",
+          "subject": "Measure cumulative integration of five phase 2 batch 9 candidates",
+          "status": "ok",
+          "flash": 212832,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "5c5d53b01548e3ca09d99c0b0aa86e956b0e1ac9",
+          "subject": "Phase 2 candidate: pce-tennokoe-lock",
+          "status": "ok",
+          "flash": 212836,
+          "ram": 6281,
+          "delta_previous": 4,
+          "delta_base": 4,
+          "classification": "increased",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "pce-tennokoe-lock",
+        "head": "5c5d53b01548e3ca09d99c0b0aa86e956b0e1ac9",
+        "path": "Cart_Reader/PCE.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45546182950",
+      "run_attempt": "1",
+      "workflow_commit": "37396fa8e5dcec8c8529c8b706bc92f9bac46310",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "ws-eeprom-geometry",
+        "head": "1c603caf545542ceb9786c7d6163b40e56c6f839",
+        "path": "Cart_Reader/WS.ino",
+        "base": "8807906a82ae1499511ee7e06382c63192a489c2",
+        "expected_base_flash": 212832,
+        "expected_base_ram": 6281,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8807906a82ae1499511ee7e06382c63192a489c2",
+          "subject": "Measure cumulative integration of five phase 2 batch 9 candidates",
+          "status": "ok",
+          "flash": 212832,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "1c603caf545542ceb9786c7d6163b40e56c6f839",
+          "subject": "Phase 2 candidate: ws-eeprom-geometry",
+          "status": "ok",
+          "flash": 212732,
+          "ram": 6281,
+          "delta_previous": -100,
+          "delta_base": -100,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "ws-eeprom-geometry",
+        "head": "1c603caf545542ceb9786c7d6163b40e56c6f839",
+        "path": "Cart_Reader/WS.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45546182950",
+      "run_attempt": "1",
+      "workflow_commit": "37396fa8e5dcec8c8529c8b706bc92f9bac46310",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "msx-koei-read-banks",
+        "head": "2a5bc7ef23e94c4feec090ce331c314210c9b7ab",
+        "path": "Cart_Reader/MSX.ino",
+        "base": "8807906a82ae1499511ee7e06382c63192a489c2",
+        "expected_base_flash": 212832,
+        "expected_base_ram": 6281,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8807906a82ae1499511ee7e06382c63192a489c2",
+          "subject": "Measure cumulative integration of five phase 2 batch 9 candidates",
+          "status": "ok",
+          "flash": 212832,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "2a5bc7ef23e94c4feec090ce331c314210c9b7ab",
+          "subject": "Phase 2 candidate: msx-koei-read-banks",
+          "status": "ok",
+          "flash": 212816,
+          "ram": 6281,
+          "delta_previous": -16,
+          "delta_base": -16,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "msx-koei-read-banks",
+        "head": "2a5bc7ef23e94c4feec090ce331c314210c9b7ab",
+        "path": "Cart_Reader/MSX.ino"
+      }
+    }
+  ]
+}
