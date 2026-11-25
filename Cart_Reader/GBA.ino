@@ -48,14 +48,14 @@ void gbaMenu() {
     case 0:
       // Read rom
       if (cartSize == 0) {
-        const byte romOptionsGBASize[] = { 1, 2, 4, 8, 16, 32 };
+        static const byte romOptionsGBASize[] PROGMEM = { 1, 2, 4, 8, 16, 32 };
         // create submenu with title and 4 options to choose from
         unsigned char GBARomMenu;
         // Copy menuOptions out of progmem
         GBARomMenu = chooseFlashMenuOption(F("Select ROM size"), romOptionsGBA, 6);
 
         // wait for user choice to come back from the question box menu
-        cartSize = romOptionsGBASize[GBARomMenu];
+        cartSize = pgm_read_byte(&romOptionsGBASize[GBARomMenu]);
       }
       if (cartSize < 128)  // Don't multiply cartSize on second dump
         cartSize *= 0x100000;
@@ -380,13 +380,13 @@ void setup_GBA_Repro() {
 *****************************************/
 static byte getSaveType() {
   if (saveType == 0) {
-    const byte saveOptionsGBAType[] = { 1, 2, 3, 6, 4, 5 };
+    static const byte saveOptionsGBAType[] PROGMEM = { 1, 2, 3, 6, 4, 5 };
     // create submenu with title and 6 options to choose from
     unsigned char GBASaveMenu;
     // Copy menuOptions out of progmem
     GBASaveMenu = chooseFlashMenuOption(FS(SharedFlashText::textSelectSaveType), saveOptionsGBA, 6);
     // wait for user choice to come back from the question box menu
-    saveType = saveOptionsGBAType[GBASaveMenu];
+    saveType = pgm_read_byte(&saveOptionsGBAType[GBASaveMenu]);
   }
   return saveType;
 }
