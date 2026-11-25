@@ -1,40 +1,25 @@
 {
-  "id": "parallel-016",
-  "base": "7064b84da853581c8437443cc9125ff491ad0471",
+  "id": "parallel-016-integration",
+  "base": "8278ad8d78671e04fb910b907c6f79c73bde3fb2",
   "expected_base_flash": 210400,
   "expected_base_ram": 6123,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "gb-mbc6-command",
-      "head": "7be3bd8f55ac8048015b8cff0a6f16b340f487d8"
+      "id": "integration-nes",
+      "head": "d5c529ccec9ec0ee07e77febb0208cc8b04a13a8"
     },
     {
-      "id": "gba-save-close",
-      "head": "8374afcdaaf276e8aa7e97795a5c74e3e282b936"
+      "id": "integration-nes-gb",
+      "head": "2bb0a1a94c1b2e86d2b732fbff3e36f23b59ac9a"
     },
     {
-      "id": "md-save-close",
-      "head": "5f564f62df9e48d950903d70cd33f0bf8148d213"
+      "id": "integration-nes-gb-snes",
+      "head": "e28c8c8c3ad3c9c8cb335904239a2fa6f8ee998c"
     },
     {
-      "id": "nes-mapper-setup",
-      "head": "97ae84591cc68c08857b51efebd4584ebbe36cb1"
-    },
-    {
-      "id": "pce-save-display",
-      "head": "ced9bf818b0ab5e10941abcaf9e6c340b14657a5"
-    },
-    {
-      "id": "ws-verify-display",
-      "head": "3a23de87652fa0c72d63badafe7cf1c310c144f2"
-    },
-    {
-      "id": "n64-pak-failure",
-      "head": "5b93b2b67236a0c648ac368960d73ff47a608955"
-    },
-    {
-      "id": "snes-sa1-block-zero",
-      "head": "8f4f0202924dd231998e04e0c300febb96d14833"
+      "id": "integration-nes-gb-snes-n64",
+      "head": "8db2f50c4b79dd727968beb8856df2064af0436d"
     }
   ]
 }
