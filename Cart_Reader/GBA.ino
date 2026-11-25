@@ -1152,6 +1152,13 @@ boolean compare_checksum_GBA() {
 /******************************************
   GBA SRAM SAVE Functions
 *****************************************/
+static void finishSaveReadP16_GBA() __attribute__((noinline));
+static void finishSaveReadP16_GBA() {
+  closeCurrentFile();
+  // Signal end of process
+  showDoneAndUpdate();
+}
+
 void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
     // Get name, add extension and convert to char array for sd lib
@@ -1178,10 +1185,7 @@ void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
     writeSdBufferBlock();
   }
   // Close the file:
-  closeCurrentFile();
-
-  // Signal end of process
-  showDoneAndUpdate();
+  finishSaveReadP16_GBA();
 }
 
 void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
@@ -1304,10 +1308,7 @@ void readFRAM_GBA(unsigned long framSize) {
     writeSdBufferBlock();
   }
   // Close the file:
-  closeCurrentFile();
-
-  // Signal end of process
-  showDoneAndUpdate();
+  finishSaveReadP16_GBA();
 }
 
 // Write file to SRAM
