@@ -1562,6 +1562,21 @@ static void selectMbc6FlashBank_GB(byte bank) {
   writeByte_GB(0x3000, bank);
 }
 
+static void waitMbc6Flash_GB(word address, const __FlashStringHelper* message) __attribute__((noinline));
+static void waitMbc6Flash_GB(word address, const __FlashStringHelper* message) {
+  byte lives = 100;
+  while (1) {
+    byte sr = readByte_GB(address);
+    if (sr == 0x80) break;
+    delay(1);
+    if (lives-- <= 0) {
+      disableFlashSaveMemory();
+      closeAndClearDisplay();
+      print_FatalError(message);
+    }
+  }
+}
+
 void writeSRAMFLASH_MBC6_GB() {
   // Create filepath
   appendSelectedFilePath();
@@ -1615,17 +1630,7 @@ void writeSRAMFLASH_MBC6_GB() {
         writeByte_GB(0x4AAA, 0x55);
         selectMbc6FlashBank_GB(currBank);
         writeByte_GB(0x4000, 0x30);
-        byte lives = 100;
-        while (1) {
-          byte sr = readByte_GB(0x4000);
-          if (sr == 0x80) break;
-          delay(1);
-          if (lives-- <= 0) {
-            disableFlashSaveMemory();
-            closeAndClearDisplay();
-            print_FatalError(F("Error erasing FLASH sector."));
-          }
-        }
+        waitMbc6Flash_GB(0x4000, F("Error erasing FLASH sector."));
       } else {
         selectMbc6FlashBank_GB(currBank);
       }
@@ -1642,17 +1647,7 @@ void writeSRAMFLASH_MBC6_GB() {
           writeByte_GB(romAddress++, myFile.read());
         }
         writeByte_GB(romAddress - 1, 0x00);
-        byte lives = 100;
-        while (1) {
-          byte sr = readByte_GB(romAddress - 1);
-          if (sr == 0x80) break;
-          delay(1);
-          if (lives-- <= 0) {
-            disableFlashSaveMemory();
-            closeAndClearDisplay();
-            print_FatalError(F("Error writing to FLASH."));
-          }
-        }
+        waitMbc6Flash_GB(romAddress - 1, F("Error writing to FLASH."));
         writeByte_GB(romAddress - 1, 0xF0);
         processedProgressBar += 128;
         draw_progressbar(processedProgressBar, totalProgressBar);
