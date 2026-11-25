@@ -74,12 +74,17 @@ static const char GameSharkRead[] PROGMEM = "Read GBC GameShark";
 static const char GameSharkWrite[] PROGMEM = "Write GBC GameShark";
 static const char* const menuOptionsGBDatel[] PROGMEM = { MegaMemRead, MegaMemWrite, GameSharkRead, GameSharkWrite };
 
-#if defined(ENABLE_FLASH)
-bool gbxFlashCFI() {
-  // Flash CFI
+static void prepareCartP21_GB() __attribute__((noinline));
+static void prepareCartP21_GB() {
   clearAndUpdateDisplay();
   setup_GB();
   mode = CORE_GB;
+}
+
+#if defined(ENABLE_FLASH)
+bool gbxFlashCFI() {
+  // Flash CFI
+  prepareCartP21_GB();
 
   // Change working dir to root
   changeToStorageRoot();
@@ -158,9 +163,7 @@ void gbxMenu() {
   // wait for user choice to come back from the question box menu
   switch (gbType) {
     case 0:
-      clearAndUpdateDisplay();
-      setup_GB();
-      mode = CORE_GB;
+      prepareCartP21_GB();
       break;
 
     case 1:
@@ -283,9 +286,7 @@ void gbxMenu() {
 
             if (selectedMBC == 30) {
               //Flash GB Camera
-              clearAndUpdateDisplay();
-              setup_GB();
-              mode = CORE_GB;
+              prepareCartP21_GB();
 
               //Flash first bank with erase
               // Change working dir to root
@@ -318,9 +319,7 @@ void gbxMenu() {
             }
             else {
               //Flash repro
-              clearAndUpdateDisplay();
-              setup_GB();
-              mode = CORE_GB;
+              prepareCartP21_GB();
 
               if (selectedWE == 0) {
                 //Setup Audio-In(PH4) as Output
