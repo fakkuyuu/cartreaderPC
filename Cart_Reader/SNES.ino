@@ -376,6 +376,13 @@ void snsMenu() {
 }
 
 // SNES Menu
+void stopSnesClocks_resetCic_resetCart();
+static void resetSnesMenuP19() __attribute__((noinline));
+static void resetSnesMenuP19() {
+  stopSnesClocks_resetCic_resetCart();
+  resetArduino();
+}
+
 void snesMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
@@ -488,8 +495,7 @@ void snesMenu() {
       break;
 
     case 6:
-      stopSnesClocks_resetCic_resetCart();
-      resetArduino();
+      resetSnesMenuP19();
       break;
   }
   //printBlankLine();
@@ -532,8 +538,7 @@ void confMenuManual() {
 
     case 4:
       // Reset
-      stopSnesClocks_resetCic_resetCart();
-      resetArduino();
+      resetSnesMenuP19();
       break;
   }
 }
