@@ -327,46 +327,15 @@ static uint8_t getCartInfo_WS() {
     default: cartSize = 0; break;
   }
 
-  switch (sramSize) {
-    case 0x00:
-      saveType = 0;
-      sramSize = 0;
-      break;
-    case 0x01:
-      saveType = 1;
-      sramSize = 64;
-      break;
-    case 0x02:
-      saveType = 1;
-      sramSize = 256;
-      break;
-    case 0x03:
-      saveType = 1;
-      sramSize = 1024;
-      break;
-    case 0x04:
-      saveType = 1;
-      sramSize = 2048;
-      break;
-    case 0x05:
-      saveType = 1;
-      sramSize = 4096;
-      break;
-    case 0x10:
-      saveType = 2;
-      sramSize = 1;
-      break;
-    case 0x20:
-      saveType = 2;
-      sramSize = 16;
-      break;
-    case 0x50:
-      saveType = 2;
-      sramSize = 8;
-      break;
-    default:
-      saveType = 0xff;
-      break;
+  static const uint16_t sramSizes[] PROGMEM = { 0, 64, 256, 1024, 2048, 4096 };
+  if (sramSize <= 5) {
+    saveType = sramSize != 0;
+    sramSize = pgm_read_word(&sramSizes[sramSize]);
+  } else if (sramSize == 0x10 || sramSize == 0x20 || sramSize == 0x50) {
+    saveType = 2;
+    sramSize = sramSize == 0x10 ? 1 : (sramSize == 0x20 ? 16 : 8);
+  } else {
+    saveType = 0xff;
   }
 
   if (saveType == 2)
