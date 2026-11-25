@@ -4613,6 +4613,14 @@ void writeBankWRAM(const size_t from, const size_t to, const size_t base) {
   }
 }
 
+static void showWritingFileP17_NES() __attribute__((noinline));
+static void showWritingFileP17_NES() {
+  display_Clear();
+  println_Msg(FS(SharedFlashText::textWritingFile));
+  println_Msg(filePath);
+  showFileNameAndUpdate();
+}
+
 void writeRAM() {
   display_Clear();
 
@@ -4624,10 +4632,7 @@ void writeRAM() {
 
     resetStorageAndAppendPath();
 
-    display_Clear();
-    println_Msg(FS(SharedFlashText::textWritingFile));
-    println_Msg(filePath);
-    showFileNameAndUpdate();
+    showWritingFileP17_NES();
 
     //open file on sd card
     if (openSelectedFileForRead()) {
@@ -5001,10 +5006,7 @@ void writeFLASH() {
     resetStorageAndAppendPath();
 
     rgbLed(red_color);
-    display_Clear();
-    println_Msg(FS(SharedFlashText::textWritingFile));
-    println_Msg(filePath);
-    showFileNameAndUpdate();
+    showWritingFileP17_NES();
 
     uint8_t bytecheck;
     uint16_t banks;
