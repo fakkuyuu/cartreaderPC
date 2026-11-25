@@ -3121,27 +3121,9 @@ void flashRepro_N64() {
     N64BufferMenu = chooseFlashMenuOption(F("Select buffer size"), bufferOptionsN64, 4);
 
     // wait for user choice to come back from the question box menu
-    switch (N64BufferMenu) {
-      case 0:
-        // no buffer
-        bufferSize = 0;
-        break;
-
-      case 1:
-        // 32 byte buffer
-        bufferSize = 32;
-        break;
-
-      case 2:
-        // 64 byte buffer
-        bufferSize = 64;
-        break;
-
-      case 3:
-        // 128 byte buffer
-        bufferSize = 128;
-        break;
-    }
+    static const byte bufferSizes[] PROGMEM = {0, 32, 64, 128};
+    if (N64BufferMenu < sizeof(bufferSizes))
+      bufferSize = pgm_read_byte(&bufferSizes[N64BufferMenu]);
 
     // Set sector size manually
     unsigned char N64SectorMenu;
@@ -3149,27 +3131,9 @@ void flashRepro_N64() {
     N64SectorMenu = chooseFlashMenuOption(F("Select sector size"), sectorOptionsN64, 4);
 
     // wait for user choice to come back from the question box menu
-    switch (N64SectorMenu) {
-      case 0:
-        // 8KB sectors
-        sectorSize = 0x2000;
-        break;
-
-      case 1:
-        // 32KB sectors
-        sectorSize = 0x8000;
-        break;
-
-      case 2:
-        // 64KB sectors
-        sectorSize = 0x10000;
-        break;
-
-      case 3:
-        // 128KB sectors
-        sectorSize = 0x20000;
-        break;
-    }
+    static const byte sectorUnits[] PROGMEM = {1, 4, 8, 16};
+    if (N64SectorMenu < sizeof(sectorUnits))
+      sectorSize = (uint32_t)pgm_read_byte(&sectorUnits[N64SectorMenu]) * 0x2000UL;
   }
 
   // Launch file browser
