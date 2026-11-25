@@ -947,6 +947,12 @@ void printRomSize_MSX(uint8_t index) {
 }
 #endif
 
+static void reportUnsupportedSizeP18_MSX() __attribute__((noinline));
+static void reportUnsupportedSizeP18_MSX() {
+  PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
+  PcConsole.println(FS(FSTRING_EMPTY));
+}
+
 void setROMSize_MSX() {
   byte newmsxsize;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -1051,14 +1057,12 @@ setrom:
     newmsxsize = sizeROM.toInt() + msxlo;
     if (msxmapper == 11) {  // PAC/FM-PAC 0K/64K
       if ((newmsxsize > 0) && (newmsxsize < 4)) {
-        PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
-        PcConsole.println(FS(FSTRING_EMPTY));
+        reportUnsupportedSizeP18_MSX();
         goto setrom;
       }
     }
     if (newmsxsize > msxhi) {
-      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
-      PcConsole.println(FS(FSTRING_EMPTY));
+      reportUnsupportedSizeP18_MSX();
       goto setrom;
     }
   }
@@ -1178,14 +1182,12 @@ setram:
     newmsxramsize = sizeRAM.toInt() + msxramlo;
     if (msxmapper == 7) {        // Koei 8K/32K
       if (newmsxramsize == 3) {  // 16K
-        PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
-        PcConsole.println(FS(FSTRING_EMPTY));
+        reportUnsupportedSizeP18_MSX();
         goto setram;
       }
     }
     if (newmsxramsize > msxramhi) {
-      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
-      PcConsole.println(FS(FSTRING_EMPTY));
+      reportUnsupportedSizeP18_MSX();
       goto setram;
     }
   }
