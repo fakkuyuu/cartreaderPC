@@ -558,15 +558,21 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
   return checksum;
 }
 
+static uint32_t sramBankGeometry_WS(uint16_t& end_bank) __attribute__((noinline));
+static uint32_t sramBankGeometry_WS(uint16_t& end_bank) {
+  uint32_t bank_size = (sramSize << 7);
+  end_bank = (bank_size >> 16);
+  if (bank_size > 0x10000)
+    bank_size = 0x10000;
+  return bank_size;
+}
+
 static void readSRAM_WS() {
   // generate fullname of rom file
   createFolderAndOpenFile("WS", "SAVE", romName, "save");
 
-  uint32_t bank_size = (sramSize << 7);
-  uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
-
-  if (bank_size > 0x10000)
-    bank_size = 0x10000;
+  uint16_t end_bank;
+  uint32_t bank_size = sramBankGeometry_WS(end_bank);
 
   uint16_t bank = 0;
 
@@ -599,13 +605,10 @@ static void verifySRAM_WS() {
   display_Update();
 
   if (openSelectedFileForRead()) {
-    uint32_t bank_size = (sramSize << 7);
-    uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
+    uint16_t end_bank;
+    uint32_t bank_size = sramBankGeometry_WS(end_bank);
     uint16_t bank = 0;
     uint32_t write_errors = 0;
-
-    if (bank_size > 0x10000)
-      bank_size = 0x10000;
 
     do {
       dataOut_WS();
@@ -657,11 +660,8 @@ static void writeSRAM_WS() {
   selectSaveForWrite_WS(FS(SharedFlashText::textSelectSavFile));
 
   if (openSelectedFileForRead()) {
-    uint32_t bank_size = (sramSize << 7);
-    uint16_t end_bank = (bank_size >> 16);  // 64KB per bank
-
-    if (bank_size > 0x10000)
-      bank_size = 0x10000;
+    uint16_t end_bank;
+    uint32_t bank_size = sramBankGeometry_WS(end_bank);
 
     uint16_t bank = 0;
     dataOut_WS();
