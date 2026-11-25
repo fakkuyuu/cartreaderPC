@@ -306,28 +306,15 @@ void n64CartMenu() {
 
     case 2:
       resetFileBrowserToRoot();
-      if (saveType == 1) {
-        // Launch file browser
-        fileBrowser(F("Select sra file"));
+      if (saveType == 1 || saveType == 2) {
+        const bool largeSram = saveType == 2;
+        fileBrowser(largeSram ? F("Select Sram 768 file") : F("Select sra file"));
         display_Clear();
-
-        writeSram(32768);
-        writeErrors = verifySram(32768, 1);
+        const unsigned long size = largeSram ? 98304UL : 32768UL;
+        writeSram(size);
+        writeErrors = verifySram(size, 1);
         if (writeErrors == 0) {
-          println_Msg(FS(SharedFlashText::textSRAMVerifiedOK));
-          display_Update();
-        } else {
-          showVerificationErrorCount(writeErrors);
-        }
-      } else if (saveType == 2) {
-        // Launch file browser
-        fileBrowser(F("Select Sram 768 file"));
-        display_Clear();
-
-        writeSram(98304);
-        writeErrors = verifySram(98304, 1);
-        if (writeErrors == 0) {
-          println_Msg(FS(SharedFlashText::textSramVerifiedOK));
+          println_Msg(largeSram ? FS(SharedFlashText::textSramVerifiedOK) : FS(SharedFlashText::textSRAMVerifiedOK));
           display_Update();
         } else {
           showVerificationErrorCount(writeErrors);
