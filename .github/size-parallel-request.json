@@ -1,48 +1,29 @@
 {
-  "id": "parallel-009",
-  "base": "bcfd68a01ecbf06e5eca8fd33a28f8a6c4452343",
+  "id": "parallel-009-integration",
+  "base": "d4c5666dee46c59cc1f51f30bfda563f176aa843",
   "expected_base_flash": 213058,
   "expected_base_ram": 6281,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "nes-mapper80-sram",
-      "head": "5839f649b05ec0615332629ffb5a92c3858deb0a",
-      "path": "Cart_Reader/NES.ino"
+      "id": "integration-md",
+      "head": "12a4aa6fa2fee5fc262bc0b2a1b16a78cbbf0b2a"
     },
     {
-      "id": "md-eeprom-set-bit",
-      "head": "43a0ccfd1e984e32d8a936ee9b2cdd01a50751ab",
-      "path": "Cart_Reader/MD.ino"
+      "id": "integration-md-ws",
+      "head": "dd0846e53c28ed4e803cbacab093cae4f12a84b6"
     },
     {
-      "id": "n64-accessory-blankcheck",
-      "head": "501521a83e8a9e99279e7bcfad65274f9337fba5",
-      "path": "Cart_Reader/N64.ino"
+      "id": "integration-md-ws-msx",
+      "head": "de19dc1d84af4a0000bc6196884d86ea30697dc9"
     },
     {
-      "id": "msx-ascii-sram-write",
-      "head": "22da506176554c16dbc2592ec39fca14125ce7f5",
-      "path": "Cart_Reader/MSX.ino"
+      "id": "integration-md-ws-msx-nes",
+      "head": "d38dd260311b1fe1cc37025f598bad3bed7bff12"
     },
     {
-      "id": "gb-mbc6-flash-poll",
-      "head": "1daea8703d72c64c735637bebed4b7f850677500",
-      "path": "Cart_Reader/GB.ino"
-    },
-    {
-      "id": "pce-tennokoe-unlock",
-      "head": "78e32637160919ab151f7aac57428d210acb5089",
-      "path": "Cart_Reader/PCE.ino"
-    },
-    {
-      "id": "ws-sram-bank-geometry",
-      "head": "79af08c8f9cfd7ebf5ca8d16209fc814df1edd5e",
-      "path": "Cart_Reader/WS.ino"
-    },
-    {
-      "id": "gba-save-seek",
-      "head": "2d142b021a9cd249f2e670ca14decf1f641d0906",
-      "path": "Cart_Reader/GBA.ino"
+      "id": "integration-md-ws-msx-nes-pce",
+      "head": "2cad7757f7fb914d615ff07033b7306b1b271485"
     }
   ]
 }
