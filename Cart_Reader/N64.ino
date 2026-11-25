@@ -3997,6 +3997,16 @@ static void showAccessoryFlashVerify_N64() {
   }
 }
 
+static void showAccessoryEraseWarningP18_N64(const __FlashStringHelper* label) __attribute__((noinline));
+static void showAccessoryEraseWarningP18_N64(const __FlashStringHelper* label) {
+  println_Msg("");
+  println_Msg(FS(SharedFlashText::textThisWillEraseYour));
+  println_Msg(label);
+  println_Msg(FS(SharedFlashText::textAttentionUse33V));
+  println_Msg(FS(SharedFlashText::textPowerOFFIfUnsure));
+  promptAndWaitForButton();
+}
+
 void flashGameshark_N64() {
   // Check flashrom ID's
   unlockGSAddressRanges();
@@ -4013,13 +4023,7 @@ void flashGameshark_N64() {
 
   if (flashid == 0x0808 || flashid == 0x0404 || flashid == 0x3535 || flashid == 0x0707) {
     backupGameshark_N64();
-    println_Msg("");
-    println_Msg(FS(SharedFlashText::textThisWillEraseYour));
-    println_Msg(F("Gameshark cartridge"));
-    println_Msg(FS(SharedFlashText::textAttentionUse33V));
-    println_Msg(FS(SharedFlashText::textPowerOFFIfUnsure));
-    // Prints string out of the common strings array either with or without newline
-    promptAndWaitForButton();
+    showAccessoryEraseWarningP18_N64(F("Gameshark cartridge"));
 
     // Launch file browser
     resetFileBrowserToRoot();
@@ -4335,13 +4339,7 @@ void flashXplorer_N64() {
 
   if (flashid == 0x0808) {
     backupXplorer_N64();
-    println_Msg("");
-    println_Msg(FS(SharedFlashText::textThisWillEraseYour));
-    println_Msg(F("Xplorer64 cartridge"));
-    println_Msg(FS(SharedFlashText::textAttentionUse33V));
-    println_Msg(FS(SharedFlashText::textPowerOFFIfUnsure));
-    // Prints string out of the common strings array either with or without newline
-    promptAndWaitForButton();
+    showAccessoryEraseWarningP18_N64(F("Xplorer64 cartridge"));
 
     // Launch file browser
     resetFileBrowserToRoot();
