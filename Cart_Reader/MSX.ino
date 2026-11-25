@@ -1252,53 +1252,25 @@ void checkStatus_MSX() {
 
 void printMapper(byte msxmaplabel) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  switch (msxmaplabel) {
-    case 0:
-      println_Msg(FS(SharedFlashText::textNONE));
-      break;
-    case 1:
-      println_Msg(FS(SharedFlashText::textASCII8));
-      break;
-    case 2:
-      println_Msg(FS(SharedFlashText::textASCII16));
-      break;
-    case 3:
-      println_Msg(FS(SharedFlashText::textCROSSBLAIM));
-      break;
-    case 4:
-      println_Msg(FS(SharedFlashText::textGAMEMASTER2));
-      break;
-    case 5:
-      println_Msg(FS(SharedFlashText::textHALNOTE));
-      break;
-    case 6:
-      println_Msg(FS(SharedFlashText::textHARRYFOXYUKI));
-      break;
-    case 7:
-      println_Msg(FS(SharedFlashText::textKOEI));
-      break;
-    case 8:
-      println_Msg(FS(SharedFlashText::textKONAMI));
-      break;
-    case 9:
-      println_Msg(FS(SharedFlashText::textKONAMISCC));
-      break;
-    case 10:
-      println_Msg(FS(SharedFlashText::textMSXDOS2));
-      break;
-    case 11:
-      println_Msg(FS(SharedFlashText::textPACFMPAC));
-      break;
-    case 12:
-      println_Msg(FS(SharedFlashText::textRTYPE));
-      break;
-    case 13:
-      println_Msg(FS(SharedFlashText::textSUPERLODERUNNER));
-      break;
-    case 14:
-      println_Msg(FS(SharedFlashText::textHUDSONSOFTBEEPACK));
-      break;
-  }
+  static const char* const labels[] PROGMEM = {
+    SharedFlashText::textNONE,
+    SharedFlashText::textASCII8,
+    SharedFlashText::textASCII16,
+    SharedFlashText::textCROSSBLAIM,
+    SharedFlashText::textGAMEMASTER2,
+    SharedFlashText::textHALNOTE,
+    SharedFlashText::textHARRYFOXYUKI,
+    SharedFlashText::textKOEI,
+    SharedFlashText::textKONAMI,
+    SharedFlashText::textKONAMISCC,
+    SharedFlashText::textMSXDOS2,
+    SharedFlashText::textPACFMPAC,
+    SharedFlashText::textRTYPE,
+    SharedFlashText::textSUPERLODERUNNER,
+    SharedFlashText::textHUDSONSOFTBEEPACK
+  };
+  if (msxmaplabel < sizeof(labels) / sizeof(labels[0]))
+    println_Msg(FS((const char*)pgm_read_ptr(&labels[msxmaplabel])));
 #else
   PcConsole.println(F("0 = NONE"));
   PcConsole.println(F("1 = ASCII8"));
