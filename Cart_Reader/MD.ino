@@ -1083,45 +1083,35 @@ void getCartInfo_MD() {
       }
     } else {
       // SRAM CARTS WITH BAD/MISSING HEADER SAVE DATA
-      switch (chksum) {
-        case 0xC2DB:     // Winter Challenge (UE)
-          saveType = 1;  // ODD
+      struct SramOverride { uint16_t checksum; byte type; byte units; };
+      static const SramOverride overrides[] PROGMEM = {
+        {0xC2DB, 1, 1},
+        {0xD7B6, 1, 4},
+        {0xFE3E, 1, 4},
+        {0xFDAD, 1, 4},
+        {0x632E, 1, 4},
+        {0xD2BA, 1, 4},
+        {0x44FE, 1, 4},
+        {0xDB5E, 3, 8},
+        {0x3428, 3, 8},
+        {0x43EE, 3, 8},
+        {0xBF72, 1, 16},
+        {0x72EF, 1, 16},
+        {0xD723, 1, 16},
+        {0x06C1, 1, 16},
+        {0xDB17, 1, 16},
+        {0x5B3A, 1, 16},
+        {0x2CF2, 1, 16},
+        {0xE9B1, 1, 16},
+        {0xEEE8, 1, 16}
+      };
+      for (byte i = 0; i < sizeof(overrides) / sizeof(overrides[0]); ++i) {
+        if (chksum == pgm_read_word(&overrides[i].checksum)) {
+          saveType = pgm_read_byte(&overrides[i].type);
           sramBase = 0x200001;
-          sramEnd = 0x200FFF;
+          sramEnd = 0x200000UL + (uint32_t)pgm_read_byte(&overrides[i].units) * 4096UL - 1;
           break;
-
-        case 0xD7B6:     // Buck Rogers: Countdown to Doomsday (UE)
-        case 0xFE3E:     // NBA Live '98 (U)
-        case 0xFDAD:     // NFL '94 starring Joe Montana (U)
-        case 0x632E:     // PGA Tour Golf (UE) (Rev 1)
-        case 0xD2BA:     // PGA Tour Golf (UE) (Rev 2)
-        case 0x44FE:     // Super Hydlide (J)
-          saveType = 1;  // ODD
-          sramBase = 0x200001;
-          sramEnd = 0x203FFF;
-          break;
-
-        case 0xDB5E:     // Might & Magic: Gates to Another World (UE) (Rev 1)
-        case 0x3428:     // Starflight (UE) (Rev 0)
-        case 0x43EE:     // Starflight (UE) (Rev 1)
-          saveType = 3;  // BOTH
-          sramBase = 0x200001;
-          sramEnd = 0x207FFF;
-          break;
-
-        case 0xBF72:     // College Football USA '96 (U)
-        case 0x72EF:     // FIFA Soccer '97 (UE)
-        case 0xD723:     // Hardball III (U)
-        case 0x06C1:     // Madden NFL '98 (U)
-        case 0xDB17:     // NHL '96 (UE)
-        case 0x5B3A:     // NHL '98 (U)
-        case 0x2CF2:     // NFL Sports Talk Football '93 starring Joe Montana (UE)
-        case 0xE9B1:     // Summer Challenge (U)
-        case 0xEEE8:     // Test Drive II: The Duel (U)
-          saveType = 1;  // ODD
-          sramBase = 0x200001;
-          sramEnd = 0x20FFFF;
-          break;
+        }
       }
       if (saveType == 1) {
         sramSize = (sramEnd - sramBase + 2) / 2;
