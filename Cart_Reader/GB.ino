@@ -1595,6 +1595,14 @@ static void selectMbc6FlashBank_GB(byte bank) {
   writeByte_GB(0x3000, bank);
 }
 
+static void mbc6UnlockSequenceP16_GB() __attribute__((noinline));
+static void mbc6UnlockSequenceP16_GB() {
+  writeByte_GB(0x2000, 0x01);
+  writeByte_GB(0x3000, 0x02);
+  writeByte_GB(0x7555, 0xAA);
+  writeByte_GB(0x4AAA, 0x55);
+}
+
 void writeSRAMFLASH_MBC6_GB() {
   // Create filepath
   appendSelectedFilePath();
@@ -1639,10 +1647,7 @@ void writeSRAMFLASH_MBC6_GB() {
       if (((processedProgressBar - 0x8000) % 0x20000) == 0) {
         writeByte_GB(0x2800, 0x08);
         writeByte_GB(0x3800, 0x08);
-        writeByte_GB(0x2000, 0x01);
-        writeByte_GB(0x3000, 0x02);
-        writeByte_GB(0x7555, 0xAA);
-        writeByte_GB(0x4AAA, 0x55);
+        mbc6UnlockSequenceP16_GB();
         writeByte_GB(0x7555, 0x80);
         writeByte_GB(0x7555, 0xAA);
         writeByte_GB(0x4AAA, 0x55);
@@ -1665,10 +1670,7 @@ void writeSRAMFLASH_MBC6_GB() {
 
       // Write to FLASH
       while (romAddress <= 0x5FFF) {
-        writeByte_GB(0x2000, 0x01);
-        writeByte_GB(0x3000, 0x02);
-        writeByte_GB(0x7555, 0xAA);
-        writeByte_GB(0x4AAA, 0x55);
+        mbc6UnlockSequenceP16_GB();
         writeByte_GB(0x7555, 0xA0);
         selectMbc6FlashBank_GB(currBank);
         for (int i = 0; i < 128; i++) {
