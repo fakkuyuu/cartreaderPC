@@ -1099,20 +1099,41 @@ void getCartInfo_GB() {
     romType = 0x104;
   }
 
-  // MMM01 (Mani 4 in 1)
-  if (
-    (
-      strncmp(romName, "BOUKENJIMA2 SET", 15) == 0 && sdBuffer[0x14D] == 0)
-    || (strncmp(romName, "BUBBLEBOBBLE SET", 16) == 0 && sdBuffer[0x14D] == 0xC6) || (strncmp(romName, "GANBARUGA SET", 13) == 0 && sdBuffer[0x14D] == 0x90) || (strncmp(romName, "RTYPE 2 SET", 11) == 0 && sdBuffer[0x14D] == 0x32)) {
-    romType = 0x0B;
-  }
-
-  // MBC1M
-  if (
-    (
-      strncmp(romName, "MOMOCOL", 7) == 0 && sdBuffer[0x14D] == 0x28)
-    || (strncmp(romName, "BOMCOL", 6) == 0 && sdBuffer[0x14D] == 0x86) || (strncmp(romName, "GENCOL", 6) == 0 && sdBuffer[0x14D] == 0x8A) || (strncmp(romName, "SUPERCHINESE 123", 16) == 0 && sdBuffer[0x14D] == 0xE4) || (strncmp(romName, "MORTALKOMBATI&II", 16) == 0 && sdBuffer[0x14D] == 0xB9) || (strncmp(romName, "MORTALKOMBAT DUO", 16) == 0 && sdBuffer[0x14D] == 0xA7)) {
-    romType += 0x100;
+  static const char title0[] PROGMEM = "BOUKENJIMA2 SET";
+  static const char title1[] PROGMEM = "BUBBLEBOBBLE SET";
+  static const char title2[] PROGMEM = "GANBARUGA SET";
+  static const char title3[] PROGMEM = "RTYPE 2 SET";
+  static const char title4[] PROGMEM = "MOMOCOL";
+  static const char title5[] PROGMEM = "BOMCOL";
+  static const char title6[] PROGMEM = "GENCOL";
+  static const char title7[] PROGMEM = "SUPERCHINESE 123";
+  static const char title8[] PROGMEM = "MORTALKOMBATI&II";
+  static const char title9[] PROGMEM = "MORTALKOMBAT DUO";
+  struct MulticartSignature { const char* title; byte length; byte checksum; };
+  static const MulticartSignature signatures[] PROGMEM = {
+    {title0, 15, 0},
+    {title1, 16, 0xC6},
+    {title2, 13, 0x90},
+    {title3, 11, 0x32},
+    {title4, 7, 0x28},
+    {title5, 6, 0x86},
+    {title6, 6, 0x8A},
+    {title7, 16, 0xE4},
+    {title8, 16, 0xB9},
+    {title9, 16, 0xA7}
+  };
+  // MMM01 and MBC1M: preserve the original group order.
+  for (byte i = 0; i < sizeof(signatures) / sizeof(signatures[0]); ++i) {
+    if (strncmp_P(romName, (const char*)pgm_read_ptr(&signatures[i].title), pgm_read_byte(&signatures[i].length)) == 0 &&
+        sdBuffer[0x14D] == pgm_read_byte(&signatures[i].checksum)) {
+      if (i < 4) {
+        romType = 0x0B;
+        i = 3;
+      } else {
+        romType += 0x100;
+        break;
+      }
+    }
   }
 
   // ROM revision
