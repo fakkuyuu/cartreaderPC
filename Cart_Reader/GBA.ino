@@ -37,6 +37,14 @@ static const char GBASaveItem5[] PROGMEM = "512K FLASH";
 static const char GBASaveItem6[] PROGMEM = "1M FLASH";
 static const char* const saveOptionsGBA[] PROGMEM = { GBASaveItem1, GBASaveItem2, GBASaveItem3, GBASaveItem4, GBASaveItem5, GBASaveItem6 };
 
+void idFlash_GBA();
+void resetFLASH_GBA();
+static void identifyAndResetSaveFlashP18_GBA() __attribute__((noinline));
+static void identifyAndResetSaveFlashP18_GBA() {
+  idFlash_GBA();
+  resetFLASH_GBA();
+}
+
 void gbaMenu() {
   // create menu with title and 5 options to choose from
   unsigned char mainMenu;
@@ -151,8 +159,7 @@ void gbaMenu() {
 
         case 4:
           // 512K FLASH
-          idFlash_GBA();
-          resetFLASH_GBA();
+          identifyAndResetSaveFlashP18_GBA();
 
           if (flashid == 0x1F3D) {
             printFlashTypeAndWait(F("Atmel AT29LV512"));
@@ -190,8 +197,7 @@ void gbaMenu() {
 
         case 5:
           // 1M FLASH
-          idFlash_GBA();
-          resetFLASH_GBA();
+          identifyAndResetSaveFlashP18_GBA();
 
           if (flashid == 0xC209) {
             printFlashTypeAndWait(F("Macronix MX29L010"));
