@@ -824,6 +824,12 @@ void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
 /******************************************
   SNES ROM Functions
 ******************************************/
+static void showChecksumP17_SNES() __attribute__((noinline));
+static void showChecksumP17_SNES() {
+  print_Msg(FS(FSTRING_CHECKSUM));
+  showChecksumAndUpdate();
+}
+
 void getCartInfo_SNES() {
   boolean manualConfig = 0;
 
@@ -962,8 +968,7 @@ void getCartInfo_SNES() {
   print_Msg(sramSize >> 3);
   println_Msg(FS(SharedFlashText::unitKBWithSpace));
 
-  print_Msg(FS(FSTRING_CHECKSUM));
-  showChecksumAndUpdate();
+  showChecksumP17_SNES();
 
   // Wait for user input
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
@@ -1014,8 +1019,7 @@ void checkAltConf(char crcStr[9]) {
   if (myFile.open("snes.txt", O_READ)) {
     // Get cart info
     showSearchingDatabase();
-    print_Msg(FS(FSTRING_CHECKSUM));
-    showChecksumAndUpdate();
+    showChecksumP17_SNES();
 
     bool unique = true;
     const bool hostLookup = myFile.isPc() && PcLink::hasHostSnesLookup();
