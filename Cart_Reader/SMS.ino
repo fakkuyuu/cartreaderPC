@@ -366,6 +366,12 @@ byte readNibble(byte data, byte number) {
 //*****************************************
 //  Cartridges functions
 //*****************************************
+static void showSizeP21_SMS() __attribute__((noinline));
+static void showSizeP21_SMS() {
+  print_Msg(cartSize / 1024);
+  println_Msg(FS(SharedFlashText::unitKB));
+}
+
 void getCartInfo_SMS() {
   byte cartNib = readNibble(readByte_SMS(0x7FFF), 0);
 
@@ -483,8 +489,7 @@ void getCartInfo_SMS() {
 
   println_Msg(FS(FSTRING_SPACE));
   showRomNameLine();
-  print_Msg(cartSize / 1024);
-  println_Msg(FS(SharedFlashText::unitKB));
+  showSizeP21_SMS();
   println_Msg(FS(FSTRING_SPACE));
 
   // Wait for user input
@@ -554,8 +559,7 @@ void manual_selectRomSize() {
   // Display info
   display_Clear();
   print_Msg(F("Selected Size: "));
-  print_Msg(cartSize / 1024);
-  println_Msg(FS(SharedFlashText::unitKB));
+  showSizeP21_SMS();
 
   printPressButtonPrompt();
 }
@@ -576,8 +580,7 @@ void readROM_SMS() {
   printAndIncrementFolder(true);
 
   print_Msg(F("ROM Size: "));
-  print_Msg(cartSize / 1024);
-  println_Msg(FS(SharedFlashText::unitKB));
+  showSizeP21_SMS();
 
   // Open file on sd card
   if (!openNamedOutputFile()) {
