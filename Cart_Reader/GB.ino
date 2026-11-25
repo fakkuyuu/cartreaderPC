@@ -1958,35 +1958,41 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
     flashid = readByte_GB(0) << 8;
     flashid |= readByte_GB(1);
 
-    if (flashid == 0x04D4) {
-      println_Msg(F("MBM29F033C"));
-      showFlashBankCount_GB(F("/256"));
-    } else if (flashid == 0x0141) {
-      println_Msg(F("AM29F032B"));
-      showFlashBankCount_GB(F("/256"));
-    } else if (flashid == 0x01AD) {
-      println_Msg(F("AM29F016B"));
-      showFlashBankCount_GB(F("/128"));
-    } else if (flashid == 0x04AD) {
-      println_Msg(F("AM29F016D"));
-      showFlashBankCount_GB(F("/128"));
-    } else if (flashid == 0x01D5) {
-      println_Msg(F("AM29F080B"));
-      showFlashBankCount_GB(F("/64"));
-    } else if (flashid == 0xBFB7) {
-      println_Msg(F("SST 39SF040"));
-      showFlashBankCount_GB(F("/32"));
-    } else if (flashid == 0xBFB6) {
-      println_Msg(F("SST 39SF020"));
-      showFlashBankCount_GB(F("/16"));
-    } else if (flashid == 0xBFB5) {
-      println_Msg(FS(SharedFlashText::textSST39SF010));
-      showFlashBankCount_GB(F("/8"));
-    } else if ((flashid == 0x01D2) || (flashid == 0x01D8)) {
-      println_Msg(F("Micron M29F160FB/T"));
-      showFlashBankCount_GB(F("/128"));
-    } else {
-      print_Msg(FS(SharedFlashText::textFlashID));
+    static const char flashName0[] PROGMEM = "MBM29F033C";
+    static const char flashName1[] PROGMEM = "AM29F032B";
+    static const char flashName2[] PROGMEM = "AM29F016B";
+    static const char flashName3[] PROGMEM = "AM29F016D";
+    static const char flashName4[] PROGMEM = "AM29F080B";
+    static const char flashName5[] PROGMEM = "SST 39SF040";
+    static const char flashName6[] PROGMEM = "SST 39SF020";
+    static const char flashName8[] PROGMEM = "Micron M29F160FB/T";
+    static const char bankCount256[] PROGMEM = "/256";
+    static const char bankCount128[] PROGMEM = "/128";
+    static const char bankCount64[] PROGMEM = "/64";
+    static const char bankCount32[] PROGMEM = "/32";
+    static const char bankCount16[] PROGMEM = "/16";
+    static const char bankCount8[] PROGMEM = "/8";
+    struct FlashLabel { uint16_t id; const char* name; const char* banks; };
+    static const FlashLabel labels[] PROGMEM = {
+      {0x04D4, flashName0, bankCount256},
+      {0x0141, flashName1, bankCount256},
+      {0x01AD, flashName2, bankCount128},
+      {0x04AD, flashName3, bankCount128},
+      {0x01D5, flashName4, bankCount64},
+      {0xBFB7, flashName5, bankCount32},
+      {0xBFB6, flashName6, bankCount16},
+      {0xBFB5, SharedFlashText::textSST39SF010, bankCount8},
+      {0x01D2, flashName8, bankCount128},
+      {0x01D8, flashName8, bankCount128}
+    };
+    byte labelIndex = 0;
+    for (; labelIndex < sizeof(labels) / sizeof(labels[0]); ++labelIndex) {
+      if (pgm_read_word(&labels[labelIndex].id) == flashid) break;
+    }
+    if (labelIndex < sizeof(labels) / sizeof(labels[0])) {
+      println_Msg(FS((const char*)pgm_read_ptr(&labels[labelIndex].name)));
+      showFlashBankCount_GB(FS((const char*)pgm_read_ptr(&labels[labelIndex].banks)));
+    } else {      print_Msg(FS(SharedFlashText::textFlashID));
       formatFlashId();
       println_Msg(flashid_str);
       display_Update();
