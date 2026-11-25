@@ -731,19 +731,9 @@ void readRAM_MSX() {
         // Use Combined Bits:  0xA0 (Bit 5 + Bit 7) and 0xC0 (Bit 6 + Bit 7)
         // Note:  Combined 0xE0 (Bit 5 + Bit 6 + Bit 7) does not work
         checkRAM();
-        if (srambit6)
-          writeData_MSX(0x7000, 0xC0);  // Bit 6 + Bit 7 Enable
-        else
-          writeData_MSX(0x7000, 0xA0);    // Bit 5 + Bit 7 Enable
-        readSegment_MSX(0x8000, 0xA000);  // 8K
-        if (msxramsize > 2) {
-          for (int x = 1; x < 4; x++) {
-            if (srambit6)
-              writeData_MSX(0x7000, 0xC0 + x);  // Bit 6 + Bit 7 Enable
-            else
-              writeData_MSX(0x7000, 0xA0 + x);  // Bit 5 + Bit 7 Enable
-            readSegment_MSX(0x8000, 0xA000);    // 8K
-          }
+        for (int x = 0; x < (msxramsize > 2 ? 4 : 1); x++) {
+          writeData_MSX(0x7000, (srambit6 ? 0xC0 : 0xA0) + x);
+          readSegment_MSX(0x8000, 0xA000);
         }
         writeData_MSX(0x7000, 0);  // SRAM Disable
         break;
