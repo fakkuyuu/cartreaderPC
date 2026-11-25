@@ -1,62 +1,62 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45593725380",
+  "run_id": "45595068453",
   "run_attempt": "1",
-  "workflow_commit": "7064b84da853581c8437443cc9125ff491ad0471",
+  "workflow_commit": "8278ad8d78671e04fb910b907c6f79c73bde3fb2",
   "request": {
-    "id": "parallel-015",
-    "base": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
+    "id": "parallel-016",
+    "base": "7064b84da853581c8437443cc9125ff491ad0471",
     "expected_base_flash": 210400,
     "expected_base_ram": 6123,
     "candidates": [
       {
-        "id": "gb-pelican",
-        "head": "c36fc858ee8fc7707e9eed278fe09bed6f88fa49"
+        "id": "gb-mbc6-command",
+        "head": "7be3bd8f55ac8048015b8cff0a6f16b340f487d8"
       },
       {
-        "id": "gba-eep",
-        "head": "56878331a2086fd980fc4fab84c2ce29c0001400"
+        "id": "gba-save-close",
+        "head": "8374afcdaaf276e8aa7e97795a5c74e3e282b936"
       },
       {
-        "id": "md-eep",
-        "head": "a8359b291816d191a9afbe175b25c763ff1abbea"
+        "id": "md-save-close",
+        "head": "5f564f62df9e48d950903d70cd33f0bf8148d213"
       },
       {
-        "id": "n64-eep",
-        "head": "a1da5680bd0e90d59b18b10d8374a74684c5e94e"
+        "id": "nes-mapper-setup",
+        "head": "97ae84591cc68c08857b51efebd4584ebbe36cb1"
       },
       {
-        "id": "nes-eep",
-        "head": "a285881a1c1597c271aa05be08e2d65c9d9127c2"
+        "id": "pce-save-display",
+        "head": "ced9bf818b0ab5e10941abcaf9e6c340b14657a5"
       },
       {
-        "id": "snes-sram",
-        "head": "5c42281ebd2b9a71866fa9bef80743afd246dfe8"
+        "id": "ws-verify-display",
+        "head": "3a23de87652fa0c72d63badafe7cf1c310c144f2"
       },
       {
-        "id": "pce-lock",
-        "head": "0f0398112cc51dd18845d160ca4a232fa9afcf47"
+        "id": "n64-pak-failure",
+        "head": "5b93b2b67236a0c648ac368960d73ff47a608955"
       },
       {
-        "id": "ws-header",
-        "head": "7d715578d3704b6e900eafd837d03d4049b898df"
+        "id": "snes-sa1-block-zero",
+        "head": "8f4f0202924dd231998e04e0c300febb96d14833"
       }
     ]
   },
-  "status": "partial_or_failed",
+  "status": "ok",
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45593725380",
+      "run_id": "45595068453",
       "run_attempt": "1",
-      "workflow_commit": "7064b84da853581c8437443cc9125ff491ad0471",
+      "workflow_commit": "8278ad8d78671e04fb910b907c6f79c73bde3fb2",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "gb-pelican",
-        "head": "c36fc858ee8fc7707e9eed278fe09bed6f88fa49",
-        "base": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
+        "id": "gb-mbc6-command",
+        "head": "7be3bd8f55ac8048015b8cff0a6f16b340f487d8",
+        "base": "7064b84da853581c8437443cc9125ff491ad0471",
         "expected_base_flash": 210400,
         "expected_base_ram": 6123,
         "endpoints_only": false
@@ -66,8 +66,8 @@
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
-          "subject": "Measure phase 2 batch 14 cumulative integration",
+          "commit": "7064b84da853581c8437443cc9125ff491ad0471",
+          "subject": "Measure fifteenth batch of eight independent firmware size candidates",
           "status": "ok",
           "flash": 210400,
           "ram": 6123,
@@ -77,8 +77,104 @@
           "error": null
         },
         {
-          "commit": "c36fc858ee8fc7707e9eed278fe09bed6f88fa49",
-          "subject": "Measure phase 2 batch 15 gb-pelican noinline candidate",
+          "commit": "7be3bd8f55ac8048015b8cff0a6f16b340f487d8",
+          "subject": "Measure phase 2 batch 16 gb-mbc6-command shared sequence",
+          "status": "ok",
+          "flash": 210362,
+          "ram": 6123,
+          "delta_previous": -38,
+          "delta_base": -38,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gb-mbc6-command",
+        "head": "7be3bd8f55ac8048015b8cff0a6f16b340f487d8"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45595068453",
+      "run_attempt": "1",
+      "workflow_commit": "8278ad8d78671e04fb910b907c6f79c73bde3fb2",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "gba-save-close",
+        "head": "8374afcdaaf276e8aa7e97795a5c74e3e282b936",
+        "base": "7064b84da853581c8437443cc9125ff491ad0471",
+        "expected_base_flash": 210400,
+        "expected_base_ram": 6123,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "7064b84da853581c8437443cc9125ff491ad0471",
+          "subject": "Measure fifteenth batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 210400,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "8374afcdaaf276e8aa7e97795a5c74e3e282b936",
+          "subject": "Measure phase 2 batch 16 gba-save-close shared sequence",
+          "status": "ok",
+          "flash": 210404,
+          "ram": 6123,
+          "delta_previous": 4,
+          "delta_base": 4,
+          "classification": "increased",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gba-save-close",
+        "head": "8374afcdaaf276e8aa7e97795a5c74e3e282b936"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45595068453",
+      "run_attempt": "1",
+      "workflow_commit": "8278ad8d78671e04fb910b907c6f79c73bde3fb2",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "md-save-close",
+        "head": "5f564f62df9e48d950903d70cd33f0bf8148d213",
+        "base": "7064b84da853581c8437443cc9125ff491ad0471",
+        "expected_base_flash": 210400,
+        "expected_base_ram": 6123,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "7064b84da853581c8437443cc9125ff491ad0471",
+          "subject": "Measure fifteenth batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 210400,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "5f564f62df9e48d950903d70cd33f0bf8148d213",
+          "subject": "Measure phase 2 batch 16 md-save-close shared sequence",
           "status": "ok",
           "flash": 210400,
           "ram": 6123,
@@ -90,21 +186,21 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "gb-pelican",
-        "head": "c36fc858ee8fc7707e9eed278fe09bed6f88fa49"
+        "id": "md-save-close",
+        "head": "5f564f62df9e48d950903d70cd33f0bf8148d213"
       }
     },
     {
       "schema": 1,
-      "run_id": "45593725380",
+      "run_id": "45595068453",
       "run_attempt": "1",
-      "workflow_commit": "7064b84da853581c8437443cc9125ff491ad0471",
+      "workflow_commit": "8278ad8d78671e04fb910b907c6f79c73bde3fb2",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "build_failed",
+      "status": "ok",
       "request": {
-        "id": "gba-eep",
-        "head": "56878331a2086fd980fc4fab84c2ce29c0001400",
-        "base": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
+        "id": "nes-mapper-setup",
+        "head": "97ae84591cc68c08857b51efebd4584ebbe36cb1",
+        "base": "7064b84da853581c8437443cc9125ff491ad0471",
         "expected_base_flash": 210400,
         "expected_base_ram": 6123,
         "endpoints_only": false
@@ -114,8 +210,8 @@
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
-          "subject": "Measure phase 2 batch 14 cumulative integration",
+          "commit": "7064b84da853581c8437443cc9125ff491ad0471",
+          "subject": "Measure fifteenth batch of eight independent firmware size candidates",
           "status": "ok",
           "flash": 210400,
           "ram": 6123,
@@ -125,34 +221,34 @@
           "error": null
         },
         {
-          "commit": "56878331a2086fd980fc4fab84c2ce29c0001400",
-          "subject": "Measure phase 2 batch 15 gba-eep noinline candidate",
-          "status": "failed",
-          "flash": null,
-          "ram": null,
-          "delta_previous": null,
-          "delta_base": null,
-          "classification": "unavailable",
-          "error": "Program \"arduino-builder.exe\" ended with non-zero exit code: 1 (0x00000001)."
+          "commit": "97ae84591cc68c08857b51efebd4584ebbe36cb1",
+          "subject": "Measure phase 2 batch 16 nes-mapper-setup shared sequence",
+          "status": "ok",
+          "flash": 210322,
+          "ram": 6123,
+          "delta_previous": -78,
+          "delta_base": -78,
+          "classification": "reduced",
+          "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "gba-eep",
-        "head": "56878331a2086fd980fc4fab84c2ce29c0001400"
+        "id": "nes-mapper-setup",
+        "head": "97ae84591cc68c08857b51efebd4584ebbe36cb1"
       }
     },
     {
       "schema": 1,
-      "run_id": "45593725380",
+      "run_id": "45595068453",
       "run_attempt": "1",
-      "workflow_commit": "7064b84da853581c8437443cc9125ff491ad0471",
+      "workflow_commit": "8278ad8d78671e04fb910b907c6f79c73bde3fb2",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "md-eep",
-        "head": "a8359b291816d191a9afbe175b25c763ff1abbea",
-        "base": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
+        "id": "pce-save-display",
+        "head": "ced9bf818b0ab5e10941abcaf9e6c340b14657a5",
+        "base": "7064b84da853581c8437443cc9125ff491ad0471",
         "expected_base_flash": 210400,
         "expected_base_ram": 6123,
         "endpoints_only": false
@@ -162,8 +258,8 @@
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
-          "subject": "Measure phase 2 batch 14 cumulative integration",
+          "commit": "7064b84da853581c8437443cc9125ff491ad0471",
+          "subject": "Measure fifteenth batch of eight independent firmware size candidates",
           "status": "ok",
           "flash": 210400,
           "ram": 6123,
@@ -173,8 +269,8 @@
           "error": null
         },
         {
-          "commit": "a8359b291816d191a9afbe175b25c763ff1abbea",
-          "subject": "Measure phase 2 batch 15 md-eep noinline candidate",
+          "commit": "ced9bf818b0ab5e10941abcaf9e6c340b14657a5",
+          "subject": "Measure phase 2 batch 16 pce-save-display shared sequence",
           "status": "ok",
           "flash": 210400,
           "ram": 6123,
@@ -186,21 +282,21 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "md-eep",
-        "head": "a8359b291816d191a9afbe175b25c763ff1abbea"
+        "id": "pce-save-display",
+        "head": "ced9bf818b0ab5e10941abcaf9e6c340b14657a5"
       }
     },
     {
       "schema": 1,
-      "run_id": "45593725380",
+      "run_id": "45595068453",
       "run_attempt": "1",
-      "workflow_commit": "7064b84da853581c8437443cc9125ff491ad0471",
+      "workflow_commit": "8278ad8d78671e04fb910b907c6f79c73bde3fb2",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "n64-eep",
-        "head": "a1da5680bd0e90d59b18b10d8374a74684c5e94e",
-        "base": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
+        "id": "ws-verify-display",
+        "head": "3a23de87652fa0c72d63badafe7cf1c310c144f2",
+        "base": "7064b84da853581c8437443cc9125ff491ad0471",
         "expected_base_flash": 210400,
         "expected_base_ram": 6123,
         "endpoints_only": false
@@ -210,8 +306,8 @@
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
-          "subject": "Measure phase 2 batch 14 cumulative integration",
+          "commit": "7064b84da853581c8437443cc9125ff491ad0471",
+          "subject": "Measure fifteenth batch of eight independent firmware size candidates",
           "status": "ok",
           "flash": 210400,
           "ram": 6123,
@@ -221,34 +317,34 @@
           "error": null
         },
         {
-          "commit": "a1da5680bd0e90d59b18b10d8374a74684c5e94e",
-          "subject": "Measure phase 2 batch 15 n64-eep noinline candidate",
+          "commit": "3a23de87652fa0c72d63badafe7cf1c310c144f2",
+          "subject": "Measure phase 2 batch 16 ws-verify-display shared sequence",
           "status": "ok",
-          "flash": 210400,
+          "flash": 210424,
           "ram": 6123,
-          "delta_previous": 0,
-          "delta_base": 0,
-          "classification": "unchanged",
+          "delta_previous": 24,
+          "delta_base": 24,
+          "classification": "increased",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "n64-eep",
-        "head": "a1da5680bd0e90d59b18b10d8374a74684c5e94e"
+        "id": "ws-verify-display",
+        "head": "3a23de87652fa0c72d63badafe7cf1c310c144f2"
       }
     },
     {
       "schema": 1,
-      "run_id": "45593725380",
+      "run_id": "45595068453",
       "run_attempt": "1",
-      "workflow_commit": "7064b84da853581c8437443cc9125ff491ad0471",
+      "workflow_commit": "8278ad8d78671e04fb910b907c6f79c73bde3fb2",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "nes-eep",
-        "head": "a285881a1c1597c271aa05be08e2d65c9d9127c2",
-        "base": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
+        "id": "n64-pak-failure",
+        "head": "5b93b2b67236a0c648ac368960d73ff47a608955",
+        "base": "7064b84da853581c8437443cc9125ff491ad0471",
         "expected_base_flash": 210400,
         "expected_base_ram": 6123,
         "endpoints_only": false
@@ -258,8 +354,8 @@
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
-          "subject": "Measure phase 2 batch 14 cumulative integration",
+          "commit": "7064b84da853581c8437443cc9125ff491ad0471",
+          "subject": "Measure fifteenth batch of eight independent firmware size candidates",
           "status": "ok",
           "flash": 210400,
           "ram": 6123,
@@ -269,82 +365,34 @@
           "error": null
         },
         {
-          "commit": "a285881a1c1597c271aa05be08e2d65c9d9127c2",
-          "subject": "Measure phase 2 batch 15 nes-eep noinline candidate",
+          "commit": "5b93b2b67236a0c648ac368960d73ff47a608955",
+          "subject": "Measure phase 2 batch 16 N64 shared Pak failure sequence",
           "status": "ok",
-          "flash": 210400,
+          "flash": 210388,
           "ram": 6123,
-          "delta_previous": 0,
-          "delta_base": 0,
-          "classification": "unchanged",
+          "delta_previous": -12,
+          "delta_base": -12,
+          "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "nes-eep",
-        "head": "a285881a1c1597c271aa05be08e2d65c9d9127c2"
+        "id": "n64-pak-failure",
+        "head": "5b93b2b67236a0c648ac368960d73ff47a608955"
       }
     },
     {
       "schema": 1,
-      "run_id": "45593725380",
+      "run_id": "45595068453",
       "run_attempt": "1",
-      "workflow_commit": "7064b84da853581c8437443cc9125ff491ad0471",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "build_failed",
-      "request": {
-        "id": "snes-sram",
-        "head": "5c42281ebd2b9a71866fa9bef80743afd246dfe8",
-        "base": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
-        "expected_base_flash": 210400,
-        "expected_base_ram": 6123,
-        "endpoints_only": false
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
-          "subject": "Measure phase 2 batch 14 cumulative integration",
-          "status": "ok",
-          "flash": 210400,
-          "ram": 6123,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "5c42281ebd2b9a71866fa9bef80743afd246dfe8",
-          "subject": "Measure phase 2 batch 15 snes-sram noinline candidate",
-          "status": "failed",
-          "flash": null,
-          "ram": null,
-          "delta_previous": null,
-          "delta_base": null,
-          "classification": "unavailable",
-          "error": "Program \"arduino-builder.exe\" ended with non-zero exit code: 1 (0x00000001)."
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "snes-sram",
-        "head": "5c42281ebd2b9a71866fa9bef80743afd246dfe8"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45593725380",
-      "run_attempt": "1",
-      "workflow_commit": "7064b84da853581c8437443cc9125ff491ad0471",
+      "workflow_commit": "8278ad8d78671e04fb910b907c6f79c73bde3fb2",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "pce-lock",
-        "head": "0f0398112cc51dd18845d160ca4a232fa9afcf47",
-        "base": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
+        "id": "snes-sa1-block-zero",
+        "head": "8f4f0202924dd231998e04e0c300febb96d14833",
+        "base": "7064b84da853581c8437443cc9125ff491ad0471",
         "expected_base_flash": 210400,
         "expected_base_ram": 6123,
         "endpoints_only": false
@@ -354,8 +402,8 @@
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
-          "subject": "Measure phase 2 batch 14 cumulative integration",
+          "commit": "7064b84da853581c8437443cc9125ff491ad0471",
+          "subject": "Measure fifteenth batch of eight independent firmware size candidates",
           "status": "ok",
           "flash": 210400,
           "ram": 6123,
@@ -365,69 +413,21 @@
           "error": null
         },
         {
-          "commit": "0f0398112cc51dd18845d160ca4a232fa9afcf47",
-          "subject": "Measure phase 2 batch 15 pce-lock noinline candidate",
+          "commit": "8f4f0202924dd231998e04e0c300febb96d14833",
+          "subject": "Measure phase 2 batch 16 SNES shared SA1 block zero setup",
           "status": "ok",
-          "flash": 210400,
+          "flash": 210362,
           "ram": 6123,
-          "delta_previous": 0,
-          "delta_base": 0,
-          "classification": "unchanged",
+          "delta_previous": -38,
+          "delta_base": -38,
+          "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "pce-lock",
-        "head": "0f0398112cc51dd18845d160ca4a232fa9afcf47"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45593725380",
-      "run_attempt": "1",
-      "workflow_commit": "7064b84da853581c8437443cc9125ff491ad0471",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "build_failed",
-      "request": {
-        "id": "ws-header",
-        "head": "7d715578d3704b6e900eafd837d03d4049b898df",
-        "base": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
-        "expected_base_flash": 210400,
-        "expected_base_ram": 6123,
-        "endpoints_only": false
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
-          "subject": "Measure phase 2 batch 14 cumulative integration",
-          "status": "ok",
-          "flash": 210400,
-          "ram": 6123,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "7d715578d3704b6e900eafd837d03d4049b898df",
-          "subject": "Measure phase 2 batch 15 ws-header noinline candidate",
-          "status": "failed",
-          "flash": null,
-          "ram": null,
-          "delta_previous": null,
-          "delta_base": null,
-          "classification": "unavailable",
-          "error": "Program \"arduino-builder.exe\" ended with non-zero exit code: 1 (0x00000001)."
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "ws-header",
-        "head": "7d715578d3704b6e900eafd837d03d4049b898df"
+        "id": "snes-sa1-block-zero",
+        "head": "8f4f0202924dd231998e04e0c300febb96d14833"
       }
     }
   ]
