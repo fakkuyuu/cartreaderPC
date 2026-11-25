@@ -1,29 +1,23 @@
 {
-  "id": "parallel-009-integration",
-  "base": "d4c5666dee46c59cc1f51f30bfda563f176aa843",
-  "expected_base_flash": 213058,
+  "id": "parallel-010",
+  "base": "8807906a82ae1499511ee7e06382c63192a489c2",
+  "expected_base_flash": 212832,
   "expected_base_ram": 6281,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-md",
-      "head": "12a4aa6fa2fee5fc262bc0b2a1b16a78cbbf0b2a"
+      "id": "pce-tennokoe-lock",
+      "head": "5c5d53b01548e3ca09d99c0b0aa86e956b0e1ac9",
+      "path": "Cart_Reader/PCE.ino"
     },
     {
-      "id": "integration-md-ws",
-      "head": "dd0846e53c28ed4e803cbacab093cae4f12a84b6"
+      "id": "ws-eeprom-geometry",
+      "head": "1c603caf545542ceb9786c7d6163b40e56c6f839",
+      "path": "Cart_Reader/WS.ino"
     },
     {
-      "id": "integration-md-ws-msx",
-      "head": "de19dc1d84af4a0000bc6196884d86ea30697dc9"
-    },
-    {
-      "id": "integration-md-ws-msx-nes",
-      "head": "d38dd260311b1fe1cc37025f598bad3bed7bff12"
-    },
-    {
-      "id": "integration-md-ws-msx-nes-pce",
-      "head": "2cad7757f7fb914d615ff07033b7306b1b271485"
+      "id": "msx-koei-read-banks",
+      "head": "2a5bc7ef23e94c4feec090ce331c314210c9b7ab",
+      "path": "Cart_Reader/MSX.ino"
     }
   ]
 }
