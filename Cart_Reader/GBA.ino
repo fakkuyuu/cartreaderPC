@@ -1152,6 +1152,12 @@ boolean compare_checksum_GBA() {
 /******************************************
   GBA SRAM SAVE Functions
 *****************************************/
+static void seekSaveOffset_GBA(uint32_t pos) __attribute__((noinline));
+static void seekSaveOffset_GBA(uint32_t pos) {
+  if (pos != 0)
+    myFile.seekCur(pos);
+}
+
 void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
     // Get name, add extension and convert to char array for sd lib
@@ -1165,8 +1171,7 @@ void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   }
 
   // Seek to a new position in the file
-  if (pos != 0)
-    myFile.seekCur(pos);
+  seekSaveOffset_GBA(pos);
 
   for (uint32_t currAddress = 0; currAddress < sramSize; currAddress += 512) {
     for (int c = 0; c < 512; c++) {
@@ -1193,8 +1198,7 @@ void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (openSelectedFileForRead()) {
 
     // Seek to a new position in the file
-    if (pos != 0)
-      myFile.seekCur(pos);
+    seekSaveOffset_GBA(pos);
 
     for (uint32_t currAddress = 0; currAddress < sramSize; currAddress += 512) {
       //fill sdBuffer
@@ -1220,8 +1224,7 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
     writeErrors = 0;
 
     // Seek to a new position in the file
-    if (pos != 0)
-      myFile.seekCur(pos);
+    seekSaveOffset_GBA(pos);
 
     for (unsigned long currAddress = 0; currAddress < sramSize; currAddress += 512) {
       //fill sdBuffer
@@ -1727,8 +1730,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
   if (openSelectedFileForRead()) {
 
     // Seek to a new position in the file
-    if (pos != 0)
-      myFile.seekCur(pos);
+    seekSaveOffset_GBA(pos);
 
     // Output a LOW signal on CE_FLASH(PH0)
     PORTH &= ~(1 << 0);
@@ -1800,8 +1802,7 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
   }
 
   // Seek to a new position in the file
-  if (pos != 0)
-    myFile.seekCur(pos);
+  seekSaveOffset_GBA(pos);
 
   for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
     readSdBufferBlock();
