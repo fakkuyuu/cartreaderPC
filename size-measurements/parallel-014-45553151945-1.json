@@ -1,0 +1,458 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45553151945",
+  "run_attempt": "1",
+  "workflow_commit": "abcaf5567738d0065f431c775b77069a9fec132c",
+  "request": {
+    "id": "parallel-014",
+    "base": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+    "expected_base_flash": 211264,
+    "expected_base_ram": 6135,
+    "candidates": [
+      {
+        "id": "ws-developer-code-table",
+        "head": "6ba6017fbcdffe604fb25250011708a48cb47602",
+        "path": "Cart_Reader/WS.ino"
+      },
+      {
+        "id": "md-sram-checksum-table",
+        "head": "7da4fa7f340cc3b90e7184ef370069b5f829e228",
+        "path": "Cart_Reader/MD.ino"
+      },
+      {
+        "id": "gb-mapper-label-ranges",
+        "head": "7f3a33568225540af3f6f51d67d14759a08c0dff",
+        "path": "Cart_Reader/GB.ino"
+      },
+      {
+        "id": "gba-empty-header-checks",
+        "head": "adc651cc2e8dbc5798d2129eb5c167f4a7d3e136",
+        "path": "Cart_Reader/GBA.ino"
+      },
+      {
+        "id": "pce-flash-id-size-table",
+        "head": "7345974b20b8bae06acf0a870956425ef136cb7d",
+        "path": "Cart_Reader/PCE.ino"
+      },
+      {
+        "id": "n64-address-crc-progmem",
+        "head": "282bc596497e3b9bf50596fdde4fd432cf744262",
+        "path": "Cart_Reader/N64.ino"
+      },
+      {
+        "id": "snes-header-checksum-progmem",
+        "head": "cf7ed0eb50980646f27bd4e5cefa9cb631503916",
+        "path": "Cart_Reader/SNES.ino"
+      },
+      {
+        "id": "msx-ascii-rom-bank-loop",
+        "head": "ef0ab1bec4094aaf67cb60e87098a59c378cacfb",
+        "path": "Cart_Reader/MSX.ino"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45553151945",
+      "run_attempt": "1",
+      "workflow_commit": "abcaf5567738d0065f431c775b77069a9fec132c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "ws-developer-code-table",
+        "head": "6ba6017fbcdffe604fb25250011708a48cb47602",
+        "path": "Cart_Reader/WS.ino",
+        "base": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+        "expected_base_flash": 211264,
+        "expected_base_ram": 6135,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+          "subject": "Measure phase 2 batch 13 cumulative integration",
+          "status": "ok",
+          "flash": 211264,
+          "ram": 6135,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "6ba6017fbcdffe604fb25250011708a48cb47602",
+          "subject": "Phase 2 candidate: ws-developer-code-table",
+          "status": "ok",
+          "flash": 210896,
+          "ram": 6135,
+          "delta_previous": -368,
+          "delta_base": -368,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "ws-developer-code-table",
+        "head": "6ba6017fbcdffe604fb25250011708a48cb47602",
+        "path": "Cart_Reader/WS.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45553151945",
+      "run_attempt": "1",
+      "workflow_commit": "abcaf5567738d0065f431c775b77069a9fec132c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "md-sram-checksum-table",
+        "head": "7da4fa7f340cc3b90e7184ef370069b5f829e228",
+        "path": "Cart_Reader/MD.ino",
+        "base": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+        "expected_base_flash": 211264,
+        "expected_base_ram": 6135,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+          "subject": "Measure phase 2 batch 13 cumulative integration",
+          "status": "ok",
+          "flash": 211264,
+          "ram": 6135,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "7da4fa7f340cc3b90e7184ef370069b5f829e228",
+          "subject": "Phase 2 candidate: md-sram-checksum-table",
+          "status": "ok",
+          "flash": 210996,
+          "ram": 6135,
+          "delta_previous": -268,
+          "delta_base": -268,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "md-sram-checksum-table",
+        "head": "7da4fa7f340cc3b90e7184ef370069b5f829e228",
+        "path": "Cart_Reader/MD.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45553151945",
+      "run_attempt": "1",
+      "workflow_commit": "abcaf5567738d0065f431c775b77069a9fec132c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "gb-mapper-label-ranges",
+        "head": "7f3a33568225540af3f6f51d67d14759a08c0dff",
+        "path": "Cart_Reader/GB.ino",
+        "base": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+        "expected_base_flash": 211264,
+        "expected_base_ram": 6135,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+          "subject": "Measure phase 2 batch 13 cumulative integration",
+          "status": "ok",
+          "flash": 211264,
+          "ram": 6135,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "7f3a33568225540af3f6f51d67d14759a08c0dff",
+          "subject": "Phase 2 candidate: gb-mapper-label-ranges",
+          "status": "ok",
+          "flash": 211164,
+          "ram": 6135,
+          "delta_previous": -100,
+          "delta_base": -100,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gb-mapper-label-ranges",
+        "head": "7f3a33568225540af3f6f51d67d14759a08c0dff",
+        "path": "Cart_Reader/GB.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45553151945",
+      "run_attempt": "1",
+      "workflow_commit": "abcaf5567738d0065f431c775b77069a9fec132c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "gba-empty-header-checks",
+        "head": "adc651cc2e8dbc5798d2129eb5c167f4a7d3e136",
+        "path": "Cart_Reader/GBA.ino",
+        "base": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+        "expected_base_flash": 211264,
+        "expected_base_ram": 6135,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+          "subject": "Measure phase 2 batch 13 cumulative integration",
+          "status": "ok",
+          "flash": 211264,
+          "ram": 6135,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "adc651cc2e8dbc5798d2129eb5c167f4a7d3e136",
+          "subject": "Phase 2 candidate: gba-empty-header-checks",
+          "status": "ok",
+          "flash": 211264,
+          "ram": 6135,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gba-empty-header-checks",
+        "head": "adc651cc2e8dbc5798d2129eb5c167f4a7d3e136",
+        "path": "Cart_Reader/GBA.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45553151945",
+      "run_attempt": "1",
+      "workflow_commit": "abcaf5567738d0065f431c775b77069a9fec132c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "pce-flash-id-size-table",
+        "head": "7345974b20b8bae06acf0a870956425ef136cb7d",
+        "path": "Cart_Reader/PCE.ino",
+        "base": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+        "expected_base_flash": 211264,
+        "expected_base_ram": 6135,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+          "subject": "Measure phase 2 batch 13 cumulative integration",
+          "status": "ok",
+          "flash": 211264,
+          "ram": 6135,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "7345974b20b8bae06acf0a870956425ef136cb7d",
+          "subject": "Phase 2 candidate: pce-flash-id-size-table",
+          "status": "ok",
+          "flash": 211264,
+          "ram": 6135,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "pce-flash-id-size-table",
+        "head": "7345974b20b8bae06acf0a870956425ef136cb7d",
+        "path": "Cart_Reader/PCE.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45553151945",
+      "run_attempt": "1",
+      "workflow_commit": "abcaf5567738d0065f431c775b77069a9fec132c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "n64-address-crc-progmem",
+        "head": "282bc596497e3b9bf50596fdde4fd432cf744262",
+        "path": "Cart_Reader/N64.ino",
+        "base": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+        "expected_base_flash": 211264,
+        "expected_base_ram": 6135,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+          "subject": "Measure phase 2 batch 13 cumulative integration",
+          "status": "ok",
+          "flash": 211264,
+          "ram": 6135,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "282bc596497e3b9bf50596fdde4fd432cf744262",
+          "subject": "Phase 2 candidate: n64-address-crc-progmem",
+          "status": "ok",
+          "flash": 211222,
+          "ram": 6123,
+          "delta_previous": -42,
+          "delta_base": -42,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "n64-address-crc-progmem",
+        "head": "282bc596497e3b9bf50596fdde4fd432cf744262",
+        "path": "Cart_Reader/N64.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45553151945",
+      "run_attempt": "1",
+      "workflow_commit": "abcaf5567738d0065f431c775b77069a9fec132c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "snes-header-checksum-progmem",
+        "head": "cf7ed0eb50980646f27bd4e5cefa9cb631503916",
+        "path": "Cart_Reader/SNES.ino",
+        "base": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+        "expected_base_flash": 211264,
+        "expected_base_ram": 6135,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+          "subject": "Measure phase 2 batch 13 cumulative integration",
+          "status": "ok",
+          "flash": 211264,
+          "ram": 6135,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "cf7ed0eb50980646f27bd4e5cefa9cb631503916",
+          "subject": "Phase 2 candidate: snes-header-checksum-progmem",
+          "status": "ok",
+          "flash": 211286,
+          "ram": 6121,
+          "delta_previous": 22,
+          "delta_base": 22,
+          "classification": "increased",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "snes-header-checksum-progmem",
+        "head": "cf7ed0eb50980646f27bd4e5cefa9cb631503916",
+        "path": "Cart_Reader/SNES.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45553151945",
+      "run_attempt": "1",
+      "workflow_commit": "abcaf5567738d0065f431c775b77069a9fec132c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "msx-ascii-rom-bank-loop",
+        "head": "ef0ab1bec4094aaf67cb60e87098a59c378cacfb",
+        "path": "Cart_Reader/MSX.ino",
+        "base": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+        "expected_base_flash": 211264,
+        "expected_base_ram": 6135,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+          "subject": "Measure phase 2 batch 13 cumulative integration",
+          "status": "ok",
+          "flash": 211264,
+          "ram": 6135,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "ef0ab1bec4094aaf67cb60e87098a59c378cacfb",
+          "subject": "Phase 2 candidate: msx-ascii-rom-bank-loop",
+          "status": "ok",
+          "flash": 211178,
+          "ram": 6135,
+          "delta_previous": -86,
+          "delta_base": -86,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "msx-ascii-rom-bank-loop",
+        "head": "ef0ab1bec4094aaf67cb60e87098a59c378cacfb",
+        "path": "Cart_Reader/MSX.ino"
+      }
+    }
+  ]
+}
