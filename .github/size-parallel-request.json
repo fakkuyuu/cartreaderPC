@@ -1,33 +1,48 @@
 {
-  "id": "parallel-013-integration",
-  "base": "5823d985294256b77da236a959d238a7f79f1a11",
-  "expected_base_flash": 212230,
-  "expected_base_ram": 6281,
-  "endpoints_only": true,
+  "id": "parallel-014",
+  "base": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+  "expected_base_flash": 211264,
+  "expected_base_ram": 6135,
   "candidates": [
     {
-      "id": "integration-gb",
-      "head": "10f4b3f4b15c2d8dfb3d3c14d4d3f0fcc32b175d"
+      "id": "ws-developer-code-table",
+      "head": "6ba6017fbcdffe604fb25250011708a48cb47602",
+      "path": "Cart_Reader/WS.ino"
     },
     {
-      "id": "integration-gb-md",
-      "head": "942f69721f289f80a80ea00e165316ca46f14edf"
+      "id": "md-sram-checksum-table",
+      "head": "7da4fa7f340cc3b90e7184ef370069b5f829e228",
+      "path": "Cart_Reader/MD.ino"
     },
     {
-      "id": "integration-gb-md-msx",
-      "head": "40e20a35325504662d336993c115ae1368a82647"
+      "id": "gb-mapper-label-ranges",
+      "head": "7f3a33568225540af3f6f51d67d14759a08c0dff",
+      "path": "Cart_Reader/GB.ino"
     },
     {
-      "id": "integration-gb-md-msx-gba",
-      "head": "55482c0415c7d2a0f08f7214956a4e478e93055b"
+      "id": "gba-empty-header-checks",
+      "head": "adc651cc2e8dbc5798d2129eb5c167f4a7d3e136",
+      "path": "Cart_Reader/GBA.ino"
     },
     {
-      "id": "integration-gb-md-msx-gba-snes",
-      "head": "4caf35b201c15805de962655cf9643fe6bc5ee03"
+      "id": "pce-flash-id-size-table",
+      "head": "7345974b20b8bae06acf0a870956425ef136cb7d",
+      "path": "Cart_Reader/PCE.ino"
     },
     {
-      "id": "integration-gb-md-msx-gba-snes-nes",
-      "head": "69f5995cb9b9a58b5e87f84f224825a89b37e388"
+      "id": "n64-address-crc-progmem",
+      "head": "282bc596497e3b9bf50596fdde4fd432cf744262",
+      "path": "Cart_Reader/N64.ino"
+    },
+    {
+      "id": "snes-header-checksum-progmem",
+      "head": "cf7ed0eb50980646f27bd4e5cefa9cb631503916",
+      "path": "Cart_Reader/SNES.ino"
+    },
+    {
+      "id": "msx-ascii-rom-bank-loop",
+      "head": "ef0ab1bec4094aaf67cb60e87098a59c378cacfb",
+      "path": "Cart_Reader/MSX.ino"
     }
   ]
 }
