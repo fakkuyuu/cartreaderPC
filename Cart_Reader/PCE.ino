@@ -489,6 +489,14 @@ uint32_t calculate_crc32(int n, unsigned char c[], uint32_t r) {
   return r;
 }
 
+static void showCrcSavePath_PCE(const char* folder_p, const char* name) __attribute__((noinline));
+static void showCrcSavePath_PCE(const char* folder_p, const char* name) {
+  print_Msg(FS(SharedFlashText::textSavedTo));
+  print_Msg(folder_p);
+  print_Msg(FS(SharedFlashText::pathSeparator));
+  print_Msg(name);
+}
+
 void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((unused)), uint32_t crc) {
   FsFile rom, script;
   char gamename[100];
@@ -519,10 +527,7 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((u
         if (strcmp(crc_search, crc_file) == 0) {
           print_Msg(F("Chksum OK "));
           println_Msg(crc_file);
-          print_Msg(FS(SharedFlashText::textSavedTo));
-          print_Msg(folder_p);
-          print_Msg(FS(SharedFlashText::pathSeparator));
-          print_Msg(gamename);
+          showCrcSavePath_PCE(folder_p, gamename);
           flag = CHKSUM_OK;
           rom.rename(gamename);
           break;
@@ -533,17 +538,11 @@ void crc_search(char *file_p, char *folder_p, uint32_t rom_size __attribute__((u
   }
 
   if (flag == CHKSUM_SKIP) {
-    print_Msg(FS(SharedFlashText::textSavedTo));
-    print_Msg(folder_p);
-    print_Msg(FS(SharedFlashText::pathSeparator));
-    print_Msg(file_p);
+    showCrcSavePath_PCE(folder_p, file_p);
   } else if (flag == CHKSUM_ERROR) {
     print_Msg(F("Chksum Error "));
     println_Msg(crc_file);
-    print_Msg(FS(SharedFlashText::textSavedTo));
-    print_Msg(folder_p);
-    print_Msg(FS(SharedFlashText::pathSeparator));
-    print_Msg(file_p);
+    showCrcSavePath_PCE(folder_p, file_p);
   }
 
   script.close();
