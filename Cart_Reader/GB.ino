@@ -3230,6 +3230,15 @@ static void identifyGamesharkFlash_GB() {
   sendGamesharkCommand_GB(0xF0);
 }
 
+static void showGamesharkIdError_GB() __attribute__((noinline));
+static void showGamesharkIdError_GB() {
+  display_Clear();
+  println_Msg(FS(SharedFlashText::textUnknownFlashID));
+  println_Msg(FS(SharedFlashText::textCheckCartridgeConnection));
+  promptAndWaitForButton();
+  mainMenu();
+}
+
 void readGameshark_GB() {
   word finalAddress = 0x5FFF;
   word startAddress = 0x4000;
@@ -3250,11 +3259,7 @@ void readGameshark_GB() {
     println_Msg(FS(SharedFlashText::text128KB));
     display_Update();
   } else {
-    display_Clear();
-    println_Msg(FS(SharedFlashText::textUnknownFlashID));
-    println_Msg(FS(SharedFlashText::textCheckCartridgeConnection));
-    promptAndWaitForButton();
-    mainMenu();
+    showGamesharkIdError_GB();
   }
 
   // Get name, add extension and convert to char array for sd lib
@@ -3300,11 +3305,7 @@ void writeGameshark_GB() {
   identifyGamesharkFlash_GB();
 
   if (flashid != 0xBFB5) {
-    display_Clear();
-    println_Msg(FS(SharedFlashText::textUnknownFlashID));
-    println_Msg(FS(SharedFlashText::textCheckCartridgeConnection));
-    promptAndWaitForButton();
-    mainMenu();
+    showGamesharkIdError_GB();
   }
 
   // Launch filebrowser
