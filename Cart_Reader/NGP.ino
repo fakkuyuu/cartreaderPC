@@ -82,16 +82,20 @@ void ngpMenu() {
   updateDisplayAndWait();
 }
 
-bool getCartInfo_NGP() {
-  uint8_t* tmp;
-
-  // enter autoselect mode
+static void enterAutoselect_NGP() __attribute__((noinline));
+static void enterAutoselect_NGP() {
   dataOut();
   writeByte_NGP(0x555, 0xaa);
   writeByte_NGP(0x2aa, 0x55);
   writeByte_NGP(0x555, 0x90);
-
   dataIn();
+}
+
+bool getCartInfo_NGP() {
+  uint8_t* tmp;
+
+  // enter autoselect mode
+  enterAutoselect_NGP();
   cartSize = 0;
 
   // get chip manufacturer and device IDs
@@ -276,12 +280,7 @@ void scanChip_NGP() {
     myFile.println("Cart size unknown");
   else {
     // enter autoselect mode
-    dataOut();
-    writeByte_NGP(0x555, 0xaa);
-    writeByte_NGP(0x2aa, 0x55);
-    writeByte_NGP(0x555, 0x90);
-
-    dataIn();
+    enterAutoselect_NGP();
     uint32_t addrMax;
     uint8_t sectorID = 0;
 
