@@ -441,6 +441,20 @@ static void finishNesRomMenuRead() {
   wait();
 }
 
+void setMapper();
+void checkMapperSize();
+void setPRGSize();
+void setCHRSize();
+void setRAMSize();
+static void configureMapperP16_NES() __attribute__((noinline));
+static void configureMapperP16_NES() {
+  setMapper();
+  checkMapperSize();
+  setPRGSize();
+  setCHRSize();
+  setRAMSize();
+}
+
 void nesMenu() {
   unsigned char answer;
 
@@ -485,11 +499,7 @@ void nesMenu() {
     // Change Mapper
     case 4:
       setDefaultRomName();
-      setMapper();
-      checkMapperSize();
-      setPRGSize();
-      setCHRSize();
-      setRAMSize();
+      configureMapperP16_NES();
       checkStatus_NES();
       break;
 
@@ -922,11 +932,7 @@ bool selectMapping(FsFile& database) {
 
   if (myLetter == 27) {
     // Change Mapper
-    setMapper();
-    checkMapperSize();
-    setPRGSize();
-    setCHRSize();
-    setRAMSize();
+    configureMapperP16_NES();
     return 0;
   } else {
     seek_first_letter_in_database(database, myLetter);
