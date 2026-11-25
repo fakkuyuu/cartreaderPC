@@ -1,25 +1,48 @@
 {
-  "id": "parallel-008-integration",
-  "base": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
-  "expected_base_flash": 213504,
+  "id": "parallel-009",
+  "base": "bcfd68a01ecbf06e5eca8fd33a28f8a6c4452343",
+  "expected_base_flash": 213058,
   "expected_base_ram": 6281,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-msx",
-      "head": "06716c600635c3f2d972c059cf4f52c3211c1a81"
+      "id": "nes-mapper80-sram",
+      "head": "5839f649b05ec0615332629ffb5a92c3858deb0a",
+      "path": "Cart_Reader/NES.ino"
     },
     {
-      "id": "integration-msx-pce",
-      "head": "78688bca6252478024cebbd515bb1121e865d0cc"
+      "id": "md-eeprom-set-bit",
+      "head": "43a0ccfd1e984e32d8a936ee9b2cdd01a50751ab",
+      "path": "Cart_Reader/MD.ino"
     },
     {
-      "id": "integration-msx-pce-n64",
-      "head": "62545e9f449539071c96d0a9345814f0959caac1"
+      "id": "n64-accessory-blankcheck",
+      "head": "501521a83e8a9e99279e7bcfad65274f9337fba5",
+      "path": "Cart_Reader/N64.ino"
     },
     {
-      "id": "integration-msx-pce-n64-snes",
-      "head": "785ee15fd5bea75122dd7a55e9abd6f7f21cfccf"
+      "id": "msx-ascii-sram-write",
+      "head": "22da506176554c16dbc2592ec39fca14125ce7f5",
+      "path": "Cart_Reader/MSX.ino"
+    },
+    {
+      "id": "gb-mbc6-flash-poll",
+      "head": "1daea8703d72c64c735637bebed4b7f850677500",
+      "path": "Cart_Reader/GB.ino"
+    },
+    {
+      "id": "pce-tennokoe-unlock",
+      "head": "78e32637160919ab151f7aac57428d210acb5089",
+      "path": "Cart_Reader/PCE.ino"
+    },
+    {
+      "id": "ws-sram-bank-geometry",
+      "head": "79af08c8f9cfd7ebf5ca8d16209fc814df1edd5e",
+      "path": "Cart_Reader/WS.ino"
+    },
+    {
+      "id": "gba-save-seek",
+      "head": "2d142b021a9cd249f2e670ca14decf1f641d0906",
+      "path": "Cart_Reader/GBA.ino"
     }
   ]
 }
