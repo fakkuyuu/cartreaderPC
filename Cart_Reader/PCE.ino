@@ -563,14 +563,19 @@ void lock_tennokoe_bank_RAM() {
   write_byte_PCE(0x0C0001, 0x60);  //Lock RAM sequence 3 Bank 60
 }
 
-static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) __attribute__((noinline));
-static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) {
-  //Unlock Tennokoe Bank RAM
-  //Disable interrupts
+static void beginProtectedTennokoeAccess_PCE() __attribute__((noinline));
+static void beginProtectedTennokoeAccess_PCE() {
   noInterrupts();
   data_output_PCE();
   unlock_tennokoe_bank_RAM();
   data_input_PCE();
+}
+
+static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) __attribute__((noinline));
+static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) {
+  //Unlock Tennokoe Bank RAM
+  //Disable interrupts
+  beginProtectedTennokoeAccess_PCE();
 
   //Read Tennokoe bank RAM
   read_bank_PCE_RAM(0x080000 + 2048UL * bank_index, block_index);
@@ -687,10 +692,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
       }
       //Unlock Tennokoe Bank RAM
       //Disable interrupts
-      noInterrupts();
-      data_output_PCE();
-      unlock_tennokoe_bank_RAM();
-      data_input_PCE();
+      beginProtectedTennokoeAccess_PCE();
 
       //Write file to Tennokoe BANK RAM
       data_output_PCE();
