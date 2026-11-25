@@ -1994,6 +1994,7 @@ static void writeSa1SramBlocks_SNES(bool fromFile, byte value) {
   }
 }
 
+void writeSRAM(boolean browseFile) __attribute__((noinline));
 void writeSRAM(boolean browseFile) {
   if (browseFile) {
     browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectSrmFile));
