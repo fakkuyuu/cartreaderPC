@@ -4490,6 +4490,26 @@ static void enableDefaultSram_NES(bool writing) {
     write_prg_byte(0x800D, 0x20);  // PRG RAM Chip Enable
 }
 
+void writeBankWRAM(const size_t from, const size_t to, const size_t base);
+static void visitMmc6Sram_NES(word base, bool writing) __attribute__((noinline));
+static void visitMmc6Sram_NES(word base, bool writing) {
+  write_prg_byte(0x8000, 0x20);
+  write_prg_byte(0xA001, writing ? 0x30 : 0x20);
+  if (writing)
+    writeBankWRAM(0x1000, 0x1200, base);
+  else
+    dumpMMC5RAM(base, 0x1000);
+
+  write_prg_byte(0x8000, 0x20);
+  write_prg_byte(0xA001, writing ? 0xC0 : 0x80);
+  if (writing)
+    writeBankWRAM(0x1200, 0x1400, base);
+  else
+    dumpMMC5RAM(base, 0x1200);
+
+  write_prg_byte(0x8000, 6);
+}
+
 void readRAM() {
   clearAndUpdateDisplay();
 
@@ -4515,18 +4535,8 @@ void readRAM() {
           break;
 
         case 4:                                                                // 1K/8K (MMC6/MMC3)
-          if (mmc6) {                                                          // MMC6 1K
-            write_prg_byte(0x8000, 0x20);                                      // PRG RAM ENABLE
-            write_prg_byte(0xA001, 0x20);                                      // PRG RAM PROTECT - Enable reading RAM at $7000-$71FF
-            for (size_t address = 0x1000; address < 0x1200; address += 512) {  // 512B
-              dumpMMC5RAM(base, address);
-            }
-            write_prg_byte(0x8000, 0x20);                                      // PRG RAM ENABLE
-            write_prg_byte(0xA001, 0x80);                                      // PRG RAM PROTECT - Enable reading RAM at $7200-$73FF
-            for (size_t address = 0x1200; address < 0x1400; address += 512) {  // 512B
-              dumpMMC5RAM(base, address);
-            }
-            write_prg_byte(0x8000, 6);       // PRG RAM DISABLE
+          if (mmc6) {
+            visitMmc6Sram_NES(base, false);
           } else {                           // MMC3 8K
             write_prg_byte(0xA001, 0xC0);    // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
             dumpPRG8KiB(base);  // 8K
@@ -4656,16 +4666,8 @@ void writeRAM() {
           break;
 
         case 4:                                   // 1K/8K (MMC6/MMC3)
-          if (mmc6) {                             // MMC6 1K
-            write_prg_byte(0x8000, 0x20);         // PRG RAM ENABLE
-            write_prg_byte(0xA001, 0x30);         // PRG RAM PROTECT - Enable reading/writing to RAM at $7000-$71FF
-            writeBankWRAM(0x1000, 0x1200, base);  // 512B
-
-            write_prg_byte(0x8000, 0x20);         // PRG RAM ENABLE
-            write_prg_byte(0xA001, 0xC0);         // PRG RAM PROTECT - Enable reading/writing to RAM at $7200-$73FF
-            writeBankWRAM(0x1200, 0x1400, base);  // 512B
-
-            write_prg_byte(0x8000, 0x6);      // PRG RAM DISABLE
+          if (mmc6) {
+            visitMmc6Sram_NES(base, true);
           } else {                            // MMC3 8K
             write_prg_byte(0xA001, 0x80);     // PRG RAM CHIP ENABLE - Chip Enable, Allow Writes
             writeBankPRG(0x0, 0x2000, base);  // 8K
