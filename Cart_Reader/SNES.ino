@@ -1376,32 +1376,21 @@ unsigned int calc_checksum(char* fileName, char* folder) {
         }
         calcChecksum += calcMirrorCount * calcChecksumChunk;
       }
-    } else if ((calcFilesize == 40) && (romChips == 85)) {
-      // Daikaijuu Monogatari 2 Fix 5MB (40Mbit)
-      // Add the 4MB (32Mbit) start
+    } else if (((calcFilesize == 40) && (romChips == 85)) || calcFilesize == 48) {
+      // Daikaijuu Monogatari 2 (5MB), Star Ocean/Tales of Phantasia (6MB)
       for (j = 0; j < (4194304 / 512); j++) {
         calcChecksumChunk += checksumBlock_SNES();
         calcChecksum = calcChecksumChunk;
       }
       calcChecksumChunk = 0;
-      // Add the 1MB (8Mbit) end
-      for (j = 0; j < (1048576 / 512); j++) {
+      const unsigned long mirrorBlocks = calcFilesize == 40 ? (1048576UL / 512) : (2097152UL / 512);
+      for (j = 0; j < mirrorBlocks; j++) {
         calcChecksumChunk += checksumBlock_SNES();
       }
-      calcChecksum += 4 * calcChecksumChunk;
-    } else if (calcFilesize == 48) {
-      // Star Ocean/Tales of Phantasia Fix 6MB (48Mbit)
-      // Add the 4MB (32Mbit) start
-      for (j = 0; j < (4194304 / 512); j++) {
-        calcChecksumChunk += checksumBlock_SNES();
-        calcChecksum = calcChecksumChunk;
-      }
-      calcChecksumChunk = 0;
-      // Add the 2MB (16Mbit) end
-      for (j = 0; j < (2097152 / 512); j++) {
-        calcChecksumChunk += checksumBlock_SNES();
-      }
-      calcChecksum += 2 * calcChecksumChunk;
+      if (calcFilesize == 40)
+        calcChecksum += 4 * calcChecksumChunk;
+      else
+        calcChecksum += 2 * calcChecksumChunk;
     } else {
       //calcFilesize == 2 || 4 || 8 || 16 || 32 || 40 || etc
       for (i = 0; i < (myFile.fileSize() / 512); i++) {
