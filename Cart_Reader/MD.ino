@@ -2685,6 +2685,7 @@ static void addressEepromByte_MD() {
   EepromSetAddress(addrlo);
 }
 
+void readEepromByte(word address) __attribute__((noinline));
 void readEepromByte(word address) {
   addrhi = address >> 8;
   addrlo = address & 0xFF;
@@ -2708,6 +2709,7 @@ void readEepromByte(word address) {
   sdBuffer[addrlo] = eeptemp;
 }
 
+void writeEepromByte(word address) __attribute__((noinline));
 void writeEepromByte(word address) {
   addrhi = address >> 8;
   addrlo = address & 0xFF;
