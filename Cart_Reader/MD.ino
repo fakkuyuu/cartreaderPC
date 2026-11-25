@@ -2615,68 +2615,48 @@ void EepromWriteData(byte data) {
   EepromStatus();  // ACK
 }
 
-void EepromFinish() {
-  if (eepType == 2) {               // Acclaim Type 2
-    writeWord_SDA(0x100000, 0x00);  // sda low
-    writeWord_SCL(0x100000, 0x00);  // scl low
-    writeWord_SDA(0x100000, 0x01);  // sda high
-    writeWord_SCL(0x100000, 0x00);  // scl low
-    writeWord_SDA(0x100000, 0x01);  // sda high
-    writeWord_SCL(0x100000, 0x01);  // scl high
-    writeWord_SDA(0x100000, 0x01);  // sda high
-    writeWord_SCL(0x100000, 0x00);  // scl low
-    writeWord_SDA(0x100000, 0x00);  // sda low
-    writeWord_SCL(0x100000, 0x00);  // scl low
-  } else if (eepType == 4) {        // EA
-    writeWord_MD(0x100000, 0x00);   // sda low, scl low
-    writeWord_MD(0x100000, 0x80);   // sda high, scl low
-    writeWord_MD(0x100000, 0xC0);   // sda high, scl high
-    writeWord_MD(0x100000, 0x80);   // sda high, scl low
-    writeWord_MD(0x100000, 0x00);   // sda low, scl low
-  } else if (eepType == 5) {        // Codemasters
-    writeWord_CM(0x180000, 0x00);   // sda low, scl low
-    writeWord_CM(0x180000, 0x01);   // sda high, scl low
-    writeWord_CM(0x180000, 0x03);   // sda high, scl high
-    writeWord_CM(0x180000, 0x01);   // sda high, scl low
-    writeWord_CM(0x180000, 0x00);   // sda low, scl low
+static void finishOrStopEeprom_MD(bool stop) __attribute__((noinline));
+static void finishOrStopEeprom_MD(bool stop) {
+  if (eepType == 2) {
+    writeWord_SDA(0x100000, 0x00);
+    writeWord_SCL(0x100000, stop ? 0x01 : 0x00);
+    writeWord_SDA(0x100000, 0x01);
+    writeWord_SCL(0x100000, stop ? 0x01 : 0x00);
+    if (!stop) {
+      writeWord_SDA(0x100000, 0x01);
+      writeWord_SCL(0x100000, 0x01);
+    }
+    writeWord_SDA(0x100000, 0x01);
+    writeWord_SCL(0x100000, 0x00);
+    writeWord_SDA(0x100000, 0x00);
+    writeWord_SCL(0x100000, 0x00);
+  } else if (eepType == 4) {
+    writeWord_MD(0x100000, 0x00);
+    writeWord_MD(0x100000, stop ? 0x40 : 0x80);
+    writeWord_MD(0x100000, 0xC0);
+    writeWord_MD(0x100000, 0x80);
+    writeWord_MD(0x100000, 0x00);
+  } else if (eepType == 5) {
+    writeWord_CM(0x180000, 0x00);
+    writeWord_CM(0x180000, stop ? 0x02 : 0x01);
+    writeWord_CM(0x180000, 0x03);
+    writeWord_CM(0x180000, 0x01);
+    writeWord_CM(0x180000, 0x00);
   } else {
-    writeWord_MD(0x100000, 0x00);  // sda low, scl low
-    writeWord_MD(0x100000, 0x01);  // sda high, scl low
-    writeWord_MD(0x100000, 0x03);  // sda high, scl high
-    writeWord_MD(0x100000, 0x01);  // sda high, scl low
-    writeWord_MD(0x100000, 0x00);  // sda low, scl low
+    writeWord_MD(0x100000, 0x00);
+    writeWord_MD(0x100000, stop ? 0x02 : 0x01);
+    writeWord_MD(0x100000, 0x03);
+    writeWord_MD(0x100000, 0x01);
+    writeWord_MD(0x100000, 0x00);
   }
 }
 
+void EepromFinish() {
+  finishOrStopEeprom_MD(false);
+}
+
 void EepromStop() {
-  if (eepType == 2) {               // Acclaim Type 2
-    writeWord_SDA(0x100000, 0x00);  // sda low
-    writeWord_SCL(0x100000, 0x01);  // scl high
-    writeWord_SDA(0x100000, 0x01);  // sda high
-    writeWord_SCL(0x100000, 0x01);  // scl high
-    writeWord_SDA(0x100000, 0x01);  // sda high
-    writeWord_SCL(0x100000, 0x00);  // scl low
-    writeWord_SDA(0x100000, 0x00);  // sda low
-    writeWord_SCL(0x100000, 0x00);  // scl low // STOP
-  } else if (eepType == 4) {        // EA
-    writeWord_MD(0x100000, 0x00);   // sda, scl low
-    writeWord_MD(0x100000, 0x40);   // sda low, scl high
-    writeWord_MD(0x100000, 0xC0);   // sda, scl high
-    writeWord_MD(0x100000, 0x80);   // sda high, scl low
-    writeWord_MD(0x100000, 0x00);   // STOP
-  } else if (eepType == 5) {        // Codemasters
-    writeWord_CM(0x180000, 0x00);   // sda low, scl low
-    writeWord_CM(0x180000, 0x02);   // sda low, scl high
-    writeWord_CM(0x180000, 0x03);   // sda, scl high
-    writeWord_CM(0x180000, 0x01);   // sda high, scl low
-    writeWord_CM(0x180000, 0x00);   // STOP
-  } else {
-    writeWord_MD(0x100000, 0x00);  // sda, scl low
-    writeWord_MD(0x100000, 0x02);  // sda low, scl high
-    writeWord_MD(0x100000, 0x03);  // sda, scl high
-    writeWord_MD(0x100000, 0x01);  // sda high, scl low
-    writeWord_MD(0x100000, 0x00);  // STOP
-  }
+  finishOrStopEeprom_MD(true);
 }
 
 void EepromSetAddress(word address) {
