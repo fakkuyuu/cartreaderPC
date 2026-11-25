@@ -4783,12 +4783,14 @@ void EepromStop_NES() {
   write_prg_byte(0x800D, 0x00);  // STOP
 }
 
+void EepromSet0_NES() __attribute__((noinline));
 void EepromSet0_NES() {
   write_prg_byte(0x800D, 0x00);  // sda low, scl low
   write_prg_byte(0x800D, 0x20);  // sda low, scl high // 0
   write_prg_byte(0x800D, 0x00);  // sda low, scl low
 }
 
+void EepromSet1_NES() __attribute__((noinline));
 void EepromSet1_NES() {
   write_prg_byte(0x800D, 0x40);  // sda high, scl low
   write_prg_byte(0x800D, 0x60);  // sda high, scl high // 1
