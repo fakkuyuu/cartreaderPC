@@ -1,0 +1,227 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45642317293",
+  "run_attempt": "1",
+  "workflow_commit": "1c15d38eb46615f2b9db906253626ddd20578a1f",
+  "request": {
+    "id": "parallel-020-integration",
+    "base": "98a77b156c9d0235c29d3dea2bf6a819301886a1",
+    "expected_base_flash": 209830,
+    "expected_base_ram": 6123,
+    "endpoints_only": true,
+    "candidates": [
+      {
+        "id": "integration-gba",
+        "head": "5a7e4cb9a3e73d30c6e05588ed3bb40e0772f7cf"
+      },
+      {
+        "id": "integration-gba-n64",
+        "head": "1d40fabafc7173d852ad627f6a631ce84ed37254"
+      },
+      {
+        "id": "integration-gba-n64-ws",
+        "head": "aa12db8a253dbf981630add454d2ea846e9370d5"
+      },
+      {
+        "id": "integration-gba-n64-ws-nes",
+        "head": "df7f2a81dca9e8665af406184b8d6a162de2f3ce"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45642317293",
+      "run_attempt": "1",
+      "workflow_commit": "1c15d38eb46615f2b9db906253626ddd20578a1f",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-gba",
+        "head": "5a7e4cb9a3e73d30c6e05588ed3bb40e0772f7cf",
+        "base": "98a77b156c9d0235c29d3dea2bf6a819301886a1",
+        "expected_base_flash": 209830,
+        "expected_base_ram": 6123,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "98a77b156c9d0235c29d3dea2bf6a819301886a1",
+          "subject": "Measure twentieth batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 209830,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "5a7e4cb9a3e73d30c6e05588ed3bb40e0772f7cf",
+          "subject": "Integrate measured phase 2 batch 20 gba size reduction",
+          "status": "ok",
+          "flash": 209794,
+          "ram": 6123,
+          "delta_previous": -36,
+          "delta_base": -36,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-gba",
+        "head": "5a7e4cb9a3e73d30c6e05588ed3bb40e0772f7cf"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45642317293",
+      "run_attempt": "1",
+      "workflow_commit": "1c15d38eb46615f2b9db906253626ddd20578a1f",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-gba-n64",
+        "head": "1d40fabafc7173d852ad627f6a631ce84ed37254",
+        "base": "98a77b156c9d0235c29d3dea2bf6a819301886a1",
+        "expected_base_flash": 209830,
+        "expected_base_ram": 6123,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "98a77b156c9d0235c29d3dea2bf6a819301886a1",
+          "subject": "Measure twentieth batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 209830,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "1d40fabafc7173d852ad627f6a631ce84ed37254",
+          "subject": "Integrate measured phase 2 batch 20 n64 size reduction",
+          "status": "ok",
+          "flash": 209764,
+          "ram": 6123,
+          "delta_previous": -66,
+          "delta_base": -66,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-gba-n64",
+        "head": "1d40fabafc7173d852ad627f6a631ce84ed37254"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45642317293",
+      "run_attempt": "1",
+      "workflow_commit": "1c15d38eb46615f2b9db906253626ddd20578a1f",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-gba-n64-ws",
+        "head": "aa12db8a253dbf981630add454d2ea846e9370d5",
+        "base": "98a77b156c9d0235c29d3dea2bf6a819301886a1",
+        "expected_base_flash": 209830,
+        "expected_base_ram": 6123,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "98a77b156c9d0235c29d3dea2bf6a819301886a1",
+          "subject": "Measure twentieth batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 209830,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "aa12db8a253dbf981630add454d2ea846e9370d5",
+          "subject": "Integrate measured phase 2 batch 20 ws size reduction",
+          "status": "ok",
+          "flash": 209754,
+          "ram": 6123,
+          "delta_previous": -76,
+          "delta_base": -76,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-gba-n64-ws",
+        "head": "aa12db8a253dbf981630add454d2ea846e9370d5"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45642317293",
+      "run_attempt": "1",
+      "workflow_commit": "1c15d38eb46615f2b9db906253626ddd20578a1f",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-gba-n64-ws-nes",
+        "head": "df7f2a81dca9e8665af406184b8d6a162de2f3ce",
+        "base": "98a77b156c9d0235c29d3dea2bf6a819301886a1",
+        "expected_base_flash": 209830,
+        "expected_base_ram": 6123,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "98a77b156c9d0235c29d3dea2bf6a819301886a1",
+          "subject": "Measure twentieth batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 209830,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "df7f2a81dca9e8665af406184b8d6a162de2f3ce",
+          "subject": "Integrate measured phase 2 batch 20 nes size reduction",
+          "status": "ok",
+          "flash": 209748,
+          "ram": 6123,
+          "delta_previous": -82,
+          "delta_base": -82,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-gba-n64-ws-nes",
+        "head": "df7f2a81dca9e8665af406184b8d6a162de2f3ce"
+      }
+    }
+  ]
+}
