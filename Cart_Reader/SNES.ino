@@ -376,6 +376,19 @@ void snsMenu() {
 }
 
 // SNES Menu
+static void verifySaveP20_SNES(bool restored) __attribute__((noinline));
+static void verifySaveP20_SNES(bool restored) {
+  unsigned long wrErrors = verifySRAM();
+  if (wrErrors != 0) {
+    showVerificationErrorCount(wrErrors);
+  } else if (restored) {
+    println_Msg(F("Restored OK"));
+    display_Update();
+  } else {
+    showVerifiedAndUpdate();
+  }
+}
+
 void snesMenu() {
   // create menu with title and 7 options to choose from
   unsigned char mainMenu;
@@ -424,13 +437,7 @@ void snesMenu() {
         // Change working dir to root
         changeToStorageRoot();
         writeSRAM(1);
-        unsigned long wrErrors;
-        wrErrors = verifySRAM();
-        if (wrErrors == 0) {
-          showVerifiedAndUpdate();
-        } else {
-          showVerificationErrorCount(wrErrors);
-        }
+        verifySaveP20_SNES(false);
       } else {
         showNoSramError();
       }
@@ -454,13 +461,7 @@ void snesMenu() {
         eraseSRAM(0x0F);
         eraseSRAM(0xF0);
         writeSRAM(0);
-        unsigned long wrErrors = verifySRAM();
-        if (wrErrors == 0) {
-          println_Msg(F("Restored OK"));
-          display_Update();
-        } else {
-          showVerificationErrorCount(wrErrors);
-        }
+        verifySaveP20_SNES(true);
       } else {
         showNoSramError();
       }
