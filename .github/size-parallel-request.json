@@ -1,21 +1,40 @@
 {
-  "id": "parallel-019-integration",
-  "base": "5874b5d3aad88c36e41bea957d284463aaed027b",
-  "expected_base_flash": 209968,
+  "id": "parallel-020",
+  "base": "d668ee5730332885598c2a5760d8a2a2d372c658",
+  "expected_base_flash": 209830,
   "expected_base_ram": 6123,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-n64",
-      "head": "e8baf9d19edcee1f6bfad0604d3ed5fd2d86c78f"
+      "id": "gb-save-verify",
+      "head": "7cb05339b394770b8b6e30c6d7cf2cdfadbbdad6"
     },
     {
-      "id": "integration-n64-msx",
-      "head": "c40f85c525b9b47d268b054dac80601c766eb58a"
+      "id": "n64-controller-setup",
+      "head": "da4205fba469f22c54e0d64ee4487edf500ccc90"
     },
     {
-      "id": "integration-n64-msx-nes",
-      "head": "bd8661a2ac2c7addc37caaee82c4ace2a8b724ef"
+      "id": "ws-save-menu",
+      "head": "9a37f9e8a12bebc25ffba96794481b57bb9c2335"
+    },
+    {
+      "id": "nes-menu-index",
+      "head": "c720ca588ef90a79725172ebab864b602deb70dc"
+    },
+    {
+      "id": "md-eeprom-header",
+      "head": "ca5c3006f1ca9bd403be52e010cd03a5d5510b5a"
+    },
+    {
+      "id": "gba-flash-bank-size",
+      "head": "b1e33ef0461fd1ebe732f177f32ff5c962a14add"
+    },
+    {
+      "id": "sfm-ok-display",
+      "head": "efc6c911b05ae282cddf3e4cf295a1721c3e92e3"
+    },
+    {
+      "id": "snes-save-verify",
+      "head": "a6e25fc9db9fcd286b11443263e3f5cc9cfdaf4e"
     }
   ]
 }
