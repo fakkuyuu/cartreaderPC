@@ -1,23 +1,34 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45539648534",
+  "run_id": "45540982346",
   "run_attempt": "1",
-  "workflow_commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+  "workflow_commit": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
   "request": {
-    "id": "parallel-007-integration",
-    "base": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
-    "expected_base_flash": 213732,
+    "id": "parallel-008",
+    "base": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+    "expected_base_flash": 213504,
     "expected_base_ram": 6281,
-    "endpoints_only": true,
     "candidates": [
       {
-        "id": "integration-ngp",
-        "head": "2146e8162f6fa033e8e8a48664a655f720e85991"
+        "id": "msx-koei-sram-banks",
+        "head": "92b1426e6e60881c46f4df772157e6c2953c39c4",
+        "path": "Cart_Reader/MSX.ino"
       },
       {
-        "id": "integration-ngp-msx",
-        "head": "f19e90a693bd0bf47522db32a41edcf70291af01"
+        "id": "pce-sf2-bank-loop",
+        "head": "5257a7de2eb8c589820ca35f7583d03481278d9d",
+        "path": "Cart_Reader/PCE.ino"
+      },
+      {
+        "id": "n64-accessory-verify",
+        "head": "2ded500081a01939046703ea9bdab6ebca510506",
+        "path": "Cart_Reader/N64.ino"
+      },
+      {
+        "id": "snes-rom-bank-reader",
+        "head": "941f44883e9661b0f00effeb05583ee1cb0461b4",
+        "path": "Cart_Reader/SNES.ino"
       }
     ]
   },
@@ -25,28 +36,29 @@
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45539648534",
+      "run_id": "45540982346",
       "run_attempt": "1",
-      "workflow_commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+      "workflow_commit": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "integration-ngp",
-        "head": "2146e8162f6fa033e8e8a48664a655f720e85991",
-        "base": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
-        "expected_base_flash": 213732,
+        "id": "msx-koei-sram-banks",
+        "head": "92b1426e6e60881c46f4df772157e6c2953c39c4",
+        "path": "Cart_Reader/MSX.ino",
+        "base": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+        "expected_base_flash": 213504,
         "expected_base_ram": 6281,
-        "endpoints_only": true
+        "endpoints_only": false
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
-          "subject": "Measure seventh batch of four independent firmware size candidates",
+          "commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+          "subject": "Verify cumulative integrated NGP and MSX size in parallel",
           "status": "ok",
-          "flash": 213732,
+          "flash": 213504,
           "ram": 6281,
           "delta_previous": null,
           "delta_base": 0,
@@ -54,47 +66,49 @@
           "error": null
         },
         {
-          "commit": "2146e8162f6fa033e8e8a48664a655f720e85991",
-          "subject": "Adopt ngp-autoselect (isolated -60 B; dbb75d0)",
+          "commit": "92b1426e6e60881c46f4df772157e6c2953c39c4",
+          "subject": "Consolidate Koei SRAM bank writes preserving bank selection",
           "status": "ok",
-          "flash": 213672,
+          "flash": 213482,
           "ram": 6281,
-          "delta_previous": -60,
-          "delta_base": -60,
+          "delta_previous": -22,
+          "delta_base": -22,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "integration-ngp",
-        "head": "2146e8162f6fa033e8e8a48664a655f720e85991"
+        "id": "msx-koei-sram-banks",
+        "head": "92b1426e6e60881c46f4df772157e6c2953c39c4",
+        "path": "Cart_Reader/MSX.ino"
       }
     },
     {
       "schema": 1,
-      "run_id": "45539648534",
+      "run_id": "45540982346",
       "run_attempt": "1",
-      "workflow_commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+      "workflow_commit": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "integration-ngp-msx",
-        "head": "f19e90a693bd0bf47522db32a41edcf70291af01",
-        "base": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
-        "expected_base_flash": 213732,
+        "id": "pce-sf2-bank-loop",
+        "head": "5257a7de2eb8c589820ca35f7583d03481278d9d",
+        "path": "Cart_Reader/PCE.ino",
+        "base": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+        "expected_base_flash": 213504,
         "expected_base_ram": 6281,
-        "endpoints_only": true
+        "endpoints_only": false
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
-          "subject": "Measure seventh batch of four independent firmware size candidates",
+          "commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+          "subject": "Verify cumulative integrated NGP and MSX size in parallel",
           "status": "ok",
-          "flash": 213732,
+          "flash": 213504,
           "ram": 6281,
           "delta_previous": null,
           "delta_base": 0,
@@ -102,21 +116,122 @@
           "error": null
         },
         {
-          "commit": "f19e90a693bd0bf47522db32a41edcf70291af01",
-          "subject": "Adopt msx-sram-write-block (isolated -168 B; 5819f55)",
+          "commit": "5257a7de2eb8c589820ca35f7583d03481278d9d",
+          "subject": "Consolidate Street Fighter II PCE bank read sequence",
           "status": "ok",
-          "flash": 213504,
+          "flash": 213464,
           "ram": 6281,
-          "delta_previous": -228,
-          "delta_base": -228,
+          "delta_previous": -40,
+          "delta_base": -40,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "integration-ngp-msx",
-        "head": "f19e90a693bd0bf47522db32a41edcf70291af01"
+        "id": "pce-sf2-bank-loop",
+        "head": "5257a7de2eb8c589820ca35f7583d03481278d9d",
+        "path": "Cart_Reader/PCE.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45540982346",
+      "run_attempt": "1",
+      "workflow_commit": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "n64-accessory-verify",
+        "head": "2ded500081a01939046703ea9bdab6ebca510506",
+        "path": "Cart_Reader/N64.ino",
+        "base": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+        "expected_base_flash": 213504,
+        "expected_base_ram": 6281,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+          "subject": "Verify cumulative integrated NGP and MSX size in parallel",
+          "status": "ok",
+          "flash": 213504,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "2ded500081a01939046703ea9bdab6ebca510506",
+          "subject": "Share GameShark and Xplorer verification traversal",
+          "status": "ok",
+          "flash": 213284,
+          "ram": 6281,
+          "delta_previous": -220,
+          "delta_base": -220,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "n64-accessory-verify",
+        "head": "2ded500081a01939046703ea9bdab6ebca510506",
+        "path": "Cart_Reader/N64.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45540982346",
+      "run_attempt": "1",
+      "workflow_commit": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "snes-rom-bank-reader",
+        "head": "941f44883e9661b0f00effeb05583ee1cb0461b4",
+        "path": "Cart_Reader/SNES.ino",
+        "base": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+        "expected_base_flash": 213504,
+        "expected_base_ram": 6281,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+          "subject": "Verify cumulative integrated NGP and MSX size in parallel",
+          "status": "ok",
+          "flash": 213504,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "941f44883e9661b0f00effeb05583ee1cb0461b4",
+          "subject": "Share identical LoROM and HiROM bank reader with initial address parameter",
+          "status": "ok",
+          "flash": 213340,
+          "ram": 6281,
+          "delta_previous": -164,
+          "delta_base": -164,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "snes-rom-bank-reader",
+        "head": "941f44883e9661b0f00effeb05583ee1cb0461b4",
+        "path": "Cart_Reader/SNES.ino"
       }
     }
   ]
