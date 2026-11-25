@@ -1184,6 +1184,23 @@ void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   showDoneAndUpdate();
 }
 
+static void visitSramFile_GBA(uint32_t sramSize, bool verifying) __attribute__((noinline));
+static void visitSramFile_GBA(uint32_t sramSize, bool verifying) {
+  for (uint32_t currAddress = 0; currAddress < sramSize; currAddress += 512) {
+    readSdBufferBlock();
+    if (verifying) {
+      for (int c = 0; c < 512; c++) {
+        if (readByte_GBA(currAddress + c) != sdBuffer[c])
+          writeErrors++;
+      }
+    } else {
+      for (int c = 0; c < 512; c++) {
+        writeByte_GBA(currAddress + c, sdBuffer[c]);
+      }
+    }
+  }
+}
+
 void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
     browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectSrmFile));
@@ -1196,15 +1213,7 @@ void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
     if (pos != 0)
       myFile.seekCur(pos);
 
-    for (uint32_t currAddress = 0; currAddress < sramSize; currAddress += 512) {
-      //fill sdBuffer
-      readSdBufferBlock();
-
-      for (int c = 0; c < 512; c++) {
-        // Write byte
-        writeByte_GBA(currAddress + c, sdBuffer[c]);
-      }
-    }
+    visitSramFile_GBA(sramSize, false);
     // Close the file:
     closeAndShowSramWritten();
 
@@ -1223,17 +1232,7 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
     if (pos != 0)
       myFile.seekCur(pos);
 
-    for (unsigned long currAddress = 0; currAddress < sramSize; currAddress += 512) {
-      //fill sdBuffer
-      readSdBufferBlock();
-
-      for (int c = 0; c < 512; c++) {
-        // Read byte
-        if (readByte_GBA(currAddress + c) != sdBuffer[c]) {
-          writeErrors++;
-        }
-      }
-    }
+    visitSramFile_GBA(sramSize, true);
     // Close the file:
     closeCurrentFile();
 
