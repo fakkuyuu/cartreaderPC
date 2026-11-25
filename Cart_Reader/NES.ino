@@ -1819,10 +1819,7 @@ void setRAMSize() {
   if ((mapper == 16) || (mapper == 159)) {
     int sizeEEP = 0;
     print_Msg(F("EEPROM SIZE "));
-    if (mapper == 16)
-      sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 32;
-    else
-      sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 16;
+    sizeEEP = pgm_read_byte(&(RAM[newramsize])) * (mapper == 16 ? 32 : 16);
     print_Msg(sizeEEP);
     println_Msg(FS(SharedFlashText::unitB));
   } else if (mapper == 19) {
@@ -1895,10 +1892,7 @@ setram:
   if ((mapper == 16) || (mapper == 159)) {
     int sizeEEP = 0;
     PcConsole.print(F("EEPROM Size = "));
-    if (mapper == 16)
-      sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 32;
-    else
-      sizeEEP = pgm_read_byte(&(RAM[newramsize])) * 16;
+    sizeEEP = pgm_read_byte(&(RAM[newramsize])) * (mapper == 16 ? 32 : 16);
     PcConsole.print(sizeEEP);
     PcConsole.println(FS(SharedFlashText::unitB));
     PcConsole.println(FS(FSTRING_EMPTY));
