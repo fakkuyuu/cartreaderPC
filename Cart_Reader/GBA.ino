@@ -172,18 +172,14 @@ void gbaMenu() {
             verifyFLASH_GBA(65536, 0);
           } else {
             eraseFLASH_GBA();
+            uint32_t bankSize = 65536UL;
             if (strcmp("PEAJ", cartID) == 0) {  // Japanese e-reader
               println_Log(FS(SharedFlashText::textSkippingLast128Bytes));
-              if (blankcheckFLASH_GBA(65408)) {
-                writeFLASH_GBA(1, 65408, 0, 0);
-                verifyFLASH_GBA(65408, 0);
-              }
+              bankSize = 65408UL;
             }
-            else {
-              if (blankcheckFLASH_GBA(65536)) {
-                writeFLASH_GBA(1, 65536, 0, 0);
-                verifyFLASH_GBA(65536, 0);
-              }
+            if (blankcheckFLASH_GBA(bankSize)) {
+              writeFLASH_GBA(1, bankSize, 0, 0);
+              verifyFLASH_GBA(bankSize, 0);
             }
           }
           break;
