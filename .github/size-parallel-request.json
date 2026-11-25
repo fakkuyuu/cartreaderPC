@@ -1,17 +1,48 @@
 {
-  "id": "parallel-010-integration",
-  "base": "37396fa8e5dcec8c8529c8b706bc92f9bac46310",
-  "expected_base_flash": 212832,
+  "id": "parallel-011",
+  "base": "b490a4a3ca12aeb3682842bac5933d91bc9c8fee",
+  "expected_base_flash": 212716,
   "expected_base_ram": 6281,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-ws",
-      "head": "99a856c2697159551e0b513c523125ff36b4d0bb"
+      "id": "pce-crc-path-report",
+      "head": "6be0c2e2558733e398b6853ee71e78e2ccd22bc4",
+      "path": "Cart_Reader/PCE.ino"
     },
     {
-      "id": "integration-ws-msx",
-      "head": "b465f7c70845d2e9a5109d833445891c4a35567f"
+      "id": "ws-verify-report",
+      "head": "0ad2a8943c7323f5a974f06496e72ee58ff59af5",
+      "path": "Cart_Reader/WS.ino"
+    },
+    {
+      "id": "md-flash-verify-report",
+      "head": "b577e201330d5bd22c4707cc0d48ea9411ebd739",
+      "path": "Cart_Reader/MD.ino"
+    },
+    {
+      "id": "gb-gameshark-id-report",
+      "head": "134ed6be86be6764eaebeff3d53e5bdbee70ab20",
+      "path": "Cart_Reader/GB.ino"
+    },
+    {
+      "id": "gba-369-bank-geometry",
+      "head": "7b16d09bf6155db466881166b7c6cfcb606d970d",
+      "path": "Cart_Reader/GBA.ino"
+    },
+    {
+      "id": "n64-accessory-id-report",
+      "head": "17dbe2d40f9335a1e8f578cd5536de9882c091d7",
+      "path": "Cart_Reader/N64.ino"
+    },
+    {
+      "id": "nes-a29040-write-error",
+      "head": "07acb78ea79329b6ed95d31767e06c347a719a91",
+      "path": "Cart_Reader/NES.ino"
+    },
+    {
+      "id": "msx-koei-bank-select",
+      "head": "505cb50fc7e9d811a4886e65c6bf3f80932e27d1",
+      "path": "Cart_Reader/MSX.ino"
     }
   ]
 }
