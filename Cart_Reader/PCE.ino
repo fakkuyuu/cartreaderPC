@@ -872,29 +872,16 @@ void flash_PCE() {
   write_byte_PCE(0x5555, 0xF0);
 
   flashSize = 0;
-  switch (deviceId) {
-    case 0xBFB5:
-      // SST39SF010 = 1Mbit
-      flashSize = 131072UL;
+  struct FlashSizeEntry { uint16_t id; byte mbit; };
+  static const FlashSizeEntry sizes[] PROGMEM = {
+    {0xBFB5, 1}, {0xBFB6, 2}, {0xBFB7, 4},
+    {0xC2A4, 4}, {0xC2D5, 8}, {0x20F1, 8}
+  };
+  for (byte i = 0; i < sizeof(sizes) / sizeof(sizes[0]); ++i) {
+    if (deviceId == pgm_read_word(&sizes[i].id)) {
+      flashSize = (uint32_t)pgm_read_byte(&sizes[i].mbit) * 131072UL;
       break;
-    case 0xBFB6:
-      // SST39SF020 = 2Mbit
-      flashSize = 262144UL;
-      break;
-    case 0xBFB7:
-      // SST39SF040 = 4Mbit
-      flashSize = 524288UL;
-      break;
-    case 0xC2A4:
-      // MX29F040 = 4Mbit
-      flashSize = 524288UL;
-      break;
-    case 0xC2D5:
-    // MX29F080 = 8Mbit
-    case 0x20F1:
-      // M29F080 = 8Mbit
-      flashSize = 1048576UL;
-      break;
+    }
   }
 
   if (flashSize <= 0) {
