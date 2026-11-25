@@ -566,6 +566,7 @@ void unlock_tennokoe_bank_RAM() {
   write_byte_PCE(0x0F0000, 0x73);  //Unlock RAM sequence 5 Bank 78
 }
 
+void lock_tennokoe_bank_RAM() __attribute__((noinline));
 void lock_tennokoe_bank_RAM() {
   write_byte_PCE(0x0D0000, 0x68);  //Lock RAM sequence 1 Bank 68
   write_byte_PCE(0x0F0001, 0x00);  //Lock RAM sequence 2 Bank 78
