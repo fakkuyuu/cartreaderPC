@@ -1,0 +1,238 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45524167795",
+  "run_attempt": "1",
+  "workflow_commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+  "request": {
+    "id": "parallel-004",
+    "base": "ed9a801b489271d0c059a8e35f95134c5250369e",
+    "expected_base_flash": 214240,
+    "expected_base_ram": 6281,
+    "candidates": [
+      {
+        "id": "nes-mmc6-sram",
+        "head": "21cc5e969525fdc3c78f6554491b660a2982f4e0",
+        "path": "Cart_Reader/NES.ino"
+      },
+      {
+        "id": "ws-save-write-ui",
+        "head": "d95be55c4f352a67600646b47bb6a9e948cf1d65",
+        "path": "Cart_Reader/WS.ino"
+      },
+      {
+        "id": "gb-mbc6-flash-bank",
+        "head": "71491d373f16cec00ae8f44afdead76110aa24a0",
+        "path": "Cart_Reader/GB.ino"
+      },
+      {
+        "id": "gba-save-flash-command",
+        "head": "1b2aec4c863202fac6611dba3b541d6b23ef8ada",
+        "path": "Cart_Reader/GBA.ino"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45524167795",
+      "run_attempt": "1",
+      "workflow_commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "nes-mmc6-sram",
+        "head": "21cc5e969525fdc3c78f6554491b660a2982f4e0",
+        "path": "Cart_Reader/NES.ino",
+        "base": "ed9a801b489271d0c059a8e35f95134c5250369e",
+        "expected_base_flash": 214240,
+        "expected_base_ram": 6281,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "ed9a801b489271d0c059a8e35f95134c5250369e",
+          "subject": "Verify cumulative integrated WS PCE N64 size in parallel",
+          "status": "ok",
+          "flash": 214240,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "21cc5e969525fdc3c78f6554491b660a2982f4e0",
+          "subject": "Share MMC6 SRAM read and write bank selection",
+          "status": "ok",
+          "flash": 214238,
+          "ram": 6281,
+          "delta_previous": -2,
+          "delta_base": -2,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "nes-mmc6-sram",
+        "head": "21cc5e969525fdc3c78f6554491b660a2982f4e0",
+        "path": "Cart_Reader/NES.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45524167795",
+      "run_attempt": "1",
+      "workflow_commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "ws-save-write-ui",
+        "head": "d95be55c4f352a67600646b47bb6a9e948cf1d65",
+        "path": "Cart_Reader/WS.ino",
+        "base": "ed9a801b489271d0c059a8e35f95134c5250369e",
+        "expected_base_flash": 214240,
+        "expected_base_ram": 6281,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "ed9a801b489271d0c059a8e35f95134c5250369e",
+          "subject": "Verify cumulative integrated WS PCE N64 size in parallel",
+          "status": "ok",
+          "flash": 214240,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "d95be55c4f352a67600646b47bb6a9e948cf1d65",
+          "subject": "Share WS SRAM and EEPROM file selection and write progress display",
+          "status": "ok",
+          "flash": 214196,
+          "ram": 6281,
+          "delta_previous": -44,
+          "delta_base": -44,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "ws-save-write-ui",
+        "head": "d95be55c4f352a67600646b47bb6a9e948cf1d65",
+        "path": "Cart_Reader/WS.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45524167795",
+      "run_attempt": "1",
+      "workflow_commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "gb-mbc6-flash-bank",
+        "head": "71491d373f16cec00ae8f44afdead76110aa24a0",
+        "path": "Cart_Reader/GB.ino",
+        "base": "ed9a801b489271d0c059a8e35f95134c5250369e",
+        "expected_base_flash": 214240,
+        "expected_base_ram": 6281,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "ed9a801b489271d0c059a8e35f95134c5250369e",
+          "subject": "Verify cumulative integrated WS PCE N64 size in parallel",
+          "status": "ok",
+          "flash": 214240,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "71491d373f16cec00ae8f44afdead76110aa24a0",
+          "subject": "Share MBC6 flash bank register setup in save writing",
+          "status": "ok",
+          "flash": 214170,
+          "ram": 6281,
+          "delta_previous": -70,
+          "delta_base": -70,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gb-mbc6-flash-bank",
+        "head": "71491d373f16cec00ae8f44afdead76110aa24a0",
+        "path": "Cart_Reader/GB.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45524167795",
+      "run_attempt": "1",
+      "workflow_commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "gba-save-flash-command",
+        "head": "1b2aec4c863202fac6611dba3b541d6b23ef8ada",
+        "path": "Cart_Reader/GBA.ino",
+        "base": "ed9a801b489271d0c059a8e35f95134c5250369e",
+        "expected_base_flash": 214240,
+        "expected_base_ram": 6281,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "ed9a801b489271d0c059a8e35f95134c5250369e",
+          "subject": "Verify cumulative integrated WS PCE N64 size in parallel",
+          "status": "ok",
+          "flash": 214240,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "1b2aec4c863202fac6611dba3b541d6b23ef8ada",
+          "subject": "Share GBA save flash program command sequence",
+          "status": "ok",
+          "flash": 214212,
+          "ram": 6281,
+          "delta_previous": -28,
+          "delta_base": -28,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gba-save-flash-command",
+        "head": "1b2aec4c863202fac6611dba3b541d6b23ef8ada",
+        "path": "Cart_Reader/GBA.ino"
+      }
+    }
+  ]
+}
