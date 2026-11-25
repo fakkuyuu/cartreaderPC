@@ -405,7 +405,7 @@ class Storage:
         self.console_text = ""
         self.companion_dump = None
 
-    def allocate(self, path, flags=1):
+    def allocate(self, path, flags=1, *, browser_copy=False):
         path = path.resolve()
         if not path.is_relative_to(self.root):
             raise ValueError("directory entry outside session")
@@ -421,9 +421,9 @@ class Storage:
                 raise ValueError("truncate requires write")
             if not path.exists() and not (flags & 4 and write):
                 raise FileNotFoundError(path)
-            mode = "w+b" if write and (flags & 8 or not path.exists()) else ("r+b" if write else "rb")
+            mode = "x+b" if browser_copy else ("w+b" if write and (flags & 8 or not path.exists()) else ("r+b" if write else "rb"))
             f = path.open(mode)
-            entry = {"path": path, "file": f, "write": write,
+            entry = {"path": path, "file": f, "write": write, "browser_copy": browser_copy,
                      "transfer_start": None, "transfer_bytes": 0,
                      "transfer_last_time": None, "transfer_last_bytes": 0}
             if write:
@@ -433,6 +433,9 @@ class Storage:
                     self.record()
                 except Exception:
                     f.close()
+                    if browser_copy:
+                        path.unlink(missing_ok=True)
+                        self.manifest.pop(name, None)
                     raise
         handle = next(i for i in range(1, 256) if i not in self.handles)
         self.handles[handle] = entry
@@ -488,6 +491,11 @@ class Storage:
             self.record()
             trace_close("manifest marked closed")
             self.log(f"\n[SAVED] {name} ({path.stat().st_size} bytes) SHA256={digest}\n")
+            if entry.get("browser_copy"):
+                # A file copy must preserve the source name, not run ROM
+                # database renaming or generate a companion dump log.
+                del self.handles[handle]
+                return 0
             relative_parts = path.relative_to(self.root).parts
             is_msx_rom = (relative_parts and relative_parts[0].upper() == "MSX" and
                           path.suffix.lower() == ".bin")
@@ -500,7 +508,7 @@ class Storage:
         else:
             trace_close("file left incomplete")
             verify_code = 0
-            if entry.get("cancelled", False) and entry["write"]:
+            if (entry.get("cancelled", False) or entry.get("browser_copy")) and entry["write"]:
                 path = entry["path"]
                 name = path.relative_to(self.root).as_posix()
                 path.unlink(missing_ok=True)
@@ -583,7 +591,10 @@ class Storage:
                 if not request or request['action']!='C': raise ValueError('no browser copy')
                 name=request['path'].encode('utf-8')
                 target=self.path(name)
+                if not p[0] & 2 or not p[0] & 4:
+                    raise ValueError("browser copy requires a new writable file")
                 target.parent.mkdir(parents=True,exist_ok=True)
+                return self.allocate(target, p[0], browser_copy=True)
             return self.allocate(self.path(name), p[0])
         if op in (6, 7, 8, 9):
             name=p
@@ -708,6 +719,20 @@ class Storage:
         entry = self.handles[p[0]]
         f = entry["file"]
         if op == 3:
+            if entry.get("browser_copy") and len(p) == 6:
+                if p[1] not in (0, 1):
+                    raise ValueError("invalid browser copy outcome")
+                total, = struct.unpack("<I", p[2:])
+                cancelled = bool(entry.get("cancelled") or
+                                 (self.cancel_event and self.cancel_event.is_set()))
+                if cancelled and self.cancel_event:
+                    self.cancel_event.clear()
+                f.flush()
+                exact = (f.tell() == total and os.fstat(f.fileno()).st_size == total
+                         and entry["transfer_bytes"] == total)
+                complete = bool(p[1] and not cancelled and exact)
+                self.close_handle(p[0], complete=complete)
+                return bytes((0xb2, 0 if complete else 1 if cancelled else 2))
             return bytes((self.close_handle(p[0]),))
         elif op == 4:
             if len(p) != 7 or f is None:

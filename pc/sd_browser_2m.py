@@ -4,7 +4,7 @@ import time
 
 def browser_transfer_allowed(store, entry, length, total):
     request = store.host_state.get("browser_request")
-    if not request or request.get("action") != "C" or not entry or not entry.get("write"):
+    if not request or request.get("action") != "C" or not entry or not entry.get("write") or not entry.get("browser_copy"):
         return False
     return (8192 <= length <= total <= 0xffffffff and length % 512 == 0
             and 0 <= total - length < 512

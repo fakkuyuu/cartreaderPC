@@ -936,6 +936,33 @@ bool PcFsFile::sdRetry2M(uint32_t total, void (*beginBlock)(uint32_t), void (*re
   return true;
 }
 
+// SD browser close supplies an explicit outcome and exact original size.
+uint8_t PcFsFile::finishSdCopy(bool success, uint32_t total) {
+  if (!handle) return 2;
+  bool cancelled = PcLink::takeCancelRequest();
+  if (success && !cancelled) {
+    flush();
+    bool checkpointCancelled = false;
+    if (!PcLink::streamCheckpoint(handle, pos, checkpointCancelled)) PcLink::resetAfterHostLoss();
+    cancelled = checkpointCancelled || PcLink::takeCancelRequest();
+  }
+  if (!PcLink::leaveDumpBaud()) PcLink::resetAfterHostLoss();
+  PcLink::data[0] = handle;
+  PcLink::data[1] = success && !cancelled ? 1 : 0;
+  PcLink::put32(PcLink::data + 2, total);
+  uint16_t got = PcLink::call(3, 6);
+  if (!got || PcLink::data[0]) PcLink::resetAfterHostLoss();
+  // A legacy PC accepts op 3 but returns only its normal verification code.
+  uint8_t result = got == 3 && PcLink::data[1] == 0xb2
+    ? PcLink::data[2] : (success && !cancelled ? 0 : 3);
+  handle = 0; writable = false; pendingBlocks = 0;
+  if (sharedFileOwner == this) {
+    sharedFileOwner = nullptr; free(sharedFileCache); sharedFileCache = nullptr;
+  }
+  used = 0; dirty = false;
+  return cancelled && result != 3 ? 1 : result;
+}
+
 void PcFsFile::benchmarkRetry(void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), uint32_t& elapsed) {
   const uint32_t length = 1048576UL;
   if (PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord, PcLink::RETRY_PROFILE_BENCHMARK, &elapsed))
@@ -1316,20 +1343,22 @@ static bool copyOnePhysicalFile(const char* name) {
     // The final retry may have read an earlier sector; seek to the exact tail.
     if (!source.seekSet(done)) {
       sdRetrySource = nullptr;
-      destination.close(); source.close(); pc.remove(browserToken); return false;
+      if (destination.finishSdCopy(false, total) == 3) pc.remove(browserToken);
+      source.close(); return false;
     }
   }
   sdRetrySource = nullptr;
   while(done < total) {
     if(PcLink::takeCancelRequest()) {
-      destination.close(); source.close();
-      pc.remove(browserToken);
+      if (destination.finishSdCopy(false, total) == 3) pc.remove(browserToken);
+      source.close();
       PcConsole.println(F("[SD Browser] copy cancelled")); return false;
     }
     int count=source.read(sdBuffer,min((uint32_t)sdCopyReadSize,total-done));
     PcLink::sampleRam(PcLink::RAM_SD_READ);
     if(count<=0 || destination.write(sdBuffer,count)!=(size_t)count) {
-      destination.close(); source.close(); pc.remove(browserToken); return false;
+      if (destination.finishSdCopy(false, total) == 3) pc.remove(browserToken);
+      source.close(); return false;
     }
     done+=count;
     PcLink::sampleRam(PcLink::RAM_PC_WRITE);
@@ -1338,11 +1367,11 @@ static bool copyOnePhysicalFile(const char* name) {
       PcConsole.print('\t'); PcConsole.println(total);
     }
   }
-  if (PcLink::takeCancelRequest()) {
-    destination.close(); source.close(); pc.remove(browserToken);
-    PcConsole.println(F("[SD Browser] copy cancelled")); return false;
-  }
-  destination.close(); source.close(); return true;
+  const uint8_t result = destination.finishSdCopy(true, total);
+  source.close();
+  if (result == 3) pc.remove(browserToken);
+  if (result == 1 || result == 3) PcConsole.println(F("[SD Browser] copy cancelled"));
+  return result == 0;
 }
 
 // One request, root-based component traversal. No heap path, recursion, or

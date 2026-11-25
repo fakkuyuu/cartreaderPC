@@ -89,6 +89,7 @@ class PcFsFile : public Stream {
   bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes = false, bool experimental = false);
   bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), PcLink::RetryProfile profile, void (*roundStarted)(uint8_t), bool fallbackBeforePayload = false, void (*progress)(uint32_t) = nullptr);
   bool sdRetry2M(uint32_t total, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*));
+  uint8_t finishSdCopy(bool success, uint32_t total);
   void benchmarkRetry(void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), uint32_t& elapsed);
   bool isOpen() const { return handle != 0; }
   bool isDir() const { return kind & 1; }
