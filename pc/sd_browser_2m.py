@@ -6,7 +6,7 @@ def browser_transfer_allowed(store, entry, length, total):
     request = store.host_state.get("browser_request")
     if not request or request.get("action") != "C" or not entry or not entry.get("write"):
         return False
-    return (8192 <= length <= 128 * 1024**2 and length % 512 == 0
+    return (8192 <= length <= total <= 0xffffffff and length % 512 == 0
             and 0 <= total - length < 512
             and entry["path"] == store.path(request["path"].encode("utf-8")))
 

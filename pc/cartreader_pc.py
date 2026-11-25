@@ -501,7 +501,7 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     if sd_browser_2m:
                         from sd_browser_2m import browser_transfer_allowed, browser_progress
                         enabled = enabled and browser_transfer_allowed(store, entry, length, sd_total)
-                    max_length = 128 * 1024**2 if n64 or sd_browser_2m else 32 * 1024**2
+                    max_length = 0xffffffff if sd_browser_2m else 128 * 1024**2 if n64 else 32 * 1024**2
                     allowed = bool(enabled and entry and entry["write"]
                                    and 0 < length <= max_length and length % block_size == 0)
                     answer = bytes([not allowed])

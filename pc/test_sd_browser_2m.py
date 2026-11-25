@@ -19,12 +19,13 @@ class Browser2MTests(unittest.TestCase):
         self.entry = {"write": True, "path": Path("/a.bin")}
 
     def test_exact_and_partial_last_sector(self):
-        for tail in (0, 1, 511):
-            self.assertTrue(browser_transfer_allowed(self.store, self.entry, 8192, 8192 + tail))
+        for length in (8192, 128 * 1024**2, 128 * 1024**2 + 512, 0xfffffe00):
+            for tail in (0, 1, 511):
+                self.assertTrue(browser_transfer_allowed(self.store, self.entry, length, length + tail))
 
     def test_bad_lengths_and_wrong_handle(self):
         for length, total in ((0, 0), (7680, 7680), (8193, 8193), (8192, 8191), (8192, 8704),
-                              (128 * 1024**2 + 512, 128 * 1024**2 + 512)):
+                              (0x100000000, 0x100000000), (0xfffffe00, 0x100000000)):
             self.assertFalse(browser_transfer_allowed(self.store, self.entry, length, total))
         self.assertFalse(browser_transfer_allowed(self.store, {"write": True, "path": Path("/b.bin")}, 8192, 8192))
         self.assertFalse(browser_transfer_allowed(self.store, {"write": False, "path": Path("/a.bin")}, 8192, 8192))
@@ -49,6 +50,7 @@ class Browser2MTests(unittest.TestCase):
         messages = []
         with tempfile.TemporaryDirectory() as directory:
             store = Storage(directory, log=messages.append)
+            store.dispatch(1, b"")
             target = Path(directory) / "sample.dat"
             handle = store.allocate(target, 14)[0]
             with patch("gba_retry.time.monotonic", Clock().monotonic), patch("gba_retry.time.sleep", lambda _: None):

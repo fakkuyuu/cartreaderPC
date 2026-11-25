@@ -469,7 +469,7 @@ static uint32_t gbaRetryMask(uint8_t round, bool wide, bool recover = false) {
   return mask;
 }
 
-static void gbaN64Handoff(bool recover = false) {
+static void rawRetryHandoff(bool recover) {
   const uint8_t marker[] = {'N', '6', '4', 'D'};
   uint16_t check = 0xffff;
   for (uint8_t value : marker) {
@@ -499,6 +499,8 @@ static void gbaN64Handoff(bool recover = false) {
   if (check != (uint16_t)(reply[4] | ((uint16_t)reply[5] << 8)))
     rawRetryFailure(recover);
 }
+
+static void gbaN64Handoff() { rawRetryHandoff(false); }
 
 static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
                              void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*),
@@ -576,7 +578,7 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
   }
   // N64 requires both ends to confirm the final zero-mask before changing baud.
   if (mode == PcLink::RETRY_PROFILE_N64) gbaN64Handoff();
-  if (browser) gbaN64Handoff(true);
+  if (browser) rawRetryHandoff(true);
   const uint32_t streamUs = micros() - streamStart;
   if (measuredUs) *measuredUs = streamUs;
   delay(150);
@@ -584,7 +586,10 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
   Serial.begin(safeBaud);
   activeBaud = safeBaud;
   delay(100);
-  PcConsole.print(browser ? F("[SD Browser 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_N64 ? F("[N64 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_MD ? F("[MD 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_SNES || mode == PcLink::RETRY_PROFILE_SNES_EXPERIMENTAL ? F("[SNES 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_BENCHMARK ? F("[Benchmark 2M profile] payload_us=") : F("[GBA 2M profile] payload_us="));
+  // SD files can take longer than the 32-bit micros() wrap interval.
+  // The PC reports elapsed time using its monotonic clock instead.
+  if (browser) return true;
+  PcConsole.print(mode == PcLink::RETRY_PROFILE_N64 ? F("[N64 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_MD ? F("[MD 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_SNES || mode == PcLink::RETRY_PROFILE_SNES_EXPERIMENTAL ? F("[SNES 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_BENCHMARK ? F("[Benchmark 2M profile] payload_us=") : F("[GBA 2M profile] payload_us="));
   PcConsole.print(gbaPayloadUs);
   PcConsole.print(F(" reply_us="));
   PcConsole.print(replyUs);
@@ -923,7 +928,7 @@ bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*
 
 bool PcFsFile::sdRetry2M(uint32_t total, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*)) {
   const uint32_t length = total & ~511UL;
-  if (!writable || !handle || pos || length < 8192UL || length > 128UL * 1024UL * 1024UL) return false;
+  if (!writable || !handle || pos || length < 8192UL) return false;
   if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord,
                                 PcLink::RETRY_PROFILE_SD_BROWSER, nullptr, nullptr,
                                 true, nullptr, total)) return false;
@@ -1290,6 +1295,12 @@ static bool copyOnePhysicalFile(const char* name) {
   PcLink::reportRam(PcLink::RAM_COPY_OPEN);
   ::FsFile source;
   if(!physicalVolume || !source.open(physicalVolume,name,O_READ) || source.isDir()) return false;
+  const uint64_t sourceSize = source.fileSize();
+  if (sourceSize > 0xffffffffULL) {
+    PcConsole.println(F("[SD Browser] files >= 4 GiB are not supported"));
+    source.close(); return false;
+  }
+  const uint32_t total = (uint32_t)sourceSize;
   PcSdFs pc;
   if(pc.exists(browserToken)) {
     PcConsole.print(F("[SD Copy] skipped existing ")); PcConsole.println(browserToken);
@@ -1298,7 +1309,7 @@ static bool copyOnePhysicalFile(const char* name) {
   PcFsFile destination;
   if(!destination.open(browserToken,O_WRITE|O_CREAT|O_TRUNC)) { source.close(); return false; }
   PcConsole.print(F("[SD Copy] ")); PcConsole.println(browserToken);
-  uint32_t done=0, total=source.fileSize();
+  uint32_t done=0;
   sdRetrySource = &source;
   if (destination.sdRetry2M(total, sdRetryBeginBlock, sdRetryReadWord)) {
     done = total & ~511UL;
