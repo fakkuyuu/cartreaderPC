@@ -1554,6 +1554,14 @@ void readSRAMFLASH_MBC6_GB() {
 }
 
 // Write RAM
+static void selectMbc6FlashBank_GB(byte bank) __attribute__((noinline));
+static void selectMbc6FlashBank_GB(byte bank) {
+  writeByte_GB(0x2800, 0x08);
+  writeByte_GB(0x3800, 0x08);
+  writeByte_GB(0x2000, bank);
+  writeByte_GB(0x3000, bank);
+}
+
 void writeSRAMFLASH_MBC6_GB() {
   // Create filepath
   appendSelectedFilePath();
@@ -1605,10 +1613,7 @@ void writeSRAMFLASH_MBC6_GB() {
         writeByte_GB(0x7555, 0x80);
         writeByte_GB(0x7555, 0xAA);
         writeByte_GB(0x4AAA, 0x55);
-        writeByte_GB(0x2800, 0x08);
-        writeByte_GB(0x3800, 0x08);
-        writeByte_GB(0x2000, currBank);
-        writeByte_GB(0x3000, currBank);
+        selectMbc6FlashBank_GB(currBank);
         writeByte_GB(0x4000, 0x30);
         byte lives = 100;
         while (1) {
@@ -1622,10 +1627,7 @@ void writeSRAMFLASH_MBC6_GB() {
           }
         }
       } else {
-        writeByte_GB(0x2800, 0x08);
-        writeByte_GB(0x3800, 0x08);
-        writeByte_GB(0x2000, currBank);
-        writeByte_GB(0x3000, currBank);
+        selectMbc6FlashBank_GB(currBank);
       }
 
       // Write to FLASH
@@ -1635,10 +1637,7 @@ void writeSRAMFLASH_MBC6_GB() {
         writeByte_GB(0x7555, 0xAA);
         writeByte_GB(0x4AAA, 0x55);
         writeByte_GB(0x7555, 0xA0);
-        writeByte_GB(0x2800, 0x08);
-        writeByte_GB(0x3800, 0x08);
-        writeByte_GB(0x2000, currBank);
-        writeByte_GB(0x3000, currBank);
+        selectMbc6FlashBank_GB(currBank);
         for (int i = 0; i < 128; i++) {
           writeByte_GB(romAddress++, myFile.read());
         }
