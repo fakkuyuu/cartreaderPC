@@ -762,9 +762,10 @@ byte readBank_SNES(byte myBank, word myAddress) {
   return tempByte;
 }
 
-void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
+static void readRomBanks_SNES(unsigned int start, unsigned int total, FsFile* file, uint16_t initialAddress) __attribute__((noinline));
+static void readRomBanks_SNES(unsigned int start, unsigned int total, FsFile* file, uint16_t initialAddress) {
   uint16_t c = 0;
-  uint16_t currByte = 32768;
+  uint16_t currByte = initialAddress;
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -777,7 +778,7 @@ void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
     // Blink led
     blinkLED();
 
-    currByte = 32768;
+    currByte = initialAddress;
     while (1) {
       c = 0;
       while (c < 512) {
@@ -812,54 +813,12 @@ void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
   }
 }
 
+void readLoRomBanks(unsigned int start, unsigned int total, FsFile* file) {
+  readRomBanks_SNES(start, total, file, 32768);
+}
+
 void readHiRomBanks(unsigned int start, unsigned int total, FsFile* file) {
-  uint16_t c = 0;
-  uint16_t currByte = 0;
-
-  //Initialize progress bar
-  uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = (uint32_t)(total - start) * 1024;
-  startProgressBar(totalProgressBar);
-
-  for (word currBank = start; currBank < total; currBank++) {
-    PORTL = currBank;
-
-    // Blink led
-    blinkLED();
-
-    currByte = 0;
-    while (1) {
-      c = 0;
-      while (c < 512) {
-        PORTF = (currByte & 0xFF);
-        PORTK = ((currByte >> 8) & 0xFF);
-
-        // Wait for the Byte to appear on the data bus
-        // Arduino running at 16Mhz -> one nop = 62.5ns
-        // slowRom is good for 200ns, fastRom is <= 120ns; S-CPU best case read speed: 3.57MHz / 280ns
-        // let's be conservative and use 6 x 62.5 = 375ns
-        NOP;
-        NOP;
-        NOP;
-        NOP;
-        NOP;
-        NOP;
-
-        sdBuffer[c] = PINC;
-        c++;
-        currByte++;
-      }
-      file->write(sdBuffer, 512);
-      blinkLED();
-
-      // exit while(1) loop once the uint16_t currByte overflows from 0xffff to 0 (current bank is done)
-      if (currByte == 0) break;
-    }
-
-    // update progress bar
-    processedProgressBar += 1024;
-    draw_progressbar(processedProgressBar, totalProgressBar);
-  }
+  readRomBanks_SNES(start, total, file, 0);
 }
 
 /******************************************
