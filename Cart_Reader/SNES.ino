@@ -903,7 +903,7 @@ void getCartInfo_SNES() {
     println_Msg(F("DSP1 RAM"));
   else if (romChips == 5)
     println_Msg(F("DSP1 SAVE"));
-  else if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26))
+  else if ((romChips >= 19 && romChips <= 21) || romChips == 26)
     println_Msg(F("SuperFX"));
   else if (romChips == 52) {
     println_Msg(F("SA1 RAM"));
@@ -1225,7 +1225,7 @@ boolean checkcart_SNES() {
 
   // Read sramSizeExp
   byte sramSizeExp;
-  if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {
+  if ((romChips >= 19 && romChips <= 21) || romChips == 26) {
     // SuperFX
     if (snesHeader[0xFFDA - headerStart] == 0x33) {
       sramSizeExp = snesHeader[0xFFBD - headerStart];
@@ -1906,7 +1906,7 @@ static void visitSramMapping_SNES(void (*visit)(byte, long, long, byte), byte va
   if (romType == LO) {
     // Sram size
     long lastByte = (long(sramSize) * 128);
-    if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26)) {  // SuperFX
+    if ((romChips >= 19 && romChips <= 21) || romChips == 26) {  // SuperFX
       visitSramBanks_SNES(0x70, 0x0000, 0x10000L, lastByte, visit, value);
     } else visitSramBanks_SNES(0x70, 0x0000, 0x8000L, lastByte, visit, value);
   } else if (romType == HI) {
