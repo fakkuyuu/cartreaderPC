@@ -2173,6 +2173,16 @@ void blankcheck_MD() {
   }
 }
 
+static void showFlashVerifyResult_MD(unsigned long blank) __attribute__((noinline));
+static void showFlashVerifyResult_MD(unsigned long blank) {
+  if (blank == 0) {
+    println_Msg(FS(SharedFlashText::textFlashromVerifiedOK));
+    display_Update();
+  } else {
+    showVerificationErrorCount(blank);
+  }
+}
+
 void verifyFlash_MD() {
   // Open file on sd card
   if (openSelectedFileForRead()) {
@@ -2200,12 +2210,7 @@ void verifyFlash_MD() {
       }
       d = 0;
     }
-    if (blank == 0) {
-      println_Msg(FS(SharedFlashText::textFlashromVerifiedOK));
-      display_Update();
-    } else {
-      showVerificationErrorCount(blank);
-    }
+    showFlashVerifyResult_MD(blank);
     // Close the file:
     closeCurrentFile();
   } else {
@@ -3100,12 +3105,7 @@ void verifyFlashCFIChip_MD(byte currChip, unsigned long toVerify) {
     }
   }
 
-  if (blank == 0) {
-    println_Msg(FS(SharedFlashText::textFlashromVerifiedOK));
-    display_Update();
-  } else {
-    showVerificationErrorCount(blank);
-  }
+  showFlashVerifyResult_MD(blank);
 }
 
 void identifyFlashCFI_MD() {
