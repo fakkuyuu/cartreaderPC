@@ -4411,25 +4411,11 @@ static void visitMmc5Sram_NES(word base, void (*visit)(word, word)) __attribute_
 static void visitMmc5Sram_NES(word base, void (*visit)(word, word)) {
   write_prg_byte(0x5100, 3);                    // 8K PRG Banks
   uint16_t banks = int_pow(2, ramsize) / 2;              // banks = 1,2,4
-  if (banks == 2) {                             // 16K - Split SRAM Chips 8K/8K
-    for (size_t i = 0; i < (banks / 2); i++) {  // Chip 1
-      write_prg_byte(0x5113, i);
-      for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-        visit(base, address);
-      }
-    }
-    for (size_t j = 4; j < (banks / 2) + 4; j++) {  // Chip 2
-      write_prg_byte(0x5113, j);
-      for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-        visit(base, address);
-      }
-    }
-  } else {                                // 8K/32K Single SRAM Chip
-    for (size_t i = 0; i < banks; i++) {  // banks = 1 or 4
-      write_prg_byte(0x5113, i);
-      for (size_t address = 0; address < 0x2000; address += 512) {  // 8K
-        visit(base, address);
-      }
+  // The 16K configuration has separate 8K chips in banks 0 and 4.
+  for (size_t i = 0; i < banks; i++) {
+    write_prg_byte(0x5113, (banks == 2 && i == 1) ? 4 : i);
+    for (size_t address = 0; address < 0x2000; address += 512) {
+      visit(base, address);
     }
   }
 }
