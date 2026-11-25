@@ -1,0 +1,175 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45550079804",
+  "run_attempt": "1",
+  "workflow_commit": "59d876d7dc3a0f2150814c8e16e1fff22d0afe1a",
+  "request": {
+    "id": "parallel-012-integration",
+    "base": "fd4f34b214f282fe275bfd2cf6ae95c48ae5394b",
+    "expected_base_flash": 212716,
+    "expected_base_ram": 6281,
+    "endpoints_only": true,
+    "candidates": [
+      {
+        "id": "integration-pce",
+        "head": "9a02dedcdac0fe4c658bd4ee28763b05bbe34267"
+      },
+      {
+        "id": "integration-pce-ws",
+        "head": "edd53e56af9e9f75f3dc1a3a998cfa3d3e508ea3"
+      },
+      {
+        "id": "integration-pce-ws-msx",
+        "head": "008a044888d14e1c15b982bdf03fe2f5c090a59e"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45550079804",
+      "run_attempt": "1",
+      "workflow_commit": "59d876d7dc3a0f2150814c8e16e1fff22d0afe1a",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-pce",
+        "head": "9a02dedcdac0fe4c658bd4ee28763b05bbe34267",
+        "base": "fd4f34b214f282fe275bfd2cf6ae95c48ae5394b",
+        "expected_base_flash": 212716,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "fd4f34b214f282fe275bfd2cf6ae95c48ae5394b",
+          "subject": "Measure twelfth batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 212716,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "9a02dedcdac0fe4c658bd4ee28763b05bbe34267",
+          "subject": "Integrate measured phase 2 batch 12 pce size reduction",
+          "status": "ok",
+          "flash": 212392,
+          "ram": 6281,
+          "delta_previous": -324,
+          "delta_base": -324,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-pce",
+        "head": "9a02dedcdac0fe4c658bd4ee28763b05bbe34267"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45550079804",
+      "run_attempt": "1",
+      "workflow_commit": "59d876d7dc3a0f2150814c8e16e1fff22d0afe1a",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-pce-ws",
+        "head": "edd53e56af9e9f75f3dc1a3a998cfa3d3e508ea3",
+        "base": "fd4f34b214f282fe275bfd2cf6ae95c48ae5394b",
+        "expected_base_flash": 212716,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "fd4f34b214f282fe275bfd2cf6ae95c48ae5394b",
+          "subject": "Measure twelfth batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 212716,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "edd53e56af9e9f75f3dc1a3a998cfa3d3e508ea3",
+          "subject": "Integrate measured phase 2 batch 12 ws size reduction",
+          "status": "ok",
+          "flash": 212306,
+          "ram": 6281,
+          "delta_previous": -410,
+          "delta_base": -410,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-pce-ws",
+        "head": "edd53e56af9e9f75f3dc1a3a998cfa3d3e508ea3"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45550079804",
+      "run_attempt": "1",
+      "workflow_commit": "59d876d7dc3a0f2150814c8e16e1fff22d0afe1a",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-pce-ws-msx",
+        "head": "008a044888d14e1c15b982bdf03fe2f5c090a59e",
+        "base": "fd4f34b214f282fe275bfd2cf6ae95c48ae5394b",
+        "expected_base_flash": 212716,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "fd4f34b214f282fe275bfd2cf6ae95c48ae5394b",
+          "subject": "Measure twelfth batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 212716,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "008a044888d14e1c15b982bdf03fe2f5c090a59e",
+          "subject": "Integrate measured phase 2 batch 12 msx size reduction",
+          "status": "ok",
+          "flash": 212230,
+          "ram": 6281,
+          "delta_previous": -486,
+          "delta_base": -486,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-pce-ws-msx",
+        "head": "008a044888d14e1c15b982bdf03fe2f5c090a59e"
+      }
+    }
+  ]
+}
