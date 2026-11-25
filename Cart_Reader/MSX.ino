@@ -947,6 +947,13 @@ void printRomSize_MSX(uint8_t index) {
 }
 #endif
 
+static void finishSizeDisplayP19_MSX() __attribute__((noinline));
+static void finishSizeDisplayP19_MSX() {
+  println_Msg(FS(SharedFlashText::unitK));
+  display_Update();
+  delay(1000);
+}
+
 void setROMSize_MSX() {
   byte newmsxsize;
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
@@ -1025,9 +1032,7 @@ void setROMSize_MSX() {
     print_Msg(F("384"));
   else
     print_Msg(MSX[newmsxsize]);
-  println_Msg(FS(SharedFlashText::unitK));
-  display_Update();
-  delay(1000);
+  finishSizeDisplayP19_MSX();
 #else
   if (msxlo == msxhi)
     newmsxsize = msxlo;
@@ -1155,9 +1160,7 @@ void setRAMSize_MSX() {
   }
   print_Msg(FS(SharedFlashText::textRAMSIZE));
   print_Msg(MSXRAM[newmsxramsize]);
-  println_Msg(FS(SharedFlashText::unitK));
-  display_Update();
-  delay(1000);
+  finishSizeDisplayP19_MSX();
 #else
   if (msxramlo == msxramhi)
     newmsxramsize = msxramlo;
