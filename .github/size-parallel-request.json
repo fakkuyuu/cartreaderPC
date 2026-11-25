@@ -1,40 +1,25 @@
 {
-  "id": "parallel-018",
-  "base": "065eaf090e162a1c0f87905c70c0fd134c384494",
+  "id": "parallel-018-integration",
+  "base": "af57228ed4daa2644b9ded25fea17dbc6d47a7b0",
   "expected_base_flash": 210172,
   "expected_base_ram": 6123,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "gb-header-retry",
-      "head": "fca48bcc03588be4a24f7b460f0c81a483a8b479"
+      "id": "integration-md",
+      "head": "1fc3b370e7e334369b18cb42aa81d1bec7b4b545"
     },
     {
-      "id": "md-lockon-display",
-      "head": "0fd18b78305c530ec255be6032409d565cf8a9f0"
+      "id": "integration-md-gb",
+      "head": "97db460ea0fd698216af041716a198c352aa6b93"
     },
     {
-      "id": "n64-erase-warning",
-      "head": "81d474982ac5fbeaeb575e3eb37d81347be589bb"
+      "id": "integration-md-gb-ws",
+      "head": "c4dfab4516ff4b98a55fd3e382a18153eb8c2863"
     },
     {
-      "id": "nes-manual-fallback",
-      "head": "368cb295d0b367dd7e4d45cfb9cbedba7b7d7b5b"
-    },
-    {
-      "id": "pce-path-prefix",
-      "head": "8fac38bb8bf85b25c5b574eb3e67d3b610690a56"
-    },
-    {
-      "id": "ws-file-display",
-      "head": "100899944bd6420763321f1c9fee00b946ef1c4a"
-    },
-    {
-      "id": "gba-flash-id-reset",
-      "head": "dea4813c45303dd91dcdc3884170e0d82f376569"
-    },
-    {
-      "id": "msx-size-error",
-      "head": "64b5c7f149a153f3beb2df0432e52c20a98612be"
+      "id": "integration-md-gb-ws-n64",
+      "head": "f3056723664aa8dd9bc123ebfab99e3d977958cf"
     }
   ]
 }
