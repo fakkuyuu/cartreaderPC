@@ -1832,6 +1832,7 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
   GBA Eeprom SAVE Functions
 *****************************************/
 // Write eeprom from file
+void writeEeprom_GBA(word eepSize) __attribute__((noinline));
 void writeEeprom_GBA(word eepSize) {
   // Launch Filebrowser
   browseRootFileWithPathAndClear(FS(SharedFlashText::textSelectEepFile));
@@ -1863,6 +1864,7 @@ void writeEeprom_GBA(word eepSize) {
 }
 
 // Read eeprom to file
+void readEeprom_GBA(word eepSize) __attribute__((noinline));
 void readEeprom_GBA(word eepSize) {
   // Get name, add extension and convert to char array for sd lib
   createDbSaveFolder("GBA", "eep");
