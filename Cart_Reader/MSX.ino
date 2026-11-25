@@ -837,22 +837,13 @@ void writeRAM_MSX() {
 
         case 7:  // Koei (8K/32K)
           checkRAM();
-          if (srambit6)
-            writeData_MSX(0x7000, 0xC0);  // Bit 6 + Bit 7 Enable
-          else
-            writeData_MSX(0x7000, 0xA0);  // Bit 5 + Bit 7 Enable
-          for (word address = 0x0; address < 0x2000; address += 512) {  // 8K
-            writeSramBlock_MSX(0x8000 + address);
-          }
-          if (msxramsize > 2) {
-            for (int y = 1; y < 4; y++) {
-              if (srambit6)
-                writeData_MSX(0x7000, 0xC0 + y);  // Bit 6 + Bit 7 Enable
-              else
-                writeData_MSX(0x7000, 0xA0 + y);  // Bit 5 + Bit 7 Enable
-              for (word address = 0x0; address < 0x2000; address += 512) {  // 8K
-                writeSramBlock_MSX(0x8000 + address);
-              }
+          for (int y = 0; y < (msxramsize > 2 ? 4 : 1); y++) {
+            if (srambit6)
+              writeData_MSX(0x7000, 0xC0 + y);
+            else
+              writeData_MSX(0x7000, 0xA0 + y);
+            for (word address = 0x0; address < 0x2000; address += 512) {
+              writeSramBlock_MSX(0x8000 + address);
             }
           }
           writeData_MSX(0x7000, 0);  // SRAM Disable
