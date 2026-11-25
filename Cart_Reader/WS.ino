@@ -706,12 +706,18 @@ static void issueEepromRead_WS(uint16_t address) {
   dataIn_WS();
 }
 
+static uint32_t eepromGeometry_WS(uint32_t& eepromSize) __attribute__((noinline));
+static uint32_t eepromGeometry_WS(uint32_t& eepromSize) {
+  eepromSize = (sramSize << 7);
+  return eepromSize < 512 ? eepromSize : 512;
+}
+
 static void readEEPROM_WS() {
   // generate fullname of eep file
   createFolderAndOpenFile("WS", "SAVE", romName, "eep");
 
-  uint32_t eepromSize = (sramSize << 7);
-  uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
+  uint32_t eepromSize;
+  uint32_t bufSize = eepromGeometry_WS(eepromSize);
 
   for (uint32_t i = 0; i < eepromSize; i += bufSize) {
     for (uint32_t j = 0; j < bufSize; j += 2) {
@@ -738,8 +744,8 @@ static void verifyEEPROM_WS() {
 
   if (openSelectedFileForRead()) {
     uint32_t write_errors = 0;
-    uint32_t eepromSize = (sramSize << 7);
-    uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
+    uint32_t eepromSize;
+    uint32_t bufSize = eepromGeometry_WS(eepromSize);
 
     for (uint32_t i = 0; i < eepromSize; i += bufSize) {
       myFile.read(sdBuffer, bufSize);
@@ -778,8 +784,8 @@ static void writeEEPROM_WS() {
   selectSaveForWrite_WS(FS(SharedFlashText::textSelectEepFile));
 
   if (openSelectedFileForRead()) {
-    uint32_t eepromSize = (sramSize << 7);
-    uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
+    uint32_t eepromSize;
+    uint32_t bufSize = eepromGeometry_WS(eepromSize);
 
     for (uint32_t i = 0; i < eepromSize; i += bufSize) {
       myFile.read(sdBuffer, bufSize);
