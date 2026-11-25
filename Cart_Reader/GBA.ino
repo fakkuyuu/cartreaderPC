@@ -1706,6 +1706,12 @@ static void beginSaveFlashProgram_GBA() {
   writeByteFlash_GBA(0x5555, 0xa0);
 }
 
+static void showMissingSaveP17_GBA() __attribute__((noinline));
+static void showMissingSaveP17_GBA() {
+  println_Msg(FS(SharedFlashText::textError));
+  reportMissingFile();
+}
+
 void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolean isAtmel) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
   PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
@@ -1768,8 +1774,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
     closeAndShowDone();
 
   } else {
-    println_Msg(FS(SharedFlashText::textError));
-    reportMissingFile();
+    showMissingSaveP17_GBA();
   }
 }
 
@@ -1857,8 +1862,7 @@ void writeEeprom_GBA(word eepSize) {
     // Close the file:
     closeAndShowDone();
   } else {
-    println_Msg(FS(SharedFlashText::textError));
-    reportMissingFile();
+    showMissingSaveP17_GBA();
   }
 }
 
