@@ -1,40 +1,21 @@
 {
-  "id": "parallel-019",
-  "base": "f30bc7a8b041f7937e8cc25c3636be52251e56ad",
+  "id": "parallel-019-integration",
+  "base": "5874b5d3aad88c36e41bea957d284463aaed027b",
   "expected_base_flash": 209968,
   "expected_base_ram": 6123,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "gb-flash-status",
-      "head": "ee71880775ae26e6a9fe641c464126b86c621365"
+      "id": "integration-n64",
+      "head": "e8baf9d19edcee1f6bfad0604d3ed5fd2d86c78f"
     },
     {
-      "id": "gba-bank-arithmetic",
-      "head": "a0cd880e9400999a40f553a69176805177d2d81e"
+      "id": "integration-n64-msx",
+      "head": "c40f85c525b9b47d268b054dac80601c766eb58a"
     },
     {
-      "id": "md-flash-size-check",
-      "head": "2c3479070b51eaac2864aa9993319bb7ade591a3"
-    },
-    {
-      "id": "n64-sram-menu",
-      "head": "caf115012fca0544e8c7e7299f4a5b16d0b595f4"
-    },
-    {
-      "id": "nes-eeprom-size",
-      "head": "36dce4aae9c1e10d0f3841b14a9724b00190471c"
-    },
-    {
-      "id": "snes-reset-menu",
-      "head": "3c6a77bd59601df41f23a69365e4c02814da46fe"
-    },
-    {
-      "id": "pce-crc-branch",
-      "head": "a808f9f25504e8d3219d14945d8cf0ac128be7f7"
-    },
-    {
-      "id": "msx-size-display",
-      "head": "124c8f132668f4e38a3227adf72df76f3b4c709b"
+      "id": "integration-n64-msx-nes",
+      "head": "bd8661a2ac2c7addc37caaee82c4ace2a8b724ef"
     }
   ]
 }
