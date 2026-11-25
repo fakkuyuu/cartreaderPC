@@ -1,28 +1,21 @@
 {
-  "id": "parallel-003",
-  "base": "72f2c4265751a7daa6114d48a2237d0f076ed775",
+  "id": "parallel-003-integration",
+  "base": "be58724c7ed1b52504324000bd760ba42c69dfdf",
   "expected_base_flash": 214542,
   "expected_base_ram": 6281,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "ws-eeprom-read-command",
-      "head": "da0c1f86b4140f74acf372e45764a72cb4e9a0be",
-      "path": "Cart_Reader/WS.ino"
+      "id": "integration-ws",
+      "head": "c058b7f46d8b2e657f6ac461fb5324a640a8f2c4"
     },
     {
-      "id": "pce-tennokoe-read-block",
-      "head": "d02effd89c3e8ca02ae049bbbc14329c587c5021",
-      "path": "Cart_Reader/PCE.ino"
+      "id": "integration-ws-pce",
+      "head": "aed583c03f654ea6996407696613ea9f7a585c91"
     },
     {
-      "id": "snes-sram-verify-ranges",
-      "head": "d6c6c759a4d13bdbc1afc3f494d24dc940bd7207",
-      "path": "Cart_Reader/SNES.ino"
-    },
-    {
-      "id": "n64-accessory-backup",
-      "head": "08479e98c88256add7f0c074ce1c16a86a1d3e52",
-      "path": "Cart_Reader/N64.ino"
+      "id": "integration-ws-pce-n64",
+      "head": "11cc96b36ea9b753c4701d454b375017244cab6c"
     }
   ]
 }
