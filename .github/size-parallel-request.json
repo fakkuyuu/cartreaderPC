@@ -1,28 +1,21 @@
 {
-  "id": "parallel-006",
-  "base": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+  "id": "parallel-006-integration",
+  "base": "38206b07045f42b327d3d6128b1b8b416709dd70",
   "expected_base_flash": 213992,
   "expected_base_ram": 6281,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "nes-mmc5-bank-loop",
-      "head": "5afa840bfdeebb7453b8de945a72a43824828786",
-      "path": "Cart_Reader/NES.ino"
+      "id": "integration-nes",
+      "head": "d910cb9465006cdee4788de80e11c7194812b3ec"
     },
     {
-      "id": "snes-checksum-mirror",
-      "head": "5dee11a685cbc8f41d7d8cd7054e2c4ddeee055c",
-      "path": "Cart_Reader/SNES.ino"
+      "id": "integration-nes-snes",
+      "head": "5afe534c2e984dff3931b3aa658cc38342d30cf0"
     },
     {
-      "id": "md-eeprom-finish-stop",
-      "head": "9727f55b65ac79489a18f19e57656fcfbe6383af",
-      "path": "Cart_Reader/MD.ino"
-    },
-    {
-      "id": "gb-megamem-flash-program",
-      "head": "f4a1192d745b0af21ec1dd0d49ead569dc79fea5",
-      "path": "Cart_Reader/GB.ino"
+      "id": "integration-nes-snes-md",
+      "head": "7677e65321634a6c0ea0d3261c6a763dc2bf8acf"
     }
   ]
 }
