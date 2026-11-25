@@ -78,6 +78,12 @@ static const char *const menuOptionspceFlash[] PROGMEM = { flashMenuItemWrite, F
 #endif
 
 // PCE start menu, first a device type is selected and set in pce_internal_mode
+static void refreshMenuP17_PCE() __attribute__((noinline));
+static void refreshMenuP17_PCE() {
+  display_Clear();
+  display_Update();
+}
+
 void pcsMenu(void) {
   unsigned char pceDev;
   pceDev = chooseFlashMenuOption(F("Select device"), menuOptionspce, 5);
@@ -85,8 +91,7 @@ void pcsMenu(void) {
   switch (pceDev) {
     case 0:
       //Hucard
-      display_Clear();
-      display_Update();
+      refreshMenuP17_PCE();
       pce_internal_mode = HUCARD;
       setup_cart_PCE();
       mode = CORE_PCE;
@@ -94,8 +99,7 @@ void pcsMenu(void) {
 
     case 1:
       //Hucard not swapped
-      display_Clear();
-      display_Update();
+      refreshMenuP17_PCE();
       pce_internal_mode = HUCARD_NOSWAP;
       setup_cart_PCE();
       mode = CORE_PCE;
@@ -103,8 +107,7 @@ void pcsMenu(void) {
 
     case 2:
       //Turbografx
-      display_Clear();
-      display_Update();
+      refreshMenuP17_PCE();
       pce_internal_mode = TURBOCHIP;
       setup_cart_PCE();
       mode = CORE_PCE;
@@ -113,8 +116,7 @@ void pcsMenu(void) {
 #ifdef ENABLE_FLASH
     case 3:
       //Flash Repro
-      display_Clear();
-      display_Update();
+      refreshMenuP17_PCE();
       pce_internal_mode = PCE_FLASH;
       setup_cart_PCE();
       mode = CORE_PCE;
