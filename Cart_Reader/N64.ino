@@ -1602,6 +1602,13 @@ void checkController() {
 }
 
 // read 32bytes from controller pak and calculate CRC
+static void showPakDumpFailureP16_N64() __attribute__((noinline));
+static void showPakDumpFailureP16_N64() {
+  closeCurrentFile();
+  println_Msg(FS(SharedFlashText::textControllerPakWas));
+  println_Msg(FS(SharedFlashText::textNotDumpedDueToA));
+}
+
 byte readBlock(byte* output, word myAddress) {
   byte response_crc;
   // Calculate the address CRC
@@ -1619,9 +1626,7 @@ byte readBlock(byte* output, word myAddress) {
   interrupts();
 
   if (error) {
-    closeCurrentFile();
-    println_Msg(FS(SharedFlashText::textControllerPakWas));
-    println_Msg(FS(SharedFlashText::textNotDumpedDueToA));
+    showPakDumpFailureP16_N64();
     print_FatalError(F("read timeout"));
   }
 
@@ -1629,9 +1634,7 @@ byte readBlock(byte* output, word myAddress) {
   if (response_crc != dataCRC(output)) {
     display_Clear();
     // Close the file:
-    closeCurrentFile();
-    println_Msg(FS(SharedFlashText::textControllerPakWas));
-    println_Msg(FS(SharedFlashText::textNotDumpedDueToA));
+    showPakDumpFailureP16_N64();
     print_FatalError(F("protocol CRC error"));
   }
 
