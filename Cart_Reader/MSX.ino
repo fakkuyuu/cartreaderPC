@@ -797,22 +797,15 @@ void writeRAM_MSX() {
 
       switch (msxmapper) {
         case 1:  // ASCII8 (2K/8K)
-          for (word address = 0x0; address < (0x800 * msxramsize * msxramsize); address += 512) {  // 2K/8K
-            if (msxramsize == 1)
-              writeData_MSX(0x7000, 0x10);  // Bit 4
-            else
-              writeData_MSX(0x7000, 0xA0);  // Bit 5 + Bit 7
-            writeSramBlock_MSX(0x8000 + address);
-          }
-          writeData_MSX(0x7000, 0);  // SRAM Disable
-          break;
-
         case 2:  // ASCII16 (2K/8K)
-          writeData_MSX(0x7000, 0x10);  // Bit 4 Enable
-          for (word address = 0x0; address < (0x800 * msxramsize * msxramsize); address += 512) {  // 2K/8K
+          if (msxmapper == 2)
+            writeData_MSX(0x7000, 0x10);
+          for (word address = 0x0; address < (0x800 * msxramsize * msxramsize); address += 512) {
+            if (msxmapper == 1)
+              writeData_MSX(0x7000, msxramsize == 1 ? 0x10 : 0xA0);
             writeSramBlock_MSX(0x8000 + address);
           }
-          writeData_MSX(0x7000, 0);  // SRAM Disable
+          writeData_MSX(0x7000, 0);
           break;
 
         case 4:  // Game Master 2 (8K)
