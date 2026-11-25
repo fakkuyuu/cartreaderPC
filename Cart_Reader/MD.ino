@@ -1173,9 +1173,12 @@ void getCartInfo_MD() {
   // This does not work for cartridges that have SRAM mapped directly after the maskrom like Striker (Europe)
   if ((cartSize < 0x8000) || (cartSize > 0xEAF400)) {
     for (cartSize = 0x20000 / 2; cartSize < 0x400000 / 2; cartSize += 0x20000 / 2) {
-      if ((readWord_MD(0x0) == readWord_MD(cartSize)) && (readWord_MD(0x1) == readWord_MD(0x1 + cartSize)) && (readWord_MD(0x2) == readWord_MD(0x2 + cartSize)) && (readWord_MD(0x3) == readWord_MD(0x3 + cartSize)) && (readWord_MD(0x4) == readWord_MD(0x4 + cartSize)) && (readWord_MD(0x5) == readWord_MD(0x5 + cartSize)) && (readWord_MD(0x6) == readWord_MD(0x6 + cartSize)) && (readWord_MD(0x7) == readWord_MD(0x7 + cartSize)) && (readWord_MD(0x8) == readWord_MD(0x8 + cartSize))) {
-        break;
+      byte wordIndex = 0;
+      for (; wordIndex < 9; ++wordIndex) {
+        word firstWord = readWord_MD(wordIndex);
+        if (firstWord != readWord_MD(cartSize + wordIndex)) break;
       }
+      if (wordIndex == 9) break;
     }
     cartSize = cartSize * 2;
   }
