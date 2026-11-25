@@ -5191,6 +5191,14 @@ static void showA29040Title_NES() {
   printBlankLine();
 }
 
+static void reportA29040WriteError_NES(uint8_t readByte) __attribute__((noinline));
+static void reportA29040WriteError_NES(uint8_t readByte) {
+  println_Msg(FS(SharedFlashText::textWriteError));
+  formatFixedHex(data_str, readByte, 2);
+  println_Msg(data_str);
+  closeCurrentFile();
+}
+
 void A29040B_writeFLASH() {
 
   display_Clear();
@@ -5289,10 +5297,7 @@ void A29040B_writeFLASH() {
           uint8_t readByte = read_prg_byte(prgAddress - 1);
           delayMicroseconds(14);  // Typical 14us
           if (readByte != sdBuffer[i]) {
-            println_Msg(FS(SharedFlashText::textWriteError));
-            formatFixedHex(data_str, readByte, 2);
-            println_Msg(data_str);
-            closeCurrentFile();
+            reportA29040WriteError_NES(readByte);
             break;
           }
         }
@@ -5336,10 +5341,7 @@ void A29040B_writeFLASH() {
           uint8_t readByte = read_chr_byte(chrAddress - 1);
           delayMicroseconds(14);  // Typical 14us
           if (readByte != sdBuffer[i]) {
-            println_Msg(FS(SharedFlashText::textWriteError));
-            formatFixedHex(data_str, readByte, 2);
-            println_Msg(data_str);
-            closeCurrentFile();
+            reportA29040WriteError_NES(readByte);
             break;
           }
         }
