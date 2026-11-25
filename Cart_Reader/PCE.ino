@@ -783,22 +783,12 @@ void read_rom_PCE(void) {
   } else if (rom_size == 2560) {
     //Dump Street fighter II' Champion Edition
     read_bank_PCE_ROM(0, 0x80000, &processed_size, rom_size * 1024UL, &crc);  //Read first bank
-    data_output_PCE();
-    write_byte_PCE(0x1FF0, 0xFF);  //Display second bank
-    data_input_PCE();
-    read_bank_PCE_ROM(0x80000, 0x100000, &processed_size, rom_size * 1024UL, &crc);  //Read second bank
-    data_output_PCE();
-    write_byte_PCE(0x1FF1, 0xFF);  //Display third bank
-    data_input_PCE();
-    read_bank_PCE_ROM(0x80000, 0x100000, &processed_size, rom_size * 1024UL, &crc);  //Read third bank
-    data_output_PCE();
-    write_byte_PCE(0x1FF2, 0xFF);  //Display forth bank
-    data_input_PCE();
-    read_bank_PCE_ROM(0x80000, 0x100000, &processed_size, rom_size * 1024UL, &crc);  //Read forth bank
-    data_output_PCE();
-    write_byte_PCE(0x1FF3, 0xFF);  //Display fifth bank
-    data_input_PCE();
-    read_bank_PCE_ROM(0x80000, 0x100000, &processed_size, rom_size * 1024UL, &crc);  //Read fifth bank
+    for (uint16_t bank = 0x1FF0; bank <= 0x1FF3; bank++) {
+      data_output_PCE();
+      write_byte_PCE(bank, 0xFF);
+      data_input_PCE();
+      read_bank_PCE_ROM(0x80000, 0x100000, &processed_size, rom_size * 1024UL, &crc);
+    }
   } else {
     //Read start form 0x000000 and keep reading until end of ROM
     read_bank_PCE_ROM(0, rom_size * 1024UL, &processed_size, rom_size * 1024UL, &crc);
