@@ -1645,6 +1645,15 @@ void printChrSize_NES(int index) {
 #endif
 
 static void setRomSize_NES(bool chr) __attribute__((noinline));
+#ifdef PC_MENU
+static void printMenuIndexP20_NES(uint8_t i) __attribute__((noinline));
+static void printMenuIndexP20_NES(uint8_t i) {
+  PcConsole.print('\t');
+  PcConsole.print(i);
+  PcConsole.print('=');
+}
+#endif
+
 static void setRomSize_NES(bool chr) {
   const uint8_t lo = chr ? chrlo : prglo;
   const uint8_t hi = chr ? chrhi : prghi;
@@ -1668,9 +1677,7 @@ static void setRomSize_NES(bool chr) {
       pcDirectMenuCode = chr ? 'C' : 'P';
       PcConsole.print((chr ? F("[Control] nes-options\tC\tCHR ROMサイズ") : F("[Control] nes-options\tP\tPRG ROMサイズ")));
       for (uint8_t i = lo; i <= hi; i++) {
-        PcConsole.print('\t');
-        PcConsole.print(i);
-        PcConsole.print('=');
+        printMenuIndexP20_NES(i);
         PcConsole.print(pgm_read_word(&(table[i])));
         PcConsole.print(FS(SharedFlashText::unitKBWithSpace));
       }
@@ -1779,9 +1786,7 @@ void setRAMSize() {
       pcDirectMenuCode = 'R';
       PcConsole.print(F("[Control] nes-options\tR\tRAM/Saveサイズ"));
       for (uint8_t i = 0; i <= ramhi; i++) {
-        PcConsole.print('\t');
-        PcConsole.print(i);
-        PcConsole.print('=');
+        printMenuIndexP20_NES(i);
         if (mapper == 0)
           PcConsole.print(i * 2);
         else if (mapper == 16)
