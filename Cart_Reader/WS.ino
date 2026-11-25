@@ -140,39 +140,26 @@ void wsMenu() {
         break;
       }
     case 1:
-      {
-        // Read Save
-        changeToStorageRoot();
-        switch (saveType) {
-          case 0: println_Msg(FS(SharedFlashText::textNoSaveForThisGame)); break;
-          case 1: readSRAM_WS(); break;
-          case 2: readEEPROM_WS(); break;
-          default: println_Msg(FS(SharedFlashText::textUnknownSaveType)); break;
-        }
-
-        break;
-      }
     case 2:
       {
-        // Write Save
+        const bool writing = mainMenu == 2;
         changeToStorageRoot();
         switch (saveType) {
           case 0: println_Msg(FS(SharedFlashText::textNoSaveForThisGame)); break;
           case 1:
-            {
+            if (writing) {
               writeSRAM_WS();
               verifySRAM_WS();
-              break;
-            }
+            } else readSRAM_WS();
+            break;
           case 2:
-            {
+            if (writing) {
               writeEEPROM_WS();
               verifyEEPROM_WS();
-              break;
-            }
+            } else readEEPROM_WS();
+            break;
           default: println_Msg(FS(SharedFlashText::textUnknownSaveType)); break;
         }
-
         break;
       }
     case 4:
