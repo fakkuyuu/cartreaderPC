@@ -658,12 +658,12 @@ void writeWord_N64(word myWord) {
    N64 Controller CRC Functions
  *****************************************/
 static word addrCRC(word address) {
-  const char n64_address_crc_table[] = { 0x15, 0x1F, 0x0B, 0x16, 0x19, 0x07, 0x0E, 0x1C, 0x0D, 0x1A, 0x01 };
+  static const char n64_address_crc_table[] PROGMEM = { 0x15, 0x1F, 0x0B, 0x16, 0x19, 0x07, 0x0E, 0x1C, 0x0D, 0x1A, 0x01 };
   const char* cur_xor = n64_address_crc_table;
   byte crc = 0;
   for (word mask = 0x0020; mask; mask <<= 1, cur_xor++) {
     if (address & mask) {
-      crc ^= *cur_xor;
+      crc ^= pgm_read_byte(cur_xor);
     }
   }
   return (address & 0xFFE0) | crc;
