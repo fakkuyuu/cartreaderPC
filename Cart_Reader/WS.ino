@@ -100,6 +100,7 @@ bool setup_WS() {
   return true;
 }
 
+static boolean headerCheck() __attribute__((noinline));
 static boolean headerCheck() {
   dataIn_WS();
 
