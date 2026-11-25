@@ -1,28 +1,17 @@
 {
-  "id": "parallel-007",
-  "base": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
+  "id": "parallel-007-integration",
+  "base": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
   "expected_base_flash": 213732,
   "expected_base_ram": 6281,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "ngp-autoselect",
-      "head": "dbb75d06384e35404cda11c42a94b0d545c90f3e",
-      "path": "Cart_Reader/NGP.ino"
+      "id": "integration-ngp",
+      "head": "2146e8162f6fa033e8e8a48664a655f720e85991"
     },
     {
-      "id": "msx-sram-write-block",
-      "head": "5819f55103582c01a73ebde56eba59980ef1e23c",
-      "path": "Cart_Reader/MSX.ino"
-    },
-    {
-      "id": "gba-sram-write-verify",
-      "head": "a50ce3a0ece5e29893e4c257eb366d4d8bb49458",
-      "path": "Cart_Reader/GBA.ino"
-    },
-    {
-      "id": "ws-eeprom-read-verify",
-      "head": "344942b7047a1f025f6b0e4735582edbdef8f7da",
-      "path": "Cart_Reader/WS.ino"
+      "id": "integration-ngp-msx",
+      "head": "f19e90a693bd0bf47522db32a41edcf70291af01"
     }
   ]
 }
