@@ -376,7 +376,7 @@ void mdCartMenu() {
     case 1:
       display_Clear();
       // Does cartridge have SRAM
-      if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
+      if (saveType >= 1 && saveType <= 3) {
         // Change working dir to root
         changeToStorageRoot();
         println_Msg(F("Reading Sram..."));
@@ -394,7 +394,7 @@ void mdCartMenu() {
     case 2:
       display_Clear();
       // Does cartridge have SRAM
-      if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
+      if (saveType >= 1 && saveType <= 3) {
         // Change working dir to root
         changeToStorageRoot();
         // Launch file browser
