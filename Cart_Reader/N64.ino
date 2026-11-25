@@ -4181,17 +4181,18 @@ void eraseGameshark_N64() {
   }
 }
 
-void blankCheck_N64() {
+static void blankCheckAccessory_N64(unsigned long start, unsigned long size) __attribute__((noinline));
+static void blankCheckAccessory_N64(unsigned long start, unsigned long size) {
   // Blankcheck
   showBlankCheckAndUpdate();
 
-  for (unsigned long currSector = 0; currSector < flashSize; currSector += 131072) {
+  for (unsigned long currSector = 0; currSector < size; currSector += 131072) {
     // Blink led
     blinkLED();
     for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
       for (int currByte = 0; currByte < 512; currByte += 2) {
         // Read flash
-        setAddress_N64(romBase + 0xEC00000 + currSector + currSdBuffer + currByte);
+        setAddress_N64(start + currSector + currSdBuffer + currByte);
         // Compare both
         if (readWord_N64() != 0xFFFF) {
           showEraseFailed();
@@ -4201,6 +4202,10 @@ void blankCheck_N64() {
   }
 }
 
+
+void blankCheck_N64() {
+  blankCheckAccessory_N64(romBase + 0xEC00000, flashSize);
+}
 void writeGameshark_N64() {
   // Write Gameshark with 2x SST 29LE010 / AMTEL AT29LV010A / SST 29EE010 Eeproms
   if (flashid == 0x0808 || flashid == 0x3535 || flashid == 0x0707) {
@@ -4473,25 +4478,8 @@ void eraseXplorer_N64() {
 }
 
 void blankCheck_XP64() {
-  // Blankcheck
-  showBlankCheckAndUpdate();
-
-  for (unsigned long currSector = 0; currSector < 262144; currSector += 131072) {
-    // Blink led
-    blinkLED();
-    for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
-      for (int currByte = 0; currByte < 512; currByte += 2) {
-        // Read flash
-        setAddress_N64(0x10400000 + currSector + currSdBuffer + currByte);
-        // Compare both
-        if (readWord_N64() != 0xFFFF) {
-          showEraseFailed();
-        }
-      }
-    }
-  }
+  blankCheckAccessory_N64(0x10400000, 262144);
 }
-
 void writeXplorer_N64() {
   // Write Xplorer64 with 2x SST 29LE010
   // Each 29LE010 has 1024 pages, each 128 bytes in size
