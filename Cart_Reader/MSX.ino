@@ -769,6 +769,14 @@ void readRAM_MSX() {
 //******************************************
 // WRITE RAM
 //******************************************
+static void writeSramBlock_MSX(word address) __attribute__((noinline));
+static void writeSramBlock_MSX(word address) {
+  readSdBufferBlock();
+  for (int x = 0; x < 512; x++) {
+    writeData_MSX(address + x, sdBuffer[x]);
+  }
+}
+
 void writeRAM_MSX() {
   display_Clear();
 
@@ -794,10 +802,7 @@ void writeRAM_MSX() {
               writeData_MSX(0x7000, 0x10);  // Bit 4
             else
               writeData_MSX(0x7000, 0xA0);  // Bit 5 + Bit 7
-            readSdBufferBlock();
-            for (int x = 0; x < 512; x++) {
-              writeData_MSX(0x8000 + address + x, sdBuffer[x]);
-            }
+            writeSramBlock_MSX(0x8000 + address);
           }
           writeData_MSX(0x7000, 0);  // SRAM Disable
           break;
@@ -805,10 +810,7 @@ void writeRAM_MSX() {
         case 2:  // ASCII16 (2K/8K)
           writeData_MSX(0x7000, 0x10);  // Bit 4 Enable
           for (word address = 0x0; address < (0x800 * msxramsize * msxramsize); address += 512) {  // 2K/8K
-            readSdBufferBlock();
-            for (int x = 0; x < 512; x++) {
-              writeData_MSX(0x8000 + address + x, sdBuffer[x]);
-            }
+            writeSramBlock_MSX(0x8000 + address);
           }
           writeData_MSX(0x7000, 0);  // SRAM Disable
           break;
@@ -817,10 +819,7 @@ void writeRAM_MSX() {
           for (int y = 0; y < 2; y++) {
             writeData_MSX(0xA000, 0x10 + (y * 0x20));  // Bit 4 Enable, Bit 5 SRAM Segment 0/1
             for (word address = 0x0; address < 0x1000; address += 512) {  // 4K
-              readSdBufferBlock();
-              for (int x = 0; x < 512; x++) {
-                writeData_MSX(0xB000 + address + x, sdBuffer[x]);
-              }
+              writeSramBlock_MSX(0xB000 + address);
             }
           }
           writeData_MSX(0xA000, 0);  // SRAM Disable
@@ -830,10 +829,7 @@ void writeRAM_MSX() {
           MERQ_ENABLE;
           writeData_MSX(0x4FFF, 0x80);  // Bit 7 Enable
           for (word address = 0; address < 0x4000; address += 512) {  // 16K
-            readSdBufferBlock();
-            for (int x = 0; x < 512; x++) {
-              writeData_MSX(address + x, sdBuffer[x]);
-            }
+            writeSramBlock_MSX(address);
           }
           writeData_MSX(0x4FFF, 0);  // SRAM Disable
           MERQ_DISABLE;
@@ -846,10 +842,7 @@ void writeRAM_MSX() {
           else
             writeData_MSX(0x7000, 0xA0);  // Bit 5 + Bit 7 Enable
           for (word address = 0x0; address < 0x2000; address += 512) {  // 8K
-            readSdBufferBlock();
-            for (int x = 0; x < 512; x++) {
-              writeData_MSX(0x8000 + address + x, sdBuffer[x]);
-            }
+            writeSramBlock_MSX(0x8000 + address);
           }
           if (msxramsize > 2) {
             for (int y = 1; y < 4; y++) {
@@ -858,10 +851,7 @@ void writeRAM_MSX() {
               else
                 writeData_MSX(0x7000, 0xA0 + y);  // Bit 5 + Bit 7 Enable
               for (word address = 0x0; address < 0x2000; address += 512) {  // 8K
-                readSdBufferBlock();
-                for (int x = 0; x < 512; x++) {
-                  writeData_MSX(0x8000 + address + x, sdBuffer[x]);
-                }
+                writeSramBlock_MSX(0x8000 + address);
               }
             }
           }
@@ -872,10 +862,7 @@ void writeRAM_MSX() {
           writeData_MSX(0x5FFE, 0x4D);  // SRAM Enable Step 1
           writeData_MSX(0x5FFF, 0x69);  // SRAM Enable Step 2
           for (word address = 0x0; address < 0x2000; address += 512) {  // 8K
-            readSdBufferBlock();
-            for (int x = 0; x < 512; x++) {
-              writeData_MSX(0x4000 + address + x, sdBuffer[x]);
-            }
+            writeSramBlock_MSX(0x4000 + address);
           }
           writeData_MSX(0x5FFE, 0);  // SRAM Disable
           break;
