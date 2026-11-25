@@ -611,36 +611,48 @@ void showCartInfo_GB() {
     showRomRevision();
 
     print_Msg(FS(FSTRING_MAPPER));
-    if ((romType == 0) || (romType == 8) || (romType == 9))
-      print_Msg(F("none"));
-    else if ((romType == 1) || (romType == 2) || (romType == 3))
-      print_Msg(F("MBC1"));
-    else if ((romType == 5) || (romType == 6))
-      print_Msg(F("MBC2"));
-    else if ((romType == 11) || (romType == 12) || (romType == 13))
-      print_Msg(F("MMM01"));
-    else if ((romType == 15) || (romType == 16) || (romType == 17) || (romType == 18) || (romType == 19))
-      print_Msg(F("MBC3"));
-    else if ((romType == 21) || (romType == 22) || (romType == 23))
-      print_Msg(F("MBC4"));
-    else if ((romType == 25) || (romType == 26) || (romType == 27) || (romType == 28) || (romType == 29) || (romType == 309))
-      print_Msg(F("MBC5"));
-    else if (romType == 32)
-      print_Msg(F("MBC6"));
-    else if (romType == 34)
-      print_Msg(F("MBC7"));
-    else if (romType == 252)
-      print_Msg(F("Camera"));
-    else if (romType == 253)
-      print_Msg(F("TAMA5"));
-    else if (romType == 254)
-      print_Msg(F("HuC-3"));
-    else if (romType == 255)
-      print_Msg(F("HuC-1"));
-    else if ((romType == 0x101) || (romType == 0x103))
-      print_Msg(F("MBC1M"));
-    else if (romType == 0x104)
-      print_Msg(F("M161"));
+    static const char mapperLabel0[] PROGMEM = "none";
+    static const char mapperLabel1[] PROGMEM = "MBC1";
+    static const char mapperLabel2[] PROGMEM = "MBC2";
+    static const char mapperLabel3[] PROGMEM = "MMM01";
+    static const char mapperLabel4[] PROGMEM = "MBC3";
+    static const char mapperLabel5[] PROGMEM = "MBC4";
+    static const char mapperLabel6[] PROGMEM = "MBC5";
+    static const char mapperLabel7[] PROGMEM = "MBC6";
+    static const char mapperLabel8[] PROGMEM = "MBC7";
+    static const char mapperLabel9[] PROGMEM = "Camera";
+    static const char mapperLabel10[] PROGMEM = "TAMA5";
+    static const char mapperLabel11[] PROGMEM = "HuC-3";
+    static const char mapperLabel12[] PROGMEM = "HuC-1";
+    static const char mapperLabel13[] PROGMEM = "MBC1M";
+    static const char mapperLabel14[] PROGMEM = "M161";
+    struct MapperRange { uint16_t first; uint16_t last; const char* label; };
+    static const MapperRange mapperRanges[] PROGMEM = {
+      {0, 0, mapperLabel0},
+      {8, 9, mapperLabel0},
+      {1, 3, mapperLabel1},
+      {5, 6, mapperLabel2},
+      {11, 13, mapperLabel3},
+      {15, 19, mapperLabel4},
+      {21, 23, mapperLabel5},
+      {25, 29, mapperLabel6},
+      {309, 309, mapperLabel6},
+      {32, 32, mapperLabel7},
+      {34, 34, mapperLabel8},
+      {252, 252, mapperLabel9},
+      {253, 253, mapperLabel10},
+      {254, 254, mapperLabel11},
+      {255, 255, mapperLabel12},
+      {257, 257, mapperLabel13},
+      {259, 259, mapperLabel13},
+      {260, 260, mapperLabel14}
+    };
+    for (byte i = 0; i < sizeof(mapperRanges) / sizeof(mapperRanges[0]); ++i) {
+      if (romType >= pgm_read_word(&mapperRanges[i].first) && romType <= pgm_read_word(&mapperRanges[i].last)) {
+        print_Msg(FS((const char*)pgm_read_ptr(&mapperRanges[i].label)));
+        break;
+      }
+    }
 
     printBlankLine();
     printRomSizeLabel();
