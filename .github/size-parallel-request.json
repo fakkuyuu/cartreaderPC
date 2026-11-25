@@ -1,23 +1,17 @@
 {
-  "id": "parallel-010",
-  "base": "8807906a82ae1499511ee7e06382c63192a489c2",
+  "id": "parallel-010-integration",
+  "base": "37396fa8e5dcec8c8529c8b706bc92f9bac46310",
   "expected_base_flash": 212832,
   "expected_base_ram": 6281,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "pce-tennokoe-lock",
-      "head": "5c5d53b01548e3ca09d99c0b0aa86e956b0e1ac9",
-      "path": "Cart_Reader/PCE.ino"
+      "id": "integration-ws",
+      "head": "99a856c2697159551e0b513c523125ff36b4d0bb"
     },
     {
-      "id": "ws-eeprom-geometry",
-      "head": "1c603caf545542ceb9786c7d6163b40e56c6f839",
-      "path": "Cart_Reader/WS.ino"
-    },
-    {
-      "id": "msx-koei-read-banks",
-      "head": "2a5bc7ef23e94c4feec090ce331c314210c9b7ab",
-      "path": "Cart_Reader/MSX.ino"
+      "id": "integration-ws-msx",
+      "head": "b465f7c70845d2e9a5109d833445891c4a35567f"
     }
   ]
 }
