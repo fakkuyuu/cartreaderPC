@@ -1192,14 +1192,13 @@ void getCartInfo_MD() {
     case 2:
     case 4:
     case 5:
-      print_Msg(F("+"));
-      print_Msg(cartSizeLockon * 8 / 1024 / 1024);
-      break;
     case 3:
       print_Msg(F("+"));
       print_Msg(cartSizeLockon * 8 / 1024 / 1024);
-      print_Msg(F("+"));
-      print_Msg(cartSizeSonic2 * 8 / 1024 / 1024);
+      if (SnKmode == 3) {
+        print_Msg(F("+"));
+        print_Msg(cartSizeSonic2 * 8 / 1024 / 1024);
+      }
       break;
   }
   println_Msg(FS(SharedFlashText::textMBit));
@@ -1210,17 +1209,15 @@ void getCartInfo_MD() {
     case 2:
     case 4:
     case 5:
-      print_Msg(F("+"));
-      print_Msg_PaddedHexByte((chksumLockon >> 8));
-      print_Msg_PaddedHexByte((chksumLockon & 0x00ff));
-      break;
     case 3:
       print_Msg(F("+"));
       print_Msg_PaddedHexByte((chksumLockon >> 8));
       print_Msg_PaddedHexByte((chksumLockon & 0x00ff));
-      print_Msg(F("+"));
-      print_Msg_PaddedHexByte((chksumSonic2 >> 8));
-      print_Msg_PaddedHexByte((chksumSonic2 & 0x00ff));
+      if (SnKmode == 3) {
+        print_Msg(F("+"));
+        print_Msg_PaddedHexByte((chksumSonic2 >> 8));
+        print_Msg_PaddedHexByte((chksumSonic2 & 0x00ff));
+      }
       break;
   }
   printBlankLine();
