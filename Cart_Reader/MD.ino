@@ -1956,6 +1956,14 @@ void resetFlash_MD() {
   dataIn_MD();
 }
 
+static void checkFlashFileSizeP19_MD() __attribute__((noinline));
+static void checkFlashFileSizeP19_MD() {
+  fileSize = myFile.fileSize();
+  if (fileSize > flashSize) {
+    print_FatalError(file_too_big_STR);
+  }
+}
+
 void write29F1610_MD() {
   // Create filepath
   appendSelectedFilePath();
@@ -1964,10 +1972,7 @@ void write29F1610_MD() {
   // Open file on sd card
   if (openSelectedFileForRead()) {
     // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize) {
-      print_FatalError(file_too_big_STR);
-    }
+    checkFlashFileSizeP19_MD();
     // Set data pins to output
     dataOut_MD();
 
@@ -2026,10 +2031,7 @@ void write29GL_MD() {
   // Open file on sd card
   if (openSelectedFileForRead()) {
     // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize) {
-      print_FatalError(file_too_big_STR);
-    }
+    checkFlashFileSizeP19_MD();
     // Set data pins to output
     dataOut_MD();
 
@@ -2167,10 +2169,7 @@ void verifyFlash_MD() {
   // Open file on sd card
   if (openSelectedFileForRead()) {
     // Get rom size from file
-    fileSize = myFile.fileSize();
-    if (fileSize > flashSize) {
-      print_FatalError(file_too_big_STR);
-    }
+    checkFlashFileSizeP19_MD();
 
     blank = 0;
     word d = 0;
