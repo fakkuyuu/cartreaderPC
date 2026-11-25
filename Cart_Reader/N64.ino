@@ -4270,8 +4270,31 @@ void writeGameshark_N64() {
   }
 }
 
-unsigned long verifyGameshark_N64() {
+static void verifyAccessoryRange_N64(unsigned long start, unsigned long totalProgressBar) __attribute__((noinline));
+static void verifyAccessoryRange_N64(unsigned long start, unsigned long totalProgressBar) {
   uint32_t processedProgressBar = 0;
+  for (unsigned long currSector = 0; currSector < totalProgressBar; currSector += 131072) {
+    for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
+      // Fill SD buffer
+      readSdBufferBlock();
+      for (int currByte = 0; currByte < 512; currByte += 2) {
+        // Join two bytes into one word
+        word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
+        // Read flash
+        setAddress_N64(start + currSector + currSdBuffer + currByte);
+        // Compare both
+        if (readWord_N64() != currWord) {
+          writeErrors++;
+        }
+      }
+      processedProgressBar += 512;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+      blinkLED();
+    }
+  }
+}
+
+unsigned long verifyGameshark_N64() {
   uint32_t totalProgressBar = (uint32_t)(fileSize);
   printBlankLine();
   startProgressBar(totalProgressBar);
@@ -4279,25 +4302,7 @@ unsigned long verifyGameshark_N64() {
   if (openSelectedFileForRead()) {
     writeErrors = 0;
 
-    for (unsigned long currSector = 0; currSector < fileSize; currSector += 131072) {
-      for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
-        // Fill SD buffer
-        readSdBufferBlock();
-        for (int currByte = 0; currByte < 512; currByte += 2) {
-          // Join two bytes into one word
-          word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
-          // Read flash
-          setAddress_N64(romBase + 0xEC00000 + currSector + currSdBuffer + currByte);
-          // Compare both
-          if (readWord_N64() != currWord) {
-            writeErrors++;
-          }
-        }
-        processedProgressBar += 512;
-        draw_progressbar(processedProgressBar, totalProgressBar);
-        blinkLED();
-      }
-    }
+    verifyAccessoryRange_N64(romBase + 0xEC00000, totalProgressBar);
     // Close the file:
     closeCurrentFile();
     return writeErrors;
@@ -4526,7 +4531,6 @@ void writeXplorer_N64() {
 }
 
 unsigned long verifyXplorer_N64() {
-  uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(262144);
   printBlankLine();
   startProgressBar(totalProgressBar);
@@ -4535,25 +4539,7 @@ unsigned long verifyXplorer_N64() {
     myFile.seek(0);
     writeErrors = 0;
 
-    for (unsigned long currSector = 0; currSector < 262144; currSector += 131072) {
-      for (unsigned long currSdBuffer = 0; currSdBuffer < 131072; currSdBuffer += 512) {
-        // Fill SD buffer
-        readSdBufferBlock();
-        for (int currByte = 0; currByte < 512; currByte += 2) {
-          // Join two bytes into one word
-          word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
-          // Read flash
-          setAddress_N64(romBase + 0x400000 + currSector + currSdBuffer + currByte);
-          // Compare both
-          if (readWord_N64() != currWord) {
-            writeErrors++;
-          }
-        }
-        processedProgressBar += 512;
-        draw_progressbar(processedProgressBar, totalProgressBar);
-        blinkLED();
-      }
-    }
+    verifyAccessoryRange_N64(romBase + 0x400000, totalProgressBar);
     // Close the file:
     closeCurrentFile();
     return writeErrors;
