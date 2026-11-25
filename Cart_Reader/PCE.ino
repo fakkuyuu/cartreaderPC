@@ -563,6 +563,26 @@ void lock_tennokoe_bank_RAM() {
   write_byte_PCE(0x0C0001, 0x60);  //Lock RAM sequence 3 Bank 60
 }
 
+static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) __attribute__((noinline));
+static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) {
+  //Unlock Tennokoe Bank RAM
+  //Disable interrupts
+  noInterrupts();
+  data_output_PCE();
+  unlock_tennokoe_bank_RAM();
+  data_input_PCE();
+
+  //Read Tennokoe bank RAM
+  read_bank_PCE_RAM(0x080000 + 2048UL * bank_index, block_index);
+
+  //Lock Tennokoe Bank RAM
+  data_output_PCE();
+  lock_tennokoe_bank_RAM();
+  data_input_PCE();
+  //Enable interrupts
+  interrupts();
+}
+
 void read_tennokoe_bank_PCE(int bank_index) {
   //clear the screen
   display_Clear();
@@ -597,22 +617,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
   pin_read_write_PCE();
 
   for (int block_index = 0; block_index < 4; block_index++) {
-    //Unlock Tennokoe Bank RAM
-    //Disable interrupts
-    noInterrupts();
-    data_output_PCE();
-    unlock_tennokoe_bank_RAM();
-    data_input_PCE();
-
-    //Read Tennokoe bank RAM
-    read_bank_PCE_RAM(0x080000 + 2048UL * bank_index, block_index);
-
-    //Lock Tennokoe Bank RAM
-    data_output_PCE();
-    lock_tennokoe_bank_RAM();
-    data_input_PCE();
-    //Enable interrupts
-    interrupts();
+    readProtectedTennokoeBlock_PCE(bank_index, block_index);
 
     // hexdump:
     // for (int c = 0; c < 512; c += 16) {
@@ -705,20 +710,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
     int diffcnt = 0;
     rewindCurrentFile();
     for (int block_index = 0; block_index < 4; block_index++) {
-      //Unlock Tennokoe Bank RAM
-      //Disable interrupts
-      noInterrupts();
-      data_output_PCE();
-      unlock_tennokoe_bank_RAM();
-      data_input_PCE();
-      //Read Tennokoe bank RAM
-      read_bank_PCE_RAM(0x080000 + 2048UL * bank_index, block_index);
-      //Lock Tennokoe Bank RAM
-      data_output_PCE();
-      lock_tennokoe_bank_RAM();
-      data_input_PCE();
-      //Enable interrupts
-      interrupts();
+      readProtectedTennokoeBlock_PCE(bank_index, block_index);
       int diffcnt = 0;
       for (int c = 0; c < 512; c += 16) {
         uint8_t ram_b = sdBuffer[c];
