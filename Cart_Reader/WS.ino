@@ -392,63 +392,60 @@ static void getDeveloperName_WS(uint8_t id, char *buf, size_t length) {
   if (buf == NULL)
     return;
 
-  char *devName = NULL;
-
-  switch (id) {
-    case 0x01: devName = PSTR("BAN"); break;
-    case 0x02: devName = PSTR("TAT"); break;
-    case 0x03: devName = PSTR("TMY"); break;
-    case 0x04: devName = PSTR("KEX"); break;
-    case 0x05: devName = PSTR("DTE"); break;
-    case 0x06: devName = PSTR("AAE"); break;
-    case 0x07: devName = PSTR("MDE"); break;
-    case 0x08: devName = PSTR("NHB"); break;
-    case 0x0a: devName = PSTR("CCJ"); break;
-    case 0x0b: devName = PSTR("SUM"); break;
-    case 0x0c: devName = PSTR("SUN"); break;
-    case 0x0d: devName = PSTR("PAW"); break;
-    case 0x0e: devName = PSTR("BPR"); break;
-    case 0x10: devName = PSTR("JLC"); break;
-    case 0x11: devName = PSTR("MGA"); break;
-    case 0x12: devName = PSTR("KNM"); break;
-    case 0x16: devName = PSTR("KBS"); break;
-    case 0x17: devName = PSTR("BTM"); break;
-    case 0x18: devName = PSTR("KGT"); break;
-    case 0x19: devName = PSTR("SRV"); break;
-    case 0x1a: devName = PSTR("CFT"); break;
-    case 0x1b: devName = PSTR("MGH"); break;
-    case 0x1d: devName = PSTR("BEC"); break;
-    case 0x1e: devName = PSTR("NAP"); break;
-    case 0x1f: devName = PSTR("BVL"); break;
-    case 0x20: devName = PSTR("ATN"); break;
-    case 0x21: devName = PSTR("KDX"); break;  // KDK for Memories of Festa?
-    case 0x22: devName = PSTR("HAL"); break;
-    case 0x23: devName = PSTR("YKE"); break;
-    case 0x24: devName = PSTR("OMM"); break;
-    case 0x25: devName = PSTR("LAY"); break;
-    case 0x26: devName = PSTR("KDK"); break;
-    case 0x27: devName = PSTR("SHL"); break;
-    case 0x28: devName = PSTR("SQR"); break;
-    case 0x2a: devName = PSTR("SCC"); break;
-    case 0x2b: devName = PSTR("TMC"); break;
-    case 0x2d: devName = PSTR("NMC"); break;
-    case 0x2e: devName = PSTR("SES"); break;
-    case 0x2f: devName = PSTR("HTR"); break;
-    case 0x31: devName = PSTR("VGD"); break;
-    case 0x33: devName = PSTR("WIZ"); break;
-    case 0x36: devName = PSTR("CPC"); break;
-
-    // custom developerId
-    case 0x7a: devName = PSTR("7AC"); break;  // witch
-    case 0xff:
-      devName = PSTR("WWGP");
-      break;  // WWGP series (jss2, dknight)
-
-    // if not found, use id
-    default: snprintf(buf, length, "%02X", id); return;
+  struct DeveloperCode { uint8_t id; char name[5]; };
+  static const DeveloperCode codes[] PROGMEM = {
+    {0x01, "BAN"},
+    {0x02, "TAT"},
+    {0x03, "TMY"},
+    {0x04, "KEX"},
+    {0x05, "DTE"},
+    {0x06, "AAE"},
+    {0x07, "MDE"},
+    {0x08, "NHB"},
+    {0x0a, "CCJ"},
+    {0x0b, "SUM"},
+    {0x0c, "SUN"},
+    {0x0d, "PAW"},
+    {0x0e, "BPR"},
+    {0x10, "JLC"},
+    {0x11, "MGA"},
+    {0x12, "KNM"},
+    {0x16, "KBS"},
+    {0x17, "BTM"},
+    {0x18, "KGT"},
+    {0x19, "SRV"},
+    {0x1a, "CFT"},
+    {0x1b, "MGH"},
+    {0x1d, "BEC"},
+    {0x1e, "NAP"},
+    {0x1f, "BVL"},
+    {0x20, "ATN"},
+    {0x21, "KDX"},
+    {0x22, "HAL"},
+    {0x23, "YKE"},
+    {0x24, "OMM"},
+    {0x25, "LAY"},
+    {0x26, "KDK"},
+    {0x27, "SHL"},
+    {0x28, "SQR"},
+    {0x2a, "SCC"},
+    {0x2b, "TMC"},
+    {0x2d, "NMC"},
+    {0x2e, "SES"},
+    {0x2f, "HTR"},
+    {0x31, "VGD"},
+    {0x33, "WIZ"},
+    {0x36, "CPC"},
+    {0x7a, "7AC"},
+    {0xff, "WWGP"}
+  };
+  for (byte i = 0; i < sizeof(codes) / sizeof(codes[0]); ++i) {
+    if (id == pgm_read_byte(&codes[i].id)) {
+      strlcpy_P(buf, codes[i].name, length);
+      return;
+    }
   }
-
-  strlcpy_P(buf, devName, length);
+  snprintf(buf, length, "%02X", id);
 }
 
 static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
