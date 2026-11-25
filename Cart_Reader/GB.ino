@@ -149,6 +149,17 @@ static void setupGbAccessoryMenu() {
   clearAndUpdateDisplay();
 }
 
+static void writeVerifySaveP20_GB() __attribute__((noinline));
+static void writeVerifySaveP20_GB() {
+  writeSRAM_GB();
+  unsigned long wrErrors = verifySRAM_GB();
+  if (wrErrors == 0) {
+    showVerifiedAndUpdate();
+  } else {
+    showVerificationErrorCount(wrErrors);
+  }
+}
+
 void gbxMenu() {
   // create menu with title and 5 options to choose from
   unsigned char gbType;
@@ -377,14 +388,7 @@ void gbxMenu() {
                   saveFound = true;
                   sprintf(filePath, "/GB/SAVE/%s/%d", fileName, i);
                   sprintf(fileName, "%s.SAV", fileName);
-                  writeSRAM_GB();
-                  unsigned long wrErrors;
-                  wrErrors = verifySRAM_GB();
-                  if (wrErrors == 0) {
-                    showVerifiedAndUpdate();
-                  } else {
-                    showVerificationErrorCount(wrErrors);
-                  }
+                  writeVerifySaveP20_GB();
                   break;
                 }
               }
@@ -543,14 +547,7 @@ void gbMenu() {
         else if (romType == 34)
           writeEEPROM_MBC7_GB();
         else {
-          writeSRAM_GB();
-          unsigned long wrErrors;
-          wrErrors = verifySRAM_GB();
-          if (wrErrors == 0) {
-            showVerifiedAndUpdate();
-          } else {
-            showVerificationErrorCount(wrErrors);
-          }
+          writeVerifySaveP20_GB();
         }
       } else {
         print_Error(FS(SharedFlashText::textNoSaveOrUnsupportedType));
