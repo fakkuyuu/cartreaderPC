@@ -1,0 +1,71 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45568770206",
+  "run_attempt": "1",
+  "workflow_commit": "f83f4db8fa2675808bb3b4a9528e63b6ea79b805",
+  "request": {
+    "id": "sd-browser-2m-001",
+    "base": "379e507e3feef2c1694d11a56fd38db4aa5922c6",
+    "expected_base_flash": 210400,
+    "expected_base_ram": 6123,
+    "endpoints_only": true,
+    "candidates": [
+      {
+        "id": "sd-browser-2m",
+        "head": "c3d5066fb4f21fb83a7ab841d467f14f4e4e38f2"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45568770206",
+      "run_attempt": "1",
+      "workflow_commit": "f83f4db8fa2675808bb3b4a9528e63b6ea79b805",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "sd-browser-2m",
+        "head": "c3d5066fb4f21fb83a7ab841d467f14f4e4e38f2",
+        "base": "379e507e3feef2c1694d11a56fd38db4aa5922c6",
+        "expected_base_flash": 210400,
+        "expected_base_ram": 6123,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "379e507e3feef2c1694d11a56fd38db4aa5922c6",
+          "subject": "Integrate measured phase 2 batch 14 msx size reduction",
+          "status": "ok",
+          "flash": 210400,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "c3d5066fb4f21fb83a7ab841d467f14f4e4e38f2",
+          "subject": "Protect SD browser destination and validate explicit copy completion or abort",
+          "status": "ok",
+          "flash": 211542,
+          "ram": 6117,
+          "delta_previous": 1142,
+          "delta_base": 1142,
+          "classification": "increased",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "sd-browser-2m",
+        "head": "c3d5066fb4f21fb83a7ab841d467f14f4e4e38f2"
+      }
+    }
+  ]
+}
