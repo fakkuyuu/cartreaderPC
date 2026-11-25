@@ -614,6 +614,13 @@ static void verifySRAM_WS() {
 }
 
 static void selectSaveForWrite_WS(const __FlashStringHelper* caption) __attribute__((noinline));
+static void showFileProgressP18_WS() __attribute__((noinline));
+static void showFileProgressP18_WS() {
+  print_Msg(filePath);
+  println_Msg(FS(SharedFlashText::ellipsis));
+  display_Update();
+}
+
 static void selectSaveForWrite_WS(const __FlashStringHelper* caption) {
   filePath[0] = 0;
   changeToStorageRoot();
@@ -622,9 +629,7 @@ static void selectSaveForWrite_WS(const __FlashStringHelper* caption) {
 
   display_Clear();
   print_Msg(FS(SharedFlashText::textWriting));
-  print_Msg(filePath);
-  println_Msg(FS(SharedFlashText::ellipsis));
-  display_Update();
+  showFileProgressP18_WS();
 }
 
 static void writeSRAM_WS() {
@@ -820,9 +825,7 @@ static void writeWitchOS_WS() {
       eraseWitchFlashSector_WS(0xee000);
 
       print_Msg(F("Flashing OS "));
-      print_Msg(filePath);
-      println_Msg(FS(SharedFlashText::ellipsis));
-      display_Update();
+      showFileProgressP18_WS();
 
       uint32_t fbin_length = myFile.fileSize();
       uint32_t i, bytes_read;

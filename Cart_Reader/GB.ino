@@ -952,45 +952,16 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
 *****************************************/
 // Read Cartridge Header
 void getCartInfo_GB() {
-  // Read Header into array
-  for (int currByte = 0x100; currByte < 0x150; currByte++) {
-    sdBuffer[currByte] = readByte_GB(currByte);
-  }
-
-  /* Compare Nintendo logo against known checksum, 156 bytes starting at 0x04
-    word logoChecksum = 0;
-    for (int currByte = 0x104; currByte < 0x134; currByte++) {
-    logoChecksum += sdBuffer[currByte];
-    }
-
-    if (logoChecksum != 0x1546) {
-    print_Error(F("STARTUP LOGO ERROR"));
-    printBlankLine();
-    printBlankLine();
-    printBlankLine();
-    println_Msg(FS(SharedFlashText::textPressButtonTo));
-    println_Msg(FS(SharedFlashText::textIgnoreOrPowercycle));
-    println_Msg(FS(SharedFlashText::textToTryAgain));
-    updateDisplayAndWait();
-    }
-  */
-
-  // Calculate header checksum
-  byte headerChecksum = 0;
-  for (int currByte = 0x134; currByte < 0x14D; currByte++) {
-    headerChecksum = headerChecksum - sdBuffer[currByte] - 1;
-  }
-
-  if (headerChecksum != sdBuffer[0x14D]) {
-    // Read Header into array a second time
+  byte headerChecksum;
+  for (byte attempt = 0; attempt < 2; ++attempt) {
     for (int currByte = 0x100; currByte < 0x150; currByte++) {
       sdBuffer[currByte] = readByte_GB(currByte);
     }
-    // Calculate header checksum a second time
     headerChecksum = 0;
     for (int currByte = 0x134; currByte < 0x14D; currByte++) {
       headerChecksum = headerChecksum - sdBuffer[currByte] - 1;
     }
+    if (headerChecksum == sdBuffer[0x14D]) break;
   }
 
   if (headerChecksum != sdBuffer[0x14D]) {
