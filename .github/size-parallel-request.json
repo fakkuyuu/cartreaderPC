@@ -1,48 +1,29 @@
 {
-  "id": "parallel-014",
-  "base": "1ec2bddb44c904626191b39aeb04bc7fcf9b1d06",
+  "id": "parallel-014-integration",
+  "base": "abcaf5567738d0065f431c775b77069a9fec132c",
   "expected_base_flash": 211264,
   "expected_base_ram": 6135,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "ws-developer-code-table",
-      "head": "6ba6017fbcdffe604fb25250011708a48cb47602",
-      "path": "Cart_Reader/WS.ino"
+      "id": "integration-ws",
+      "head": "6442ee27e03b1e6655ebe34f465244d1adfe1349"
     },
     {
-      "id": "md-sram-checksum-table",
-      "head": "7da4fa7f340cc3b90e7184ef370069b5f829e228",
-      "path": "Cart_Reader/MD.ino"
+      "id": "integration-ws-md",
+      "head": "5436ff3ed5e5a4cf6e93d1463aadeac06d92fa97"
     },
     {
-      "id": "gb-mapper-label-ranges",
-      "head": "7f3a33568225540af3f6f51d67d14759a08c0dff",
-      "path": "Cart_Reader/GB.ino"
+      "id": "integration-ws-md-gb",
+      "head": "69ef748fee58c2fb4dd638473c4a595ea32bd01c"
     },
     {
-      "id": "gba-empty-header-checks",
-      "head": "adc651cc2e8dbc5798d2129eb5c167f4a7d3e136",
-      "path": "Cart_Reader/GBA.ino"
+      "id": "integration-ws-md-gb-n64",
+      "head": "34d5479b96927e36363ea0743c92dc4baa6b7422"
     },
     {
-      "id": "pce-flash-id-size-table",
-      "head": "7345974b20b8bae06acf0a870956425ef136cb7d",
-      "path": "Cart_Reader/PCE.ino"
-    },
-    {
-      "id": "n64-address-crc-progmem",
-      "head": "282bc596497e3b9bf50596fdde4fd432cf744262",
-      "path": "Cart_Reader/N64.ino"
-    },
-    {
-      "id": "snes-header-checksum-progmem",
-      "head": "cf7ed0eb50980646f27bd4e5cefa9cb631503916",
-      "path": "Cart_Reader/SNES.ino"
-    },
-    {
-      "id": "msx-ascii-rom-bank-loop",
-      "head": "ef0ab1bec4094aaf67cb60e87098a59c378cacfb",
-      "path": "Cart_Reader/MSX.ino"
+      "id": "integration-ws-md-gb-n64-msx",
+      "head": "379e507e3feef2c1694d11a56fd38db4aa5922c6"
     }
   ]
 }
