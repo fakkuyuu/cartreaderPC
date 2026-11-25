@@ -185,6 +185,13 @@ void n64Menu() {
 }
 
 // N64 Controller Menu
+static void prepareControllerPakP20_N64() __attribute__((noinline));
+static void prepareControllerPakP20_N64() {
+  resetController();
+  checkController();
+  clearAndUpdateDisplay();
+}
+
 void n64ControllerMenu() {
   // create menu with title and 4 options to choose from
   unsigned char mainMenu;
@@ -208,9 +215,7 @@ void n64ControllerMenu() {
 #endif
 
     case 1:
-      resetController();
-      checkController();
-      clearAndUpdateDisplay();
+      prepareControllerPakP20_N64();
       readMPK();
       verifyCRC();
       validateMPK();
@@ -220,9 +225,7 @@ void n64ControllerMenu() {
       break;
 
     case 2:
-      resetController();
-      checkController();
-      clearAndUpdateDisplay();
+      prepareControllerPakP20_N64();
       // Change to root
       resetFileBrowserToRoot();
       // Launch file browser
