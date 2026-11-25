@@ -566,9 +566,14 @@ static void readSRAM_WS() {
   display_Update();
 }
 
-static void verifySRAM_WS() {
+static void showVerifyStartP17_WS() __attribute__((noinline));
+static void showVerifyStartP17_WS() {
   print_Msg(F("Verifying... "));
   display_Update();
+}
+
+static void verifySRAM_WS() {
+  showVerifyStartP17_WS();
 
   if (openSelectedFileForRead()) {
     uint16_t end_bank;
@@ -705,8 +710,7 @@ static void readEEPROM_WS() {
 }
 
 static void verifyEEPROM_WS() {
-  print_Msg(F("Verifying... "));
-  display_Update();
+  showVerifyStartP17_WS();
 
   if (openSelectedFileForRead()) {
     uint32_t write_errors = 0;
