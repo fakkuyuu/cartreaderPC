@@ -1,40 +1,40 @@
 {
-  "id": "parallel-015",
-  "base": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
+  "id": "parallel-016",
+  "base": "7064b84da853581c8437443cc9125ff491ad0471",
   "expected_base_flash": 210400,
   "expected_base_ram": 6123,
   "candidates": [
     {
-      "id": "gb-pelican",
-      "head": "c36fc858ee8fc7707e9eed278fe09bed6f88fa49"
+      "id": "gb-mbc6-command",
+      "head": "7be3bd8f55ac8048015b8cff0a6f16b340f487d8"
     },
     {
-      "id": "gba-eep",
-      "head": "56878331a2086fd980fc4fab84c2ce29c0001400"
+      "id": "gba-save-close",
+      "head": "8374afcdaaf276e8aa7e97795a5c74e3e282b936"
     },
     {
-      "id": "md-eep",
-      "head": "a8359b291816d191a9afbe175b25c763ff1abbea"
+      "id": "md-save-close",
+      "head": "5f564f62df9e48d950903d70cd33f0bf8148d213"
     },
     {
-      "id": "n64-eep",
-      "head": "a1da5680bd0e90d59b18b10d8374a74684c5e94e"
+      "id": "nes-mapper-setup",
+      "head": "97ae84591cc68c08857b51efebd4584ebbe36cb1"
     },
     {
-      "id": "nes-eep",
-      "head": "a285881a1c1597c271aa05be08e2d65c9d9127c2"
+      "id": "pce-save-display",
+      "head": "ced9bf818b0ab5e10941abcaf9e6c340b14657a5"
     },
     {
-      "id": "snes-sram",
-      "head": "5c42281ebd2b9a71866fa9bef80743afd246dfe8"
+      "id": "ws-verify-display",
+      "head": "3a23de87652fa0c72d63badafe7cf1c310c144f2"
     },
     {
-      "id": "pce-lock",
-      "head": "0f0398112cc51dd18845d160ca4a232fa9afcf47"
+      "id": "n64-pak-failure",
+      "head": "5b93b2b67236a0c648ac368960d73ff47a608955"
     },
     {
-      "id": "ws-header",
-      "head": "7d715578d3704b6e900eafd837d03d4049b898df"
+      "id": "snes-sa1-block-zero",
+      "head": "8f4f0202924dd231998e04e0c300febb96d14833"
     }
   ]
 }
