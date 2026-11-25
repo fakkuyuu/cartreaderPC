@@ -2634,8 +2634,8 @@ void read369in1(byte blockNumber, byte fileSizeByte) {
     fileSize = (unsigned long)fileSizeByte * 1024 * 1024;
 
   // 64 blocks at 4MB each
-  unsigned long startBank = (((unsigned long)blockNumber * 4) / 32) * 0x2000000;
-  unsigned long startBlock = ((unsigned long)blockNumber * 4 * 1024 * 1024) - startBank;
+  unsigned long startBank = (unsigned long)(blockNumber & 0xF8) << 22;
+  unsigned long startBlock = (unsigned long)(blockNumber & 7) << 22;
   unsigned long lastBlock = 0x2000000;
   if (fileSize < lastBlock)
     lastBlock = startBlock + fileSize;
@@ -2676,8 +2676,8 @@ void read369in1(byte blockNumber, byte fileSizeByte) {
 // Erase 369-in-1 repro
 void erase369in1(byte blockNumber) {
   // 64 blocks at 4MB each
-  unsigned long startBank = (((unsigned long)blockNumber * 4) / 32) * 0x2000000;
-  unsigned long startBlock = ((unsigned long)blockNumber * 4 * 1024 * 1024) - startBank;
+  unsigned long startBank = (unsigned long)(blockNumber & 0xF8) << 22;
+  unsigned long startBlock = (unsigned long)(blockNumber & 7) << 22;
   unsigned long lastBlock = 0x2000000;
   if (fileSize < lastBlock)
     lastBlock = startBlock + fileSize;
@@ -2725,8 +2725,8 @@ void write369in1(byte blockNumber) {
   byte writeBuffer[1024];
 
   // 64 blocks at 4MB each
-  unsigned long startBank = (((unsigned long)blockNumber * 4) / 32) * 0x2000000;
-  unsigned long startBlock = ((unsigned long)blockNumber * 4 * 1024 * 1024) - startBank;
+  unsigned long startBank = (unsigned long)(blockNumber & 0xF8) << 22;
+  unsigned long startBlock = (unsigned long)(blockNumber & 7) << 22;
   unsigned long lastBlock = 0x2000000;
   if (fileSize < lastBlock)
     lastBlock = startBlock + fileSize;
