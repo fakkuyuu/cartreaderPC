@@ -1,23 +1,34 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45529709637",
+  "run_id": "45530505237",
   "run_attempt": "1",
-  "workflow_commit": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+  "workflow_commit": "38206b07045f42b327d3d6128b1b8b416709dd70",
   "request": {
-    "id": "parallel-005-integration",
-    "base": "ea0a96b82974f670f7b6c34ad28329741c621f91",
-    "expected_base_flash": 214096,
+    "id": "parallel-006",
+    "base": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+    "expected_base_flash": 213992,
     "expected_base_ram": 6281,
-    "endpoints_only": true,
     "candidates": [
       {
-        "id": "integration-nes",
-        "head": "08343c0e1b1b3174beff1cdb59c59ea974f6bd98"
+        "id": "nes-mmc5-bank-loop",
+        "head": "5afa840bfdeebb7453b8de945a72a43824828786",
+        "path": "Cart_Reader/NES.ino"
       },
       {
-        "id": "integration-nes-md",
-        "head": "d9161f565318aff36eb8fa41484b2728235491ad"
+        "id": "snes-checksum-mirror",
+        "head": "5dee11a685cbc8f41d7d8cd7054e2c4ddeee055c",
+        "path": "Cart_Reader/SNES.ino"
+      },
+      {
+        "id": "md-eeprom-finish-stop",
+        "head": "9727f55b65ac79489a18f19e57656fcfbe6383af",
+        "path": "Cart_Reader/MD.ino"
+      },
+      {
+        "id": "gb-megamem-flash-program",
+        "head": "f4a1192d745b0af21ec1dd0d49ead569dc79fea5",
+        "path": "Cart_Reader/GB.ino"
       }
     ]
   },
@@ -25,28 +36,29 @@
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45529709637",
+      "run_id": "45530505237",
       "run_attempt": "1",
-      "workflow_commit": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+      "workflow_commit": "38206b07045f42b327d3d6128b1b8b416709dd70",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "integration-nes",
-        "head": "08343c0e1b1b3174beff1cdb59c59ea974f6bd98",
-        "base": "ea0a96b82974f670f7b6c34ad28329741c621f91",
-        "expected_base_flash": 214096,
+        "id": "nes-mmc5-bank-loop",
+        "head": "5afa840bfdeebb7453b8de945a72a43824828786",
+        "path": "Cart_Reader/NES.ino",
+        "base": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+        "expected_base_flash": 213992,
         "expected_base_ram": 6281,
-        "endpoints_only": true
+        "endpoints_only": false
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "ea0a96b82974f670f7b6c34ad28329741c621f91",
-          "subject": "Measure fifth batch of four independent firmware size candidates",
+          "commit": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+          "subject": "Verify cumulative integrated NES MD size in parallel",
           "status": "ok",
-          "flash": 214096,
+          "flash": 213992,
           "ram": 6281,
           "delta_previous": null,
           "delta_base": 0,
@@ -54,47 +66,49 @@
           "error": null
         },
         {
-          "commit": "08343c0e1b1b3174beff1cdb59c59ea974f6bd98",
-          "subject": "Adopt nes-mapper72-92 (isolated -36 B; 7ee8871)",
+          "commit": "5afa840bfdeebb7453b8de945a72a43824828786",
+          "subject": "Consolidate MMC5 SRAM bank traversal while retaining split-chip mapping",
           "status": "ok",
-          "flash": 214060,
+          "flash": 213940,
           "ram": 6281,
-          "delta_previous": -36,
-          "delta_base": -36,
+          "delta_previous": -52,
+          "delta_base": -52,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "integration-nes",
-        "head": "08343c0e1b1b3174beff1cdb59c59ea974f6bd98"
+        "id": "nes-mmc5-bank-loop",
+        "head": "5afa840bfdeebb7453b8de945a72a43824828786",
+        "path": "Cart_Reader/NES.ino"
       }
     },
     {
       "schema": 1,
-      "run_id": "45529709637",
+      "run_id": "45530505237",
       "run_attempt": "1",
-      "workflow_commit": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+      "workflow_commit": "38206b07045f42b327d3d6128b1b8b416709dd70",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "integration-nes-md",
-        "head": "d9161f565318aff36eb8fa41484b2728235491ad",
-        "base": "ea0a96b82974f670f7b6c34ad28329741c621f91",
-        "expected_base_flash": 214096,
+        "id": "snes-checksum-mirror",
+        "head": "5dee11a685cbc8f41d7d8cd7054e2c4ddeee055c",
+        "path": "Cart_Reader/SNES.ino",
+        "base": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+        "expected_base_flash": 213992,
         "expected_base_ram": 6281,
-        "endpoints_only": true
+        "endpoints_only": false
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "ea0a96b82974f670f7b6c34ad28329741c621f91",
-          "subject": "Measure fifth batch of four independent firmware size candidates",
+          "commit": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+          "subject": "Verify cumulative integrated NES MD size in parallel",
           "status": "ok",
-          "flash": 214096,
+          "flash": 213992,
           "ram": 6281,
           "delta_previous": null,
           "delta_base": 0,
@@ -102,21 +116,122 @@
           "error": null
         },
         {
-          "commit": "d9161f565318aff36eb8fa41484b2728235491ad",
-          "subject": "Adopt md-sram-read-block (isolated -68 B; 3c6c4d7)",
+          "commit": "5dee11a685cbc8f41d7d8cd7054e2c4ddeee055c",
+          "subject": "Consolidate 5MB and 6MB SNES checksum mirror calculation",
           "status": "ok",
-          "flash": 213992,
+          "flash": 213988,
           "ram": 6281,
-          "delta_previous": -104,
-          "delta_base": -104,
+          "delta_previous": -4,
+          "delta_base": -4,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "integration-nes-md",
-        "head": "d9161f565318aff36eb8fa41484b2728235491ad"
+        "id": "snes-checksum-mirror",
+        "head": "5dee11a685cbc8f41d7d8cd7054e2c4ddeee055c",
+        "path": "Cart_Reader/SNES.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45530505237",
+      "run_attempt": "1",
+      "workflow_commit": "38206b07045f42b327d3d6128b1b8b416709dd70",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "md-eeprom-finish-stop",
+        "head": "9727f55b65ac79489a18f19e57656fcfbe6383af",
+        "path": "Cart_Reader/MD.ino",
+        "base": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+        "expected_base_flash": 213992,
+        "expected_base_ram": 6281,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+          "subject": "Verify cumulative integrated NES MD size in parallel",
+          "status": "ok",
+          "flash": 213992,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "9727f55b65ac79489a18f19e57656fcfbe6383af",
+          "subject": "Share MD EEPROM finish and stop signaling with original pin sequences",
+          "status": "ok",
+          "flash": 213792,
+          "ram": 6281,
+          "delta_previous": -200,
+          "delta_base": -200,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "md-eeprom-finish-stop",
+        "head": "9727f55b65ac79489a18f19e57656fcfbe6383af",
+        "path": "Cart_Reader/MD.ino"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45530505237",
+      "run_attempt": "1",
+      "workflow_commit": "38206b07045f42b327d3d6128b1b8b416709dd70",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "gb-megamem-flash-program",
+        "head": "f4a1192d745b0af21ec1dd0d49ead569dc79fea5",
+        "path": "Cart_Reader/GB.ino",
+        "base": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+        "expected_base_flash": 213992,
+        "expected_base_ram": 6281,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "b4f5c8bb0a9e1f5c5c948cc853d3c461c72684b4",
+          "subject": "Verify cumulative integrated NES MD size in parallel",
+          "status": "ok",
+          "flash": 213992,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "f4a1192d745b0af21ec1dd0d49ead569dc79fea5",
+          "subject": "Share Mega Memory SST28LF040 byte programming command sequence",
+          "status": "ok",
+          "flash": 213996,
+          "ram": 6281,
+          "delta_previous": 4,
+          "delta_base": 4,
+          "classification": "increased",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gb-megamem-flash-program",
+        "head": "f4a1192d745b0af21ec1dd0d49ead569dc79fea5",
+        "path": "Cart_Reader/GB.ino"
       }
     }
   ]
