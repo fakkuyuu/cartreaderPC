@@ -4075,6 +4075,15 @@ void unlockGSAddressRanges() {
 }
 
 //Test for SST 29LE010  or SST 28LF040 (0404) or AMTEL AT29LV010A (3535) or SST 29EE010 (0707)
+static void showAccessoryIdError_N64() __attribute__((noinline));
+static void showAccessoryIdError_N64() {
+  println_Msg(FS(SharedFlashText::textCheckCartConnection));
+  println_Msg(FS(SharedFlashText::textUnknownFlashID));
+  formatFlashId();
+  promptAndWaitForButton();
+  mainMenu();
+}
+
 void idGameshark_N64() {
   flashid = 0x0;
   //Send flashrom ID command
@@ -4092,11 +4101,7 @@ void idGameshark_N64() {
     //Set SST 28LF040 flashrom size
     flashSize = 1048574;
   } else {
-    println_Msg(FS(SharedFlashText::textCheckCartConnection));
-    println_Msg(FS(SharedFlashText::textUnknownFlashID));
-    formatFlashId();
-    promptAndWaitForButton();
-    mainMenu();
+    showAccessoryIdError_N64();
   }
   formatFlashId();
   // Reset flashrom
@@ -4394,11 +4399,7 @@ void idXplorer_N64() {
   readWord_N64();
 
   if (flashid != 0x0808) {
-    println_Msg(FS(SharedFlashText::textCheckCartConnection));
-    println_Msg(FS(SharedFlashText::textUnknownFlashID));
-    formatFlashId();
-    promptAndWaitForButton();
-    mainMenu();
+    showAccessoryIdError_N64();
   }
   formatFlashId();
   // Reset flashrom
