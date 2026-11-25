@@ -571,6 +571,13 @@ static void beginProtectedTennokoeAccess_PCE() {
   data_input_PCE();
 }
 
+static void endProtectedTennokoeAccess_PCE() __attribute__((noinline));
+static void endProtectedTennokoeAccess_PCE() {
+  lock_tennokoe_bank_RAM();
+  data_input_PCE();
+  interrupts();
+}
+
 static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) __attribute__((noinline));
 static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) {
   //Unlock Tennokoe Bank RAM
@@ -582,10 +589,7 @@ static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) {
 
   //Lock Tennokoe Bank RAM
   data_output_PCE();
-  lock_tennokoe_bank_RAM();
-  data_input_PCE();
-  //Enable interrupts
-  interrupts();
+  endProtectedTennokoeAccess_PCE();
 }
 
 void read_tennokoe_bank_PCE(int bank_index) {
@@ -702,10 +706,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
       }
 
       //Lock Tennokoe Bank RAM
-      lock_tennokoe_bank_RAM();
-      data_input_PCE();
-      //Enable interrupts
-      interrupts();
+      endProtectedTennokoeAccess_PCE();
     }
 
     // verify
