@@ -29,7 +29,7 @@ jobs:
           request = json.loads(Path('.github/size-parallel-request.json').read_text())
           assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}', request['id'])
           assert re.fullmatch(r'[0-9a-f]{40}', request['base'])
-          assert 1 <= len(request['candidates']) <= 4
+          assert 1 <= len(request['candidates']) <= 8
           assert len({x['id'] for x in request['candidates']}) == len(request['candidates'])
           assert len({x['head'] for x in request['candidates']}) == len(request['candidates'])
           matrix = []
@@ -43,7 +43,7 @@ jobs:
     needs: prepare
     strategy:
       fail-fast: false
-      max-parallel: 4
+      max-parallel: 8
       matrix:
         candidate: ${{ fromJSON(needs.prepare.outputs.candidates) }}
     runs-on: windows-latest
