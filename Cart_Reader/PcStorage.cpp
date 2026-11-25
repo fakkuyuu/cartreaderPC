@@ -575,7 +575,8 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
     if (progress) progress((first + count) << frameShift);
   }
   // N64 requires both ends to confirm the final zero-mask before changing baud.
-  if (mode == PcLink::RETRY_PROFILE_N64 || browser) gbaN64Handoff(browser);
+  if (mode == PcLink::RETRY_PROFILE_N64) gbaN64Handoff();
+  if (browser) gbaN64Handoff(true);
   const uint32_t streamUs = micros() - streamStart;
   if (measuredUs) *measuredUs = streamUs;
   delay(150);

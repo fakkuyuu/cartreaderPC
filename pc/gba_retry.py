@@ -131,7 +131,7 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
             received += count
         if not ended:
             if fallback_before_payload:
-                log(f"[{label} 2M] no ready marker; no payload sent, returning to normal transfer\n")
+                log(f"[{label} 2M] no ready marker; no ROM payload sent, returning to normal transfer\n")
                 return None
             raise ProtocolError("reader did not confirm the switch to 2M")
         phase = "sending the 2M ready acknowledgement"
