@@ -2,7 +2,7 @@ name: Phase 2 parallel independent size candidates
 
 on:
   push:
-    branches: [experiment/size-reduction-phase2]
+    branches: [experiment/size-reduction-phase2, experiment/sd-browser-2m]
     paths:
       - '.github/size-parallel-request.json'
   workflow_dispatch:
