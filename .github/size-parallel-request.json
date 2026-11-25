@@ -1,21 +1,28 @@
 {
-  "id": "parallel-003-integration",
-  "base": "be58724c7ed1b52504324000bd760ba42c69dfdf",
-  "expected_base_flash": 214542,
+  "id": "parallel-004",
+  "base": "ed9a801b489271d0c059a8e35f95134c5250369e",
+  "expected_base_flash": 214240,
   "expected_base_ram": 6281,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-ws",
-      "head": "c058b7f46d8b2e657f6ac461fb5324a640a8f2c4"
+      "id": "nes-mmc6-sram",
+      "head": "21cc5e969525fdc3c78f6554491b660a2982f4e0",
+      "path": "Cart_Reader/NES.ino"
     },
     {
-      "id": "integration-ws-pce",
-      "head": "aed583c03f654ea6996407696613ea9f7a585c91"
+      "id": "ws-save-write-ui",
+      "head": "d95be55c4f352a67600646b47bb6a9e948cf1d65",
+      "path": "Cart_Reader/WS.ino"
     },
     {
-      "id": "integration-ws-pce-n64",
-      "head": "11cc96b36ea9b753c4701d454b375017244cab6c"
+      "id": "gb-mbc6-flash-bank",
+      "head": "71491d373f16cec00ae8f44afdead76110aa24a0",
+      "path": "Cart_Reader/GB.ino"
+    },
+    {
+      "id": "gba-save-flash-command",
+      "head": "1b2aec4c863202fac6611dba3b541d6b23ef8ada",
+      "path": "Cart_Reader/GBA.ino"
     }
   ]
 }
