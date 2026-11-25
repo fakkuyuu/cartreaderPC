@@ -2613,6 +2613,15 @@ byte selectBlockNumber(boolean option) {
 }
 
 // Read 369-in-1 repro
+static void geometry369in1_GBA(byte blockNumber, unsigned long& startBank, unsigned long& startBlock, unsigned long& lastBlock) __attribute__((noinline));
+static void geometry369in1_GBA(byte blockNumber, unsigned long& startBank, unsigned long& startBlock, unsigned long& lastBlock) {
+  startBank = (((unsigned long)blockNumber * 4) / 32) * 0x2000000;
+  startBlock = ((unsigned long)blockNumber * 4 * 1024 * 1024) - startBank;
+  lastBlock = 0x2000000;
+  if (fileSize < lastBlock)
+    lastBlock = startBlock + fileSize;
+}
+
 void read369in1(byte blockNumber, byte fileSizeByte) {
   byte readBuffer[1024];
   strcpy(romName, "369in1");
@@ -2630,11 +2639,8 @@ void read369in1(byte blockNumber, byte fileSizeByte) {
     fileSize = (unsigned long)fileSizeByte * 1024 * 1024;
 
   // 64 blocks at 4MB each
-  unsigned long startBank = (((unsigned long)blockNumber * 4) / 32) * 0x2000000;
-  unsigned long startBlock = ((unsigned long)blockNumber * 4 * 1024 * 1024) - startBank;
-  unsigned long lastBlock = 0x2000000;
-  if (fileSize < lastBlock)
-    lastBlock = startBlock + fileSize;
+  unsigned long startBank, startBlock, lastBlock;
+  geometry369in1_GBA(blockNumber, startBank, startBlock, lastBlock);
   unsigned long lastBuffer = 0x400000;
   if (fileSize < lastBuffer)
     lastBuffer = fileSize;
@@ -2672,11 +2678,8 @@ void read369in1(byte blockNumber, byte fileSizeByte) {
 // Erase 369-in-1 repro
 void erase369in1(byte blockNumber) {
   // 64 blocks at 4MB each
-  unsigned long startBank = (((unsigned long)blockNumber * 4) / 32) * 0x2000000;
-  unsigned long startBlock = ((unsigned long)blockNumber * 4 * 1024 * 1024) - startBank;
-  unsigned long lastBlock = 0x2000000;
-  if (fileSize < lastBlock)
-    lastBlock = startBlock + fileSize;
+  unsigned long startBank, startBlock, lastBlock;
+  geometry369in1_GBA(blockNumber, startBank, startBlock, lastBlock);
   unsigned long lastSector = 0x400000;
   if (fileSize < lastSector)
     lastSector = fileSize;
@@ -2721,11 +2724,8 @@ void write369in1(byte blockNumber) {
   byte writeBuffer[1024];
 
   // 64 blocks at 4MB each
-  unsigned long startBank = (((unsigned long)blockNumber * 4) / 32) * 0x2000000;
-  unsigned long startBlock = ((unsigned long)blockNumber * 4 * 1024 * 1024) - startBank;
-  unsigned long lastBlock = 0x2000000;
-  if (fileSize < lastBlock)
-    lastBlock = startBlock + fileSize;
+  unsigned long startBank, startBlock, lastBlock;
+  geometry369in1_GBA(blockNumber, startBank, startBlock, lastBlock);
   unsigned long lastSector = 0x400000;
   if (fileSize < lastSector)
     lastSector = fileSize;
