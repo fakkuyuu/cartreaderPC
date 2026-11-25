@@ -1854,6 +1854,26 @@ void writeSram_MD() {
 }
 
 // Read sram and save to the SD card
+static void readSramBuffer_MD(unsigned long currBuffer, bool verifying) __attribute__((noinline));
+static void readSramBuffer_MD(unsigned long currBuffer, bool verifying) {
+  for (int currWord = 0; currWord < 256; currWord++) {
+    word myWord = readWord_MD(currBuffer + currWord);
+    if (saveType == 3) {
+      sdBuffer[currWord * 2] = (myWord >> 8) & 0xFF;
+      sdBuffer[currWord * 2 + 1] = myWord & 0xFF;
+    } else if (saveType == 1 || saveType == 2) {
+      byte value = saveType == 2 ? (myWord >> 8) & 0xFF : myWord & 0xFF;
+      if (verifying || segaSram16bit > 0) {
+        sdBuffer[currWord * 2] = value;
+        if (!verifying)
+          sdBuffer[currWord * 2 + 1] = value;
+      } else {
+        sdBuffer[currWord] = value;
+      }
+    }
+  }
+}
+
 void readSram_MD() {
   dataIn_MD();
 
@@ -1870,30 +1890,7 @@ void readSram_MD() {
   }
 
   for (unsigned long currBuffer = sramBase; currBuffer < sramBase + sramSize; currBuffer += 256) {
-    for (int currWord = 0; currWord < 256; currWord++) {
-      word myWord = readWord_MD(currBuffer + currWord);
-
-      if (saveType == 2) {
-        // Only use the upper byte
-        if (segaSram16bit > 0) {
-          sdBuffer[(currWord * 2) + 0] = ((myWord >> 8) & 0xFF);
-          sdBuffer[(currWord * 2) + 1] = ((myWord >> 8) & 0xFF);
-        } else {
-          sdBuffer[currWord] = ((myWord >> 8) & 0xFF);
-        }
-      } else if (saveType == 1) {
-        // Only use the lower byte
-        if (segaSram16bit > 0) {
-          sdBuffer[(currWord * 2) + 0] = (myWord & 0xFF);
-          sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
-        } else {
-          sdBuffer[currWord] = (myWord & 0xFF);
-        }
-      } else if (saveType == 3) {  // BOTH
-        sdBuffer[currWord * 2] = ((myWord >> 8) & 0xFF);
-        sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
-      }
-    }
+    readSramBuffer_MD(currBuffer, false);
     if (saveType == 3 || segaSram16bit > 0)
       writeSdBufferBlock();
     else
@@ -1924,20 +1921,7 @@ unsigned long verifySram_MD() {
   // Open file on sd card
   if (openSelectedFileForRead()) {
     for (unsigned long currBuffer = sramBase; currBuffer < sramBase + sramSize; currBuffer += 256) {
-      for (int currWord = 0; currWord < 256; currWord++) {
-        word myWord = readWord_MD(currBuffer + currWord);
-
-        if (saveType == 2) {
-          // Only use the upper byte
-          sdBuffer[currWord * 2] = ((myWord >> 8) & 0xFF);
-        } else if (saveType == 1) {
-          // Only use the lower byte
-          sdBuffer[currWord * 2] = (myWord & 0xFF);
-        } else if (saveType == 3) {  // BOTH
-          sdBuffer[(currWord * 2) + 0] = ((myWord >> 8) & 0xFF);
-          sdBuffer[(currWord * 2) + 1] = (myWord & 0xFF);
-        }
-      }
+      readSramBuffer_MD(currBuffer, true);
       int step = saveType == 3 ? 1 : 2;
       // Check sdBuffer content against file on sd card
       for (int i = 0; i < 512; i += step) {
