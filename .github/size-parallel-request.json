@@ -1,48 +1,48 @@
 {
-  "id": "parallel-011",
-  "base": "b490a4a3ca12aeb3682842bac5933d91bc9c8fee",
+  "id": "parallel-012",
+  "base": "e2490aa43d9f9fb0fb19969d2c2c2af0cd39925e",
   "expected_base_flash": 212716,
   "expected_base_ram": 6281,
   "candidates": [
     {
-      "id": "pce-crc-path-report",
-      "head": "6be0c2e2558733e398b6853ee71e78e2ccd22bc4",
+      "id": "pce-signature-loop",
+      "head": "d9e3b36273601bbd278549afa41f063927e1b8d4",
       "path": "Cart_Reader/PCE.ino"
     },
     {
-      "id": "ws-verify-report",
-      "head": "0ad2a8943c7323f5a974f06496e72ee58ff59af5",
+      "id": "ws-save-size-table",
+      "head": "66d9ab075d25a7602317c49a7f7c61a9b6828346",
       "path": "Cart_Reader/WS.ino"
     },
     {
-      "id": "md-flash-verify-report",
-      "head": "b577e201330d5bd22c4707cc0d48ea9411ebd739",
+      "id": "msx-mapper-label-table",
+      "head": "e20658f0875266ce00d99106c68bca8e94133bfa",
+      "path": "Cart_Reader/MSX.ino"
+    },
+    {
+      "id": "md-save-type-range",
+      "head": "b211357cbe7a3d97d2776109f61eace2f6306eb2",
       "path": "Cart_Reader/MD.ino"
     },
     {
-      "id": "gb-gameshark-id-report",
-      "head": "134ed6be86be6764eaebeff3d53e5bdbee70ab20",
+      "id": "gb-flash-id-table",
+      "head": "b789f3ab7d54c54babcd3ce5fd7e32abd5b52ca2",
       "path": "Cart_Reader/GB.ino"
     },
     {
-      "id": "gba-369-bank-geometry",
-      "head": "7b16d09bf6155db466881166b7c6cfcb606d970d",
+      "id": "gba-save-label-table",
+      "head": "ca42dd5ef4b82429c5fb5f3e06ede76ad5aa5641",
       "path": "Cart_Reader/GBA.ino"
     },
     {
-      "id": "n64-accessory-id-report",
-      "head": "17dbe2d40f9335a1e8f578cd5536de9882c091d7",
-      "path": "Cart_Reader/N64.ino"
+      "id": "snes-superfx-predicate",
+      "head": "d1baf716034466c589c619589b4df099152b7062",
+      "path": "Cart_Reader/SNES.ino"
     },
     {
-      "id": "nes-a29040-write-error",
-      "head": "07acb78ea79329b6ed95d31767e06c347a719a91",
+      "id": "nes-eeprom-size-factor",
+      "head": "ad5e8be46889578d3566353c2f068bf299e909d6",
       "path": "Cart_Reader/NES.ino"
-    },
-    {
-      "id": "msx-koei-bank-select",
-      "head": "505cb50fc7e9d811a4886e65c6bf3f80932e27d1",
-      "path": "Cart_Reader/MSX.ino"
     }
   ]
 }
