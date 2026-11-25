@@ -208,21 +208,16 @@ void gbaMenu() {
             switchBank_GBA(bank);
             setROM_GBA();
             // Card e-Reader+ does not allow access to last 128 bytes of a bank
+            uint32_t bankSize = 65536UL;
             if (strcmp("PSAE", cartID) == 0 || strcmp("PSAJ", cartID) == 0) { // Japanese e-reader+, USA e-reader
               println_Log(FS(SharedFlashText::textSkippingLast128Bytes));
-              if (!blankcheckFLASH_GBA(65408))
-                break;
-              writeFLASH_GBA(!bank, 65408, bank ? 65536 : 0, 0);
-              if (verifyFLASH_GBA(65408, bank ? 65536 : 0))
-                break;
+              bankSize = 65408UL;
             }
-            else {
-              if (!blankcheckFLASH_GBA(65536))
-                break;
-              writeFLASH_GBA(!bank, 65536, bank ? 65536 : 0, 0);
-              if (verifyFLASH_GBA(65536, bank ? 65536 : 0))
-                break;
-            }
+            if (!blankcheckFLASH_GBA(bankSize))
+              break;
+            writeFLASH_GBA(!bank, bankSize, bank ? 65536 : 0, 0);
+            if (verifyFLASH_GBA(bankSize, bank ? 65536 : 0))
+              break;
           }
           break;
 
