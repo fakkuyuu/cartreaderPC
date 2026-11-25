@@ -4490,6 +4490,12 @@ static void visitMmc6Sram_NES(word base, bool writing) {
   write_prg_byte(0x8000, 6);
 }
 
+static void setMapper80SramAccess_NES(byte value) __attribute__((noinline));
+static void setMapper80SramAccess_NES(byte value) {
+  write_prg_byte(0x7EF8, value);
+  write_prg_byte(0x7EF9, value);
+}
+
 void readRAM() {
   clearAndUpdateDisplay();
 
@@ -4558,14 +4564,12 @@ void readRAM() {
           break;
 
         case 80:                              // 1K
-          write_prg_byte(0x7EF8, 0xA3);       // PRG RAM ENABLE 0
-          write_prg_byte(0x7EF9, 0xA3);       // PRG RAM ENABLE 1
+          setMapper80SramAccess_NES(0xA3);
           for (size_t x = 0; x < 128; x++) {  // PRG RAM 1K ($7F00-$7FFF) MIRRORED ONCE
             sdBuffer[x] = read_prg_byte(0x7F00 + x);
           }
           myFile.write(sdBuffer, 128);
-          write_prg_byte(0x7EF8, 0xFF);  // PRG RAM DISABLE 0
-          write_prg_byte(0x7EF9, 0xFF);  // PRG RAM DISABLE 1
+          setMapper80SramAccess_NES(0xFF);
           break;
 
         case 82:                                                          // 5K
@@ -4695,16 +4699,14 @@ void writeRAM() {
           break;
 
         case 80:                                                             // 1K
-          write_prg_byte(0x7EF8, 0xA3);                                      // PRG RAM ENABLE 0
-          write_prg_byte(0x7EF9, 0xA3);                                      // PRG RAM ENABLE 1
+          setMapper80SramAccess_NES(0xA3);
           for (size_t address = 0x1F00; address < 0x2000; address += 512) {  // PRG RAM 1K ($7F00-$7FFF)
             readSdBuffer128();
             for (size_t x = 0; x < 128; x++) {
               write_prg_byte(base + address + x, sdBuffer[x]);
             }
           }
-          write_prg_byte(0x7EF8, 0xFF);  // PRG RAM DISABLE 0
-          write_prg_byte(0x7EF9, 0xFF);  // PRG RAM DISABLE 1
+          setMapper80SramAccess_NES(0xFF);
           break;
 
         case 82:                                                           // 5K
