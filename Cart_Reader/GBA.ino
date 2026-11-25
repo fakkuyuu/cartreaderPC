@@ -686,7 +686,7 @@ void getCartInfo_GBA() {
     cartID[2] = char(sdBuffer[0xAE]);
     cartID[3] = char(sdBuffer[0xAF]);
 
-    if (strcmp("", cartID) == 0) {
+    if (cartID[0] == '\0') {
       cartID[0] = '0';
       cartID[1] = '0';
       cartID[2] = '0';
@@ -824,7 +824,7 @@ void getCartInfo_GBA() {
     // Get name
     buildRomName(romName, &sdBuffer[0xA0], 12);
 
-    if (strcmp("", romName) == 0) {
+    if (romName[0] == '\0') {
       romName[0] = 'U';
       romName[1] = 'N';
       romName[2] = 'K';
