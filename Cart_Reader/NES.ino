@@ -2809,12 +2809,16 @@ void readPRG(bool readrom) {
         break;
 
       case 72:  // 128K
+      case 92:  // 256K
         banks = prgBanks16K;
         write_prg_byte(0x8000, 0);            // Reset Register
         for (size_t i = 0; i < banks; i++) {  // 128K
           write_prg_byte(0x8000, i | 0x80);   // PRG Command + Bank
           write_prg_byte(0x8000, i);          // PRG Bank
-          dumpPRG16KiB(base);     // 16K Banks ($8000-$BFFF)
+          if (mapper == 72)
+            dumpPRG16KiB(base);
+          else
+            dumpBankPRG(0x4000, 0x8000, base);
         }
         break;
 
@@ -2848,16 +2852,6 @@ void readPRG(bool readrom) {
           write_prg_byte(0x8000 + ((i & 0x30) >> 3), i);  // PRG A18-A17 (submapper 0 only)
           write_prg_byte(0x7000, i);                      // PRG -A13
           dumpPRG8KiB(base);
-        }
-        break;
-
-      case 92:  // 256K
-        banks = prgBanks16K;
-        write_prg_byte(0x8000, 0);            // Reset Register
-        for (size_t i = 0; i < banks; i++) {  // 256K
-          write_prg_byte(0x8000, i | 0x80);   // PRG Command + Bank
-          write_prg_byte(0x8000, i);          // PRG Bank
-          dumpBankPRG(0x4000, 0x8000, base);  // 16K Banks ($C000-$FFFF)
         }
         break;
 
