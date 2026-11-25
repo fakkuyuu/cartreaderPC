@@ -1923,6 +1923,12 @@ static void showFlashBankCount_GB(const __FlashStringHelper* suffix) {
   display_Update();
 }
 
+static void showFlashStatusP19_GB(const __FlashStringHelper* label) __attribute__((noinline));
+static void showFlashStatusP19_GB(const __FlashStringHelper* label) {
+  println_Msg(label);
+  display_Update();
+}
+
 void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
   // Launch filebrowser
   browseRootFileAndClear();
@@ -2005,8 +2011,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
     delay(100);
 
     if (flashErase) {
-      println_Msg(FS(SharedFlashText::textErasingFlash));
-      display_Update();
+      showFlashStatusP19_GB(FS(SharedFlashText::textErasingFlash));
 
       // Erase flash
       sendFlashCommand_GB(0x80, commandSet);
@@ -2016,8 +2021,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
       busyCheck_GB(0, 0x80);
 
       // Blankcheck
-      println_Msg(FS(SharedFlashText::textBlankcheck));
-      display_Update();
+      showFlashStatusP19_GB(FS(SharedFlashText::textBlankcheck));
 
       // Read x number of banks
       for (word currBank = 0; currBank < romBanks; currBank++) {
@@ -2486,8 +2490,7 @@ bool writeCFI_GB() {
     writeByte_GB(0x555, 0xf0);
 
     delay(100);
-    println_Msg(FS(SharedFlashText::textErasingFlash));
-    display_Update();
+    showFlashStatusP19_GB(FS(SharedFlashText::textErasingFlash));
 
     // Erase flash
     sendCFICommand_GB(0x80);
@@ -2506,8 +2509,7 @@ bool writeCFI_GB() {
     }
 
     // Blankcheck
-    println_Msg(FS(SharedFlashText::textBlankcheck));
-    display_Update();
+    showFlashStatusP19_GB(FS(SharedFlashText::textBlankcheck));
 
     // Read x number of banks
     for (word currBank = 0; currBank < romBanks; currBank++) {
