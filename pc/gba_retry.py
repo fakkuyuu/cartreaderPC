@@ -140,7 +140,7 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
         if wire.write(ready) != len(ready):
             raise ProtocolError(f"{label} 2M ready acknowledgement was not sent")
         log(f"[{label} 2M] Reader confirmed at 2000000 baud\n")
-        if expected_block is None:
+        if expected_block is None and progress_callback is None:
             log("[")
             stars = 0
         total = length // block_size
@@ -173,7 +173,7 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
                 if not mask:
                     if progress_callback is not None:
                         progress_callback(committed)
-                    if expected_block is None:
+                    if expected_block is None and progress_callback is None:
                         completed_stars = committed * 19 // length
                         if completed_stars > stars:
                             log("*" * (completed_stars - stars))
@@ -198,7 +198,7 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
         wire.baudrate = previous_baud
         wire.timeout = previous_timeout
     elapsed = time.perf_counter() - started
-    if expected_block is None:
+    if expected_block is None and progress_callback is None:
         log("]\n")
     log(f"[{label} 2M] Validated {length} bytes, retransmitted {resends} blocks, "
         f"{elapsed:.3f} s\n")
