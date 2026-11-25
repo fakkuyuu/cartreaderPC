@@ -891,44 +891,56 @@ void getCartInfo_SNES() {
     println_Msg(romSpeed);
 
   print_Msg(F("ICs: ROM "));
-  if (romChips == 0)
-    println_Msg(F("ONLY"));
-  else if (romChips == 1)
-    println_Msg(F("RAM"));
-  else if (romChips == 2)
-    println_Msg(F("SAVE"));
-  else if (romChips == 3)
-    println_Msg(F("DSP1"));
-  else if (romChips == 4)
-    println_Msg(F("DSP1 RAM"));
-  else if (romChips == 5)
-    println_Msg(F("DSP1 SAVE"));
-  else if ((romChips == 19) || (romChips == 20) || (romChips == 21) || (romChips == 26))
-    println_Msg(F("SuperFX"));
-  else if (romChips == 52) {
-    println_Msg(F("SA1 RAM"));
-    romType = SA;
-  } else if (romChips == 53) {
-    println_Msg(F("SA1 RAM BATT"));
-    romType = SA;
-  } else if (romChips == 67) {
-    println_Msg(F("SDD1"));
-  } else if (romChips == 69) {
-    println_Msg(F("SDD1 BATT"));
-  } else if (romChips == 85)
-    println_Msg(F("SRTC RAM BATT"));
-  else if (romChips == 227)
-    println_Msg(F("RAM GBoy"));
-  else if (romChips == 243)
-    println_Msg(F("CX4"));
-  else if (romChips == 246)
-    println_Msg(F("DSP2"));
-  else if (romChips == 245)
-    println_Msg(F("SPC RAM BATT"));
-  else if (romChips == 249)
-    println_Msg(F("SPC RAM RTC"));
-  else
+  static const char chipLabel0[] PROGMEM = "ONLY";
+  static const char chipLabel1[] PROGMEM = "RAM";
+  static const char chipLabel2[] PROGMEM = "SAVE";
+  static const char chipLabel3[] PROGMEM = "DSP1";
+  static const char chipLabel4[] PROGMEM = "DSP1 RAM";
+  static const char chipLabel5[] PROGMEM = "DSP1 SAVE";
+  static const char chipLabel6[] PROGMEM = "SuperFX";
+  static const char chipLabel7[] PROGMEM = "SA1 RAM";
+  static const char chipLabel8[] PROGMEM = "SA1 RAM BATT";
+  static const char chipLabel9[] PROGMEM = "SDD1";
+  static const char chipLabel10[] PROGMEM = "SDD1 BATT";
+  static const char chipLabel11[] PROGMEM = "SRTC RAM BATT";
+  static const char chipLabel12[] PROGMEM = "RAM GBoy";
+  static const char chipLabel13[] PROGMEM = "CX4";
+  static const char chipLabel14[] PROGMEM = "DSP2";
+  static const char chipLabel15[] PROGMEM = "SPC RAM BATT";
+  static const char chipLabel16[] PROGMEM = "SPC RAM RTC";
+  struct ChipLabel { byte id; const char* label; };
+  static const ChipLabel chipLabels[] PROGMEM = {
+    {0, chipLabel0},
+    {1, chipLabel1},
+    {2, chipLabel2},
+    {3, chipLabel3},
+    {4, chipLabel4},
+    {5, chipLabel5},
+    {19, chipLabel6},
+    {20, chipLabel6},
+    {21, chipLabel6},
+    {26, chipLabel6},
+    {52, chipLabel7},
+    {53, chipLabel8},
+    {67, chipLabel9},
+    {69, chipLabel10},
+    {85, chipLabel11},
+    {227, chipLabel12},
+    {243, chipLabel13},
+    {246, chipLabel14},
+    {245, chipLabel15},
+    {249, chipLabel16}
+  };
+  byte chipIndex = 0;
+  for (; chipIndex < sizeof(chipLabels) / sizeof(chipLabels[0]); ++chipIndex) {
+    if (romChips == pgm_read_byte(&chipLabels[chipIndex].id)) break;
+  }
+  if (chipIndex < sizeof(chipLabels) / sizeof(chipLabels[0])) {
+    println_Msg(FS((const char*)pgm_read_ptr(&chipLabels[chipIndex].label)));
+    if (romChips == 52 || romChips == 53) romType = SA;
+  } else {
     printBlankLine();
+  }
 
 
   printRomSizeLabel();
