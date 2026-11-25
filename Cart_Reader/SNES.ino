@@ -1953,6 +1953,12 @@ static void visitSramMapping_SNES(void (*visit)(byte, long, long, byte), byte va
 }
 
 static void writeSa1SramBlocks_SNES(bool fromFile, byte value) __attribute__((noinline));
+static void enableSa1BlockZeroP16_SNES() __attribute__((noinline));
+static void enableSa1BlockZeroP16_SNES() {
+  writeBank_SNES(0, 0x2224, 0);
+  writeBank_SNES(0, 0x2226, 0x80);
+}
+
 static void writeSa1SramBlocks_SNES(bool fromFile, byte value) {
   long lastByte = (long(sramSize) * 128);
   if (i2c_found) {
@@ -1971,9 +1977,7 @@ static void writeSa1SramBlocks_SNES(bool fromFile, byte value) {
 
   // Setup BW-RAM
   // Set 0x2224 (SNES BMAPS) to map SRAM Block 0 to 0x6000-0x7FFF
-  writeBank_SNES(0, 0x2224, 0);
-  // Set 0x2226 (SNES SBWE) to 0x80 Write Enable
-  writeBank_SNES(0, 0x2226, 0x80);
+  enableSa1BlockZeroP16_SNES();
   // Set 0x2228 (SNES BWPA) to 0x00 BW-RAM Write-Protected Area
   writeBank_SNES(0, 0x2228, 0);
   delay(1000);
@@ -2017,8 +2021,7 @@ void writeSRAM(boolean browseFile) {
       // Rewrite first 16 bytes since they often get written incorrectly(fixes Super Bomberman Panic Bomber W), first byte needs to be written last(fixes PGA Tour 96)
       rewindCurrentFile();
       myFile.read(sdBuffer, 16);
-      writeBank_SNES(0, 0x2224, 0);
-      writeBank_SNES(0, 0x2226, 0x80);
+      enableSa1BlockZeroP16_SNES();
       for (int c = 15; c >= 0; c--) {
         writeBank_SNES(0, 0x6000 + c,  sdBuffer[c]);
       }
@@ -2143,8 +2146,7 @@ boolean eraseSRAM(byte b) {
   if (romType == SA) {
     writeSa1SramBlocks_SNES(false, b);
     // Rewrite First Byte
-    writeBank_SNES(0, 0x2224, 0);
-    writeBank_SNES(0, 0x2226, 0x80);
+    enableSa1BlockZeroP16_SNES();
     writeBank_SNES(0, 0x6000, b);
 
     if (i2c_found) {
