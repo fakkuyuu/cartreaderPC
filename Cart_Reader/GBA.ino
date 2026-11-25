@@ -1699,6 +1699,13 @@ void busyCheck_GBA(uint16_t currByte) {
   DDRC = 0xFF;
 }
 
+static void beginSaveFlashProgram_GBA() __attribute__((noinline));
+static void beginSaveFlashProgram_GBA() {
+  writeByteFlash_GBA(0x5555, 0xaa);
+  writeByteFlash_GBA(0x2aaa, 0x55);
+  writeByteFlash_GBA(0x5555, 0xa0);
+}
+
 void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolean isAtmel) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5) and OE_FLASH(PH6)
   PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
@@ -1733,9 +1740,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
 
         for (int c = 0; c < 512 && (currAddress + c) < flashSize; c++) {
           // Write command sequence
-          writeByteFlash_GBA(0x5555, 0xaa);
-          writeByteFlash_GBA(0x2aaa, 0x55);
-          writeByteFlash_GBA(0x5555, 0xa0);
+          beginSaveFlashProgram_GBA();
           // Write current byte
           writeByteFlash_GBA(currAddress + c, sdBuffer[c]);
 
@@ -1749,9 +1754,7 @@ void writeFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, boolea
         readSdBuffer128();
 
         // Write command sequence
-        writeByteFlash_GBA(0x5555, 0xaa);
-        writeByteFlash_GBA(0x2aaa, 0x55);
-        writeByteFlash_GBA(0x5555, 0xa0);
+        beginSaveFlashProgram_GBA();
         for (int c = 0; c < 128; c++) {
           writeByteFlash_GBA(currAddress + c, sdBuffer[c]);
         }
