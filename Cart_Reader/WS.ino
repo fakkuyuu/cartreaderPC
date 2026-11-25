@@ -639,10 +639,11 @@ static void verifySRAM_WS() {
   }
 }
 
-static void writeSRAM_WS() {
+static void selectSaveForWrite_WS(const __FlashStringHelper* caption) __attribute__((noinline));
+static void selectSaveForWrite_WS(const __FlashStringHelper* caption) {
   filePath[0] = 0;
   changeToStorageRoot();
-  fileBrowser(FS(SharedFlashText::textSelectSavFile));
+  fileBrowser(caption);
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
 
   display_Clear();
@@ -650,6 +651,10 @@ static void writeSRAM_WS() {
   print_Msg(filePath);
   println_Msg(FS(SharedFlashText::ellipsis));
   display_Update();
+}
+
+static void writeSRAM_WS() {
+  selectSaveForWrite_WS(FS(SharedFlashText::textSelectSavFile));
 
   if (openSelectedFileForRead()) {
     uint32_t bank_size = (sramSize << 7);
@@ -770,16 +775,7 @@ static void verifyEEPROM_WS() {
 }
 
 static void writeEEPROM_WS() {
-  filePath[0] = 0;
-  changeToStorageRoot();
-  fileBrowser(FS(SharedFlashText::textSelectEepFile));
-  snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
-
-  display_Clear();
-  print_Msg(FS(SharedFlashText::textWriting));
-  print_Msg(filePath);
-  println_Msg(FS(SharedFlashText::ellipsis));
-  display_Update();
+  selectSaveForWrite_WS(FS(SharedFlashText::textSelectEepFile));
 
   if (openSelectedFileForRead()) {
     uint32_t eepromSize = (sramSize << 7);
