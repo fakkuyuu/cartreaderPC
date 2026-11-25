@@ -329,6 +329,15 @@ void write_byte_PCE(uint32_t address, uint8_t data) {
 }
 
 //Confirm the size of ROM
+static bool matchesRomSignature_PCE(uint32_t address, const char* signature, byte length) __attribute__((noinline));
+static bool matchesRomSignature_PCE(uint32_t address, const char* signature, byte length) {
+  for (byte i = 0; i < length; ++i) {
+    if (read_byte_PCE(address + i) != pgm_read_byte(signature + i))
+      return false;
+  }
+  return true;
+}
+
 uint32_t detect_rom_size_PCE(void) {
   uint32_t rom_size;
   uint8_t read_byte;
@@ -430,21 +439,21 @@ uint32_t detect_rom_size_PCE(void) {
   //If rom size is more than or equal to 512KB, detect special cards
   if (rom_size >= 512) {
     //Street Fighter II' - Champion Edition (Japan)
-    if (read_byte_PCE(0x7FFF9) == 'N' && read_byte_PCE(0x7FFFA) == 'E' && read_byte_PCE(0x7FFFB) == 'C' && read_byte_PCE(0x7FFFC) == ' ' && read_byte_PCE(0x7FFFD) == 'H' && read_byte_PCE(0x7FFFE) == 'E') {
+    if (matchesRomSignature_PCE(0x7FFF9, PSTR("NEC HE"), 6)) {
       rom_size = 2560;
     }
     //Populous (Japan)
-    if (read_byte_PCE(0x1F26) == 'P' && read_byte_PCE(0x1F27) == 'O' && read_byte_PCE(0x1F28) == 'P' && read_byte_PCE(0x1F29) == 'U' && read_byte_PCE(0x1F2A) == 'L' && read_byte_PCE(0x1F2B) == 'O' && read_byte_PCE(0x1F2C) == 'U' && read_byte_PCE(0x1F2D) == 'S') {
+    if (matchesRomSignature_PCE(0x1F26, PSTR("POPULOUS"), 8)) {
       rom_size = 512;
     }
     //Dinoforce (Japan)
-    if (read_byte_PCE(0x15A) == 'D' && read_byte_PCE(0x15B) == 'I' && read_byte_PCE(0x15C) == 'N' && read_byte_PCE(0x15D) == 'O' && read_byte_PCE(0x15E) == '-' && read_byte_PCE(0x15F) == 'F' && read_byte_PCE(0x160) == 'O' && read_byte_PCE(0x161) == 'R' && read_byte_PCE(0x162) == 'C' && read_byte_PCE(0x163) == 'E') {
+    if (matchesRomSignature_PCE(0x15A, PSTR("DINO-FORCE"), 10)) {
       rom_size = 512;
     }
   }
   if (rom_size == 384) {
     //"CD-ROM² Super System Card (v3.0)(Japan)" or "Arcade Card Pro CD-ROM²"
-    if (read_byte_PCE(0x29D1) == 'V' && read_byte_PCE(0x29D2) == 'E' && read_byte_PCE(0x29D3) == 'R' && read_byte_PCE(0x29D4) == '.' && read_byte_PCE(0x29D5) == ' ' && read_byte_PCE(0x29D6) == '3' && read_byte_PCE(0x29D7) == '.' && read_byte_PCE(0x29D8) == '0' && read_byte_PCE(0x29D9) == '0') {
+    if (matchesRomSignature_PCE(0x29D1, PSTR("VER. 3.00"), 9)) {
       rom_size = 256;
     }
   }
