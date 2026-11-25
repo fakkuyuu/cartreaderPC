@@ -72,6 +72,24 @@
 //******************************************
 // Supported Mapper Array
 // Format = {msxmapper,msxlo,msxhi,msxramlo,msxramhi}
+static const char* const msxMapperLabels[] PROGMEM = {
+  SharedFlashText::textNONE,
+  SharedFlashText::textASCII8,
+  SharedFlashText::textASCII16,
+  SharedFlashText::textCROSSBLAIM,
+  SharedFlashText::textGAMEMASTER2,
+  SharedFlashText::textHALNOTE,
+  SharedFlashText::textHARRYFOXYUKI,
+  SharedFlashText::textKOEI,
+  SharedFlashText::textKONAMI,
+  SharedFlashText::textKONAMISCC,
+  SharedFlashText::textMSXDOS2,
+  SharedFlashText::textPACFMPAC,
+  SharedFlashText::textRTYPE,
+  SharedFlashText::textSUPERLODERUNNER,
+  SharedFlashText::textHUDSONSOFTBEEPACK
+};
+
 static const byte PROGMEM msxmapsize[] = {
   0, 1, 4, 0, 0,   // No Mapper
   1, 4, 7, 0, 2,   // ASCII8                                 [sram r/w] 2K (Dires), 8K (Xanadu/Wizardry)
@@ -146,23 +164,8 @@ static void pcMSXMapperReady() {
     PcConsole.print('=');
     PcConsole.print(mapper);
     PcConsole.print(F("  "));
-    switch (mapper) {
-      case 0: PcConsole.print(FS(SharedFlashText::textNONE)); break;
-      case 1: PcConsole.print(FS(SharedFlashText::textASCII8)); break;
-      case 2: PcConsole.print(FS(SharedFlashText::textASCII16)); break;
-      case 3: PcConsole.print(FS(SharedFlashText::textCROSSBLAIM)); break;
-      case 4: PcConsole.print(FS(SharedFlashText::textGAMEMASTER2)); break;
-      case 5: PcConsole.print(FS(SharedFlashText::textHALNOTE)); break;
-      case 6: PcConsole.print(FS(SharedFlashText::textHARRYFOXYUKI)); break;
-      case 7: PcConsole.print(FS(SharedFlashText::textKOEI)); break;
-      case 8: PcConsole.print(FS(SharedFlashText::textKONAMI)); break;
-      case 9: PcConsole.print(FS(SharedFlashText::textKONAMISCC)); break;
-      case 10: PcConsole.print(FS(SharedFlashText::textMSXDOS2)); break;
-      case 11: PcConsole.print(FS(SharedFlashText::textPACFMPAC)); break;
-      case 12: PcConsole.print(FS(SharedFlashText::textRTYPE)); break;
-      case 13: PcConsole.print(FS(SharedFlashText::textSUPERLODERUNNER)); break;
-      case 14: PcConsole.print(FS(SharedFlashText::textHUDSONSOFTBEEPACK)); break;
-    }
+    if (mapper < sizeof(msxMapperLabels) / sizeof(msxMapperLabels[0]))
+      PcConsole.print(FS((const char*)pgm_read_ptr(&msxMapperLabels[mapper])));
   }
   PcConsole.println();
   PcLink::menuReady();
@@ -1252,25 +1255,9 @@ void checkStatus_MSX() {
 
 void printMapper(byte msxmaplabel) {
 #if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
-  static const char* const labels[] PROGMEM = {
-    SharedFlashText::textNONE,
-    SharedFlashText::textASCII8,
-    SharedFlashText::textASCII16,
-    SharedFlashText::textCROSSBLAIM,
-    SharedFlashText::textGAMEMASTER2,
-    SharedFlashText::textHALNOTE,
-    SharedFlashText::textHARRYFOXYUKI,
-    SharedFlashText::textKOEI,
-    SharedFlashText::textKONAMI,
-    SharedFlashText::textKONAMISCC,
-    SharedFlashText::textMSXDOS2,
-    SharedFlashText::textPACFMPAC,
-    SharedFlashText::textRTYPE,
-    SharedFlashText::textSUPERLODERUNNER,
-    SharedFlashText::textHUDSONSOFTBEEPACK
-  };
-  if (msxmaplabel < sizeof(labels) / sizeof(labels[0]))
-    println_Msg(FS((const char*)pgm_read_ptr(&labels[msxmaplabel])));
+
+  if (msxmaplabel < sizeof(msxMapperLabels) / sizeof(msxMapperLabels[0]))
+    println_Msg(FS((const char*)pgm_read_ptr(&msxMapperLabels[msxmaplabel])));
 #else
   PcConsole.println(F("0 = NONE"));
   PcConsole.println(F("1 = ASCII8"));
