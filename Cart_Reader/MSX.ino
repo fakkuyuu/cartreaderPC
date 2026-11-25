@@ -441,24 +441,22 @@ void readROM_MSX() {
       case 7:  // Koei (256K/512K/1024K)
         msxbanks = int_pow(2, msxsize - 1);
         for (int x = 0; x < msxbanks; x += 4) {
-          writeData_MSX(0x6000, x);
-          readSegment_MSX(0x4000, 0x6000);  // 8K Init Bank 0
-          writeData_MSX(0x6800, x + 1);
-          readSegment_MSX(0x6000, 0x8000);  // 8K Init Bank 0
-          writeData_MSX(0x7000, x + 2);
-          readSegment_MSX(0x8000, 0xA000);  // 8K Init Bank 0
-          writeData_MSX(0x7800, x + 3);
-          readSegment_MSX(0xA000, 0xC000);  // 8K Init Bank 0
+          for (byte j = 0; j < 4; ++j) {
+            word start = 0x4000U + j * 0x2000U;
+            writeData_MSX(0x6000U + j * 0x800U, x + j);
+            readSegment_MSX(start, start + 0x2000U);
+          }
         }
         break;
 
       case 2:  // ASCII16 (64K/128K/256K/512K)
         msxbanks = int_pow(2, msxsize - 1) / 2;
         for (int x = 0; x < msxbanks; x += 2) {
-          writeData_MSX(0x6000, x);
-          readSegment_MSX(0x4000, 0x8000);  // 16K Init Bank 0
-          writeData_MSX(0x7000, x + 1);
-          readSegment_MSX(0x8000, 0xC000);  // 16K Init Bank 0
+          for (byte j = 0; j < 2; ++j) {
+            word start = 0x4000U + j * 0x4000U;
+            writeData_MSX(0x6000U + j * 0x1000U, x + j);
+            readSegment_MSX(start, start + 0x4000U);
+          }
         }
         break;
 
