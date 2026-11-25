@@ -201,6 +201,12 @@ void sfmGameOptions() {
   }
 }
 
+static void showOkP20_SFM() __attribute__((noinline));
+static void showOkP20_SFM() {
+  printOkLine();
+  display_Update();
+}
+
 #ifdef ENABLE_FLASH
 void sfmFlashMenu() {
   // create menu with title and 6 options to choose from
@@ -223,8 +229,7 @@ void sfmFlashMenu() {
       print_Msg(FS(SharedFlashText::textSwitchToHiRom));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
-        printOkLine();
-        display_Update();
+        showOkP20_SFM();
 
         // Reset flash
         resetFlash_SFM(0xC0);
@@ -299,8 +304,7 @@ void sfmFlashMenu() {
       print_Msg(FS(SharedFlashText::textSwitchToHiRom));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
-        printOkLine();
-        display_Update();
+        showOkP20_SFM();
         idFlash_SFM(0xC0);
         if (flashid == 0xc2f3) {
           idFlash_SFM(0xE0);
@@ -338,8 +342,7 @@ void sfmFlashMenu() {
       print_Msg(FS(SharedFlashText::textSwitchToHiRom));
       display_Update();
       if (send_SFM(0x04) == 0x2A) {
-        printOkLine();
-        display_Update();
+        showOkP20_SFM();
         idFlash_SFM(0xC0);
         if (flashid == 0xc2f3) {
           idFlash_SFM(0xE0);
@@ -388,8 +391,7 @@ void sfmFlashMenu() {
       print_Msg(FS(SharedFlashText::blankCheckProgress));
       display_Update();
       if (blankcheckMapping_SFM()) {
-        printOkLine();
-        display_Update();
+        showOkP20_SFM();
       } else {
         println_Msg(FS(SharedFlashText::textNope));
         break;
@@ -1629,15 +1631,13 @@ boolean unlockHirom() {
   print_Msg(FS(SharedFlashText::textSwitchToHiRom));
   display_Update();
   if (send_SFM(0x04) == 0x2A) {
-    printOkLine();
-    display_Update();
+    showOkP20_SFM();
     // Unlock Write Protection
     print_Msg(F("Enable Write..."));
     display_Update();
     send_SFM(0x02);
     if (readBank_SFM(0, 0x2401) == 0x4) {
-      printOkLine();
-      display_Update();
+      showOkP20_SFM();
       return 1;
     } else {
       println_Msg(FS(SharedFlashText::textFailed));
@@ -1708,8 +1708,7 @@ void write_SFM(int startBank, uint32_t pos) {
       print_Msg(FS(SharedFlashText::blankCheckProgress));
       display_Update();
       if (blankcheck_SFM(startBank)) {
-        printOkLine();
-        display_Update();
+        showOkP20_SFM();
       } else {
         println_Msg(FS(SharedFlashText::textNope));
         display_Clear();
@@ -1721,8 +1720,7 @@ void write_SFM(int startBank, uint32_t pos) {
         print_Msg(FS(SharedFlashText::blankCheckProgress));
         display_Update();
         if (blankcheck_SFM(startBank)) {
-          printOkLine();
-          display_Update();
+          showOkP20_SFM();
         } else {
           print_FatalError(FS(SharedFlashText::textCouldNotEraseFlash));
         }
@@ -1738,8 +1736,7 @@ void write_SFM(int startBank, uint32_t pos) {
       display_Update();
       writeErrors = verifyFlash_SFM(startBank, pos);
       if (writeErrors == 0) {
-        printOkLine();
-        display_Update();
+        showOkP20_SFM();
       } else {
         print_STR(error_STR, 0);
         print_Msg(writeErrors);
