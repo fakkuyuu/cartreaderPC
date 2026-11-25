@@ -459,11 +459,15 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     probe = len(payload) == 6 and payload[5] == 12
                     md = len(payload) == 6 and payload[5] == 14
                     n64 = len(payload) == 6 and payload[5] == 15
+                    sd_browser_2m = len(payload) == 10 and payload[5] == 16
+                    sd_total = int.from_bytes(payload[6:10], "little") if sd_browser_2m else 0
                     enabled = not experimental and retry_benchmark_preferred(identity)
                     block_size = 512
                     try:
                         settings = json.loads(TRANSFER_SETTINGS_FILE.read_text(encoding="utf-8"))
-                        if n64:
+                        if sd_browser_2m:
+                            enabled = settings.get("sd_browser_retry_2m", True) is True
+                        elif n64:
                             # N64 may be disabled locally, but it never bypasses
                             # the adapter-specific retry benchmark decision.
                             enabled = enabled and settings.get("n64_retry_2m", True) is True
@@ -484,21 +488,24 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                         pass
                     selectable = len(payload) == 6 and payload[5] == 0
                     legacy = len(payload) == 6 and payload[5] == 9
-                    if legacy or snes or probe or md or n64:
+                    if legacy or snes or probe or md or n64 or sd_browser_2m:
                         # SNES, MD and N64 use the established 512-byte frame.
                         block_size = 512
-                    handle = payload[0] if selectable or legacy or snes or probe or md or n64 else 0
+                    handle = payload[0] if selectable or legacy or snes or probe or md or n64 or sd_browser_2m else 0
                     length = int.from_bytes(payload[1:5], "little")
                     entry = store.handles.get(handle)
                     if probe:
                         enabled = bool(host_state and host_state.get("retry_probe") and entry
                                        and entry["path"].relative_to(store.root).as_posix()
                                        == "__diagnostics__/tx-test.crpctest" and length == 1048576)
-                    max_length = 128 * 1024**2 if n64 else 32 * 1024**2
+                    if sd_browser_2m:
+                        from sd_browser_2m import browser_transfer_allowed, browser_progress
+                        enabled = enabled and browser_transfer_allowed(store, entry, length, sd_total)
+                    max_length = 128 * 1024**2 if n64 or sd_browser_2m else 32 * 1024**2
                     allowed = bool(enabled and entry and entry["write"]
                                    and 0 < length <= max_length and length % block_size == 0)
                     answer = bytes([not allowed])
-                    if allowed and (selectable or snes or probe or md or n64):
+                    if allowed and (selectable or snes or probe or md or n64 or sd_browser_2m):
                         answer += bytes([block_size.bit_length() - 1])
                     reply = encode(op | 0x80, seq, answer)
                     if wire.write(reply) != len(reply):
@@ -507,16 +514,25 @@ def serve(port, sessions, seed, keys, log, stop, reconnect=None, cancel_event=No
                     if allowed:
                         # Preserve the old-baud ACK before changing the port, as op=17 does.
                         time.sleep(.05)
-                        label = "Benchmark" if probe else "N64" if n64 else "MD" if md else "SNES" if snes else "GBA"
+                        label = "SD Browser" if sd_browser_2m else "Benchmark" if probe else "N64" if n64 else "MD" if md else "SNES" if snes else "GBA"
                         log(f"[{label} 2M] Starting CRC16 transfer with selective retransmission\n")
                         log(f"[{label} 2M] Frame size {block_size} B, reply window 8192 B\n")
-                        result = receive_dump(wire, store, handle, length, log, stop, cancel_event,
-                                              block_size, 8192 // block_size, label,
-                                              expected_block=bytes(range(256)) * 2 if probe else None,
-                                              fallback_before_payload=n64,
-                                              completion_handshake=n64)
-                        if n64 and result is None:
-                            log("[N64 2M] Falling back to the ordinary N64 PC dump path\n")
+                        try:
+                            result = receive_dump(wire, store, handle, length, log, stop, cancel_event,
+                                                  block_size, 8192 // block_size, label,
+                                                  expected_block=bytes(range(256)) * 2 if probe else None,
+                                                  fallback_before_payload=n64 or sd_browser_2m,
+                                                  completion_handshake=n64 or sd_browser_2m,
+                                                  progress_callback=browser_progress(log, sd_total) if sd_browser_2m else None)
+                        except Exception:
+                            if sd_browser_2m:
+                                # Existing cancelled-file close removes the partial file
+                                # and its manifest entry. Never finalize a failed raw copy.
+                                entry["cancelled"] = True
+                                store.close_handle(handle, complete=False)
+                            raise
+                        if (n64 or sd_browser_2m) and result is None:
+                            log(f"[{label} 2M] Falling back to ordinary transfer\n")
                     continue
                 response = store.dispatch(op, payload)
                 if tx2m is not None:

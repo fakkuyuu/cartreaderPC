@@ -109,7 +109,7 @@ def receive_window(wire, first, count, round_number, blocks, stop, cancel, block
     return received, False
 
 
-def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512, window=16, label="GBA", *, expected_block=None, fallback_before_payload=False, completion_handshake=False):
+def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512, window=16, label="GBA", *, expected_block=None, fallback_before_payload=False, completion_handshake=False, progress_callback=None):
     if expected_block is not None and len(expected_block) != block_size:
         raise ValueError("benchmark pattern must match the frame size")
     previous_baud, previous_timeout = wire.baudrate, wire.timeout
@@ -131,7 +131,7 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
             received += count
         if not ended:
             if fallback_before_payload:
-                log(f"[{label} 2M] no ready marker; no ROM payload sent, returning to normal transfer\n")
+                log(f"[{label} 2M] no ready marker; no payload sent, returning to normal transfer\n")
                 return None
             raise ProtocolError("reader did not confirm the switch to 2M")
         phase = "sending the 2M ready acknowledgement"
@@ -171,6 +171,8 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
                 if wire.write(request) != len(request):
                     raise ProtocolError(f"{label} 2M retry request was not sent")
                 if not mask:
+                    if progress_callback is not None:
+                        progress_callback(committed)
                     if expected_block is None:
                         completed_stars = committed * 19 // length
                         if completed_stars > stars:
@@ -181,7 +183,7 @@ def receive_dump(wire, store, handle, length, log, stop, cancel, block_size=512,
         if completion_handshake:
             phase = "waiting for final N64 2M handoff marker"
             complete_n64_handoff(wire, stop, cancel)
-            log("[N64 2M] Reader handoff marker received; acknowledgement sent\n")
+            log(f"[{label} 2M] Reader handoff marker received; acknowledgement sent\n")
         phase = "flushing the last reply"
         wire.flush()
         time.sleep(0.04)

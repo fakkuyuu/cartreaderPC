@@ -13,7 +13,8 @@ enum RetryProfile : uint8_t {
   RETRY_PROFILE_BENCHMARK = 12,
   RETRY_PROFILE_SNES_EXPERIMENTAL = 13,
   RETRY_PROFILE_MD = 14,
-  RETRY_PROFILE_N64 = 15
+  RETRY_PROFILE_N64 = 15,
+  RETRY_PROFILE_SD_BROWSER = 16
 };
 // Sampled heap/stack gap, not a stack watermark or total allocator free space.
 enum RamStage : uint8_t { RAM_MENU, RAM_PROTOCOL, RAM_LIST_OPEN, RAM_LIST_ENTRY,
@@ -87,6 +88,7 @@ class PcFsFile : public Stream {
   operator bool() const { return handle != 0; }
   bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), bool snes = false, bool experimental = false);
   bool romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), PcLink::RetryProfile profile, void (*roundStarted)(uint8_t), bool fallbackBeforePayload = false, void (*progress)(uint32_t) = nullptr);
+  bool sdRetry2M(uint32_t total, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*));
   void benchmarkRetry(void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*), uint32_t& elapsed);
   bool isOpen() const { return handle != 0; }
   bool isDir() const { return kind & 1; }

@@ -446,7 +446,12 @@ static void sendGbaRetryFrame(uint32_t block, uint8_t round, bool end,
   gbaWriteByte((uint8_t)(check >> 8));
 }
 
-static uint32_t gbaRetryMask(uint8_t round, bool wide) {
+static void rawRetryFailure(bool recover) {
+  if (recover) resetAfterHostLoss();
+  stop();
+}
+
+static uint32_t gbaRetryMask(uint8_t round, bool wide, bool recover = false) {
   uint8_t reply[8];
   const uint8_t size = wide ? 8 : 6;
   uint8_t received = 0;
@@ -455,16 +460,16 @@ static uint32_t gbaRetryMask(uint8_t round, bool wide) {
     int value = Serial.read();
     if (value >= 0) reply[received++] = (uint8_t)value;
   }
-  if (received != size || reply[0] != 0xA7 || reply[1] != round) stop();
+  if (received != size || reply[0] != 0xA7 || reply[1] != round) rawRetryFailure(recover);
   uint16_t check = 0xffff;
   for (uint8_t i = 0; i < size - 2; ++i) check = crc(check, reply[i]);
-  if (check != (uint16_t)(reply[size - 2] | ((uint16_t)reply[size - 1] << 8))) stop();
+  if (check != (uint16_t)(reply[size - 2] | ((uint16_t)reply[size - 1] << 8))) rawRetryFailure(recover);
   uint32_t mask = reply[2] | ((uint32_t)reply[3] << 8);
   if (wide) mask |= ((uint32_t)reply[4] << 16) | ((uint32_t)reply[5] << 24);
   return mask;
 }
 
-static void gbaN64Handoff() {
+static void gbaN64Handoff(bool recover = false) {
   const uint8_t marker[] = {'N', '6', '4', 'D'};
   uint16_t check = 0xffff;
   for (uint8_t value : marker) {
@@ -484,15 +489,15 @@ static void gbaN64Handoff() {
       reply[received++] = (uint8_t)Serial.read();
   }
   if (received != sizeof(reply))
-    stop();
+    rawRetryFailure(recover);
   check = 0xffff;
   for (uint8_t i = 0; i < sizeof(expected); ++i) {
     if (reply[i] != expected[i])
-      stop();
+      rawRetryFailure(recover);
     check = crc(check, reply[i]);
   }
   if (check != (uint16_t)(reply[4] | ((uint16_t)reply[5] << 8)))
-    stop();
+    rawRetryFailure(recover);
 }
 
 static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
@@ -500,13 +505,16 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
                              uint8_t mode, uint32_t* measuredUs = nullptr,
                              void (*roundStarted)(uint8_t) = nullptr,
                              bool fallbackBeforePayload = false,
-                             void (*progress)(uint32_t) = nullptr) {
+                             void (*progress)(uint32_t) = nullptr,
+                             uint32_t browserTotal = 0) {
+  const bool browser = mode == PcLink::RETRY_PROFILE_SD_BROWSER;
   data[0] = handle;
   put32(data + 1, length);
   data[5] = mode;
-  if (call(30, 6) != 2 || data[0]) return false;
+  if (browser) put32(data + 6, browserTotal);
+  if (call(30, browser ? 10 : 6) != 2 || data[0]) return false;
   const uint8_t frameShift = data[1];
-  if (frameShift < 8 || frameShift > 10) stop();
+  if (frameShift < 8 || frameShift > 10 || (browser && frameShift != 9)) rawRetryFailure(browser);
   const auto sendFrame = frameShift == 8 ? sendGbaRetryFrame<256> :
                          frameShift == 9 ? sendGbaRetryFrame<512> : sendGbaRetryFrame<1024>;
   const uint8_t window = 8192U >> frameShift;
@@ -532,17 +540,17 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
         Serial.begin(safeBaud);
         activeBaud = safeBaud;
         delay(100);
-        PcConsole.println(F("[N64 2M] negotiation timed out before payload; using normal transfer"));
+        PcConsole.println(browser ? F("[SD Browser 2M] negotiation timed out before payload; using normal transfer") : F("[N64 2M] negotiation timed out before payload; using normal transfer"));
         return false;
       }
-      stop();
+      rawRetryFailure(browser);
     }
     sendFrame(0xffffffffUL, 0xff, true, beginBlock, readWord);
     gbaFlushTx();
     const uint32_t sent = millis();
     while (!Serial.available() && millis() - sent < 100UL) {}
   }
-  if (gbaRetryMask(0xff, wide) != 0) stop();
+  if (gbaRetryMask(0xff, wide, browser) != 0) rawRetryFailure(browser);
   gbaPayloadUs = 0;
   uint32_t replyUs = 0;
   const uint32_t streamStart = micros();
@@ -552,7 +560,7 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
     const uint32_t validMask = 0xffffffffUL >> (32 - count);
     uint32_t mask = validMask;
     for (uint8_t round = 0; mask; ++round) {
-      if (round >= 10) stop();
+      if (round >= 10) rawRetryFailure(browser);
       if (roundStarted) roundStarted(round);
       for (uint8_t i = 0; i < count; ++i) {
         if (mask & (1UL << i)) sendFrame(first + i, round, false, beginBlock, readWord);
@@ -560,14 +568,14 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
       sendFrame(first, round, true, beginBlock, readWord);
       gbaFlushTx();
       const uint32_t replyStart = micros();
-      mask = gbaRetryMask(round, wide);
+      mask = gbaRetryMask(round, wide, browser);
       replyUs += micros() - replyStart;
-      if (mask & ~validMask) stop();
+      if (mask & ~validMask) rawRetryFailure(browser);
     }
     if (progress) progress((first + count) << frameShift);
   }
   // N64 requires both ends to confirm the final zero-mask before changing baud.
-  if (mode == PcLink::RETRY_PROFILE_N64) gbaN64Handoff();
+  if (mode == PcLink::RETRY_PROFILE_N64 || browser) gbaN64Handoff(browser);
   const uint32_t streamUs = micros() - streamStart;
   if (measuredUs) *measuredUs = streamUs;
   delay(150);
@@ -575,7 +583,7 @@ static bool gbaRetryTransfer(uint8_t handle, uint32_t length,
   Serial.begin(safeBaud);
   activeBaud = safeBaud;
   delay(100);
-  PcConsole.print(mode == PcLink::RETRY_PROFILE_N64 ? F("[N64 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_MD ? F("[MD 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_SNES || mode == PcLink::RETRY_PROFILE_SNES_EXPERIMENTAL ? F("[SNES 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_BENCHMARK ? F("[Benchmark 2M profile] payload_us=") : F("[GBA 2M profile] payload_us="));
+  PcConsole.print(browser ? F("[SD Browser 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_N64 ? F("[N64 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_MD ? F("[MD 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_SNES || mode == PcLink::RETRY_PROFILE_SNES_EXPERIMENTAL ? F("[SNES 2M profile] payload_us=") : mode == PcLink::RETRY_PROFILE_BENCHMARK ? F("[Benchmark 2M profile] payload_us=") : F("[GBA 2M profile] payload_us="));
   PcConsole.print(gbaPayloadUs);
   PcConsole.print(F(" reply_us="));
   PcConsole.print(replyUs);
@@ -908,6 +916,16 @@ bool PcFsFile::romRetry2M(uint32_t length, void (*beginBlock)(uint32_t), void (*
   if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord,
                                 (uint8_t)profile, nullptr, roundStarted,
                                 fallbackBeforePayload, progress)) return false;
+  pos = size = length;
+  return true;
+}
+
+bool PcFsFile::sdRetry2M(uint32_t total, void (*beginBlock)(uint32_t), void (*readWord)(uint8_t*)) {
+  const uint32_t length = total & ~511UL;
+  if (!writable || !handle || pos || length < 8192UL || length > 128UL * 1024UL * 1024UL) return false;
+  if (!PcLink::gbaRetryTransfer(handle, length, beginBlock, readWord,
+                                PcLink::RETRY_PROFILE_SD_BROWSER, nullptr, nullptr,
+                                true, nullptr, total)) return false;
   pos = size = length;
   return true;
 }
@@ -1253,6 +1271,20 @@ bool HybridSdFs::copyPhysicalToPc(uint8_t) {
 bool HybridSdFs::listPhysicalPath(uint8_t,const char*) { return false; }
 bool HybridSdFs::copyPhysicalPathToPc(uint8_t,const char*) { return false; }
 static const char browserToken[]="/__crpc_browser_file__";
+// Reuse the physical SD buffer. Every retry reads the exact requested sector;
+// no 8 KiB window is allocated on the AVR.
+static ::FsFile* sdRetrySource = nullptr;
+static uint16_t sdRetryOffset;
+static void sdRetryBeginBlock(uint32_t offset) {
+  if (!sdRetrySource || !sdRetrySource->seekSet(offset) ||
+      sdRetrySource->read(sdBuffer, sizeof(sdBuffer)) != (int)sizeof(sdBuffer))
+    PcLink::resetAfterHostLoss();
+  sdRetryOffset = 0;
+}
+static void sdRetryReadWord(uint8_t* word) {
+  word[0] = sdBuffer[sdRetryOffset++];
+  word[1] = sdBuffer[sdRetryOffset++];
+}
 static bool copyOnePhysicalFile(const char* name) {
   PcLink::reportRam(PcLink::RAM_COPY_OPEN);
   ::FsFile source;
@@ -1266,13 +1298,23 @@ static bool copyOnePhysicalFile(const char* name) {
   if(!destination.open(browserToken,O_WRITE|O_CREAT|O_TRUNC)) { source.close(); return false; }
   PcConsole.print(F("[SD Copy] ")); PcConsole.println(browserToken);
   uint32_t done=0, total=source.fileSize();
-  while(source.available()) {
+  sdRetrySource = &source;
+  if (destination.sdRetry2M(total, sdRetryBeginBlock, sdRetryReadWord)) {
+    done = total & ~511UL;
+    // The final retry may have read an earlier sector; seek to the exact tail.
+    if (!source.seekSet(done)) {
+      sdRetrySource = nullptr;
+      destination.close(); source.close(); pc.remove(browserToken); return false;
+    }
+  }
+  sdRetrySource = nullptr;
+  while(done < total) {
     if(PcLink::takeCancelRequest()) {
       destination.close(); source.close();
       pc.remove(browserToken);
       PcConsole.println(F("[SD Browser] copy cancelled")); return false;
     }
-    int count=source.read(sdBuffer,sdCopyReadSize);
+    int count=source.read(sdBuffer,min((uint32_t)sdCopyReadSize,total-done));
     PcLink::sampleRam(PcLink::RAM_SD_READ);
     if(count<=0 || destination.write(sdBuffer,count)!=(size_t)count) {
       destination.close(); source.close(); pc.remove(browserToken); return false;
@@ -1283,6 +1325,10 @@ static bool copyOnePhysicalFile(const char* name) {
       PcConsole.print(F("[SD Progress]\t")); PcConsole.print(done);
       PcConsole.print('\t'); PcConsole.println(total);
     }
+  }
+  if (PcLink::takeCancelRequest()) {
+    destination.close(); source.close(); pc.remove(browserToken);
+    PcConsole.println(F("[SD Browser] copy cancelled")); return false;
   }
   destination.close(); source.close(); return true;
 }
