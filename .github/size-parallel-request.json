@@ -1,29 +1,40 @@
 {
-  "id": "parallel-014-integration",
-  "base": "abcaf5567738d0065f431c775b77069a9fec132c",
-  "expected_base_flash": 211264,
-  "expected_base_ram": 6135,
-  "endpoints_only": true,
+  "id": "parallel-015",
+  "base": "4aeb415d32858c7112f4a87bbf8aa01c8b9c3f47",
+  "expected_base_flash": 210400,
+  "expected_base_ram": 6123,
   "candidates": [
     {
-      "id": "integration-ws",
-      "head": "6442ee27e03b1e6655ebe34f465244d1adfe1349"
+      "id": "gb-pelican",
+      "head": "c36fc858ee8fc7707e9eed278fe09bed6f88fa49"
     },
     {
-      "id": "integration-ws-md",
-      "head": "5436ff3ed5e5a4cf6e93d1463aadeac06d92fa97"
+      "id": "gba-eep",
+      "head": "56878331a2086fd980fc4fab84c2ce29c0001400"
     },
     {
-      "id": "integration-ws-md-gb",
-      "head": "69ef748fee58c2fb4dd638473c4a595ea32bd01c"
+      "id": "md-eep",
+      "head": "a8359b291816d191a9afbe175b25c763ff1abbea"
     },
     {
-      "id": "integration-ws-md-gb-n64",
-      "head": "34d5479b96927e36363ea0743c92dc4baa6b7422"
+      "id": "n64-eep",
+      "head": "a1da5680bd0e90d59b18b10d8374a74684c5e94e"
     },
     {
-      "id": "integration-ws-md-gb-n64-msx",
-      "head": "379e507e3feef2c1694d11a56fd38db4aa5922c6"
+      "id": "nes-eep",
+      "head": "a285881a1c1597c271aa05be08e2d65c9d9127c2"
+    },
+    {
+      "id": "snes-sram",
+      "head": "5c42281ebd2b9a71866fa9bef80743afd246dfe8"
+    },
+    {
+      "id": "pce-lock",
+      "head": "0f0398112cc51dd18845d160ca4a232fa9afcf47"
+    },
+    {
+      "id": "ws-header",
+      "head": "7d715578d3704b6e900eafd837d03d4049b898df"
     }
   ]
 }
