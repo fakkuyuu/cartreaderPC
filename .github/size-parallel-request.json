@@ -1,28 +1,17 @@
 {
-  "id": "parallel-005",
-  "base": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
+  "id": "parallel-005-integration",
+  "base": "ea0a96b82974f670f7b6c34ad28329741c621f91",
   "expected_base_flash": 214096,
   "expected_base_ram": 6281,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "ws-verify-result",
-      "head": "a02515bd48199f703afe0cc963f0e3a75f305753",
-      "path": "Cart_Reader/WS.ino"
+      "id": "integration-nes",
+      "head": "08343c0e1b1b3174beff1cdb59c59ea974f6bd98"
     },
     {
-      "id": "nes-mapper72-92",
-      "head": "7ee8871e601151590f0279abd565e913f3ad574b",
-      "path": "Cart_Reader/NES.ino"
-    },
-    {
-      "id": "pce-crc-result",
-      "head": "40cc4ad71bfdca897e12291728bfcff7288cb51f",
-      "path": "Cart_Reader/PCE.ino"
-    },
-    {
-      "id": "md-sram-read-block",
-      "head": "3c6c4d70fb07a1d7815e594f3773d4bd6d411a66",
-      "path": "Cart_Reader/MD.ino"
+      "id": "integration-nes-md",
+      "head": "d9161f565318aff36eb8fa41484b2728235491ad"
     }
   ]
 }
