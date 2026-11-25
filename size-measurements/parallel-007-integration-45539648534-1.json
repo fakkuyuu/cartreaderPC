@@ -1,0 +1,123 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45539648534",
+  "run_attempt": "1",
+  "workflow_commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+  "request": {
+    "id": "parallel-007-integration",
+    "base": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
+    "expected_base_flash": 213732,
+    "expected_base_ram": 6281,
+    "endpoints_only": true,
+    "candidates": [
+      {
+        "id": "integration-ngp",
+        "head": "2146e8162f6fa033e8e8a48664a655f720e85991"
+      },
+      {
+        "id": "integration-ngp-msx",
+        "head": "f19e90a693bd0bf47522db32a41edcf70291af01"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45539648534",
+      "run_attempt": "1",
+      "workflow_commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-ngp",
+        "head": "2146e8162f6fa033e8e8a48664a655f720e85991",
+        "base": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
+        "expected_base_flash": 213732,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
+          "subject": "Measure seventh batch of four independent firmware size candidates",
+          "status": "ok",
+          "flash": 213732,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "2146e8162f6fa033e8e8a48664a655f720e85991",
+          "subject": "Adopt ngp-autoselect (isolated -60 B; dbb75d0)",
+          "status": "ok",
+          "flash": 213672,
+          "ram": 6281,
+          "delta_previous": -60,
+          "delta_base": -60,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-ngp",
+        "head": "2146e8162f6fa033e8e8a48664a655f720e85991"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45539648534",
+      "run_attempt": "1",
+      "workflow_commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-ngp-msx",
+        "head": "f19e90a693bd0bf47522db32a41edcf70291af01",
+        "base": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
+        "expected_base_flash": 213732,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
+          "subject": "Measure seventh batch of four independent firmware size candidates",
+          "status": "ok",
+          "flash": 213732,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "f19e90a693bd0bf47522db32a41edcf70291af01",
+          "subject": "Adopt msx-sram-write-block (isolated -168 B; 5819f55)",
+          "status": "ok",
+          "flash": 213504,
+          "ram": 6281,
+          "delta_previous": -228,
+          "delta_base": -228,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-ngp-msx",
+        "head": "f19e90a693bd0bf47522db32a41edcf70291af01"
+      }
+    }
+  ]
+}

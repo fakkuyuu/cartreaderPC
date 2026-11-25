@@ -1,34 +1,23 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45535239498",
+  "run_id": "45539648534",
   "run_attempt": "1",
-  "workflow_commit": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
+  "workflow_commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
   "request": {
-    "id": "parallel-007",
-    "base": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
+    "id": "parallel-007-integration",
+    "base": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
     "expected_base_flash": 213732,
     "expected_base_ram": 6281,
+    "endpoints_only": true,
     "candidates": [
       {
-        "id": "ngp-autoselect",
-        "head": "dbb75d06384e35404cda11c42a94b0d545c90f3e",
-        "path": "Cart_Reader/NGP.ino"
+        "id": "integration-ngp",
+        "head": "2146e8162f6fa033e8e8a48664a655f720e85991"
       },
       {
-        "id": "msx-sram-write-block",
-        "head": "5819f55103582c01a73ebde56eba59980ef1e23c",
-        "path": "Cart_Reader/MSX.ino"
-      },
-      {
-        "id": "gba-sram-write-verify",
-        "head": "a50ce3a0ece5e29893e4c257eb366d4d8bb49458",
-        "path": "Cart_Reader/GBA.ino"
-      },
-      {
-        "id": "ws-eeprom-read-verify",
-        "head": "344942b7047a1f025f6b0e4735582edbdef8f7da",
-        "path": "Cart_Reader/WS.ino"
+        "id": "integration-ngp-msx",
+        "head": "f19e90a693bd0bf47522db32a41edcf70291af01"
       }
     ]
   },
@@ -36,27 +25,26 @@
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45535239498",
+      "run_id": "45539648534",
       "run_attempt": "1",
-      "workflow_commit": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
+      "workflow_commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "ngp-autoselect",
-        "head": "dbb75d06384e35404cda11c42a94b0d545c90f3e",
-        "path": "Cart_Reader/NGP.ino",
-        "base": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
+        "id": "integration-ngp",
+        "head": "2146e8162f6fa033e8e8a48664a655f720e85991",
+        "base": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
         "expected_base_flash": 213732,
         "expected_base_ram": 6281,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
-          "subject": "Verify cumulative integrated NES SNES MD size in parallel",
+          "commit": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
+          "subject": "Measure seventh batch of four independent firmware size candidates",
           "status": "ok",
           "flash": 213732,
           "ram": 6281,
@@ -66,8 +54,8 @@
           "error": null
         },
         {
-          "commit": "dbb75d06384e35404cda11c42a94b0d545c90f3e",
-          "subject": "Share NGP flash autoselect sequence",
+          "commit": "2146e8162f6fa033e8e8a48664a655f720e85991",
+          "subject": "Adopt ngp-autoselect (isolated -60 B; dbb75d0)",
           "status": "ok",
           "flash": 213672,
           "ram": 6281,
@@ -79,34 +67,32 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "ngp-autoselect",
-        "head": "dbb75d06384e35404cda11c42a94b0d545c90f3e",
-        "path": "Cart_Reader/NGP.ino"
+        "id": "integration-ngp",
+        "head": "2146e8162f6fa033e8e8a48664a655f720e85991"
       }
     },
     {
       "schema": 1,
-      "run_id": "45535239498",
+      "run_id": "45539648534",
       "run_attempt": "1",
-      "workflow_commit": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
+      "workflow_commit": "d6bd1bb7061987d92256cd719b780797d5bdf8bb",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "msx-sram-write-block",
-        "head": "5819f55103582c01a73ebde56eba59980ef1e23c",
-        "path": "Cart_Reader/MSX.ino",
-        "base": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
+        "id": "integration-ngp-msx",
+        "head": "f19e90a693bd0bf47522db32a41edcf70291af01",
+        "base": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
         "expected_base_flash": 213732,
         "expected_base_ram": 6281,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
-          "subject": "Verify cumulative integrated NES SNES MD size in parallel",
+          "commit": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
+          "subject": "Measure seventh batch of four independent firmware size candidates",
           "status": "ok",
           "flash": 213732,
           "ram": 6281,
@@ -116,122 +102,21 @@
           "error": null
         },
         {
-          "commit": "5819f55103582c01a73ebde56eba59980ef1e23c",
-          "subject": "Share MSX SRAM block writes across mappers",
+          "commit": "f19e90a693bd0bf47522db32a41edcf70291af01",
+          "subject": "Adopt msx-sram-write-block (isolated -168 B; 5819f55)",
           "status": "ok",
-          "flash": 213564,
+          "flash": 213504,
           "ram": 6281,
-          "delta_previous": -168,
-          "delta_base": -168,
+          "delta_previous": -228,
+          "delta_base": -228,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "msx-sram-write-block",
-        "head": "5819f55103582c01a73ebde56eba59980ef1e23c",
-        "path": "Cart_Reader/MSX.ino"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45535239498",
-      "run_attempt": "1",
-      "workflow_commit": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "ok",
-      "request": {
-        "id": "gba-sram-write-verify",
-        "head": "a50ce3a0ece5e29893e4c257eb366d4d8bb49458",
-        "path": "Cart_Reader/GBA.ino",
-        "base": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
-        "expected_base_flash": 213732,
-        "expected_base_ram": 6281,
-        "endpoints_only": false
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
-          "subject": "Verify cumulative integrated NES SNES MD size in parallel",
-          "status": "ok",
-          "flash": 213732,
-          "ram": 6281,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "a50ce3a0ece5e29893e4c257eb366d4d8bb49458",
-          "subject": "Share GBA SRAM write and verify file-block traversal",
-          "status": "ok",
-          "flash": 213748,
-          "ram": 6281,
-          "delta_previous": 16,
-          "delta_base": 16,
-          "classification": "increased",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "gba-sram-write-verify",
-        "head": "a50ce3a0ece5e29893e4c257eb366d4d8bb49458",
-        "path": "Cart_Reader/GBA.ino"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45535239498",
-      "run_attempt": "1",
-      "workflow_commit": "9cb16b8879b620b0ce71e16792b92b19ce6bc533",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "ok",
-      "request": {
-        "id": "ws-eeprom-read-verify",
-        "head": "344942b7047a1f025f6b0e4735582edbdef8f7da",
-        "path": "Cart_Reader/WS.ino",
-        "base": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
-        "expected_base_flash": 213732,
-        "expected_base_ram": 6281,
-        "endpoints_only": false
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "94680ab059bf9cf155fcd46bf8634f91d2faefde",
-          "subject": "Verify cumulative integrated NES SNES MD size in parallel",
-          "status": "ok",
-          "flash": 213732,
-          "ram": 6281,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "344942b7047a1f025f6b0e4735582edbdef8f7da",
-          "subject": "Share WS EEPROM data block read and verify traversal",
-          "status": "ok",
-          "flash": 213776,
-          "ram": 6281,
-          "delta_previous": 44,
-          "delta_base": 44,
-          "classification": "increased",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "ws-eeprom-read-verify",
-        "head": "344942b7047a1f025f6b0e4735582edbdef8f7da",
-        "path": "Cart_Reader/WS.ino"
+        "id": "integration-ngp-msx",
+        "head": "f19e90a693bd0bf47522db32a41edcf70291af01"
       }
     }
   ]
