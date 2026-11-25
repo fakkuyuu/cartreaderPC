@@ -1,25 +1,40 @@
 {
-  "id": "parallel-020-integration",
-  "base": "98a77b156c9d0235c29d3dea2bf6a819301886a1",
-  "expected_base_flash": 209830,
+  "id": "parallel-021",
+  "base": "f45fb841911a61c5037d1f182ee95a037b913a2c",
+  "expected_base_flash": 209748,
   "expected_base_ram": 6123,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-gba",
-      "head": "5a7e4cb9a3e73d30c6e05588ed3bb40e0772f7cf"
+      "id": "gba-512k-flash",
+      "head": "3c2094cb007f749dae05f4e807c3b4f2fe7eb4ec"
     },
     {
-      "id": "integration-gba-n64",
-      "head": "1d40fabafc7173d852ad627f6a631ce84ed37254"
+      "id": "n64-cart-setup",
+      "head": "3188bcfbff2b130213a6bab2d84ab05e1820589d"
     },
     {
-      "id": "integration-gba-n64-ws",
-      "head": "aa12db8a253dbf981630add454d2ea846e9370d5"
+      "id": "gb-cart-setup",
+      "head": "43dccb4de5c101e077063b5fa888442d7afc86e9"
     },
     {
-      "id": "integration-gba-n64-ws-nes",
-      "head": "df7f2a81dca9e8665af406184b8d6a162de2f3ce"
+      "id": "md-cart-setup",
+      "head": "a21ae5a700771a341d2c3fab3b84f871b60b1075"
+    },
+    {
+      "id": "sms-size-display",
+      "head": "0d0dce8f544e29688148cd4ffcd1546e7ea4d2f8"
+    },
+    {
+      "id": "sv-write-error",
+      "head": "1ec5aa1c03b7dc6a2861b48e735c9c9ac81e81ab"
+    },
+    {
+      "id": "msx-size-stepping",
+      "head": "2dfde447e6aefcca681718c9f1e00b6f867ae2ed"
+    },
+    {
+      "id": "ws-verify-report",
+      "head": "3d54e20ceb36741b303b43e838e4e56bb2f58aad"
     }
   ]
 }
