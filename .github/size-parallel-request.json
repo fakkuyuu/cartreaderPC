@@ -1,25 +1,28 @@
 {
-  "id": "parallel-004-integration",
-  "base": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
-  "expected_base_flash": 214240,
+  "id": "parallel-005",
+  "base": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
+  "expected_base_flash": 214096,
   "expected_base_ram": 6281,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-nes",
-      "head": "6e1ebdfb2720b9e77782116c1119567412690860"
+      "id": "ws-verify-result",
+      "head": "a02515bd48199f703afe0cc963f0e3a75f305753",
+      "path": "Cart_Reader/WS.ino"
     },
     {
-      "id": "integration-nes-ws",
-      "head": "4f49402db44621e67289394b645f8446a77df7ca"
+      "id": "nes-mapper72-92",
+      "head": "7ee8871e601151590f0279abd565e913f3ad574b",
+      "path": "Cart_Reader/NES.ino"
     },
     {
-      "id": "integration-nes-ws-gb",
-      "head": "73a9fc2b2a2dbbd8de07eb9b07e5588d227721f5"
+      "id": "pce-crc-result",
+      "head": "40cc4ad71bfdca897e12291728bfcff7288cb51f",
+      "path": "Cart_Reader/PCE.ino"
     },
     {
-      "id": "integration-nes-ws-gb-gba",
-      "head": "7dabd8df2e978bd60854d9b7be64ac5a77f0c83a"
+      "id": "md-sram-read-block",
+      "head": "3c6c4d70fb07a1d7815e594f3773d4bd6d411a66",
+      "path": "Cart_Reader/MD.ino"
     }
   ]
 }
