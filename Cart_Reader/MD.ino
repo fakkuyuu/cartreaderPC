@@ -2737,6 +2737,12 @@ static void openMdBackupOutput() {
   }
 }
 
+static void finishMdBackupP17() __attribute__((noinline));
+static void finishMdBackupP17() {
+  closeBlankAndClear();
+  showSavedToFolder();
+}
+
 void readEEP_MD() {
   dataIn_MD();
 
@@ -2764,8 +2770,7 @@ void readEEP_MD() {
     myFile.write(sdBuffer, eepSize);
   }
   // Close the file:
-  closeBlankAndClear();
-  showSavedToFolder();
+  finishMdBackupP17();
 
   display_Update();
 }
@@ -2826,8 +2831,7 @@ void readBram_MD() {
   }
 
   // Close the file:
-  closeBlankAndClear();
-  showSavedToFolder();
+  finishMdBackupP17();
 
   display_Update();
 }
