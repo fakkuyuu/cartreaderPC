@@ -1,34 +1,31 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45524167795",
+  "run_id": "45525373749",
   "run_attempt": "1",
-  "workflow_commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+  "workflow_commit": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
   "request": {
-    "id": "parallel-004",
-    "base": "ed9a801b489271d0c059a8e35f95134c5250369e",
+    "id": "parallel-004-integration",
+    "base": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
     "expected_base_flash": 214240,
     "expected_base_ram": 6281,
+    "endpoints_only": true,
     "candidates": [
       {
-        "id": "nes-mmc6-sram",
-        "head": "21cc5e969525fdc3c78f6554491b660a2982f4e0",
-        "path": "Cart_Reader/NES.ino"
+        "id": "integration-nes",
+        "head": "6e1ebdfb2720b9e77782116c1119567412690860"
       },
       {
-        "id": "ws-save-write-ui",
-        "head": "d95be55c4f352a67600646b47bb6a9e948cf1d65",
-        "path": "Cart_Reader/WS.ino"
+        "id": "integration-nes-ws",
+        "head": "4f49402db44621e67289394b645f8446a77df7ca"
       },
       {
-        "id": "gb-mbc6-flash-bank",
-        "head": "71491d373f16cec00ae8f44afdead76110aa24a0",
-        "path": "Cart_Reader/GB.ino"
+        "id": "integration-nes-ws-gb",
+        "head": "73a9fc2b2a2dbbd8de07eb9b07e5588d227721f5"
       },
       {
-        "id": "gba-save-flash-command",
-        "head": "1b2aec4c863202fac6611dba3b541d6b23ef8ada",
-        "path": "Cart_Reader/GBA.ino"
+        "id": "integration-nes-ws-gb-gba",
+        "head": "7dabd8df2e978bd60854d9b7be64ac5a77f0c83a"
       }
     ]
   },
@@ -36,27 +33,26 @@
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45524167795",
+      "run_id": "45525373749",
       "run_attempt": "1",
-      "workflow_commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+      "workflow_commit": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "nes-mmc6-sram",
-        "head": "21cc5e969525fdc3c78f6554491b660a2982f4e0",
-        "path": "Cart_Reader/NES.ino",
-        "base": "ed9a801b489271d0c059a8e35f95134c5250369e",
+        "id": "integration-nes",
+        "head": "6e1ebdfb2720b9e77782116c1119567412690860",
+        "base": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
         "expected_base_flash": 214240,
         "expected_base_ram": 6281,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "ed9a801b489271d0c059a8e35f95134c5250369e",
-          "subject": "Verify cumulative integrated WS PCE N64 size in parallel",
+          "commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+          "subject": "Measure fourth batch of four independent firmware size candidates",
           "status": "ok",
           "flash": 214240,
           "ram": 6281,
@@ -66,8 +62,8 @@
           "error": null
         },
         {
-          "commit": "21cc5e969525fdc3c78f6554491b660a2982f4e0",
-          "subject": "Share MMC6 SRAM read and write bank selection",
+          "commit": "6e1ebdfb2720b9e77782116c1119567412690860",
+          "subject": "Adopt nes-mmc6-sram (isolated -2 B; 21cc5e9)",
           "status": "ok",
           "flash": 214238,
           "ram": 6281,
@@ -79,34 +75,32 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "nes-mmc6-sram",
-        "head": "21cc5e969525fdc3c78f6554491b660a2982f4e0",
-        "path": "Cart_Reader/NES.ino"
+        "id": "integration-nes",
+        "head": "6e1ebdfb2720b9e77782116c1119567412690860"
       }
     },
     {
       "schema": 1,
-      "run_id": "45524167795",
+      "run_id": "45525373749",
       "run_attempt": "1",
-      "workflow_commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+      "workflow_commit": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "ws-save-write-ui",
-        "head": "d95be55c4f352a67600646b47bb6a9e948cf1d65",
-        "path": "Cart_Reader/WS.ino",
-        "base": "ed9a801b489271d0c059a8e35f95134c5250369e",
+        "id": "integration-nes-ws",
+        "head": "4f49402db44621e67289394b645f8446a77df7ca",
+        "base": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
         "expected_base_flash": 214240,
         "expected_base_ram": 6281,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "ed9a801b489271d0c059a8e35f95134c5250369e",
-          "subject": "Verify cumulative integrated WS PCE N64 size in parallel",
+          "commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+          "subject": "Measure fourth batch of four independent firmware size candidates",
           "status": "ok",
           "flash": 214240,
           "ram": 6281,
@@ -116,47 +110,45 @@
           "error": null
         },
         {
-          "commit": "d95be55c4f352a67600646b47bb6a9e948cf1d65",
-          "subject": "Share WS SRAM and EEPROM file selection and write progress display",
+          "commit": "4f49402db44621e67289394b645f8446a77df7ca",
+          "subject": "Adopt ws-save-write-ui (isolated -44 B; d95be55)",
           "status": "ok",
-          "flash": 214196,
+          "flash": 214194,
           "ram": 6281,
-          "delta_previous": -44,
-          "delta_base": -44,
+          "delta_previous": -46,
+          "delta_base": -46,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "ws-save-write-ui",
-        "head": "d95be55c4f352a67600646b47bb6a9e948cf1d65",
-        "path": "Cart_Reader/WS.ino"
+        "id": "integration-nes-ws",
+        "head": "4f49402db44621e67289394b645f8446a77df7ca"
       }
     },
     {
       "schema": 1,
-      "run_id": "45524167795",
+      "run_id": "45525373749",
       "run_attempt": "1",
-      "workflow_commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+      "workflow_commit": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "gb-mbc6-flash-bank",
-        "head": "71491d373f16cec00ae8f44afdead76110aa24a0",
-        "path": "Cart_Reader/GB.ino",
-        "base": "ed9a801b489271d0c059a8e35f95134c5250369e",
+        "id": "integration-nes-ws-gb",
+        "head": "73a9fc2b2a2dbbd8de07eb9b07e5588d227721f5",
+        "base": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
         "expected_base_flash": 214240,
         "expected_base_ram": 6281,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "ed9a801b489271d0c059a8e35f95134c5250369e",
-          "subject": "Verify cumulative integrated WS PCE N64 size in parallel",
+          "commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+          "subject": "Measure fourth batch of four independent firmware size candidates",
           "status": "ok",
           "flash": 214240,
           "ram": 6281,
@@ -166,47 +158,45 @@
           "error": null
         },
         {
-          "commit": "71491d373f16cec00ae8f44afdead76110aa24a0",
-          "subject": "Share MBC6 flash bank register setup in save writing",
+          "commit": "73a9fc2b2a2dbbd8de07eb9b07e5588d227721f5",
+          "subject": "Adopt gb-mbc6-flash-bank (isolated -70 B; 71491d3)",
           "status": "ok",
-          "flash": 214170,
+          "flash": 214124,
           "ram": 6281,
-          "delta_previous": -70,
-          "delta_base": -70,
+          "delta_previous": -116,
+          "delta_base": -116,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "gb-mbc6-flash-bank",
-        "head": "71491d373f16cec00ae8f44afdead76110aa24a0",
-        "path": "Cart_Reader/GB.ino"
+        "id": "integration-nes-ws-gb",
+        "head": "73a9fc2b2a2dbbd8de07eb9b07e5588d227721f5"
       }
     },
     {
       "schema": 1,
-      "run_id": "45524167795",
+      "run_id": "45525373749",
       "run_attempt": "1",
-      "workflow_commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+      "workflow_commit": "06de195de2e6e73351bff62d3cbd1ab1a2b30114",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "gba-save-flash-command",
-        "head": "1b2aec4c863202fac6611dba3b541d6b23ef8ada",
-        "path": "Cart_Reader/GBA.ino",
-        "base": "ed9a801b489271d0c059a8e35f95134c5250369e",
+        "id": "integration-nes-ws-gb-gba",
+        "head": "7dabd8df2e978bd60854d9b7be64ac5a77f0c83a",
+        "base": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
         "expected_base_flash": 214240,
         "expected_base_ram": 6281,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "ed9a801b489271d0c059a8e35f95134c5250369e",
-          "subject": "Verify cumulative integrated WS PCE N64 size in parallel",
+          "commit": "85bfd7c0902d7882fc5cf310b951bc38ea797a71",
+          "subject": "Measure fourth batch of four independent firmware size candidates",
           "status": "ok",
           "flash": 214240,
           "ram": 6281,
@@ -216,22 +206,21 @@
           "error": null
         },
         {
-          "commit": "1b2aec4c863202fac6611dba3b541d6b23ef8ada",
-          "subject": "Share GBA save flash program command sequence",
+          "commit": "7dabd8df2e978bd60854d9b7be64ac5a77f0c83a",
+          "subject": "Adopt gba-save-flash-command (isolated -28 B; 1b2aec4)",
           "status": "ok",
-          "flash": 214212,
+          "flash": 214096,
           "ram": 6281,
-          "delta_previous": -28,
-          "delta_base": -28,
+          "delta_previous": -144,
+          "delta_base": -144,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "gba-save-flash-command",
-        "head": "1b2aec4c863202fac6611dba3b541d6b23ef8ada",
-        "path": "Cart_Reader/GBA.ino"
+        "id": "integration-nes-ws-gb-gba",
+        "head": "7dabd8df2e978bd60854d9b7be64ac5a77f0c83a"
       }
     }
   ]
