@@ -1,0 +1,227 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45541415453",
+  "run_attempt": "1",
+  "workflow_commit": "ffb5d84c856076fac55bb012026e4cdf51b054f6",
+  "request": {
+    "id": "parallel-008-integration",
+    "base": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
+    "expected_base_flash": 213504,
+    "expected_base_ram": 6281,
+    "endpoints_only": true,
+    "candidates": [
+      {
+        "id": "integration-msx",
+        "head": "06716c600635c3f2d972c059cf4f52c3211c1a81"
+      },
+      {
+        "id": "integration-msx-pce",
+        "head": "78688bca6252478024cebbd515bb1121e865d0cc"
+      },
+      {
+        "id": "integration-msx-pce-n64",
+        "head": "62545e9f449539071c96d0a9345814f0959caac1"
+      },
+      {
+        "id": "integration-msx-pce-n64-snes",
+        "head": "785ee15fd5bea75122dd7a55e9abd6f7f21cfccf"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45541415453",
+      "run_attempt": "1",
+      "workflow_commit": "ffb5d84c856076fac55bb012026e4cdf51b054f6",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-msx",
+        "head": "06716c600635c3f2d972c059cf4f52c3211c1a81",
+        "base": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
+        "expected_base_flash": 213504,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
+          "subject": "Measure eighth batch of four independent firmware size candidates",
+          "status": "ok",
+          "flash": 213504,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "06716c600635c3f2d972c059cf4f52c3211c1a81",
+          "subject": "Adopt msx-koei-sram-banks (isolated -22 B; 92b1426)",
+          "status": "ok",
+          "flash": 213482,
+          "ram": 6281,
+          "delta_previous": -22,
+          "delta_base": -22,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-msx",
+        "head": "06716c600635c3f2d972c059cf4f52c3211c1a81"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45541415453",
+      "run_attempt": "1",
+      "workflow_commit": "ffb5d84c856076fac55bb012026e4cdf51b054f6",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-msx-pce",
+        "head": "78688bca6252478024cebbd515bb1121e865d0cc",
+        "base": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
+        "expected_base_flash": 213504,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
+          "subject": "Measure eighth batch of four independent firmware size candidates",
+          "status": "ok",
+          "flash": 213504,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "78688bca6252478024cebbd515bb1121e865d0cc",
+          "subject": "Adopt pce-sf2-bank-loop (isolated -40 B; 5257a7d)",
+          "status": "ok",
+          "flash": 213442,
+          "ram": 6281,
+          "delta_previous": -62,
+          "delta_base": -62,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-msx-pce",
+        "head": "78688bca6252478024cebbd515bb1121e865d0cc"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45541415453",
+      "run_attempt": "1",
+      "workflow_commit": "ffb5d84c856076fac55bb012026e4cdf51b054f6",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-msx-pce-n64",
+        "head": "62545e9f449539071c96d0a9345814f0959caac1",
+        "base": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
+        "expected_base_flash": 213504,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
+          "subject": "Measure eighth batch of four independent firmware size candidates",
+          "status": "ok",
+          "flash": 213504,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "62545e9f449539071c96d0a9345814f0959caac1",
+          "subject": "Adopt n64-accessory-verify (isolated -220 B; 2ded500)",
+          "status": "ok",
+          "flash": 213222,
+          "ram": 6281,
+          "delta_previous": -282,
+          "delta_base": -282,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-msx-pce-n64",
+        "head": "62545e9f449539071c96d0a9345814f0959caac1"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45541415453",
+      "run_attempt": "1",
+      "workflow_commit": "ffb5d84c856076fac55bb012026e4cdf51b054f6",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-msx-pce-n64-snes",
+        "head": "785ee15fd5bea75122dd7a55e9abd6f7f21cfccf",
+        "base": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
+        "expected_base_flash": 213504,
+        "expected_base_ram": 6281,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "e00cb1cbd5d2ee951dcd0c7408cb5e5208ab1b7b",
+          "subject": "Measure eighth batch of four independent firmware size candidates",
+          "status": "ok",
+          "flash": 213504,
+          "ram": 6281,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "785ee15fd5bea75122dd7a55e9abd6f7f21cfccf",
+          "subject": "Adopt snes-rom-bank-reader (isolated -164 B; 941f448)",
+          "status": "ok",
+          "flash": 213058,
+          "ram": 6281,
+          "delta_previous": -446,
+          "delta_base": -446,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-msx-pce-n64-snes",
+        "head": "785ee15fd5bea75122dd7a55e9abd6f7f21cfccf"
+      }
+    }
+  ]
+}
