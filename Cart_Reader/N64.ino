@@ -4116,10 +4116,9 @@ void resetGameshark_N64() {
 }
 
 // Read rom and save to the SD card
-void backupGameshark_N64() {
-  createFolderAndOpenFile("N64", "ROM", "GameShark", "z64");
-
-  for (unsigned long currByte = romBase + 0xEC00000; currByte < (romBase + 0xEC00000 + flashSize); currByte += 512) {
+static void backupAccessoryRange_N64(unsigned long start, unsigned long end) __attribute__((noinline));
+static void backupAccessoryRange_N64(unsigned long start, unsigned long end) {
+  for (unsigned long currByte = start; currByte < end; currByte += 512) {
     // Blink led
     if (currByte % 16384 == 0)
       blinkLED();
@@ -4130,6 +4129,12 @@ void backupGameshark_N64() {
     readN64WordsToBuffer(512);
     writeSdBufferBlock();
   }
+}
+
+void backupGameshark_N64() {
+  createFolderAndOpenFile("N64", "ROM", "GameShark", "z64");
+
+  backupAccessoryRange_N64(romBase + 0xEC00000, romBase + 0xEC00000 + flashSize);
   // Close the file:
   closeCurrentFile();
 }
@@ -4406,17 +4411,7 @@ void backupXplorer_N64() {
   // create a new folder
   createFolderAndOpenFile("N64", "ROM", "XPLORER64", "z64");
 
-  for (unsigned long currByte = 0x10400000; currByte <= 0x1043FFFF; currByte += 512) {
-    // Blink led
-    if (currByte % 16384 == 0)
-      blinkLED();
-
-    // Set the address for the next 512 bytes
-    setAddress_N64(currByte);
-
-    readN64WordsToBuffer(512);
-    writeSdBufferBlock();
-  }
+  backupAccessoryRange_N64(0x10400000, 0x10440000);
   // Close the file:
   closeCurrentFile();
   println_Msg(F("Done."));
