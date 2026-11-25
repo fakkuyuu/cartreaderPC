@@ -1155,7 +1155,7 @@ boolean checkcart_SNES() {
     romType = EX;  // Check if ExHiROM
   } else if (romType == 0x3A) {
     romType = HI;                                 // Check if SPC7110
-  } else if (strcmp("3BB0", checksumStr) == 0) {  // invalid romType due to too long ROM name (Yuyu no Quiz de GO!GO!)
+  } else if (strcmp_P(checksumStr, PSTR("3BB0")) == 0) {  // invalid romType due to too long ROM name (Yuyu no Quiz de GO!GO!)
     romType = LO;
   } else {
     romType &= 1;  // Must be LoROM or HiROM
@@ -1205,7 +1205,7 @@ boolean checkcart_SNES() {
   }
 
   //Check SD card for alt config, pass CRC32 of snesHeader but filter out 0000 and FFFF checksums
-  if (!(strcmp(checksumStr, "0000") == 0) && !(strcmp(checksumStr, "FFFF") == 0)) {
+  if (!(strcmp_P(checksumStr, PSTR("0000")) == 0) && !(strcmp_P(checksumStr, PSTR("FFFF")) == 0)) {
     checkAltConf(crcStr);
   }
 
@@ -1242,7 +1242,7 @@ boolean checkcart_SNES() {
     if (snesHeader[0xFFDA - headerStart] == 0x33) {
       sramSizeExp = snesHeader[0xFFBD - headerStart];
     } else {
-      if (strncmp(romName, "STARFOX2", 8) == 0) {
+      if (strncmp_P(romName, PSTR("STARFOX2"), 8) == 0) {
         sramSizeExp = 6;
       } else {
         sramSizeExp = 5;
@@ -1272,7 +1272,7 @@ boolean checkcart_SNES() {
 
   // Test if checksum is equal to reverse checksum
   if (((word(snesHeader[0xFFDC - headerStart]) + (word(snesHeader[0xFFDD - headerStart]) * 256)) + (word(snesHeader[0xFFDE - headerStart]) + (word(snesHeader[0xFFDF - headerStart]) * 256))) == 65535) {
-    if (strcmp("0000", checksumStr) == 0) {
+    if (strcmp_P(checksumStr, PSTR("0000")) == 0) {
       return 0;
     } else {
       return 1;
