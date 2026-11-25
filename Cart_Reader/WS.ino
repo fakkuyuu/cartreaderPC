@@ -706,6 +706,26 @@ static void issueEepromRead_WS(uint16_t address) {
   dataIn_WS();
 }
 
+static uint32_t readEepromBlock_WS(uint32_t i, uint32_t bufSize, bool verifying) __attribute__((noinline));
+static uint32_t readEepromBlock_WS(uint32_t i, uint32_t bufSize, bool verifying) {
+  uint32_t errors = 0;
+  for (uint32_t j = 0; j < bufSize; j += 2) {
+    if ((j & 0x1f) == 0x00)
+      blinkLED();
+    issueEepromRead_WS((i + j) >> 1);
+    if (verifying) {
+      if (readByte_WSPort(0xc4) != sdBuffer[j])
+        errors++;
+      if (readByte_WSPort(0xc5) != sdBuffer[j + 1])
+        errors++;
+    } else {
+      sdBuffer[j] = readByte_WSPort(0xc4);
+      sdBuffer[j + 1] = readByte_WSPort(0xc5);
+    }
+  }
+  return errors;
+}
+
 static void readEEPROM_WS() {
   // generate fullname of eep file
   createFolderAndOpenFile("WS", "SAVE", romName, "eep");
@@ -714,15 +734,7 @@ static void readEEPROM_WS() {
   uint32_t bufSize = (eepromSize < 512 ? eepromSize : 512);
 
   for (uint32_t i = 0; i < eepromSize; i += bufSize) {
-    for (uint32_t j = 0; j < bufSize; j += 2) {
-      // blink LED
-      if ((j & 0x1f) == 0x00)
-        blinkLED();
-
-      issueEepromRead_WS((i + j) >> 1);
-      sdBuffer[j] = readByte_WSPort(0xc4);
-      sdBuffer[j + 1] = readByte_WSPort(0xc5);
-    }
+    readEepromBlock_WS(i, bufSize, false);
 
     myFile.write(sdBuffer, bufSize);
   }
@@ -744,18 +756,7 @@ static void verifyEEPROM_WS() {
     for (uint32_t i = 0; i < eepromSize; i += bufSize) {
       myFile.read(sdBuffer, bufSize);
 
-      for (uint32_t j = 0; j < bufSize; j += 2) {
-        // blink LED
-        if ((j & 0x1f) == 0x00)
-          blinkLED();
-
-        issueEepromRead_WS((i + j) >> 1);
-        if (readByte_WSPort(0xc4) != sdBuffer[j])
-          write_errors++;
-
-        if (readByte_WSPort(0xc5) != sdBuffer[j + 1])
-          write_errors++;
-      }
+      write_errors += readEepromBlock_WS(i, bufSize, true);
     }
 
     closeCurrentFile();
