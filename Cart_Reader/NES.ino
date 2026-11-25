@@ -1428,27 +1428,13 @@ chooseMapper:
     print_STR(press_to_change_STR, 1);
     println_Msg(F("Press right to select"));
 
-    if (digit == 0) {
+    if (digit <= 2 && digit >= 0) {
+      for (byte i = 0; i < 3; ++i) {
+        display.setDrawColor(i == digit ? 1 : 0);
+        byte x = 20 + i * 20;
+        display.drawLine(x, 30, x + 10, 30);
+      }
       display.setDrawColor(1);
-      display.drawLine(20, 30, 30, 30);
-      display.setDrawColor(0);
-      display.drawLine(40, 30, 50, 30);
-      display.drawLine(60, 30, 70, 30);
-      display.setDrawColor(1);
-    } else if (digit == 1) {
-      display.setDrawColor(0);
-      display.drawLine(20, 30, 30, 30);
-      display.setDrawColor(1);
-      display.drawLine(40, 30, 50, 30);
-      display.setDrawColor(0);
-      display.drawLine(60, 30, 70, 30);
-      display.setDrawColor(1);
-    } else if (digit == 2) {
-      display.setDrawColor(0);
-      display.drawLine(20, 30, 30, 30);
-      display.drawLine(40, 30, 50, 30);
-      display.setDrawColor(1);
-      display.drawLine(60, 30, 70, 30);
     }
     display.updateDisplay();
 
