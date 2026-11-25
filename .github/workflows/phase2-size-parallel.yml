@@ -36,7 +36,7 @@ jobs:
           for candidate in request['candidates']:
               assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}', candidate['id'])
               assert re.fullmatch(r'[0-9a-f]{40}', candidate['head'])
-              matrix.append(dict(candidate, base=request['base'], expected_base_flash=request['expected_base_flash'], expected_base_ram=request['expected_base_ram']))
+              matrix.append(dict(candidate, base=request['base'], expected_base_flash=request['expected_base_flash'], expected_base_ram=request['expected_base_ram'], endpoints_only=request.get('endpoints_only', False)))
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               print('candidates=' + json.dumps(matrix, separators=(',', ':')), file=f)
   measure:
@@ -84,7 +84,13 @@ jobs:
             $head = [string]$request.head
             $lineage = @(git -C $repo rev-list --first-parent $head)
             if ($lineage -notcontains $base) { throw 'Base must lie on the head first-parent history' }
-            $refs = @($base) + @(git -C $repo rev-list --first-parent --reverse "$base..$head")
+            if ($request.endpoints_only -eq $true) {
+              if ($base -eq $head) { throw 'Endpoints must be distinct' }
+              $refs = @($base, $head)
+            } else {
+              $refs = @($base) + @(git -C $repo rev-list --first-parent --reverse "$base..$head")
+              if ($refs.Count -ne 2) { throw 'Independent candidates must be exactly one commit from base' }
+            }
             if ($refs.Count -gt 41) { throw 'At most 40 candidate commits per request' }
             Save-Report
             $archive = Join-Path $temp 'upstream.zip'
