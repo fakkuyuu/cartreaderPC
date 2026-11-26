@@ -301,18 +301,8 @@ static uint8_t getCartInfo_WS() {
   snprintf(checksumStr, 5, "%04X", wsGameChecksum);
   snprintf(romName, 17, "%s%s", vendorID, cartID);
 
-  switch (romSize) {
-    case 0x01: cartSize = 131072 * 2; break;
-    case 0x02: cartSize = 131072 * 4; break;
-    case 0x03: cartSize = 131072 * 8; break;
-    case 0x04: cartSize = 131072 * 16; break;
-    // case 0x05: cartSize = 131072 * 24; break;
-    case 0x06: cartSize = 131072 * 32; break;
-    // case 0x07: cartSize = 131072 * 48; break;
-    case 0x08: cartSize = 131072 * 64; break;
-    case 0x09: cartSize = 131072 * 128; break;
-    default: cartSize = 0; break;
-  }
+  static const uint8_t romSizeUnits[] PROGMEM = { 0, 2, 4, 8, 16, 0, 32, 0, 64, 128 };
+  cartSize = romSize < sizeof(romSizeUnits) ? (uint32_t)pgm_read_byte(&romSizeUnits[romSize]) * 131072UL : 0;
 
   static const uint16_t sramSizes[] PROGMEM = { 0, 64, 256, 1024, 2048, 4096 };
   if (sramSize <= 5) {
