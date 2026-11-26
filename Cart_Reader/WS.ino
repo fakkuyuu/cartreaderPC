@@ -634,7 +634,7 @@ static void writeSRAM_WS() {
         readSdBufferBlock();
 
         // SRAM data on D0-D7, with A-1 to select high/low byte
-        for (uint32_t w = 0; w < 512; w++)
+        for (uint16_t w = 0; w < 512; w++)
           writeByte_WS(0x10000 + addr + w, sdBuffer[w]);
       }
     } while (++bank < end_bank);
