@@ -162,6 +162,12 @@ static void printOptionPrefixP31_MSX(byte i) {
   PcConsole.print('=');
 }
 
+static void finishPcOptionsP32_MSX() __attribute__((noinline));
+static void finishPcOptionsP32_MSX() {
+  PcConsole.println();
+  PcLink::menuReady();
+}
+
 static void pcMSXMapperReady() {
   PcConsole.print(F("[Control] msx-options\tX\tMSX Mapper"));
   for (byte i = 0; i < msxmapcount; i++) {
@@ -172,8 +178,7 @@ static void pcMSXMapperReady() {
     if (mapper < sizeof(msxMapperLabels) / sizeof(msxMapperLabels[0]))
       PcConsole.print(FS((const char*)pgm_read_ptr(&msxMapperLabels[mapper])));
   }
-  PcConsole.println();
-  PcLink::menuReady();
+  finishPcOptionsP32_MSX();
 }
 
 static void pcMSXSizeReady(char code, const __FlashStringHelper* title,
@@ -188,8 +193,7 @@ static void pcMSXSizeReady(char code, const __FlashStringHelper* title,
     PcConsole.print(ramValues ? MSXRAM[i] : MSX[i]);
     PcConsole.print(FS(SharedFlashText::unitKBWithSpace));
   }
-  PcConsole.println();
-  PcLink::menuReady();
+  finishPcOptionsP32_MSX();
 }
 #endif
 
