@@ -1,0 +1,434 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45776918603",
+  "run_attempt": "1",
+  "workflow_commit": "b30a866a34496c26317d0086c493f6fc1fe1face",
+  "request": {
+    "id": "parallel-028",
+    "base": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+    "expected_base_flash": 208598,
+    "expected_base_ram": 6105,
+    "candidates": [
+      {
+        "id": "msx-finish-read",
+        "head": "b3809e5fde7f308385f63345290cad03cbdd2a66"
+      },
+      {
+        "id": "gba-flash-type-branch",
+        "head": "3a91d82f4dcf6299acb88109d9109233fce0d891"
+      },
+      {
+        "id": "nes-manual-fallback-tail",
+        "head": "c10258609b4ebba306d1fa115a7242e538baff99"
+      },
+      {
+        "id": "sv-write-file-select",
+        "head": "ffe6bc7b3646b59bd6b83f2103102b4c1d48cbc6"
+      },
+      {
+        "id": "n64-device-cart-dispatch",
+        "head": "4ea5bc027aa7bb6672144f048c8818b8d3b10457"
+      },
+      {
+        "id": "pce-saved-path-helper",
+        "head": "7db7d050b6fdc67dba5e47f3b43890a54b6dcc8f"
+      },
+      {
+        "id": "gb-menu-display",
+        "head": "8a9ae24aa51fcf43d187afc24d605a31aa1002fd"
+      },
+      {
+        "id": "snes-speed-label",
+        "head": "da2adf71869c820ec6871d838dd0be72c8ca8597"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45776918603",
+      "run_attempt": "1",
+      "workflow_commit": "b30a866a34496c26317d0086c493f6fc1fe1face",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "msx-finish-read",
+        "head": "b3809e5fde7f308385f63345290cad03cbdd2a66",
+        "base": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+        "expected_base_flash": 208598,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+          "subject": "Accept measured phase 2 batch 27 reductions: flash 208598 B, RAM 6105 B",
+          "status": "ok",
+          "flash": 208598,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "b3809e5fde7f308385f63345290cad03cbdd2a66",
+          "subject": "Measure phase 2 batch 28 msx-finish-read",
+          "status": "ok",
+          "flash": 208520,
+          "ram": 6105,
+          "delta_previous": -78,
+          "delta_base": -78,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "msx-finish-read",
+        "head": "b3809e5fde7f308385f63345290cad03cbdd2a66"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45776918603",
+      "run_attempt": "1",
+      "workflow_commit": "b30a866a34496c26317d0086c493f6fc1fe1face",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "gba-flash-type-branch",
+        "head": "3a91d82f4dcf6299acb88109d9109233fce0d891",
+        "base": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+        "expected_base_flash": 208598,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+          "subject": "Accept measured phase 2 batch 27 reductions: flash 208598 B, RAM 6105 B",
+          "status": "ok",
+          "flash": 208598,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "3a91d82f4dcf6299acb88109d9109233fce0d891",
+          "subject": "Measure phase 2 batch 28 gba-flash-type-branch",
+          "status": "ok",
+          "flash": 208598,
+          "ram": 6105,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gba-flash-type-branch",
+        "head": "3a91d82f4dcf6299acb88109d9109233fce0d891"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45776918603",
+      "run_attempt": "1",
+      "workflow_commit": "b30a866a34496c26317d0086c493f6fc1fe1face",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "nes-manual-fallback-tail",
+        "head": "c10258609b4ebba306d1fa115a7242e538baff99",
+        "base": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+        "expected_base_flash": 208598,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+          "subject": "Accept measured phase 2 batch 27 reductions: flash 208598 B, RAM 6105 B",
+          "status": "ok",
+          "flash": 208598,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "c10258609b4ebba306d1fa115a7242e538baff99",
+          "subject": "Measure phase 2 batch 28 nes-manual-fallback-tail",
+          "status": "ok",
+          "flash": 208562,
+          "ram": 6105,
+          "delta_previous": -36,
+          "delta_base": -36,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "nes-manual-fallback-tail",
+        "head": "c10258609b4ebba306d1fa115a7242e538baff99"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45776918603",
+      "run_attempt": "1",
+      "workflow_commit": "b30a866a34496c26317d0086c493f6fc1fe1face",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "sv-write-file-select",
+        "head": "ffe6bc7b3646b59bd6b83f2103102b4c1d48cbc6",
+        "base": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+        "expected_base_flash": 208598,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+          "subject": "Accept measured phase 2 batch 27 reductions: flash 208598 B, RAM 6105 B",
+          "status": "ok",
+          "flash": 208598,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "ffe6bc7b3646b59bd6b83f2103102b4c1d48cbc6",
+          "subject": "Measure phase 2 batch 28 sv-write-file-select",
+          "status": "ok",
+          "flash": 208706,
+          "ram": 6105,
+          "delta_previous": 108,
+          "delta_base": 108,
+          "classification": "increased",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "sv-write-file-select",
+        "head": "ffe6bc7b3646b59bd6b83f2103102b4c1d48cbc6"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45776918603",
+      "run_attempt": "1",
+      "workflow_commit": "b30a866a34496c26317d0086c493f6fc1fe1face",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "n64-device-cart-dispatch",
+        "head": "4ea5bc027aa7bb6672144f048c8818b8d3b10457",
+        "base": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+        "expected_base_flash": 208598,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+          "subject": "Accept measured phase 2 batch 27 reductions: flash 208598 B, RAM 6105 B",
+          "status": "ok",
+          "flash": 208598,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "4ea5bc027aa7bb6672144f048c8818b8d3b10457",
+          "subject": "Measure phase 2 batch 28 n64-device-cart-dispatch",
+          "status": "ok",
+          "flash": 208604,
+          "ram": 6105,
+          "delta_previous": 6,
+          "delta_base": 6,
+          "classification": "increased",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "n64-device-cart-dispatch",
+        "head": "4ea5bc027aa7bb6672144f048c8818b8d3b10457"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45776918603",
+      "run_attempt": "1",
+      "workflow_commit": "b30a866a34496c26317d0086c493f6fc1fe1face",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "pce-saved-path-helper",
+        "head": "7db7d050b6fdc67dba5e47f3b43890a54b6dcc8f",
+        "base": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+        "expected_base_flash": 208598,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+          "subject": "Accept measured phase 2 batch 27 reductions: flash 208598 B, RAM 6105 B",
+          "status": "ok",
+          "flash": 208598,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "7db7d050b6fdc67dba5e47f3b43890a54b6dcc8f",
+          "subject": "Measure phase 2 batch 28 pce-saved-path-helper",
+          "status": "ok",
+          "flash": 208598,
+          "ram": 6105,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "pce-saved-path-helper",
+        "head": "7db7d050b6fdc67dba5e47f3b43890a54b6dcc8f"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45776918603",
+      "run_attempt": "1",
+      "workflow_commit": "b30a866a34496c26317d0086c493f6fc1fe1face",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "gb-menu-display",
+        "head": "8a9ae24aa51fcf43d187afc24d605a31aa1002fd",
+        "base": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+        "expected_base_flash": 208598,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+          "subject": "Accept measured phase 2 batch 27 reductions: flash 208598 B, RAM 6105 B",
+          "status": "ok",
+          "flash": 208598,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "8a9ae24aa51fcf43d187afc24d605a31aa1002fd",
+          "subject": "Measure phase 2 batch 28 gb-menu-display",
+          "status": "ok",
+          "flash": 208596,
+          "ram": 6105,
+          "delta_previous": -2,
+          "delta_base": -2,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gb-menu-display",
+        "head": "8a9ae24aa51fcf43d187afc24d605a31aa1002fd"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45776918603",
+      "run_attempt": "1",
+      "workflow_commit": "b30a866a34496c26317d0086c493f6fc1fe1face",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "snes-speed-label",
+        "head": "da2adf71869c820ec6871d838dd0be72c8ca8597",
+        "base": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+        "expected_base_flash": 208598,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f0bdd10c05c4365b421eba1db20c217cb6b738a7",
+          "subject": "Accept measured phase 2 batch 27 reductions: flash 208598 B, RAM 6105 B",
+          "status": "ok",
+          "flash": 208598,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "da2adf71869c820ec6871d838dd0be72c8ca8597",
+          "subject": "Measure phase 2 batch 28 snes-speed-label",
+          "status": "ok",
+          "flash": 208598,
+          "ram": 6105,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "snes-speed-label",
+        "head": "da2adf71869c820ec6871d838dd0be72c8ca8597"
+      }
+    }
+  ]
+}
