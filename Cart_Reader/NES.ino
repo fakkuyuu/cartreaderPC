@@ -814,17 +814,13 @@ void getMapping() {
   }
   oldcrc32 = ~oldcrc32;
   oldcrc32MMC3 = ~oldcrc32MMC3;
-  bool browseDatabase;
+  bool browseDatabase = false;
+  bool manualFallback = false;
 
   // Filter out all 0xFF checksums at 0x8000 and 0xE000
   if (oldcrc32 == 0xBD7BC39F && oldcrc32MMC3 == 0xBD7BC39F) {
     println_Msg(F("No data found."));
-    println_Msg(FS(SharedFlashText::textUsingManualSelection));
-    display_Update();
-    delay(500);
-    setDefaultRomName();
-    standaloneError();
-    browseDatabase = selectMapping(database);
+    manualFallback = true;
   } else {
     char crcStrAlt[9];
     println_Msg(F("Searching database"));
@@ -858,18 +854,16 @@ void getMapping() {
       // File searched until end but nothing found
       printBlankLine();
       println_Msg(F("CRC not found in database"));
-      println_Msg(FS(SharedFlashText::textUsingManualSelection));
-      display_Update();
-      delay(500);
-      // Print content of PRG for debugging
-      //printPRG(0x8000);
-      //printPRG(0xE000);
-
-      // Change ROM name to CART
-      setDefaultRomName();
-      standaloneError();
-    browseDatabase = selectMapping(database);
+      manualFallback = true;
     }
+  }
+  if (manualFallback) {
+    println_Msg(FS(SharedFlashText::textUsingManualSelection));
+    display_Update();
+    delay(500);
+    setDefaultRomName();
+    standaloneError();
+    browseDatabase = selectMapping(database);
   }
   if (browseDatabase) {
     struct database_entry entry;
