@@ -7,6 +7,8 @@
 
 #ifdef ENABLE_NES
 
+static void sizeP33_NES() __attribute__((noinline));
+
 //Line Content
 //37   Supported Mappers
 //185  Defines
@@ -4596,10 +4598,7 @@ void writeRAM() {
 
     resetStorageAndAppendPath();
 
-    display_Clear();
-    println_Msg(FS(SharedFlashText::textWritingFile));
-    println_Msg(filePath);
-    showFileNameAndUpdate();
+    sizeP33_NES();
 
     //open file on sd card
     if (openSelectedFileForRead()) {
@@ -4973,10 +4972,7 @@ void writeFLASH() {
     resetStorageAndAppendPath();
 
     rgbLed(red_color);
-    display_Clear();
-    println_Msg(FS(SharedFlashText::textWritingFile));
-    println_Msg(filePath);
-    showFileNameAndUpdate();
+    sizeP33_NES();
 
     uint8_t bytecheck;
     uint16_t banks;
@@ -5329,6 +5325,14 @@ void A29040B_writeFLASH() {
 // avoid warnings
 #undef MODE_READ
 #undef MODE_WRITE
+
+
+static void sizeP33_NES() {
+  display_Clear();
+  println_Msg(FS(SharedFlashText::textWritingFile));
+  println_Msg(filePath);
+  showFileNameAndUpdate();
+}
 
 #endif
 //******************************************
