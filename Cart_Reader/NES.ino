@@ -4412,13 +4412,18 @@ static void setMapper82SramAccess_NES(bool enabled) {
 }
 
 static void enableDefaultSram_NES(bool writing) __attribute__((noinline));
+static void initMapper19Ram_NES() __attribute__((noinline));
+static void initMapper19Ram_NES() {
+  for (size_t i = 0; i < 64; i++) {  // Init Register
+    write_ram_byte(0xE000, 0);
+  }
+}
+
 static void enableDefaultSram_NES(bool writing) {
   if (mapper == 118)               // 8K
     write_prg_byte(0xA001, writing ? 0x80 : 0xC0);  // PRG RAM enable, read-only or writable
   else if (!writing && mapper == 19) {
-    for (size_t i = 0; i < 64; i++) {  // Init Register
-      write_ram_byte(0xE000, 0);
-    }
+    initMapper19Ram_NES();
   } else if ((mapper == 21) || (mapper == 25))  // 8K
     write_prg_byte(0x8000, 0);
   else if (mapper == 26)           // 8K
@@ -4520,9 +4525,7 @@ void readRAM() {
             }
             myFile.write(sdBuffer, 128);
           } else {                             // SRAM 8K
-            for (size_t i = 0; i < 64; i++) {  // Init Register
-              write_ram_byte(0xE000, 0);
-            }
+            initMapper19Ram_NES();
             dumpPRG8KiB(base);  // 8K
           }
           break;
