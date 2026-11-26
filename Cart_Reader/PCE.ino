@@ -746,6 +746,12 @@ void write_tennokoe_bank_PCE(int bank_index) {
   finishRamMenuP30_PCE();
 }
 
+static void unlockFlashCommand_PCE() __attribute__((noinline));
+static void unlockFlashCommand_PCE() {
+  write_byte_PCE(0x5555, 0xAA);
+  write_byte_PCE(0x2AAA, 0x55);
+}
+
 void read_rom_PCE(void) {
   uint32_t rom_size;
   uint32_t processed_size = 0;
@@ -848,8 +854,7 @@ void flash_PCE() {
 
   // SOFTWARE ID PROGRAM
   flash_mode_PCE();
-  write_byte_PCE(0x5555, 0xAA);
-  write_byte_PCE(0x2AAA, 0x55);
+  unlockFlashCommand_PCE();
   write_byte_PCE(0x5555, 0x90);
   data_input_PCE();
   // tIDA = 150ns
@@ -859,8 +864,7 @@ void flash_PCE() {
 
   // EXIT SOFTWARE ID PROGRAM
   flash_mode_PCE();
-  write_byte_PCE(0x5555, 0xAA);
-  write_byte_PCE(0x2AAA, 0x55);
+  unlockFlashCommand_PCE();
   write_byte_PCE(0x5555, 0xF0);
 
   flashSize = 0;
@@ -914,11 +918,9 @@ void flash_PCE() {
 
     // CHIP ERASE PROGRAM
     flash_mode_PCE();
-    write_byte_PCE(0x5555, 0xAA);
-    write_byte_PCE(0x2AAA, 0x55);
+    unlockFlashCommand_PCE();
     write_byte_PCE(0x5555, 0x80);
-    write_byte_PCE(0x5555, 0xAA);
-    write_byte_PCE(0x2AAA, 0x55);
+    unlockFlashCommand_PCE();
     write_byte_PCE(0x5555, 0x10);
     // Data complement polling, wait until highest bit is 1
     flash_wait_status_PCE(0xFF);
@@ -941,8 +943,7 @@ void flash_PCE() {
       for (int currByte = 0; currByte < BUFSIZE; currByte++) {
         // BYTE PROGRAM
         byte b = sdBuffer[currByte];
-        write_byte_PCE(0x5555, 0xAA);
-        write_byte_PCE(0x2AAA, 0x55);
+        unlockFlashCommand_PCE();
         write_byte_PCE(0x5555, 0xA0);
         write_byte_PCE(currAddr + currByte, b);
         flash_wait_status_PCE(b);
