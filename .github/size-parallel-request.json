@@ -1,40 +1,21 @@
 {
-  "id": "parallel-029",
-  "base": "a6a3d3d39d38be529e40dcff66560d52b399dd29",
+  "id": "parallel-029-integration",
+  "base": "3ea1297673974e1614fd2ac3a6dd1a9f0e8b7df5",
   "expected_base_flash": 208482,
   "expected_base_ram": 6105,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "md-menu-clear",
-      "head": "67e60b89524691d6e0fa44cd674f644a45c8ea91"
+      "id": "integration-gba",
+      "head": "b5a8aabd4154fd8e29708a56dd3fc800b8de164f"
     },
     {
-      "id": "sms-menu-label",
-      "head": "0ff0c8261217bad5aa231c5cd61019a76be2e398"
+      "id": "integration-gba-sms",
+      "head": "c3d0c95f54edc8ab9e6a892ebfb89164ee8b54ce"
     },
     {
-      "id": "ws-verify-report",
-      "head": "8ff4c02a5868326202509edefe4b5233d089a1c7"
-    },
-    {
-      "id": "sv-write-error-tail",
-      "head": "c70fca21b9da698e2bbfe785a7b4c66afc27ccc0"
-    },
-    {
-      "id": "nes-chip-menu-tail",
-      "head": "8425d7c8672c969f99dad15b898841a35cf87591"
-    },
-    {
-      "id": "gba-flash-init-tail",
-      "head": "611b6124c9fafc82d14c1c21ceddabd735303774"
-    },
-    {
-      "id": "n64-stick-result-draw",
-      "head": "4e204b4c28b9ecc60007425a4315e54ffc6b8fcb"
-    },
-    {
-      "id": "pce-checksum-fallback",
-      "head": "940c8a460c28dbc5bd1d198b1221ce7879b6c25a"
+      "id": "integration-gba-sms-md",
+      "head": "6e4ac673c9dafec15bfaa4277999996934ac16dc"
     }
   ]
 }
