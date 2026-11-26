@@ -494,25 +494,18 @@ void confMenuManual() {
       break;
 
     case 1:
-      romType = LO;
-      numBanks = 128;
-      sramSize = 256;
-      strcpy(romName, "LoROM");
-      break;
-
     case 2:
-      romType = HI;
-      numBanks = 64;
-      sramSize = 64;
-      strcpy(romName, "HiROM");
+    case 3: {
+      static const uint8_t mappingTypes[] PROGMEM = { LO, HI, EX };
+      static const uint8_t bankCounts[] PROGMEM = { 128, 64, 96 };
+      static const char mappingNames[][6] PROGMEM = { "LoROM", "HiROM", "ExROM" };
+      const byte index = subMenu - 1;
+      romType = pgm_read_byte(&mappingTypes[index]);
+      numBanks = pgm_read_byte(&bankCounts[index]);
+      sramSize = subMenu == 2 ? 64 : 256;
+      strcpy_P(romName, mappingNames[index]);
       break;
-
-    case 3:
-      romType = EX;
-      numBanks = 96;
-      sramSize = 256;
-      strcpy(romName, "ExROM");
-      break;
+    }
 
     case 4:
       // Reset
