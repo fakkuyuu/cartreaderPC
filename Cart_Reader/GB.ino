@@ -655,44 +655,24 @@ void showCartInfo_GB() {
     //println_Msg(romBanks);
 
     print_Msg(FS(SharedFlashText::textSaveSize));
-    switch (sramSize) {
-      case 0:
-        if (romType == 6) {
-          print_Msg(F("512 Byte"));
-        } else if (romType == 0x22) {
-          print_Msg(lastByte);
-          print_Msg(F(" Byte"));
-        } else if (romType == 0xFD) {
-          print_Msg(F("32 Byte"));
-        } else {
-          print_Msg(FS(SharedFlashText::textNone));
-        }
-        break;
-      case 1:
-        print_Msg(F("2 KB"));
-        break;
-
-      case 2:
-        print_Msg(F("8 KB"));
-        break;
-
-      case 3:
-        if (romType == 0x20) {
-          print_Msg(F("1.03 MB"));
-        } else {
-          print_Msg(FS(SharedFlashText::text32KB));
-        }
-        break;
-
-      case 4:
-        print_Msg(FS(SharedFlashText::text128KB));
-        break;
-
-      case 5:
-        print_Msg(FS(SharedFlashText::text64KB));
-        break;
-
-      default: print_Msg(FS(SharedFlashText::textNone));
+    static const char sram2KB[] PROGMEM = "2 KB";
+    static const char sram8KB[] PROGMEM = "8 KB";
+    static const char* const sramLabels[] PROGMEM = {
+      SharedFlashText::textNone, sram2KB, sram8KB, SharedFlashText::text32KB,
+      SharedFlashText::text128KB, SharedFlashText::text64KB
+    };
+    if (sramSize == 0 && romType == 6) {
+      print_Msg(F("512 Byte"));
+    } else if (sramSize == 0 && romType == 0x22) {
+      print_Msg(lastByte);
+      print_Msg(F(" Byte"));
+    } else if (sramSize == 0 && romType == 0xFD) {
+      print_Msg(F("32 Byte"));
+    } else if (sramSize == 3 && romType == 0x20) {
+      print_Msg(F("1.03 MB"));
+    } else {
+      const byte index = sramSize < sizeof(sramLabels) / sizeof(sramLabels[0]) ? sramSize : 0;
+      print_Msg(FS((const char*)pgm_read_ptr(&sramLabels[index])));
     }
     printBlankLine();
     //print_Msg(F("Checksum: "));
