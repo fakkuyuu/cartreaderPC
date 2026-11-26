@@ -2769,6 +2769,12 @@ void readEEP_MD() {
   display_Update();
 }
 
+static void finishBackupWriteP22_MD() __attribute__((noinline));
+static void finishBackupWriteP22_MD() {
+  closeBlankAndClear();
+  showDoneAndUpdate();
+}
+
 void writeEEP_MD() {
   dataOut_MD();
 
@@ -2798,8 +2804,7 @@ void writeEEP_MD() {
       }
     }
     // Close the file:
-    closeBlankAndClear();
-    showDoneAndUpdate();
+    finishBackupWriteP22_MD();
   } else {
     fatalSdError();
   }
@@ -2851,8 +2856,7 @@ void writeBram_MD() {
     }
     writeWord_MD(0x380000, 0);  // Disable BRAM Writes
     // Close the file:
-    closeBlankAndClear();
-    showDoneAndUpdate();
+    finishBackupWriteP22_MD();
   } else {
     fatalSdError();
   }
