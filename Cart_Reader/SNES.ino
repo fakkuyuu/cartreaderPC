@@ -1470,12 +1470,17 @@ static void readSrtcRetryWord_SNES(uint8_t* output) {
 }
 
 
+static void setBusInput_SNES() __attribute__((noinline));
+static void setBusInput_SNES() {
+  dataIn();
+  controlIn_SNES();
+}
+
 static void writeSnesRegister_SNES(word address, byte value) {
   dataOut();
   controlOut_SNES();
   writeBank_SNES(0, address, value);
-  dataIn();
-  controlIn_SNES();
+  setBusInput_SNES();
 }
 
 // S-DD1's legacy reader selects one 1 MiB ROM page in the F0-FF window
@@ -1559,8 +1564,7 @@ static void writeCx4Mapping_SNES(byte value) {
   dataOut();
   controlOut_SNES();
   writeBank_SNES(0, 32594, value);
-  dataIn();
-  controlIn_SNES();
+  setBusInput_SNES();
 }
 static void prepareCx4Mapping_SNES() __attribute__((noinline));
 static void prepareCx4Mapping_SNES() {
@@ -1574,8 +1578,7 @@ static void prepareCx4Mapping_SNES() {
 
 void readROM_SNES() {
   // Set control
-  dataIn();
-  controlIn_SNES();
+  setBusInput_SNES();
 
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("SNES", "ROM", romName, "sfc");
@@ -1712,8 +1715,7 @@ void readROM_SNES() {
 
       writeBank_SNES(0, 18439, currMemmap);
 
-      dataIn();
-      controlIn_SNES();
+      setBusInput_SNES();
 
       readHiRomBanks(240, 256, &myFile);
       if (currMemmap == 2) display_Clear();  // need more space for the progress bars
@@ -1724,8 +1726,7 @@ void readROM_SNES() {
 
     writeBank_SNES(0, 18439, initialSOMap);
 
-    dataIn();
-    controlIn_SNES();
+    setBusInput_SNES();
   }
 
   // SPC7110: rebuild the relevant ROM window mapping from the file offset.
@@ -1774,8 +1775,7 @@ void readROM_SNES() {
       // Set 0x4834 to 0xFF
       writeBank_SNES(0, 0x4834, 0xFF);
 
-      dataIn();
-      controlIn_SNES();
+      setBusInput_SNES();
 
       // 0xE00000-0xEFFFFF
       //print_Msg(F(" 2"));
@@ -1794,8 +1794,7 @@ void readROM_SNES() {
         // Set 0x4833 to 3
         writeBank_SNES(0, 0x4833, 3);
 
-        dataIn();
-        controlIn_SNES();
+        setBusInput_SNES();
 
         // 0xF00000-0xFFFFFF
         //print_Msg(F(" 4"));
@@ -1812,8 +1811,7 @@ void readROM_SNES() {
       writeBank_SNES(0, 0x4833, 2);
       writeBank_SNES(0, 0x4834, 0);
 
-      dataIn();
-      controlIn_SNES();
+      setBusInput_SNES();
     }
   }
 
