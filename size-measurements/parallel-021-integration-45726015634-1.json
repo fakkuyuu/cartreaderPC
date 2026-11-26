@@ -1,0 +1,279 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45726015634",
+  "run_attempt": "1",
+  "workflow_commit": "48a5a7293bee615216266e638407ca6b1f2f0503",
+  "request": {
+    "id": "parallel-021-integration",
+    "base": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
+    "expected_base_flash": 209748,
+    "expected_base_ram": 6123,
+    "endpoints_only": true,
+    "candidates": [
+      {
+        "id": "integration-sms",
+        "head": "4a851cc5c690151857a7285115e898ceb1036a5a"
+      },
+      {
+        "id": "integration-sms-msx",
+        "head": "bb27fca035b3946e2bdc811d01ae4d5e76e2df90"
+      },
+      {
+        "id": "integration-sms-msx-n64",
+        "head": "3b7b1d4e49c117a2d662c606445a65aa726081b7"
+      },
+      {
+        "id": "integration-sms-msx-n64-gba",
+        "head": "e0ba76106a5628250985ec2ccd333cb8c1b49732"
+      },
+      {
+        "id": "integration-sms-msx-n64-gba-md",
+        "head": "3c47ad72d38ebbd8b3feaa4c2b86d2e9634f6680"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45726015634",
+      "run_attempt": "1",
+      "workflow_commit": "48a5a7293bee615216266e638407ca6b1f2f0503",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-sms",
+        "head": "4a851cc5c690151857a7285115e898ceb1036a5a",
+        "base": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
+        "expected_base_flash": 209748,
+        "expected_base_ram": 6123,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
+          "subject": "Measure twenty-first batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 209748,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "4a851cc5c690151857a7285115e898ceb1036a5a",
+          "subject": "Integrate measured phase 2 batch 21 sms size reduction",
+          "status": "ok",
+          "flash": 209666,
+          "ram": 6123,
+          "delta_previous": -82,
+          "delta_base": -82,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-sms",
+        "head": "4a851cc5c690151857a7285115e898ceb1036a5a"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45726015634",
+      "run_attempt": "1",
+      "workflow_commit": "48a5a7293bee615216266e638407ca6b1f2f0503",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-sms-msx",
+        "head": "bb27fca035b3946e2bdc811d01ae4d5e76e2df90",
+        "base": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
+        "expected_base_flash": 209748,
+        "expected_base_ram": 6123,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
+          "subject": "Measure twenty-first batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 209748,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "bb27fca035b3946e2bdc811d01ae4d5e76e2df90",
+          "subject": "Integrate measured phase 2 batch 21 msx size reduction",
+          "status": "ok",
+          "flash": 209644,
+          "ram": 6123,
+          "delta_previous": -104,
+          "delta_base": -104,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-sms-msx",
+        "head": "bb27fca035b3946e2bdc811d01ae4d5e76e2df90"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45726015634",
+      "run_attempt": "1",
+      "workflow_commit": "48a5a7293bee615216266e638407ca6b1f2f0503",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-sms-msx-n64",
+        "head": "3b7b1d4e49c117a2d662c606445a65aa726081b7",
+        "base": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
+        "expected_base_flash": 209748,
+        "expected_base_ram": 6123,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
+          "subject": "Measure twenty-first batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 209748,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "3b7b1d4e49c117a2d662c606445a65aa726081b7",
+          "subject": "Integrate measured phase 2 batch 21 n64 size reduction",
+          "status": "ok",
+          "flash": 209630,
+          "ram": 6123,
+          "delta_previous": -118,
+          "delta_base": -118,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-sms-msx-n64",
+        "head": "3b7b1d4e49c117a2d662c606445a65aa726081b7"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45726015634",
+      "run_attempt": "1",
+      "workflow_commit": "48a5a7293bee615216266e638407ca6b1f2f0503",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-sms-msx-n64-gba",
+        "head": "e0ba76106a5628250985ec2ccd333cb8c1b49732",
+        "base": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
+        "expected_base_flash": 209748,
+        "expected_base_ram": 6123,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
+          "subject": "Measure twenty-first batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 209748,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "e0ba76106a5628250985ec2ccd333cb8c1b49732",
+          "subject": "Integrate measured phase 2 batch 21 gba size reduction",
+          "status": "ok",
+          "flash": 209622,
+          "ram": 6123,
+          "delta_previous": -126,
+          "delta_base": -126,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-sms-msx-n64-gba",
+        "head": "e0ba76106a5628250985ec2ccd333cb8c1b49732"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45726015634",
+      "run_attempt": "1",
+      "workflow_commit": "48a5a7293bee615216266e638407ca6b1f2f0503",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-sms-msx-n64-gba-md",
+        "head": "3c47ad72d38ebbd8b3feaa4c2b86d2e9634f6680",
+        "base": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
+        "expected_base_flash": 209748,
+        "expected_base_ram": 6123,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
+          "subject": "Measure twenty-first batch of eight independent firmware size candidates",
+          "status": "ok",
+          "flash": 209748,
+          "ram": 6123,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "3c47ad72d38ebbd8b3feaa4c2b86d2e9634f6680",
+          "subject": "Integrate measured phase 2 batch 21 md size reduction",
+          "status": "ok",
+          "flash": 209618,
+          "ram": 6123,
+          "delta_previous": -130,
+          "delta_base": -130,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-sms-msx-n64-gba-md",
+        "head": "3c47ad72d38ebbd8b3feaa4c2b86d2e9634f6680"
+      }
+    }
+  ]
+}
