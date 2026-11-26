@@ -1751,15 +1751,14 @@ void printRamSize_NES(int index) {
   print_Msg(F("RAM Size: "));
   if (mapper == 0)
     println_Msg(pgm_read_byte(&(RAM[index])) / 4);
-  else if (mapper == 16)
-    println_Msg(pgm_read_byte(&(RAM[index])) * 32);
+  else if (mapper == 16 || mapper == 159 || mapper == 80)
+    println_Msg(pgm_read_byte(&(RAM[index])) * (mapper == 16 ? 32 : 16));
   else if (mapper == 19) {
     if (index == 2)
       println_Msg(F("128"));
     else
       println_Msg(pgm_read_byte(&(RAM[index])));
-  } else if ((mapper == 159) || (mapper == 80))
-    println_Msg(pgm_read_byte(&(RAM[index])) * 16);
+  }
   else if (mapper == 82)
     println_Msg(index * 5);
   else
