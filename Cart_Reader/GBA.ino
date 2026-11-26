@@ -83,13 +83,8 @@ void gbaMenu() {
         const byte detectedSaveType = getSaveType();
         switch (detectedSaveType) {
           case 1:
-            // 4K EEPROM
-            readEeprom_GBA(4);
-            break;
-
           case 2:
-            // 64K EEPROM
-            readEeprom_GBA(64);
+            readEeprom_GBA(detectedSaveType == 1 ? 4 : 64);
             break;
 
           case 3:
@@ -131,17 +126,14 @@ void gbaMenu() {
       const byte detectedWriteSaveType = getSaveType();
       switch (detectedWriteSaveType) {
         case 1:
-          // 4K EEPROM
-          writeEeprom_GBA(4);
-          verifyEEP_GBA(4);
-          setROM_GBA();
+        case 2: {
+          const byte size = detectedWriteSaveType == 1 ? 4 : 64;
+          writeEeprom_GBA(size);
+          verifyEEP_GBA(size);
+          if (detectedWriteSaveType == 1)
+            setROM_GBA();
           break;
-
-        case 2:
-          // 64K EEPROM
-          writeEeprom_GBA(64);
-          verifyEEP_GBA(64);
-          break;
+        }
 
         case 3:
         case 6: {
