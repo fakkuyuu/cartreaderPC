@@ -509,49 +509,15 @@ void manual_selectRomSize() {
   if (system_sg1000) {
     // Rom sizes for SG-1000
     SMSRomSize = chooseFlashMenuOption(F("Select ROM size"), SG1RomSizeMenu, 4);
-    switch (SMSRomSize) {
-      case 0:
-        cartSize = 8192;   // 8 KiB
-        break;
-      case 1:
-        cartSize = 16384;  // 16 KiB
-        break;
-      case 2:
-        cartSize = 24576;  // 24 KiB
-        break;
-      case 3:
-        cartSize = 32768;  // 32 KiB
-        break;
-        //case 4:
-        //  cartSize = 40960; // 40KB
-        //  break;
-        //case 5:
-        //  cartSize = 49152; // 48KB
-        //  break;
-    }
+    if (SMSRomSize < 4)
+      cartSize = (uint32_t)(SMSRomSize + 1) * 8192UL;
+
   } else {
     // Rom sizes for SMS and GG
     SMSRomSize = chooseFlashMenuOption(F("Select ROM size"), SMSRomSizeMenu, 6);
-    switch (SMSRomSize) {
-      case 0:
-        cartSize = 32768;    // 32 KiB
-        break;
-      case 1:
-        cartSize = 65536;    // 64 KiB
-        break;
-      case 2:
-        cartSize = 131072;   // 128 KiB
-        break;
-      case 3:
-        cartSize = 262144;   // 256 KiB
-        break;
-      case 4:
-        cartSize = 524288;   // 512 KiB
-        break;
-      case 5:
-        cartSize = 1048576;  // 1 MiB
-        break;
-    }
+    if (SMSRomSize < 6)
+      cartSize = 32768UL << SMSRomSize;
+
   }
   strcpy(romName, "UNKNOWN"); // Use default UNKNOWN rom name upon manual selection
   manRomSizeSelected = true; // This ensures manually selected value is used upon read from the menu
