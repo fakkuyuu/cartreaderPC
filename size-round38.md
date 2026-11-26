@@ -14,3 +14,7 @@
 |8|SNES CX4 register $7F52|87ea6caca2922fc779746c21fd2013f318d58be1|未確定|CX4 type 2/3 ROM、初期マップと復元、PC/SD CRC、SPC7110/S-DD1回帰|
 
 採否は基準照合後に決定。Flash減少かつRAM増加なしの候補のみ合成し再計測する。実機未試験。
+
+## 基準再計測
+
+[Actions run 45850143712](https://github.com/fakkuyuu/cartreaderPC/actions/runs/45850143712): f6ad14a と同じツリーの確認コミット e3838f4 は両方とも Flash 207968 B、静的RAM 6105 B。基準一致。Portable V15.5、AVR GCC 15.2.0、HW3 FLASH OFF。afcdcbd..f6ad14a の変更は size-round37.md の追加のみ。独立7候補の計測 [run 45850459422](https://github.com/fakkuyuu/cartreaderPC/actions/runs/45850459422) を開始済み。結果確定前につき統合なし。
