@@ -409,49 +409,41 @@ void snesMenu() {
 
     case 1:
     case 2:
+    case 3:
       if (sramSize > 0) {
         display_Clear();
+        if (mainMenu == 3) {
+          println_Msg(F("Warning:"));
+          println_Msg(F("This can erase"));
+          println_Msg(F("your save games"));
+          printBlankLine();
+          printBlankLine();
+          println_Msg(F("Press any button to"));
+          println_Msg(F("start sram testing"));
+          updateDisplayAndWait();
+          display_Clear();
+        }
         changeToStorageRoot();
         if (mainMenu == 1) {
           readSRAM();
         } else {
-          writeSRAM(1);
-          unsigned long wrErrors = verifySRAM();
-          if (wrErrors == 0) {
-            showVerifiedAndUpdate();
+          if (mainMenu == 3) {
+            readSRAM();
+            eraseSRAM(0x0F);
+            eraseSRAM(0xF0);
+            writeSRAM(0);
           } else {
-            showVerificationErrorCount(wrErrors);
+            writeSRAM(1);
           }
-        }
-      } else {
-        showNoSramError();
-      }
-      break;
-
-    case 3:
-      if (sramSize > 0) {
-        display_Clear();
-        println_Msg(F("Warning:"));
-        println_Msg(F("This can erase"));
-        println_Msg(F("your save games"));
-        printBlankLine();
-        printBlankLine();
-        println_Msg(F("Press any button to"));
-        println_Msg(F("start sram testing"));
-        updateDisplayAndWait();
-        display_Clear();
-        // Change working dir to root
-        changeToStorageRoot();
-        readSRAM();
-        eraseSRAM(0x0F);
-        eraseSRAM(0xF0);
-        writeSRAM(0);
-        unsigned long wrErrors = verifySRAM();
-        if (wrErrors == 0) {
-          println_Msg(F("Restored OK"));
-          display_Update();
-        } else {
-          showVerificationErrorCount(wrErrors);
+          unsigned long wrErrors = verifySRAM();
+          if (wrErrors != 0) {
+            showVerificationErrorCount(wrErrors);
+          } else if (mainMenu == 3) {
+            println_Msg(F("Restored OK"));
+            display_Update();
+          } else {
+            showVerifiedAndUpdate();
+          }
         }
       } else {
         showNoSramError();
