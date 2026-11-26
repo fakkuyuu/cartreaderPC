@@ -467,8 +467,7 @@ void read_bank_PCE_ROM(uint32_t address_start, uint32_t address_end, uint32_t *p
   }
 }
 
-void read_bank_PCE_RAM(uint32_t address_start, int block_index) {
-  uint32_t start = address_start + block_index * 512;
+void read_bank_PCE_RAM(uint32_t start) {
   for (uint16_t c = 0; c < 512; c++) {
     sdBuffer[c] = read_byte_PCE(start + c);
   }
@@ -568,6 +567,11 @@ static void beginProtectedTennokoeAccess_PCE() {
   data_input_PCE();
 }
 
+static uint32_t tennokoeBlockAddressR38_PCE(int bank_index, int block_index) __attribute__((noinline));
+static uint32_t tennokoeBlockAddressR38_PCE(int bank_index, int block_index) {
+  return 0x080000 + bank_index * 2048UL + block_index * 512UL;
+}
+
 static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) __attribute__((noinline));
 static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) {
   //Unlock Tennokoe Bank RAM
@@ -575,7 +579,7 @@ static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) {
   beginProtectedTennokoeAccess_PCE();
 
   //Read Tennokoe bank RAM
-  read_bank_PCE_RAM(0x080000 + 2048UL * bank_index, block_index);
+  read_bank_PCE_RAM(tennokoeBlockAddressR38_PCE(bank_index, block_index));
 
   //Lock Tennokoe Bank RAM
   data_output_PCE();
@@ -698,7 +702,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
 
       //Write file to Tennokoe BANK RAM
       data_output_PCE();
-      uint32_t offset = 0x080000 + (bank_index * 2048UL) + (block_index * 512UL);
+      uint32_t offset = tennokoeBlockAddressR38_PCE(bank_index, block_index);
       for (uint16_t c = 0; c < 512; c++) {
         write_byte_PCE(offset + c, sdBuffer[c]);
       }
