@@ -1,0 +1,70 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45850143712",
+  "run_attempt": "1",
+  "workflow_commit": "d5c40e059bf47953f8940c68d84675c28324cf2a",
+  "request": {
+    "id": "parallel-038-baseline",
+    "base": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
+    "expected_base_flash": 207968,
+    "expected_base_ram": 6105,
+    "candidates": [
+      {
+        "id": "baseline-repeat",
+        "head": "e3838f440806bce03906fb2f201012c42364b036"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45850143712",
+      "run_attempt": "1",
+      "workflow_commit": "d5c40e059bf47953f8940c68d84675c28324cf2a",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "baseline-repeat",
+        "head": "e3838f440806bce03906fb2f201012c42364b036",
+        "base": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
+        "expected_base_flash": 207968,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
+          "subject": "Record round 37 independent and combined measurements",
+          "status": "ok",
+          "flash": 207968,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "e3838f440806bce03906fb2f201012c42364b036",
+          "subject": "Round 38 baseline calibration (unchanged source)",
+          "status": "ok",
+          "flash": 207968,
+          "ram": 6105,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "baseline-repeat",
+        "head": "e3838f440806bce03906fb2f201012c42364b036"
+      }
+    }
+  ]
+}
