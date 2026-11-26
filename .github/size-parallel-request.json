@@ -1,40 +1,25 @@
 {
-  "id": "parallel-031",
-  "base": "f8f7598ff5b3983b5e6b54a194660cf1d3162883",
+  "id": "parallel-031-integration",
+  "base": "f373296759327b99e1007d0c21f34214bbe3717c",
   "expected_base_flash": 208406,
   "expected_base_ram": 6105,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "msx-pc-option-prefix",
-      "head": "2585f824808bd4bcf7c140c5b07df93989490a91"
+      "id": "integration-ws",
+      "head": "74ce5b6e4be210710592e2e475c195be98b3b5f2"
     },
     {
-      "id": "ws-write-browser-prefix",
-      "head": "7e58bb91182f184e87c62fe062d2b50fe5fefb2c"
+      "id": "integration-ws-sv",
+      "head": "3e0e06bd3d76f31c327843f3bb11b5807309d1d5"
     },
     {
-      "id": "sv-menu-storage-root",
-      "head": "3af780ad6bc15123803128b9005940be5ff3feb0"
+      "id": "integration-ws-sv-msx",
+      "head": "f8d95cd4de7b283ca901838b029f9fb05fed1928"
     },
     {
-      "id": "sms-save-close-tail",
-      "head": "c00949bdfd1b2cab0756bd41bc3e5175fe16073d"
-    },
-    {
-      "id": "gba-db-id-read",
-      "head": "ac97be84eebf4c5757492e84a1989f6855d68f32"
-    },
-    {
-      "id": "gb-accessory-setup",
-      "head": "d067e8417e5f49d8b420c8dd78294dc60b60ba18"
-    },
-    {
-      "id": "snes-rom-type-label",
-      "head": "91da681ea61e63bd0f789f2f440f07c8d5d6bff6"
-    },
-    {
-      "id": "n64-save-verified-label",
-      "head": "a002e037037ef49b6ba106d0f3cace779a458596"
+      "id": "integration-ws-sv-msx-n64",
+      "head": "d62f2ce9e23797f93e2f5401e9dad480a9e284ed"
     }
   ]
 }
