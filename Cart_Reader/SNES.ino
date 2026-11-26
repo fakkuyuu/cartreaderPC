@@ -3,6 +3,8 @@
 //******************************************
 #ifdef ENABLE_SNES
 
+static void sizeP33_SNES() __attribute__((noinline));
+
 /******************************************
   Defines
  *****************************************/
@@ -471,8 +473,7 @@ void snesMenu() {
       break;
 
     case 6:
-      stopSnesClocks_resetCic_resetCart();
-      resetArduino();
+      sizeP33_SNES();
       break;
   }
   //printBlankLine();
@@ -508,8 +509,7 @@ void confMenuManual() {
 
     case 4:
       // Reset
-      stopSnesClocks_resetCic_resetCart();
-      resetArduino();
+      sizeP33_SNES();
       break;
   }
 }
@@ -2152,6 +2152,12 @@ boolean eraseSRAM(byte b) {
     return 0;
   }
   display_Update();
+}
+
+
+static void sizeP33_SNES() {
+  stopSnesClocks_resetCic_resetCart();
+  resetArduino();
 }
 
 #endif
