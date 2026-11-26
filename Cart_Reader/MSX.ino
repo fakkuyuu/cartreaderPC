@@ -2,6 +2,8 @@
 // MSX COMPUTER MODULE
 //******************************************
 #ifdef ENABLE_MSX
+
+static void sizeP33_MSX() __attribute__((noinline));
 // MSX
 // Cartridge Pinout
 // 50P 2.54mm pitch connector
@@ -242,8 +244,7 @@ void msxMenu() {
       writeRAM_MSX();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
-      printPressButtonPrompt();
-      updateDisplayAndWait();
+      sizeP33_MSX();
       break;
 
     case 4:
@@ -423,8 +424,7 @@ static void finishReadP28_MSX() {
   closeCurrentFile();
   printCRC(fileName, NULL, 0);
   printBlankLine();
-  printPressButtonPrompt();
-  updateDisplayAndWait();
+  sizeP33_MSX();
 }
 
 void readROM_MSX() {
@@ -1314,4 +1314,10 @@ void setCart_MSX() {
     fatalMissingDatabase();
   }
 }
+
+static void sizeP33_MSX() {
+  printPressButtonPrompt();
+  updateDisplayAndWait();
+}
+
 #endif
