@@ -363,27 +363,11 @@ void n64CartMenu() {
       N64SaveMenu = chooseFlashMenuOption(FS(SharedFlashText::textSelectSaveType), saveOptionsN64, 5);
 
       // wait for user choice to come back from the question box menu
-      switch (N64SaveMenu) {
-        case 0:
-          // None
-          saveType = 0;
-          break;
-
-        case 1:
-        case 2:
-          saveType = N64SaveMenu == 1 ? 5 : 6;
+      static const byte saveTypesP32[] PROGMEM = {0, 5, 6, 1, 4};
+      if (N64SaveMenu < 5) {
+        saveType = pgm_read_byte(&saveTypesP32[N64SaveMenu]);
+        if (N64SaveMenu == 1 || N64SaveMenu == 2)
           eepPages = N64SaveMenu == 1 ? 64 : 256;
-          break;
-
-        case 3:
-          // SRAM
-          saveType = 1;
-          break;
-
-        case 4:
-          // FLASHRAM
-          saveType = 4;
-          break;
       }
       break;
 
