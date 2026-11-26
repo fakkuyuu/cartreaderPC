@@ -3,6 +3,8 @@
 //******************************************
 #ifdef ENABLE_GBX
 
+static void sizeP33_GB() __attribute__((noinline));
+
 /******************************************
    Variables
  *****************************************/
@@ -77,9 +79,7 @@ static const char* const menuOptionsGBDatel[] PROGMEM = { MegaMemRead, MegaMemWr
 #if defined(ENABLE_FLASH)
 bool gbxFlashCFI() {
   // Flash CFI
-  clearAndUpdateDisplay();
-  setup_GB();
-  mode = CORE_GB;
+  sizeP33_GB();
 
   // Change working dir to root
   changeToStorageRoot();
@@ -158,9 +158,7 @@ void gbxMenu() {
   // wait for user choice to come back from the question box menu
   switch (gbType) {
     case 0:
-      clearAndUpdateDisplay();
-      setup_GB();
-      mode = CORE_GB;
+      sizeP33_GB();
       break;
 
     case 1:
@@ -283,9 +281,7 @@ void gbxMenu() {
 
             if (selectedMBC == 30) {
               //Flash GB Camera
-              clearAndUpdateDisplay();
-              setup_GB();
-              mode = CORE_GB;
+              sizeP33_GB();
 
               //Flash first bank with erase
               // Change working dir to root
@@ -318,9 +314,7 @@ void gbxMenu() {
             }
             else {
               //Flash repro
-              clearAndUpdateDisplay();
-              setup_GB();
-              mode = CORE_GB;
+              sizeP33_GB();
 
               if (selectedWE == 0) {
                 //Setup Audio-In(PH4) as Output
@@ -3362,6 +3356,13 @@ void writeGameshark_GB() {
   closeCurrentFile();
 
   showAccessoryVerifyResult_GB();
+}
+
+
+static void sizeP33_GB() {
+  clearAndUpdateDisplay();
+  setup_GB();
+  mode = CORE_GB;
 }
 
 #endif
