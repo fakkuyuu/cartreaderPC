@@ -130,11 +130,11 @@ void wsMenu() {
   convertPgm(menuOptionsWS, mainMenu);
   mainMenu = chooseMenuOption(FS(SharedFlashText::textWSMenu), mainMenu);
 
+  if (mainMenu <= 2) changeToStorageRoot();
   switch (mainMenu) {
     case 0:
       {
         // Read Rom
-        changeToStorageRoot();
         compareChecksum_WS(readROM_WS(filePath, FILEPATH_LENGTH));
         changeToStorageRoot();
         break;
@@ -143,7 +143,6 @@ void wsMenu() {
     case 2:
       {
         const bool writing = mainMenu == 2;
-        changeToStorageRoot();
         switch (saveType) {
           case 0: println_Msg(FS(SharedFlashText::textNoSaveForThisGame)); break;
           case 1:
