@@ -411,6 +411,15 @@ void disableCS() {
 //******************************************
 // READ ROM
 //******************************************
+static void finishReadP28_MSX() __attribute__((noinline));
+static void finishReadP28_MSX() {
+  closeCurrentFile();
+  printCRC(fileName, NULL, 0);
+  printBlankLine();
+  printPressButtonPrompt();
+  updateDisplayAndWait();
+}
+
 void readROM_MSX() {
   if (msxsize == 0) {
     display_Clear();
@@ -598,14 +607,7 @@ void readROM_MSX() {
         }
         break;
     }
-    closeCurrentFile();
-
-    printCRC(fileName, NULL, 0);
-
-    printBlankLine();
-    // Prints string out of the common strings array either with or without newline
-    printPressButtonPrompt();
-    updateDisplayAndWait();
+    finishReadP28_MSX();
   }
 }
 
@@ -746,14 +748,7 @@ void readRAM_MSX() {
         writeData_MSX(0x5FFE, 0);         // SRAM Disable
         break;
     }
-    closeCurrentFile();
-
-    printCRC(fileName, NULL, 0);
-
-    printBlankLine();
-    // Prints string out of the common strings array either with or without newline
-    printPressButtonPrompt();
-    updateDisplayAndWait();
+    finishReadP28_MSX();
   }
 }
 
