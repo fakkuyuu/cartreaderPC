@@ -448,21 +448,16 @@ void segaCDMenu() {
   // wait for user choice to come back from the question box menu
   switch (scdMenu) {
     case 0:
-      display_Clear();
-      if (bramSize > 0)
-        readBram_MD();
-      else {
-        print_Error(FS(SharedFlashText::textNotCDBackupRAMCart));
-      }
-      break;
-
     case 1:
       display_Clear();
       if (bramSize > 0) {
-        // Launch file browser
-        fileBrowser(F("Select brm file"));
-        display_Clear();
-        writeBram_MD();
+        if (scdMenu == 0) {
+          readBram_MD();
+        } else {
+          fileBrowser(F("Select brm file"));
+          display_Clear();
+          writeBram_MD();
+        }
       } else {
         print_Error(FS(SharedFlashText::textNotCDBackupRAMCart));
       }
