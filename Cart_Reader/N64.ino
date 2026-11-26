@@ -1959,13 +1959,12 @@ void printCartInfo_N64() {
         println_Msg(FS(SharedFlashText::textFLASH));
         break;
       case 5:
-        println_Msg(FS(SharedFlashText::text4KEEPROM));
-        eepPages = 64;
+      case 6: {
+        const bool largeEeprom = saveType == 6;
+        println_Msg(largeEeprom ? FS(SharedFlashText::text16KEEPROM) : FS(SharedFlashText::text4KEEPROM));
+        eepPages = largeEeprom ? 256 : 64;
         break;
-      case 6:
-        println_Msg(FS(SharedFlashText::text16KEEPROM));
-        eepPages = 256;
-        break;
+      }
       default:
         println_Msg(FS(SharedFlashText::textNoneUnknown));
         break;
