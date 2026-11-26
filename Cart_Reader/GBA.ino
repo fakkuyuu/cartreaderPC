@@ -124,6 +124,10 @@ void gbaMenu() {
       clearAndRootDirectory();
       {
       const byte detectedWriteSaveType = getSaveType();
+      if (detectedWriteSaveType == 4 || detectedWriteSaveType == 5) {
+        idFlash_GBA();
+        resetFLASH_GBA();
+      }
       switch (detectedWriteSaveType) {
         case 1:
         case 2: {
@@ -145,8 +149,6 @@ void gbaMenu() {
 
         case 4:
           // 512K FLASH
-          idFlash_GBA();
-          resetFLASH_GBA();
 
           if (flashid == 0x1F3D) {
             printFlashTypeAndWait(F("Atmel AT29LV512"));
@@ -180,8 +182,6 @@ void gbaMenu() {
 
         case 5:
           // 1M FLASH
-          idFlash_GBA();
-          resetFLASH_GBA();
 
           if (flashid == 0xC209) {
             printFlashTypeAndWait(F("Macronix MX29L010"));
