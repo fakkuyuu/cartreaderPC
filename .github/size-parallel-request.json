@@ -1,29 +1,40 @@
 {
-  "id": "parallel-021-integration",
-  "base": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
-  "expected_base_flash": 209748,
+  "id": "parallel-022",
+  "base": "59b8778ec8a093de8ee77e2babcad419f3e70091",
+  "expected_base_flash": 209618,
   "expected_base_ram": 6123,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-sms",
-      "head": "4a851cc5c690151857a7285115e898ceb1036a5a"
+      "id": "gba-read-sram-menu",
+      "head": "510c6bd9391359a0c20ebd3cc26c9f873f8a856d"
     },
     {
-      "id": "integration-sms-msx",
-      "head": "bb27fca035b3946e2bdc811d01ae4d5e76e2df90"
+      "id": "ws-save-label",
+      "head": "196821ed15185082444d0e1a4da4d17c683bb3f6"
     },
     {
-      "id": "integration-sms-msx-n64",
-      "head": "3b7b1d4e49c117a2d662c606445a65aa726081b7"
+      "id": "pce-device-setup",
+      "head": "04f8020d70a69dbf912ac40a6bbc560a004ee9eb"
     },
     {
-      "id": "integration-sms-msx-n64-gba",
-      "head": "e0ba76106a5628250985ec2ccd333cb8c1b49732"
+      "id": "md-save-write-end",
+      "head": "491c8f59c3fce467678c4f623d05531a4a145e6e"
     },
     {
-      "id": "integration-sms-msx-n64-gba-md",
-      "head": "3c47ad72d38ebbd8b3feaa4c2b86d2e9634f6680"
+      "id": "n64-stick-results",
+      "head": "7229ee49d823ba4313a8d875f963586ef97b58db"
+    },
+    {
+      "id": "sms-save-end",
+      "head": "aca74182ee107e286dbb4bce12097bf51e36fbdc"
+    },
+    {
+      "id": "nes-serial-eeprom-size",
+      "head": "cd3bc282525380032ee67059adc4d95d72b721d8"
+    },
+    {
+      "id": "sfm-powercycle-error",
+      "head": "359f9e179b04b81b8aa4ec8696aff319b9fb61f4"
     }
   ]
 }
