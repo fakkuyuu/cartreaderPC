@@ -3,6 +3,8 @@
 //***********************************************************
 #ifdef ENABLE_SMS
 
+static void sizeP33_SMS() __attribute__((noinline));
+
 //******************************************
 //   Menus
 //******************************************
@@ -573,8 +575,7 @@ void readSRAM_SMS() {
     }
   }
   // Close file
-  closeCurrentFile();
-  showPressButtonAndUpdate();
+  sizeP33_SMS();
 }
 
 //**********************************************
@@ -615,8 +616,7 @@ void writeSRAM_SMS() {
       }
 
       // Close file
-      closeCurrentFile();
-      showPressButtonAndUpdate();
+      sizeP33_SMS();
     } else {
       fatalSdError();
     }
@@ -624,6 +624,12 @@ void writeSRAM_SMS() {
   resetStorageDirectory();          // root
   filePath[0] = '\0';  // Reset filePath
 }
+
+static void sizeP33_SMS() {
+  closeCurrentFile();
+  showPressButtonAndUpdate();
+}
+
 #endif
 
 //******************************************
