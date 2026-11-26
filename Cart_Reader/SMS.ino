@@ -660,6 +660,12 @@ void readROM_SMS() {
 //******************************************
 //  Read SRAM and save to the SD card
 ///*****************************************
+static void finishSaveP22_SMS() __attribute__((noinline));
+static void finishSaveP22_SMS() {
+  closeCurrentFile();
+  showPressButtonAndUpdate();
+}
+
 void readSRAM_SMS() {
   // Get name, add extension and convert to char array for sd lib
   const char* system;
@@ -690,8 +696,7 @@ void readSRAM_SMS() {
     }
   }
   // Close file
-  closeCurrentFile();
-  showPressButtonAndUpdate();
+  finishSaveP22_SMS();
 }
 
 //**********************************************
@@ -732,8 +737,7 @@ void writeSRAM_SMS() {
       }
 
       // Close file
-      closeCurrentFile();
-      showPressButtonAndUpdate();
+      finishSaveP22_SMS();
     } else {
       fatalSdError();
     }
