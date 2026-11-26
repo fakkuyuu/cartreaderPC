@@ -2232,13 +2232,8 @@ static void eraseIntelBlock_GBA(unsigned long currBlock) {
   }
 }
 
-void eraseIntel4000_GBA() {
-  // If the game is smaller than 16Mbit only erase the needed blocks
-  unsigned long lastBlock = 0xFFFFFF;
-  if (fileSize < 0xFFFFFF)
-    lastBlock = fileSize;
-
-  // Erase 4 blocks with 16kwords each
+static void eraseIntelFirstChip_GBA(unsigned long lastBlock) __attribute__((noinline));
+static void eraseIntelFirstChip_GBA(unsigned long lastBlock) {
   for (unsigned long currBlock = 0x0; currBlock < 0x1FFFF; currBlock += 0x8000) {
     eraseIntelBlock_GBA(currBlock);
   }
@@ -2249,6 +2244,16 @@ void eraseIntel4000_GBA() {
     // Blink led
     blinkLED();
   }
+}
+
+void eraseIntel4000_GBA() {
+  // If the game is smaller than 16Mbit only erase the needed blocks
+  unsigned long lastBlock = 0xFFFFFF;
+  if (fileSize < 0xFFFFFF)
+    lastBlock = fileSize;
+
+  // Erase 4 blocks with 16kwords each
+  eraseIntelFirstChip_GBA(lastBlock);
 
   // Erase the second chip
   if (fileSize > 0xFFFFFF) {
@@ -2275,16 +2280,7 @@ void eraseIntel4400_GBA() {
     lastBlock = fileSize;
 
   // Erase 4 blocks with 16kwords each
-  for (unsigned long currBlock = 0x0; currBlock < 0x1FFFF; currBlock += 0x8000) {
-    eraseIntelBlock_GBA(currBlock);
-  }
-
-  // Erase 255 blocks with 64kwords each
-  for (unsigned long currBlock = 0x20000; currBlock < lastBlock; currBlock += 0x1FFFF) {
-    eraseIntelBlock_GBA(currBlock);
-    // Blink led
-    blinkLED();
-  }
+  eraseIntelFirstChip_GBA(lastBlock);
 
   /* No need to erase the second chip as max rom size is 32MB
     if (fileSize > 0x2000000) {
