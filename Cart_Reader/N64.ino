@@ -3,6 +3,8 @@
 //******************************************
 #ifdef ENABLE_N64
 
+static void sizeP33_N64() __attribute__((noinline));
+
 /******************************************
   Defines
  *****************************************/
@@ -3038,8 +3040,7 @@ void flashRepro_N64() {
     print_Msg(cartSize);
     println_Msg(FS(SharedFlashText::unitMB));
     println_Msg("");
-    showEraseReproWarning();
-    println_Msg(FS(SharedFlashText::textAttentionUse33V));
+    sizeP33_N64();
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     promptAndWaitForButton();
@@ -3054,8 +3055,7 @@ void flashRepro_N64() {
     println_Msg(FS(FSTRING_SPACE));
     println_Msg(FS(SharedFlashText::textPressButtonFor));
     println_Msg(F("manual config"));
-    showEraseReproWarning();
-    println_Msg(FS(SharedFlashText::textAttentionUse33V));
+    sizeP33_N64();
     updateDisplayAndWait();
 
     // clear IDs
@@ -4504,6 +4504,14 @@ unsigned long verifyXplorer_N64() {
     return 9999;
   }
 }
+
+
+#if defined(ENABLE_FLASH)
+static void sizeP33_N64() {
+  showEraseReproWarning();
+  println_Msg(FS(SharedFlashText::textAttentionUse33V));
+}
+#endif
 
 #endif
 
