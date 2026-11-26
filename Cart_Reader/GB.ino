@@ -1073,6 +1073,14 @@ void getCartInfo_GB() {
   ROM functions
 *****************************************/
 // Read ROM
+static void dumpRomBlock_GB(word romAddress) __attribute__((noinline));
+static void dumpRomBlock_GB(word romAddress) {
+  for (int i = 0; i < 512; i++) {
+    sdBuffer[i] = readByte_GB(romAddress + i);
+  }
+  writeSdBufferBlock();
+}
+
 void readROM_GB() {
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("GB", "ROM", romName, "gb");
@@ -1191,10 +1199,7 @@ void readROM_GB() {
 
     // Read banks and save to SD
     while (romAddress <= endAddress) {
-      for (int i = 0; i < 512; i++) {
-        sdBuffer[i] = readByte_GB(romAddress + i);
-      }
-      writeSdBufferBlock();
+      dumpRomBlock_GB(romAddress);
       romAddress += 512;
       processedProgressBar += 512;
       draw_progressbar(processedProgressBar, totalProgressBar);
@@ -1481,10 +1486,7 @@ void readSRAMFLASH_MBC6_GB() {
 
     // Read banks and save to SD
     while (romAddress <= 0x5FFF) {
-      for (int i = 0; i < 512; i++) {
-        sdBuffer[i] = readByte_GB(romAddress + i);
-      }
-      writeSdBufferBlock();
+      dumpRomBlock_GB(romAddress);
       romAddress += 512;
       processedProgressBar += 512;
       draw_progressbar(processedProgressBar, totalProgressBar);
