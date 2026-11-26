@@ -127,7 +127,9 @@ void gbaMenu() {
     case 2:
       // Write save
       clearAndRootDirectory();
-      switch (getSaveType()) {
+      {
+      const byte detectedWriteSaveType = getSaveType();
+      switch (detectedWriteSaveType) {
         case 1:
           // 4K EEPROM
           writeEeprom_GBA(4);
@@ -142,10 +144,12 @@ void gbaMenu() {
           break;
 
         case 3:
-          // 256K SRAM/FRAM
-          writeSRAM_GBA(1, 32768, 0);
-          verifySRAM_GBA(32768, 0);
+        case 6: {
+          const uint32_t size = detectedWriteSaveType == 3 ? 32768UL : 65536UL;
+          writeSRAM_GBA(1, size, 0);
+          verifySRAM_GBA(size, 0);
           break;
+        }
 
         case 4:
           // 512K FLASH
@@ -215,11 +219,8 @@ void gbaMenu() {
           }
           break;
 
-        case 6:
-          // 512K SRAM/FRAM
-          writeSRAM_GBA(1, 65536, 0);
-          verifySRAM_GBA(65536, 0);
-          break;
+
+      }
       }
       setROM_GBA();
       printBlankLine();
