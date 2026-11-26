@@ -2788,8 +2788,9 @@ void readBram_MD() {
   openMdBackupOutput();
 
   for (unsigned long currByte = 0; currByte < bramSize; currByte += 512) {
+    const unsigned long blockStart = 0x300000UL + currByte;
     for (int i = 0; i < 512; i++) {
-      sdBuffer[i] = readWord_MD(0x300000 + currByte + i);
+      sdBuffer[i] = readWord_MD(blockStart + i);
     }
     writeSdBufferBlock();
   }
@@ -2815,8 +2816,9 @@ void writeBram_MD() {
 
     for (unsigned long currByte = 0; currByte < bramSize; currByte += 512) {
       readSdBufferBlock();
+      const unsigned long blockStart = 0x300000UL + currByte;
       for (int i = 0; i < 512; i++) {
-        writeWord_MD(0x300000 + currByte + i, sdBuffer[i]);
+        writeWord_MD(blockStart + i, sdBuffer[i]);
       }
     }
     writeWord_MD(0x380000, 0);  // Disable BRAM Writes
