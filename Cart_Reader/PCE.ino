@@ -90,38 +90,24 @@ void pcsMenu(void) {
 
   switch (pceDev) {
     case 0:
-      //Hucard
-      refreshMenuP17_PCE();
-      pce_internal_mode = HUCARD;
-      setup_cart_PCE();
-      mode = CORE_PCE;
-      break;
-
     case 1:
-      //Hucard not swapped
-      refreshMenuP17_PCE();
-      pce_internal_mode = HUCARD_NOSWAP;
-      setup_cart_PCE();
-      mode = CORE_PCE;
-      break;
-
     case 2:
-      //Turbografx
-      refreshMenuP17_PCE();
-      pce_internal_mode = TURBOCHIP;
-      setup_cart_PCE();
-      mode = CORE_PCE;
-      break;
-
 #ifdef ENABLE_FLASH
     case 3:
-      //Flash Repro
+#endif
+    {
+      static const uint8_t deviceModes[] PROGMEM = {
+        HUCARD, HUCARD_NOSWAP, TURBOCHIP
+#ifdef ENABLE_FLASH
+        , PCE_FLASH
+#endif
+      };
       refreshMenuP17_PCE();
-      pce_internal_mode = PCE_FLASH;
+      pce_internal_mode = pgm_read_byte(&deviceModes[pceDev]);
       setup_cart_PCE();
       mode = CORE_PCE;
       break;
-#endif
+    }
 
     case 4:
       resetArduino();

@@ -248,6 +248,12 @@ void n64ControllerMenu() {
 }
 
 // N64 Cartridge Menu
+static void showSaveReadP27_N64(const __FlashStringHelper* label) __attribute__((noinline));
+static void showSaveReadP27_N64(const __FlashStringHelper* label) {
+  println_Msg(label);
+  display_Update();
+}
+
 void n64CartMenu() {
   // create menu with title and 6 options to choose from
   unsigned char mainMenu;
@@ -282,17 +288,14 @@ void n64CartMenu() {
 
       if (saveType == 1 || saveType == 2) {
         const bool largeSram = saveType == 2;
-        println_Msg(largeSram ? F("Reading Sram 768...") : FS(SharedFlashText::textReadingSRAM));
-        display_Update();
+        showSaveReadP27_N64(largeSram ? F("Reading Sram 768...") : FS(SharedFlashText::textReadingSRAM));
         readSram(largeSram ? 98304UL : 32768UL, 1);
       } else if (saveType == 4) {
         getFramType();
-        println_Msg(F("Reading FLASH..."));
-        display_Update();
+        showSaveReadP27_N64(F("Reading FLASH..."));
         readFram(flashramType);
       } else if ((saveType == 5) || (saveType == 6)) {
-        println_Msg(F("Reading EEPROM..."));
-        display_Update();
+        showSaveReadP27_N64(F("Reading EEPROM..."));
         resetEeprom_N64();
         readEeprom_N64();
       } else {

@@ -528,23 +528,15 @@ void nesChipMenu() {
       finishNesRomMenuRead();
       break;
 
-    // Read PRG
     case 1:
-      CreateROMFolderInSD();
-      readPRG(false);
-      resetROM();
-      printBlankLine();
-      // Prints string out of the common strings array either with or without newline
-      promptAndWaitForButton();
-      break;
-
-    // Read CHR
     case 2:
       CreateROMFolderInSD();
-      readCHR(false);
+      if (answer == 1)
+        readPRG(false);
+      else
+        readCHR(false);
       resetROM();
       printBlankLine();
-      // Prints string out of the common strings array either with or without newline
       promptAndWaitForButton();
       break;
 

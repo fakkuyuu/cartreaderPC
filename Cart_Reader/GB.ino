@@ -953,20 +953,9 @@ void getCartInfo_GB() {
   }
 
   // SRAM size
-  switch (sramSize) {
-    case 2:
-      sramBanks = 1;
-      break;
-    case 3:
-      sramBanks = 4;
-      break;
-    case 4:
-      sramBanks = 16;
-      break;
-    case 5:
-      sramBanks = 8;
-      break;
-  }
+  static const uint8_t bankCounts[] PROGMEM = { 1, 4, 16, 8 };
+  if (sramSize >= 2 && sramSize <= 5)
+    sramBanks = pgm_read_byte(&bankCounts[sramSize - 2]);
 
   // Last byte of SRAM
   if (romType == 6) {

@@ -75,18 +75,7 @@ void operationsMenu() {
 
   if (system_sg1000) {
     SMSOperation = chooseFlashMenuOption(FS(SMSAdapterItem6), SGOperationsMenu, 2);
-    switch (SMSOperation) {
-      case 0: // Read ROM
-        mode = CORE_SMS;
-        setup_SMS();
-        readROM_SMS();
-        break;
-      default:
-      case 1:
-        // Reset
-        resetArduino();
-        break;
-    }
+    if (SMSOperation != 0) SMSOperation = 4;
   } else {
     convertPgm(SMSOperationMenu, 5);
     if (system_sms) {
@@ -105,28 +94,29 @@ void operationsMenu() {
       }
     }
 
-    switch (SMSOperation) {
-      case 0:
-      case 1:
-      case 2:
-        mode = CORE_SMS;
-        setup_SMS();
-        if (SMSOperation == 0)
-          readROM_SMS();
-        else if (SMSOperation == 1)
-          readSRAM_SMS();
-        else
-          writeSRAM_SMS();
-        break;
-      case 3: // Select ROM Size
-        manual_selectRomSize();
-        break;
-      default:
-      case 4:
-        // Reset
-        resetArduino();
-        break;
-    }
+  }
+
+  switch (SMSOperation) {
+    case 0:
+    case 1:
+    case 2:
+      mode = CORE_SMS;
+      setup_SMS();
+      if (SMSOperation == 0)
+        readROM_SMS();
+      else if (SMSOperation == 1)
+        readSRAM_SMS();
+      else
+        writeSRAM_SMS();
+      break;
+    case 3: // Select ROM Size
+      manual_selectRomSize();
+      break;
+    default:
+    case 4:
+      // Reset
+      resetArduino();
+      break;
   }
 
   updateDisplayAndWait();
