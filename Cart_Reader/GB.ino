@@ -551,6 +551,14 @@ void gbMenu() {
 /******************************************
    Setup
  *****************************************/
+static void finishMmm01Remap_GB() __attribute__((noinline));
+static void finishMmm01Remap_GB() {
+  writeByte_GB(0x5fff, 0x40);
+  writeByte_GB(0x7fff, 0x01);
+  writeByte_GB(0x1fff, 0x3a);
+  writeByte_GB(0x1fff, 0x7a);
+}
+
 void setup_GB() {
   // Request 5V
   setVoltage(VOLTS_SET_5V);
@@ -575,10 +583,7 @@ void setup_GB() {
   // MMM01 initialize
   if (romType >= 11 && romType <= 13) {
     writeByte_GB(0x3fff, 0x00);
-    writeByte_GB(0x5fff, 0x40);
-    writeByte_GB(0x7fff, 0x01);
-    writeByte_GB(0x1fff, 0x3a);
-    writeByte_GB(0x1fff, 0x7a);
+    finishMmm01Remap_GB();
   }
 }
 
@@ -1150,10 +1155,7 @@ void readROM_GB() {
 
           // remap to higher 4Mbits ROM
           writeByte_GB(0x3fff, 0x20);
-          writeByte_GB(0x5fff, 0x40);
-          writeByte_GB(0x7fff, 0x01);
-          writeByte_GB(0x1fff, 0x3a);
-          writeByte_GB(0x1fff, 0x7a);
+          finishMmm01Remap_GB();
 
           // for every 4Mbits ROM, restart from 0x0000
           romAddress = 0x0000;
