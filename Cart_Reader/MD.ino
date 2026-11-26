@@ -1198,15 +1198,15 @@ void getCartInfo_MD() {
   if (saveType == 4) {
     print_Msg(F("PcConsole EEPROM: "));
     print_Msg(eepSize * 8 / 1024);
-    println_Msg(FS(SharedFlashText::textKBit));
   } else {
     print_Msg(FS(SharedFlashText::textSram));
-    if (sramSize > 0) {
+    if (sramSize > 0)
       print_Msg(sramSize * 8 / 1024);
-      println_Msg(FS(SharedFlashText::textKBit));
-    } else
+    else
       println_Msg(FS(SharedFlashText::textNone));
   }
+  if (saveType == 4 || sramSize > 0)
+    println_Msg(FS(SharedFlashText::textKBit));
   println_Msg(FS(FSTRING_SPACE));
 
   // Wait for user input
