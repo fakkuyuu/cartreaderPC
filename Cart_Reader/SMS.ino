@@ -535,13 +535,7 @@ void readROM_SMS() {
   closeCurrentFile();
 
   // Compare dump checksum with database values
-  if (system_sms) {
-    compareCRC("sms.txt", 0, 1, 0);
-  } else if (system_gg) {
-    compareCRC("gg.txt", 0, 1, 0);
-  } else {
-    compareCRC("sg1000.txt", 0, 1, 0);
-  }
+  compareCRC(system_sms ? "sms.txt" : (system_gg ? "gg.txt" : "sg1000.txt"), 0, 1, 0);
 
 #ifdef ENABLE_GLOBAL_LOG
   save_log();

@@ -386,8 +386,8 @@ void snesMenu() {
   switch (mainMenu) {
     case 0:
       {
+        display_Clear();
         if (numBanks > 0) {
-          display_Clear();
           // Change working dir to root
           changeToStorageRoot();
           // start reading from cart
@@ -401,7 +401,6 @@ void snesMenu() {
 #endif
           display_Update();
         } else {
-          display_Clear();
           print_Error(F("Does not have ROM"));
         }
       }

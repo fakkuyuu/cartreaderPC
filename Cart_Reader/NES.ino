@@ -1361,6 +1361,14 @@ void printMapperSelection_NES(int index) {
 }
 #endif
 
+#ifdef PC_MENU
+static void finishPcMenuP30_NES() __attribute__((noinline));
+static void finishPcMenuP30_NES() {
+  PcConsole.println();
+  PcLink::menuReady();
+}
+#endif
+
 void setMapper() {
   uint16_t newmapper;
 #ifdef ENABLE_GLOBAL_LOG
@@ -1391,8 +1399,7 @@ chooseMapper:
       PcConsole.print('\t');
       PcConsole.print(pgm_read_word(mapsize + i));
     }
-    PcConsole.println();
-    PcLink::menuReady();
+    finishPcMenuP30_NES();
   }
 #endif
 
@@ -1660,8 +1667,7 @@ static void setRomSize_NES(bool chr) {
         PcConsole.print(pgm_read_word(&(table[i])));
         PcConsole.print(FS(SharedFlashText::unitKBWithSpace));
       }
-      PcConsole.println();
-      PcLink::menuReady();
+      finishPcMenuP30_NES();
     }
 #endif
     selected = navigateMenu(lo, hi, (chr ? &printChrSize_NES : &printPrgSize_NES));
@@ -1780,8 +1786,7 @@ void setRAMSize() {
           PcConsole.print(pgm_read_byte(&(RAM[i])));
         PcConsole.print((mapper == 16 || mapper == 159 || mapper == 80 || (mapper == 19 && i == 2)) ? F(" B") : F(" KB"));
       }
-      PcConsole.println();
-      PcLink::menuReady();
+      finishPcMenuP30_NES();
     }
 #endif
     newramsize = navigateMenu(0, ramhi, &printRamSize_NES);
