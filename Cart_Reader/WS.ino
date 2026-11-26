@@ -678,7 +678,7 @@ static void readEEPROM_WS() {
   uint32_t bufSize = eepromGeometry_WS(eepromSize);
 
   for (uint32_t i = 0; i < eepromSize; i += bufSize) {
-    for (uint32_t j = 0; j < bufSize; j += 2) {
+    for (uint16_t j = 0; j < bufSize; j += 2) {
       // blink LED
       if ((j & 0x1f) == 0x00)
         blinkLED();
@@ -707,7 +707,7 @@ static void verifyEEPROM_WS() {
     for (uint32_t i = 0; i < eepromSize; i += bufSize) {
       myFile.read(sdBuffer, bufSize);
 
-      for (uint32_t j = 0; j < bufSize; j += 2) {
+      for (uint16_t j = 0; j < bufSize; j += 2) {
         // blink LED
         if ((j & 0x1f) == 0x00)
           blinkLED();
@@ -747,7 +747,7 @@ static void writeEEPROM_WS() {
     for (uint32_t i = 0; i < eepromSize; i += bufSize) {
       myFile.read(sdBuffer, bufSize);
 
-      for (uint32_t j = 0; j < bufSize; j += 2) {
+      for (uint16_t j = 0; j < bufSize; j += 2) {
         // blink LED
         if ((j & 0x1f) == 0x00)
           blinkLED();
