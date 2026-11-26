@@ -7,6 +7,11 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+// Optional AVR GCC 15.2 size tuning (round 35, HW3, base 3b962cb):
+// Append -fno-tree-tail-merge -fno-split-wide-types to C, C++ and link flags.
+// Tested with -mcall-prologues (C/C++) and -Wl,--relax -flto-partition=none (link).
+// Flash 208274 -> 208014 bytes, static RAM 6105 bytes. Build-tested only.
+
 /***** FIRMWARE CONFIGURATION **************************************
 
     Add or remove the "//" in front of items to toggle them.
