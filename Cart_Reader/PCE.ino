@@ -585,6 +585,12 @@ static void readProtectedTennokoeBlock_PCE(int bank_index, int block_index) {
   interrupts();
 }
 
+static void finishRamMenuP30_PCE() __attribute__((noinline));
+static void finishRamMenuP30_PCE() {
+  printBlankLine();
+  promptAndWaitForButton();
+}
+
 void read_tennokoe_bank_PCE(int bank_index) {
   //clear the screen
   display_Clear();
@@ -656,8 +662,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
   //Close the file:
   closeCurrentFile();
 
-  printBlankLine();
-  promptAndWaitForButton();
+  finishRamMenuP30_PCE();
 }
 
 void write_tennokoe_bank_PCE(int bank_index) {
@@ -738,8 +743,7 @@ void write_tennokoe_bank_PCE(int bank_index) {
     reportMissingFile();
   }
 
-  printBlankLine();
-  promptAndWaitForButton();
+  finishRamMenuP30_PCE();
 }
 
 void read_rom_PCE(void) {
