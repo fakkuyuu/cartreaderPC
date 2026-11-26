@@ -123,6 +123,13 @@ static const char* const sectorOptionsN64[] PROGMEM = { N64SectorItem1, N64Secto
 #endif
 
 // N64 start menu
+static void prepareCartP21_N64(bool special) __attribute__((noinline));
+static void prepareCartP21_N64(bool special) {
+  n64SpecialDeviceMode = special;
+  clearAndUpdateDisplay();
+  setup_N64_Cart();
+}
+
 void n64Menu() {
   // create menu with title and 6 options to choose from
   unsigned char n64Dev;
@@ -132,9 +139,7 @@ void n64Menu() {
   // wait for user choice to come back from the question box menu
   switch (n64Dev) {
     case 0:
-      n64SpecialDeviceMode = false;
-      clearAndUpdateDisplay();
-      setup_N64_Cart();
+      prepareCartP21_N64(false);
       printCartInfo_N64();
       mode = CORE_N64_CART;
       break;
@@ -147,9 +152,7 @@ void n64Menu() {
 
 #if defined(ENABLE_FLASH)
     case 2:
-      n64SpecialDeviceMode = true;
-      clearAndUpdateDisplay();
-      setup_N64_Cart();
+      prepareCartP21_N64(true);
       flashRepro_N64();
       printCartInfo_N64();
       mode = CORE_N64_CART;
@@ -157,18 +160,14 @@ void n64Menu() {
 #endif
 
     case 3:
-      n64SpecialDeviceMode = true;
-      clearAndUpdateDisplay();
-      setup_N64_Cart();
+      prepareCartP21_N64(true);
       flashGameshark_N64();
       printCartInfo_N64();
       mode = CORE_N64_CART;
       break;
 
     case 4:
-      n64SpecialDeviceMode = true;
-      clearAndUpdateDisplay();
-      setup_N64_Cart();
+      prepareCartP21_N64(true);
       flashXplorer_N64();
       mode = CORE_N64_CART;
       promptAndWaitForButton();
