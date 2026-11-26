@@ -1789,10 +1789,8 @@ void setRAMSize() {
         printMenuIndexP20_NES(i);
         if (mapper == 0)
           PcConsole.print(i * 2);
-        else if (mapper == 16)
-          PcConsole.print(pgm_read_byte(&(RAM[i])) * 32);
-        else if (mapper == 159 || mapper == 80)
-          PcConsole.print(pgm_read_byte(&(RAM[i])) * 16);
+        else if (mapper == 16 || mapper == 159 || mapper == 80)
+          PcConsole.print(pgm_read_byte(&(RAM[i])) * (mapper == 16 ? 32 : 16));
         else if (mapper == 19 && i == 2)
           PcConsole.print(128);
         else if (mapper == 82)
