@@ -547,6 +547,12 @@ void readROM_SMS() {
 //******************************************
 //  Read SRAM and save to the SD card
 ///*****************************************
+static void finishSaveP31_SMS() __attribute__((noinline));
+static void finishSaveP31_SMS() {
+  closeCurrentFile();
+  showPressButtonAndUpdate();
+}
+
 void readSRAM_SMS() {
   // Get name, add extension and convert to char array for sd lib
   const char* system;
@@ -577,8 +583,7 @@ void readSRAM_SMS() {
     }
   }
   // Close file
-  closeCurrentFile();
-  showPressButtonAndUpdate();
+  finishSaveP31_SMS();
 }
 
 //**********************************************
@@ -619,8 +624,7 @@ void writeSRAM_SMS() {
       }
 
       // Close file
-      closeCurrentFile();
-      showPressButtonAndUpdate();
+      finishSaveP31_SMS();
     } else {
       fatalSdError();
     }
