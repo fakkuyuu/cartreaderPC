@@ -139,7 +139,15 @@ void n64Menu() {
   // wait for user choice to come back from the question box menu
   switch (n64Dev) {
     case 0:
-      prepareCartP21_N64(false);
+#if defined(ENABLE_FLASH)
+    case 2:
+#endif
+    case 3:
+      prepareCartP21_N64(n64Dev != 0);
+#if defined(ENABLE_FLASH)
+      if (n64Dev == 2) flashRepro_N64();
+#endif
+      if (n64Dev == 3) flashGameshark_N64();
       printCartInfo_N64();
       mode = CORE_N64_CART;
       break;
@@ -148,22 +156,6 @@ void n64Menu() {
       clearAndUpdateDisplay();
       setup_N64_Controller();
       mode = CORE_N64_CONTROLLER;
-      break;
-
-#if defined(ENABLE_FLASH)
-    case 2:
-      prepareCartP21_N64(true);
-      flashRepro_N64();
-      printCartInfo_N64();
-      mode = CORE_N64_CART;
-      break;
-#endif
-
-    case 3:
-      prepareCartP21_N64(true);
-      flashGameshark_N64();
-      printCartInfo_N64();
-      mode = CORE_N64_CART;
       break;
 
     case 4:
