@@ -149,42 +149,31 @@ void sfmGameOptions() {
 
   // wait for user choice to come back from the question box menu
   switch (gameSubMenu) {
-    // Read sram
     case 0:
-      display_Clear();
-      // Change working dir to root
-      changeToStorageRoot();
-      readSRAM();
-      break;
-
-    // Read rom
     case 1:
-      display_Clear();
-      // Change working dir to root
-      changeToStorageRoot();
-      readROM_SFM();
-      if (!PcLink::usingPcStorage()) {
-        compare_checksum();
-        compareCRC("snes.txt", 0, 1, 0);
-      }
-      break;
-
-    // Write sram
     case 2:
       display_Clear();
-      // Change working dir to root
       changeToStorageRoot();
-      writeSRAM(1);
-      unsigned long wrErrors;
-      wrErrors = verifySRAM();
-      if (wrErrors == 0) {
-        println_Msg(FS(SharedFlashText::textVerifiedOK));
-        display_Update();
+      if (gameSubMenu == 0) {
+        readSRAM();
+      } else if (gameSubMenu == 1) {
+        readROM_SFM();
+        if (!PcLink::usingPcStorage()) {
+          compare_checksum();
+          compareCRC("snes.txt", 0, 1, 0);
+        }
       } else {
-        print_STR(error_STR, 0);
-        print_Msg(wrErrors);
-        printBytesLine();
-        reportVerificationError();
+        writeSRAM(1);
+        unsigned long wrErrors = verifySRAM();
+        if (wrErrors == 0) {
+          println_Msg(FS(SharedFlashText::textVerifiedOK));
+          display_Update();
+        } else {
+          print_STR(error_STR, 0);
+          print_Msg(wrErrors);
+          printBytesLine();
+          reportVerificationError();
+        }
       }
       break;
 
