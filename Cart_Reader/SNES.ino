@@ -854,12 +854,15 @@ void getCartInfo_SNES() {
   showRomRevision();
 
   print_Msg(FS(SharedFlashText::textType));
+  const __FlashStringHelper* romTypeLabel = NULL;
   if (romType == HI)
-    print_Msg(FS(SharedFlashText::textHiROM));
+    romTypeLabel = FS(SharedFlashText::textHiROM);
   else if (romType == LO)
-    print_Msg(FS(SharedFlashText::textLoROM));
+    romTypeLabel = FS(SharedFlashText::textLoROM);
   else if (romType == EX)
-    print_Msg(F("ExHiRom"));
+    romTypeLabel = F("ExHiRom");
+  if (romTypeLabel)
+    print_Msg(romTypeLabel);
   else
     print_Msg(romType);
   print_Msg(FS(FSTRING_SPACE));
