@@ -250,13 +250,9 @@ void mdMenu() {
   // wait for user choice to come back from the question box menu
   switch (mdDev) {
     case 0:
-      prepareCartP21_MD();
-      mode = CORE_MD_CART;
-      break;
-
     case 1:
       prepareCartP21_MD();
-      mode = CORE_SEGA_CD;
+      mode = mdDev == 0 ? CORE_MD_CART : CORE_SEGA_CD;
       break;
 
 #ifdef ENABLE_FLASH
