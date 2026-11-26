@@ -2,7 +2,7 @@
   "schema": 2,
   "mode": "parallel-independent",
   "run_id": "45837758389",
-  "run_attempt": "1",
+  "run_attempt": "2",
   "workflow_commit": "f98d433c72a6a3c5671c4f4fd92ff3e0998c1bb1",
   "request": {
     "id": "parallel-033",
@@ -65,40 +65,196 @@
       "results": []
     },
     {
+      "schema": 1,
+      "run_id": "45837758389",
+      "run_attempt": "2",
+      "workflow_commit": "f98d433c72a6a3c5671c4f4fd92ff3e0998c1bb1",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "msx-prompt",
+        "head": "e783a93073ab2b464e2e62336951394a09f2f732",
+        "base": "3b962cb8d38a352f9f7957bdc73a0a45e7471970",
+        "expected_base_flash": 208274,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "3b962cb8d38a352f9f7957bdc73a0a45e7471970",
+          "subject": "Measure round 32 cumulative integration stages",
+          "status": "ok",
+          "flash": 208274,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "e783a93073ab2b464e2e62336951394a09f2f732",
+          "subject": "Round 33 candidate: msx-prompt",
+          "status": "ok",
+          "flash": 208274,
+          "ram": 6105,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
       "candidate": {
         "id": "msx-prompt",
         "head": "e783a93073ab2b464e2e62336951394a09f2f732"
-      },
-      "status": "missing_or_invalid",
-      "error": "",
-      "results": []
+      }
     },
     {
+      "schema": 1,
+      "run_id": "45837758389",
+      "run_attempt": "2",
+      "workflow_commit": "f98d433c72a6a3c5671c4f4fd92ff3e0998c1bb1",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "nes-write-display",
+        "head": "6c824fec21b98a5740d41118a596f12808d46c59",
+        "base": "3b962cb8d38a352f9f7957bdc73a0a45e7471970",
+        "expected_base_flash": 208274,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "3b962cb8d38a352f9f7957bdc73a0a45e7471970",
+          "subject": "Measure round 32 cumulative integration stages",
+          "status": "ok",
+          "flash": 208274,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "6c824fec21b98a5740d41118a596f12808d46c59",
+          "subject": "Round 33 candidate: nes-write-display",
+          "status": "ok",
+          "flash": 208278,
+          "ram": 6105,
+          "delta_previous": 4,
+          "delta_base": 4,
+          "classification": "increased",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
       "candidate": {
         "id": "nes-write-display",
         "head": "6c824fec21b98a5740d41118a596f12808d46c59"
-      },
-      "status": "missing_or_invalid",
-      "error": "",
-      "results": []
+      }
     },
     {
+      "schema": 1,
+      "run_id": "45837758389",
+      "run_attempt": "2",
+      "workflow_commit": "f98d433c72a6a3c5671c4f4fd92ff3e0998c1bb1",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "snes-reset",
+        "head": "a3282010203a730f3a33cf06e0ba7e05bf6e9d4d",
+        "base": "3b962cb8d38a352f9f7957bdc73a0a45e7471970",
+        "expected_base_flash": 208274,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "3b962cb8d38a352f9f7957bdc73a0a45e7471970",
+          "subject": "Measure round 32 cumulative integration stages",
+          "status": "ok",
+          "flash": 208274,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "a3282010203a730f3a33cf06e0ba7e05bf6e9d4d",
+          "subject": "Round 33 candidate: snes-reset",
+          "status": "ok",
+          "flash": 208274,
+          "ram": 6105,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
       "candidate": {
         "id": "snes-reset",
         "head": "a3282010203a730f3a33cf06e0ba7e05bf6e9d4d"
-      },
-      "status": "missing_or_invalid",
-      "error": "",
-      "results": []
+      }
     },
     {
+      "schema": 1,
+      "run_id": "45837758389",
+      "run_attempt": "2",
+      "workflow_commit": "f98d433c72a6a3c5671c4f4fd92ff3e0998c1bb1",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "n64-flash-warning",
+        "head": "708714668d681fad18048a101227e01753d11cf5",
+        "base": "3b962cb8d38a352f9f7957bdc73a0a45e7471970",
+        "expected_base_flash": 208274,
+        "expected_base_ram": 6105,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "3b962cb8d38a352f9f7957bdc73a0a45e7471970",
+          "subject": "Measure round 32 cumulative integration stages",
+          "status": "ok",
+          "flash": 208274,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "708714668d681fad18048a101227e01753d11cf5",
+          "subject": "Round 33 candidate: n64-flash-warning",
+          "status": "ok",
+          "flash": 208274,
+          "ram": 6105,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
       "candidate": {
         "id": "n64-flash-warning",
         "head": "708714668d681fad18048a101227e01753d11cf5"
-      },
-      "status": "missing_or_invalid",
-      "error": "",
-      "results": []
+      }
     },
     {
       "candidate": {
