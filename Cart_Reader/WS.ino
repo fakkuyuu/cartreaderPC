@@ -510,6 +510,13 @@ static uint32_t sramBankGeometry_WS(uint16_t& end_bank) {
   return bank_size;
 }
 
+static void selectSramReadBankR40_WS(uint16_t bank) __attribute__((noinline));
+static void selectSramReadBankR40_WS(uint16_t bank) {
+  dataOut_WS();
+  writeByte_WSPort(0xc1, bank);
+  dataIn_WS();
+}
+
 static void readSRAM_WS() {
   // generate fullname of rom file
   createFolderAndOpenFile("WS", "SAVE", romName, "save");
@@ -520,10 +527,7 @@ static void readSRAM_WS() {
   uint16_t bank = 0;
 
   do {
-    dataOut_WS();
-    writeByte_WSPort(0xc1, bank);
-
-    dataIn_WS();
+    selectSramReadBankR40_WS(bank);
     for (uint32_t addr = 0; addr < bank_size; addr += 512) {
       // blink LED
       if ((addr & ((1 << 14) - 1)) == 0)
@@ -559,10 +563,7 @@ static void verifySRAM_WS() {
     uint32_t write_errors = 0;
 
     do {
-      dataOut_WS();
-      writeByte_WSPort(0xc1, bank);
-
-      dataIn_WS();
+      selectSramReadBankR40_WS(bank);
       for (uint32_t addr = 0; addr < bank_size && myFile.available(); addr += 512) {
         readSdBufferBlock();
 
