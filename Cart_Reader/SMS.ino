@@ -56,37 +56,13 @@ void smsMenu() {
   unsigned char SMSSetup;
   SMSSetup = chooseFlashMenuOption(F("Select your setup"), SMSAdapterMenu, 6);
 
-  switch (SMSSetup) {
-    case 0:
-      // SMS or MarkIII with raphnet adapter
-      system_sms = true;
-      adapter_raphnet = true;
-      break;
-    case 1:
-      // SMS with Retrode adapter
-      system_sms = true;
-      adapter_retrode = true;
-      break;
-    case 2:
-      // SMS with Retron 3in1 adapter
-      system_sms = true;
-      adapter_retron = true;
-      break;
-    case 3:
-      // GameGear with Retrode adapter
-      system_gg = true;
-      adapter_retrode = true;
-      break;
-    case 4:
-      // GameGear with Retron 3in1 adapter
-      system_gg = true;
-      adapter_retron = true;
-      break;
-    case 5:
-      // SG-1000 with raphnet adapter
-      system_sg1000 = true;
-      adapter_raphnet = true;
-      break;
+  if (SMSSetup < 6) {
+    if (SMSSetup < 3) system_sms = true;
+    else if (SMSSetup < 5) system_gg = true;
+    else system_sg1000 = true;
+    if (SMSSetup == 0 || SMSSetup == 5) adapter_raphnet = true;
+    else if (SMSSetup == 1 || SMSSetup == 3) adapter_retrode = true;
+    else adapter_retron = true;
   }
   for (;;) operationsMenu();
 }
