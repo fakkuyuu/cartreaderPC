@@ -1172,37 +1172,27 @@ void getCartInfo_MD() {
   }
   print_Msg(FS(FSTRING_SIZE));
   print_Msg(cartSize * 8 / 1024 / 1024);
-  switch (SnKmode) {
-    case 2:
-    case 4:
-    case 5:
-    case 3:
+  if (SnKmode >= 2 && SnKmode <= 5) {
+    print_Msg(F("+"));
+    print_Msg(cartSizeLockon * 8 / 1024 / 1024);
+    if (SnKmode == 3) {
       print_Msg(F("+"));
-      print_Msg(cartSizeLockon * 8 / 1024 / 1024);
-      if (SnKmode == 3) {
-        print_Msg(F("+"));
-        print_Msg(cartSizeSonic2 * 8 / 1024 / 1024);
-      }
-      break;
+      print_Msg(cartSizeSonic2 * 8 / 1024 / 1024);
+    }
   }
   println_Msg(FS(SharedFlashText::textMBit));
   print_Msg(F("ChkS: "));
   print_Msg_PaddedHexByte((chksum >> 8));
   print_Msg_PaddedHexByte((chksum & 0x00ff));
-  switch (SnKmode) {
-    case 2:
-    case 4:
-    case 5:
-    case 3:
+  if (SnKmode >= 2 && SnKmode <= 5) {
+    print_Msg(F("+"));
+    print_Msg_PaddedHexByte((chksumLockon >> 8));
+    print_Msg_PaddedHexByte((chksumLockon & 0x00ff));
+    if (SnKmode == 3) {
       print_Msg(F("+"));
-      print_Msg_PaddedHexByte((chksumLockon >> 8));
-      print_Msg_PaddedHexByte((chksumLockon & 0x00ff));
-      if (SnKmode == 3) {
-        print_Msg(F("+"));
-        print_Msg_PaddedHexByte((chksumSonic2 >> 8));
-        print_Msg_PaddedHexByte((chksumSonic2 & 0x00ff));
-      }
-      break;
+      print_Msg_PaddedHexByte((chksumSonic2 >> 8));
+      print_Msg_PaddedHexByte((chksumSonic2 & 0x00ff));
+    }
   }
   printBlankLine();
   if (saveType == 4) {
