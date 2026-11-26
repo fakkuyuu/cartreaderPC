@@ -864,9 +864,7 @@ void getCartInfo_SNES() {
   else
     print_Msg(romType);
   print_Msg(FS(FSTRING_SPACE));
-  if (romSpeed == 0)
-    println_Msg(FS(SharedFlashText::textSlowROM));
-  else if (romSpeed == 2)
+  if (romSpeed == 0 || romSpeed == 2)
     println_Msg(FS(SharedFlashText::textSlowROM));
   else if (romSpeed == 3)
     println_Msg(F("FastROM"));
