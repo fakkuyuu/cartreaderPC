@@ -1876,6 +1876,12 @@ void readSram_MD() {
   display_Update();
 }
 
+static void unlockFlashCommand_MD() __attribute__((noinline));
+static void unlockFlashCommand_MD() {
+  writeFlash_MD(0x5555, 0xaa);
+  writeFlash_MD(0x2aaa, 0x55);
+}
+
 unsigned long verifySram_MD() {
   dataIn_MD();
   writeErrors = 0;
@@ -1920,8 +1926,7 @@ void resetFlash_MD() {
   dataOut_MD();
 
   // Reset command sequence
-  writeFlash_MD(0x5555, 0xaa);
-  writeFlash_MD(0x2aaa, 0x55);
+  unlockFlashCommand_MD();
   writeFlash_MD(0x5555, 0xf0);
 
   // Set data pins to input again
@@ -1959,8 +1964,7 @@ void write29F1610_MD() {
       }
 
       // Write command sequence
-      writeFlash_MD(0x5555, 0xaa);
-      writeFlash_MD(0x2aaa, 0x55);
+      unlockFlashCommand_MD();
       writeFlash_MD(0x5555, 0xa0);
 
       // Write one full page at a time
@@ -2071,8 +2075,7 @@ void idFlash_MD() {
   dataOut_MD();
 
   // ID command sequence
-  writeFlash_MD(0x5555, 0xaa);
-  writeFlash_MD(0x2aaa, 0x55);
+  unlockFlashCommand_MD();
   writeFlash_MD(0x5555, 0x90);
 
   // Set data pins to input again
@@ -2089,8 +2092,7 @@ byte readStatusReg_MD() {
   dataOut_MD();
 
   // Status reg command sequence
-  writeFlash_MD(0x5555, 0xaa);
-  writeFlash_MD(0x2aaa, 0x55);
+  unlockFlashCommand_MD();
   writeFlash_MD(0x5555, 0x70);
 
   // Set data pins to input again
@@ -2106,11 +2108,9 @@ void eraseFlash_MD() {
   dataOut_MD();
 
   // Erase command sequence
-  writeFlash_MD(0x5555, 0xaa);
-  writeFlash_MD(0x2aaa, 0x55);
+  unlockFlashCommand_MD();
   writeFlash_MD(0x5555, 0x80);
-  writeFlash_MD(0x5555, 0xaa);
-  writeFlash_MD(0x2aaa, 0x55);
+  unlockFlashCommand_MD();
   writeFlash_MD(0x5555, 0x10);
 
   // Set data pins to input again
