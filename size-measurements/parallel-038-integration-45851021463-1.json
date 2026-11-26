@@ -1,0 +1,175 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45851021463",
+  "run_attempt": "1",
+  "workflow_commit": "6b6563168a5f492e1ac3f6fc58274df8779f6436",
+  "request": {
+    "id": "parallel-038-integration",
+    "base": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
+    "expected_base_flash": 207968,
+    "expected_base_ram": 6105,
+    "endpoints_only": true,
+    "candidates": [
+      {
+        "id": "integration-n64",
+        "head": "230d871e93dac146f08df87de839cb0c356ea036"
+      },
+      {
+        "id": "integration-n64-snes",
+        "head": "901086daa96ea9781ee1b597b07b68c8c81e175a"
+      },
+      {
+        "id": "integration-n64-snes-sms",
+        "head": "56a7dff426b6a0097d169ebd055ee692e30b3cfc"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45851021463",
+      "run_attempt": "1",
+      "workflow_commit": "6b6563168a5f492e1ac3f6fc58274df8779f6436",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-n64",
+        "head": "230d871e93dac146f08df87de839cb0c356ea036",
+        "base": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
+        "expected_base_flash": 207968,
+        "expected_base_ram": 6105,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
+          "subject": "Record round 37 independent and combined measurements",
+          "status": "ok",
+          "flash": 207968,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "230d871e93dac146f08df87de839cb0c356ea036",
+          "subject": "Round 38 integrate N64 candidate c971481",
+          "status": "ok",
+          "flash": 207926,
+          "ram": 6105,
+          "delta_previous": -42,
+          "delta_base": -42,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-n64",
+        "head": "230d871e93dac146f08df87de839cb0c356ea036"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45851021463",
+      "run_attempt": "1",
+      "workflow_commit": "6b6563168a5f492e1ac3f6fc58274df8779f6436",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-n64-snes",
+        "head": "901086daa96ea9781ee1b597b07b68c8c81e175a",
+        "base": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
+        "expected_base_flash": 207968,
+        "expected_base_ram": 6105,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
+          "subject": "Record round 37 independent and combined measurements",
+          "status": "ok",
+          "flash": 207968,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "901086daa96ea9781ee1b597b07b68c8c81e175a",
+          "subject": "Round 38 integrate SNES candidate 87ea6ca",
+          "status": "ok",
+          "flash": 207896,
+          "ram": 6105,
+          "delta_previous": -72,
+          "delta_base": -72,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-n64-snes",
+        "head": "901086daa96ea9781ee1b597b07b68c8c81e175a"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45851021463",
+      "run_attempt": "1",
+      "workflow_commit": "6b6563168a5f492e1ac3f6fc58274df8779f6436",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-n64-snes-sms",
+        "head": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
+        "base": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
+        "expected_base_flash": 207968,
+        "expected_base_ram": 6105,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
+          "subject": "Record round 37 independent and combined measurements",
+          "status": "ok",
+          "flash": 207968,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
+          "subject": "Round 38 integrate SMS candidate bcef1cf",
+          "status": "ok",
+          "flash": 207892,
+          "ram": 6105,
+          "delta_previous": -76,
+          "delta_base": -76,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-n64-snes-sms",
+        "head": "56a7dff426b6a0097d169ebd055ee692e30b3cfc"
+      }
+    }
+  ]
+}
