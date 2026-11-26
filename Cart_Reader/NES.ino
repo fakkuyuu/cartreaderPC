@@ -1806,26 +1806,14 @@ void setRAMSize() {
 
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  if ((mapper == 16) || (mapper == 159)) {
-    int sizeEEP = 0;
-    print_Msg(F("EEPROM SIZE "));
-    sizeEEP = pgm_read_byte(&(RAM[newramsize])) * (mapper == 16 ? 32 : 16);
-    print_Msg(sizeEEP);
+  const bool eeprom = mapper == 16 || mapper == 159;
+  print_Msg(eeprom ? F("EEPROM SIZE ") : FS(SharedFlashText::textRAMSIZE));
+  if (eeprom || mapper == 80) {
+    print_Msg(pgm_read_byte(&(RAM[newramsize])) * (mapper == 16 ? 32 : 16));
     println_Msg(FS(SharedFlashText::unitB));
-  } else if (mapper == 19) {
-    print_Msg(FS(SharedFlashText::textRAMSIZE));
-    if (newramsize == 2)
-      println_Msg(FS(SharedFlashText::text128B));
-    else {
-      print_Msg(pgm_read_byte(&(RAM[newramsize])));
-      println_Msg(FS(SharedFlashText::unitK));
-    }
-  } else if (mapper == 80) {
-    print_Msg(FS(SharedFlashText::textRAMSIZE));
-    print_Msg(pgm_read_byte(&(RAM[newramsize])) * 16);
-    println_Msg(FS(SharedFlashText::unitB));
+  } else if (mapper == 19 && newramsize == 2) {
+    println_Msg(FS(SharedFlashText::text128B));
   } else {
-    print_Msg(FS(SharedFlashText::textRAMSIZE));
     if (mapper == 0)
       print_Msg(newramsize * 2);
     else if (mapper == 82)
