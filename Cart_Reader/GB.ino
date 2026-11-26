@@ -156,6 +156,7 @@ void gbxMenu() {
   gbType = chooseFlashMenuOption(F("Select Game Boy"), menuOptionsGBx, 7);
 
   // wait for user choice to come back from the question box menu
+  if (gbType == 4 || gbType == 5) setupGbAccessoryMenu();
   switch (gbType) {
     case 0:
       clearAndUpdateDisplay();
@@ -433,7 +434,6 @@ void gbxMenu() {
 
     case 4:
       // Read or Write a Pelican Codebreaker or MonsterBrain
-      setupGbAccessoryMenu();
       unsigned char gbPelican;
       // Copy menuOptions out of progmem
       gbPelican = chooseFlashMenuOption(FS(SharedFlashText::textSelectOperation), menuOptionsGBPelican, 2);
@@ -453,7 +453,6 @@ void gbxMenu() {
 
     case 5:
       // Read or Write a Datel Device (Mega Memory Card and Gameshark)
-      setupGbAccessoryMenu();
       unsigned char gbDatel;
       // Copy menuOptions out of progmem
       gbDatel = chooseFlashMenuOption(FS(SharedFlashText::textSelectOperation), menuOptionsGBDatel, 4);
