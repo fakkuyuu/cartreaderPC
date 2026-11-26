@@ -369,15 +369,9 @@ void n64CartMenu() {
           break;
 
         case 1:
-          // 4K EEPROM
-          saveType = 5;
-          eepPages = 64;
-          break;
-
         case 2:
-          // 16K EEPROM
-          saveType = 6;
-          eepPages = 256;
+          saveType = N64SaveMenu == 1 ? 5 : 6;
+          eepPages = N64SaveMenu == 1 ? 64 : 256;
           break;
 
         case 3:
