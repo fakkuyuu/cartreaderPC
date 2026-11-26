@@ -343,9 +343,9 @@ void mdCartMenu() {
   mainMenu = chooseFlashMenuOption(FS(SharedFlashText::textMEGADRIVEReader), menuOptionsMDCart, 6);
 
   // wait for user choice to come back from the question box menu
+  if (mainMenu <= 3) display_Clear();
   switch (mainMenu) {
     case 0:
-      display_Clear();
 
       // common ROM read fail state: no cart inserted - tends to report impossibly large cartSize
       // largest known game so far is supposedly "Paprium" at 10MB, so cap sanity check at 16MB
@@ -373,7 +373,6 @@ void mdCartMenu() {
 
     case 1:
     case 2:
-      display_Clear();
       if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
         changeToStorageRoot();
         if (mainMenu == 1) {
@@ -410,7 +409,6 @@ void mdCartMenu() {
       break;
 
     case 3:
-      display_Clear();
       force_cartSize_MD();
       break;
 
