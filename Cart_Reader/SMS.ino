@@ -460,6 +460,14 @@ void manual_selectRomSize() {
 //******************************************
 //  Read ROM and save it to the SD card
 //******************************************
+static void readSaveBlockR38_SMS(word start) __attribute__((noinline));
+static void readSaveBlockR38_SMS(word start) {
+  for (int currByte = 0; currByte < 512; currByte++) {
+    sdBuffer[currByte] = readByte_SMS(start + currByte);
+  }
+  writeSdBufferBlock();
+}
+
 void readROM_SMS() {
   changeToStorageRoot();
   // Get name, add extension depending on the system and convert to char array for sd lib
@@ -500,26 +508,7 @@ void readROM_SMS() {
 
     // Read 16KB from slot 2 which starts at 0x8000
     for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
-      // Fill SD buffer
-      for (int currByte = 0; currByte < 512; currByte++) {
-        sdBuffer[currByte] = readByte_SMS(((system_sg1000) || (cartSize == 32768) ? 0 : 0x8000) + currBuffer + currByte);
-      }
-      // hexdump for debugging:
-      // if (currBank == 0 && currBuffer == 0) {
-      //   for (word xi = 0; xi < 0x100; xi++) {
-      //     if (xi%16==0) {
-      //       print_Msg_PaddedHex16(xi);
-      //       print_Msg(FS(FSTRING_SPACE));
-      //     }
-      //     print_Msg_PaddedHexByte(sdBuffer[xi]);
-      //     if (xi>0&&((xi+1)%16)==0) {
-      //       printBlankLine();
-      //     } else {
-      //       print_Msg(FS(FSTRING_SPACE));
-      //     }
-      //   }
-      // }
-      writeSdBufferBlock();
+      readSaveBlockR38_SMS(((system_sg1000) || (cartSize == 32768) ? 0 : 0x8000) + currBuffer);
     }
 
     // Update progress bar
@@ -565,11 +554,7 @@ void readSRAM_SMS() {
 
     // Read 16 KiB from slot 2 which starts at 0x8000
     for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
-      // Fill SD buffer
-      for (int currByte = 0; currByte < 512; currByte++) {
-        sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
-      }
-      writeSdBufferBlock();
+      readSaveBlockR38_SMS(0x8000 + currBuffer);
     }
   }
   // Close file
