@@ -1,40 +1,33 @@
 {
-  "id": "parallel-024",
-  "base": "6e5cd3327a1f0bf3683cca257eab07678d7a4f9e",
+  "id": "parallel-024-integration",
+  "base": "541aece5922226793b2f594f5d5de958b97c2ed0",
   "expected_base_flash": 209324,
   "expected_base_ram": 6123,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "gba-eeprom-menu",
-      "head": "aa7d87a57568b3f602b295aebc520d490f157819"
+      "id": "integration-gba",
+      "head": "c2d62499c8f99630e324071eced442a3a9ac7d1d"
     },
     {
-      "id": "sms-operation-setup",
-      "head": "7ccfdf2690204327636e4a7abb6ecb697f8c6563"
+      "id": "integration-gba-snes",
+      "head": "abaec25f8db53e7a8a239cf9334095d873ab28ef"
     },
     {
-      "id": "msx-pc-menu-index",
-      "head": "fa4acda48624a4bae538cbc449bc2150e3d42ede"
+      "id": "integration-gba-snes-md",
+      "head": "06187866124aa923f606b35da4fc33c80387068f"
     },
     {
-      "id": "n64-manual-eeprom",
-      "head": "0bc89516c5777313a0ab1d4c837c8f0581c723ea"
+      "id": "integration-gba-snes-md-gb",
+      "head": "ac868787903fc42ba0085a64f19a10bc4e5ad07d"
     },
     {
-      "id": "gb-accessory-menu-end",
-      "head": "d615da89fde539bb27b6c86be664018d84524986"
+      "id": "integration-gba-snes-md-gb-n64",
+      "head": "583ef63a026d02c28c615633e61540cefb103ccf"
     },
     {
-      "id": "snes-sram-test-menu",
-      "head": "0cfb661f1c6ebe94349b1c2dabf4f6451d9f72a5"
-    },
-    {
-      "id": "md-cd-backup-menu",
-      "head": "3f8a78ec50fcdb1f488d8c63078081e0dcf5089a"
-    },
-    {
-      "id": "nes-ram-size-display",
-      "head": "288c504bb5a846a37e9d60f62ce1b7cf77fc0673"
+      "id": "integration-gba-snes-md-gb-n64-sms",
+      "head": "4ebd1b61e09a17e183fe3142c88fe6796bd49e78"
     }
   ]
 }
