@@ -1858,10 +1858,7 @@ setram:
         PcConsole.print(pgm_read_byte(&(RAM[i])) / 4);
         PcConsole.println(FS(SharedFlashText::unitK));
       } else if ((mapper == 16) || (mapper == 159)) {
-        if (mapper == 16)
-          PcConsole.print(pgm_read_byte(&(RAM[i + ramlo])) * 32);
-        else
-          PcConsole.print(pgm_read_byte(&(RAM[i + ramlo])) * 16);
+        PcConsole.print(pgm_read_byte(&(RAM[i + ramlo])) * (mapper == 16 ? 32 : 16));
         PcConsole.println(FS(SharedFlashText::unitB));
       } else if (mapper == 19) {
         if (i == 2)
