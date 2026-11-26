@@ -1,40 +1,37 @@
 {
-  "id": "parallel-023",
-  "base": "0ae5f19204549513f176cacf508e604d1d6dd794",
+  "id": "parallel-023-integration",
+  "base": "aec1c4edb0898adcb388fce992617732fbe3df2c",
   "expected_base_flash": 209566,
   "expected_base_ram": 6123,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "n64-read-sram",
-      "head": "359f179e1471d35c31352c73b53b464d42ca98fe"
+      "id": "integration-gba",
+      "head": "845332e0253c292aec0c770b91ee5f9d8654593a"
     },
     {
-      "id": "sms-rom-size-table",
-      "head": "3574556fdcd37a1ff92c2b6a575a9b984a2a5611"
+      "id": "integration-gba-snes",
+      "head": "e7634b12a1428a6b1d88b927d998aafd58fc40f1"
     },
     {
-      "id": "gba-write-sram-menu",
-      "head": "db1bcd12eeffc7267cc02fdf84b213fd8076255b"
+      "id": "integration-gba-snes-gb",
+      "head": "ead492570d564a78cc11b8df062a15595e50c4b1"
     },
     {
-      "id": "gb-save-menu",
-      "head": "05be118b6564471d6f5e55fe670399afc496d637"
+      "id": "integration-gba-snes-gb-md",
+      "head": "0c7ec72f94de4dacd5ce44fcb81e3b8557601178"
     },
     {
-      "id": "snes-sram-menu",
-      "head": "29a3c525ceb226f460a72dd2b710e761d604fe91"
+      "id": "integration-gba-snes-gb-md-sms",
+      "head": "5dd26272c440c0e49c16c7f2ba887fc93e05c4b8"
     },
     {
-      "id": "nes-pc-ram-size",
-      "head": "be3990f3907f0722a8803b264ef06c479407677f"
+      "id": "integration-gba-snes-gb-md-sms-msx",
+      "head": "953c722d2e45beb9d136f441dcf9e6e3cdd7a679"
     },
     {
-      "id": "md-save-menu",
-      "head": "82b3730ff8148eaa31a10652c54c28703cdd78fe"
-    },
-    {
-      "id": "msx-mapper-index",
-      "head": "d030cb146cd37677f45965d3e646e5d459c31b54"
+      "id": "integration-gba-snes-gb-md-sms-msx-n64",
+      "head": "7b11624f9acf4afea008dd55c135c0b780422ca8"
     }
   ]
 }
