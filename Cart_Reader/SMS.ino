@@ -78,21 +78,16 @@ void operationsMenu() {
     if (SMSOperation != 0) SMSOperation = 4;
   } else {
     convertPgm(SMSOperationMenu, 5);
+    const __FlashStringHelper* label = NULL;
     if (system_sms) {
-      if (adapter_raphnet) {
-        SMSOperation = chooseMenuOption(FS(SMSAdapterItem1), 5);
-      } else if (adapter_retrode) {
-        SMSOperation = chooseMenuOption(FS(SMSAdapterItem2), 5);
-      } else if (adapter_retron) {
-        SMSOperation = chooseMenuOption(FS(SMSAdapterItem3), 5);
-      }
+      if (adapter_raphnet) label = FS(SMSAdapterItem1);
+      else if (adapter_retrode) label = FS(SMSAdapterItem2);
+      else if (adapter_retron) label = FS(SMSAdapterItem3);
     } else if (system_gg) {
-      if (adapter_retrode) {
-        SMSOperation = chooseMenuOption(FS(SMSAdapterItem4), 5);
-      } else if (adapter_retron) {
-        SMSOperation = chooseMenuOption(FS(SMSAdapterItem5), 5);
-      }
+      if (adapter_retrode) label = FS(SMSAdapterItem4);
+      else if (adapter_retron) label = FS(SMSAdapterItem5);
     }
+    if (label) SMSOperation = chooseMenuOption(label, 5);
 
   }
 
