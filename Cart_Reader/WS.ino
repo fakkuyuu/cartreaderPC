@@ -352,12 +352,8 @@ static void showCartInfo_WS() {
   switch (saveType) {
     case 0: println_Msg(FS(SharedFlashText::textNone)); break;
     case 1:
-      print_Msg(F("Sram "));
-      print_Msg(sramSize);
-      println_Msg(F(" Kb"));
-      break;
     case 2:
-      print_Msg(F("Eeprom "));
+      print_Msg(saveType == 1 ? F("Sram ") : F("Eeprom "));
       print_Msg(sramSize);
       println_Msg(F(" Kb"));
       break;

@@ -93,8 +93,9 @@ void gbaMenu() {
             break;
 
           case 3:
-            // 256K SRAM/FRAM
-            readSRAM_GBA(1, 32768, 0);
+          case 6:
+            // 256K/512K SRAM/FRAM
+            readSRAM_GBA(1, detectedSaveType == 3 ? 32768UL : 65536UL, 0);
             break;
 
           case 4:
@@ -112,10 +113,7 @@ void gbaMenu() {
             readFLASH_GBA(0, 65536, 65536, true);
             break;
 
-          case 6:
-            // 512K SRAM/FRAM
-            readSRAM_GBA(1, 65536, 0);
-            break;
+
         }
         setROM_GBA();
         if (detectedSaveType >= 1 && detectedSaveType <= 6)
