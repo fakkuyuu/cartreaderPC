@@ -408,28 +408,20 @@ void snesMenu() {
       break;
 
     case 1:
-      if (sramSize > 0) {
-        display_Clear();
-        // Change working dir to root
-        changeToStorageRoot();
-        readSRAM();
-      } else {
-        showNoSramError();
-      }
-      break;
-
     case 2:
       if (sramSize > 0) {
         display_Clear();
-        // Change working dir to root
         changeToStorageRoot();
-        writeSRAM(1);
-        unsigned long wrErrors;
-        wrErrors = verifySRAM();
-        if (wrErrors == 0) {
-          showVerifiedAndUpdate();
+        if (mainMenu == 1) {
+          readSRAM();
         } else {
-          showVerificationErrorCount(wrErrors);
+          writeSRAM(1);
+          unsigned long wrErrors = verifySRAM();
+          if (wrErrors == 0) {
+            showVerifiedAndUpdate();
+          } else {
+            showVerificationErrorCount(wrErrors);
+          }
         }
       } else {
         showNoSramError();
