@@ -1,40 +1,21 @@
 {
-  "id": "parallel-022",
-  "base": "59b8778ec8a093de8ee77e2babcad419f3e70091",
+  "id": "parallel-022-integration",
+  "base": "82773eac3583cc58a6fd2eecf57c560260ddc8b5",
   "expected_base_flash": 209618,
   "expected_base_ram": 6123,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "gba-read-sram-menu",
-      "head": "510c6bd9391359a0c20ebd3cc26c9f873f8a856d"
+      "id": "integration-ws",
+      "head": "e3c935fe85f4c2cceafc5afbe731e0927a6490fe"
     },
     {
-      "id": "ws-save-label",
-      "head": "196821ed15185082444d0e1a4da4d17c683bb3f6"
+      "id": "integration-ws-gba",
+      "head": "e984d9c12a87f130f47c40f96131412a8cce3165"
     },
     {
-      "id": "pce-device-setup",
-      "head": "04f8020d70a69dbf912ac40a6bbc560a004ee9eb"
-    },
-    {
-      "id": "md-save-write-end",
-      "head": "491c8f59c3fce467678c4f623d05531a4a145e6e"
-    },
-    {
-      "id": "n64-stick-results",
-      "head": "7229ee49d823ba4313a8d875f963586ef97b58db"
-    },
-    {
-      "id": "sms-save-end",
-      "head": "aca74182ee107e286dbb4bce12097bf51e36fbdc"
-    },
-    {
-      "id": "nes-serial-eeprom-size",
-      "head": "cd3bc282525380032ee67059adc4d95d72b721d8"
-    },
-    {
-      "id": "sfm-powercycle-error",
-      "head": "359f9e179b04b81b8aa4ec8696aff319b9fb61f4"
+      "id": "integration-ws-gba-sfm",
+      "head": "d085619f084ca1c9cd854bdfd42ada34b6f7f2af"
     }
   ]
 }
