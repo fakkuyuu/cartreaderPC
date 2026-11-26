@@ -84,6 +84,14 @@ static void refreshMenuP17_PCE() {
   display_Update();
 }
 
+static void setupDeviceP22_PCE(decltype(pce_internal_mode) device) __attribute__((noinline));
+static void setupDeviceP22_PCE(decltype(pce_internal_mode) device) {
+  refreshMenuP17_PCE();
+  pce_internal_mode = device;
+  setup_cart_PCE();
+  mode = CORE_PCE;
+}
+
 void pcsMenu(void) {
   unsigned char pceDev;
   pceDev = chooseFlashMenuOption(F("Select device"), menuOptionspce, 5);
@@ -91,35 +99,23 @@ void pcsMenu(void) {
   switch (pceDev) {
     case 0:
       //Hucard
-      refreshMenuP17_PCE();
-      pce_internal_mode = HUCARD;
-      setup_cart_PCE();
-      mode = CORE_PCE;
+      setupDeviceP22_PCE(HUCARD);
       break;
 
     case 1:
       //Hucard not swapped
-      refreshMenuP17_PCE();
-      pce_internal_mode = HUCARD_NOSWAP;
-      setup_cart_PCE();
-      mode = CORE_PCE;
+      setupDeviceP22_PCE(HUCARD_NOSWAP);
       break;
 
     case 2:
       //Turbografx
-      refreshMenuP17_PCE();
-      pce_internal_mode = TURBOCHIP;
-      setup_cart_PCE();
-      mode = CORE_PCE;
+      setupDeviceP22_PCE(TURBOCHIP);
       break;
 
 #ifdef ENABLE_FLASH
     case 3:
       //Flash Repro
-      refreshMenuP17_PCE();
-      pce_internal_mode = PCE_FLASH;
-      setup_cart_PCE();
-      mode = CORE_PCE;
+      setupDeviceP22_PCE(PCE_FLASH);
       break;
 #endif
 
