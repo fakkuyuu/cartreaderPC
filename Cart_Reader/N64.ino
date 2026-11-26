@@ -130,6 +130,12 @@ static void prepareCartP21_N64(bool special) {
   setup_N64_Cart();
 }
 
+static void finishCartMenuP30_N64() __attribute__((noinline));
+static void finishCartMenuP30_N64() {
+  printCartInfo_N64();
+  mode = CORE_N64_CART;
+}
+
 void n64Menu() {
   // create menu with title and 6 options to choose from
   unsigned char n64Dev;
@@ -140,8 +146,7 @@ void n64Menu() {
   switch (n64Dev) {
     case 0:
       prepareCartP21_N64(false);
-      printCartInfo_N64();
-      mode = CORE_N64_CART;
+      finishCartMenuP30_N64();
       break;
 
     case 1:
@@ -154,16 +159,14 @@ void n64Menu() {
     case 2:
       prepareCartP21_N64(true);
       flashRepro_N64();
-      printCartInfo_N64();
-      mode = CORE_N64_CART;
+      finishCartMenuP30_N64();
       break;
 #endif
 
     case 3:
       prepareCartP21_N64(true);
       flashGameshark_N64();
-      printCartInfo_N64();
-      mode = CORE_N64_CART;
+      finishCartMenuP30_N64();
       break;
 
     case 4:
