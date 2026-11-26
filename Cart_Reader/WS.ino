@@ -544,6 +544,19 @@ static void showVerifyStartP17_WS() {
   display_Update();
 }
 
+static void showVerifyResultP29_WS(uint32_t write_errors) __attribute__((noinline));
+static void showVerifyResultP29_WS(uint32_t write_errors) {
+  if (write_errors == 0) {
+    println_Msg(FS(SharedFlashText::textPassed));
+  } else {
+    println_Msg(FS(SharedFlashText::textFailed));
+    print_STR(error_STR, 0);
+    print_Msg(write_errors);
+    printBytesLine();
+    reportVerificationError();
+  }
+}
+
 static void verifySRAM_WS() {
   showVerifyStartP17_WS();
 
@@ -571,15 +584,7 @@ static void verifySRAM_WS() {
 
     closeCurrentFile();
 
-    if (write_errors == 0) {
-      println_Msg(FS(SharedFlashText::textPassed));
-    } else {
-      println_Msg(FS(SharedFlashText::textFailed));
-      print_STR(error_STR, 0);
-      print_Msg(write_errors);
-      printBytesLine();
-      reportVerificationError();
-    }
+    showVerifyResultP29_WS(write_errors);
   } else {
     reportMissingFile();
   }
@@ -713,15 +718,7 @@ static void verifyEEPROM_WS() {
 
     closeCurrentFile();
 
-    if (write_errors == 0) {
-      println_Msg(FS(SharedFlashText::textPassed));
-    } else {
-      println_Msg(FS(SharedFlashText::textFailed));
-      print_STR(error_STR, 0);
-      print_Msg(write_errors);
-      printBytesLine();
-      reportVerificationError();
-    }
+    showVerifyResultP29_WS(write_errors);
   } else {
     reportMissingFile();
   }
