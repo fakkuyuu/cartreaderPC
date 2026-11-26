@@ -870,10 +870,8 @@ void getCartInfo_GBA() {
       }
     } else if (saveTypeStr[0] == 'S') {
       saveType = 3;
-    } else if ((saveTypeStr[0] == 'F') && (saveTypeStr[5] == '1')) {
-      saveType = 5;
     } else if (saveTypeStr[0] == 'F') {
-      saveType = 4;
+      saveType = saveTypeStr[5] == '1' ? 5 : 4;
     }
   }
 }
