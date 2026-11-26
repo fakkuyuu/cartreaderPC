@@ -321,14 +321,17 @@ void readSRAM_SV() {
   updateDisplayAndWait();
 }
 
-void writeSRAM_SV() {
+static void selectWriteFileP28_SV(const __FlashStringHelper* label) __attribute__((noinline));
+static void selectWriteFileP28_SV(const __FlashStringHelper* label) {
   filePath[0] = '\0';
   changeToStorageRoot();
-  fileBrowser(FS(SharedFlashText::textSelectSrmFile));
-  // Create filepath
+  fileBrowser(label);
   sprintf(filePath, "%s/%s", filePath, fileName);
-  //clear the screen
   display_Clear();
+}
+
+void writeSRAM_SV() {
+  selectWriteFileP28_SV(FS(SharedFlashText::textSelectSrmFile));
 
   //open file on sd card
   if (openSelectedFileForRead()) {
@@ -445,12 +448,7 @@ void writeROM_SV(void) {
   }
 
   //Display file Browser and wait user to select a file. Size must be 1MB.
-  filePath[0] = '\0';
-  changeToStorageRoot();
-  fileBrowser(F("Select BS file"));
-  // Create filepath
-  sprintf(filePath, "%s/%s", filePath, fileName);
-  display_Clear();
+  selectWriteFileP28_SV(F("Select BS file"));
 
   //open file on sd card
   if (openSelectedFileForRead()) {
