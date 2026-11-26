@@ -639,43 +639,16 @@ void showCartInfo_GB() {
 
     printBlankLine();
     printRomSizeLabel();
-    switch (romSize) {
-      case 0:
-        print_Msg(FS(SharedFlashText::text32KB));
-        break;
-
-      case 1:
-        print_Msg(FS(SharedFlashText::text64KB));
-        break;
-
-      case 2:
-        print_Msg(FS(SharedFlashText::text128KB));
-        break;
-
-      case 3:
-        print_Msg(FS(SharedFlashText::text256KB));
-        break;
-
-      case 4:
-        print_Msg(FS(SharedFlashText::text512KB));
-        break;
-
-      case 5:
-        print_Msg(F("1 MB"));
-        break;
-
-      case 6:
-        print_Msg(F("2 MB"));
-        break;
-
-      case 7:
-        print_Msg(F("4 MB"));
-        break;
-
-      case 8:
-        print_Msg(F("8 MB"));
-        break;
-    }
+    static const char size1MB[] PROGMEM = "1 MB";
+    static const char size2MB[] PROGMEM = "2 MB";
+    static const char size4MB[] PROGMEM = "4 MB";
+    static const char size8MB[] PROGMEM = "8 MB";
+    static const char* const romSizeLabels[] PROGMEM = {
+      SharedFlashText::text32KB, SharedFlashText::text64KB, SharedFlashText::text128KB,
+      SharedFlashText::text256KB, SharedFlashText::text512KB, size1MB, size2MB, size4MB, size8MB
+    };
+    if (romSize < sizeof(romSizeLabels) / sizeof(romSizeLabels[0]))
+      print_Msg(FS((const char*)pgm_read_ptr(&romSizeLabels[romSize])));
 
     printBlankLine();
     //print_Msg(FS(SharedFlashText::textBanks));
