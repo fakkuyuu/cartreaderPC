@@ -314,31 +314,16 @@ void setup_GBA() {
     showReproCartSizeMb();
   }
   print_Msg(FS(SharedFlashText::textSaveType));
-  switch (saveType) {
-    case 0:
-      println_Msg(FS(SharedFlashText::textNoneUnknown));
-      break;
-
-    case 1:
-      println_Msg(FS(SharedFlashText::text4KEEPROM));
-      break;
-
-    case 2:
-      println_Msg(F("64K EEPROM"));
-      break;
-
-    case 3:
-      println_Msg(F("256K SRAM"));
-      break;
-
-    case 4:
-      println_Msg(F("512K FLASH"));
-      break;
-
-    case 5:
-      println_Msg(F("1M FLASH"));
-      break;
-  }
+  static const char save64KEeprom[] PROGMEM = "64K EEPROM";
+  static const char save256KSram[] PROGMEM = "256K SRAM";
+  static const char save512KFlash[] PROGMEM = "512K FLASH";
+  static const char save1MFlash[] PROGMEM = "1M FLASH";
+  static const char* const saveLabels[] PROGMEM = {
+    SharedFlashText::textNoneUnknown, SharedFlashText::text4KEEPROM,
+    save64KEeprom, save256KSram, save512KFlash, save1MFlash
+  };
+  if (saveType < sizeof(saveLabels) / sizeof(saveLabels[0]))
+    println_Msg(FS((const char*)pgm_read_ptr(&saveLabels[saveType])));
   print_Msg(F("Header Checksum: "));
   println_Msg(checksumStr);
 
