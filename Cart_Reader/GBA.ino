@@ -148,17 +148,16 @@ void gbaMenu() {
           idFlash_GBA();
           resetFLASH_GBA();
 
-          if (flashid == 0x1F3D) {
-            printFlashTypeAndWait(F("Atmel AT29LV512"));
-          } else if (flashid == 0xBFD4) {
-            printFlashTypeAndWait(F("SST 39VF512"));
-          } else if (flashid == 0xC21C) {
-            printFlashTypeAndWait(F("Macronix MX29L512"));
-          } else if (flashid == 0x321B) {
-            printFlashTypeAndWait(F("Panasonic MN63F805MNP"));
-          } else {
-            printFlashTypeAndWait(FS(SharedFlashText::textUnknown));
-            //print_FatalError(FSTRING_EMPTY);
+          {
+            const __FlashStringHelper* flashLabel;
+            switch (flashid) {
+              case 0x1F3D: flashLabel = F("Atmel AT29LV512"); break;
+              case 0xBFD4: flashLabel = F("SST 39VF512"); break;
+              case 0xC21C: flashLabel = F("Macronix MX29L512"); break;
+              case 0x321B: flashLabel = F("Panasonic MN63F805MNP"); break;
+              default: flashLabel = FS(SharedFlashText::textUnknown); break;
+            }
+            printFlashTypeAndWait(flashLabel);
           }
 
           if (flashid == 0x1F3D) {  // Atmel
