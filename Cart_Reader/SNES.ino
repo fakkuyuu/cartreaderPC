@@ -1379,15 +1379,15 @@ boolean compare_checksum() {
 }
 
 // Read rom to SD card
-static uint16_t loRomRetryAddress;
+static uint16_t sharedRetryAddressR40_SNES;
 static void beginLoRomRetry_SNES(uint32_t offset) {
   PORTL = (uint8_t)(offset >> 15);
-  loRomRetryAddress = 0x8000 | (offset & 0x7fff);
+  sharedRetryAddressR40_SNES = 0x8000 | (offset & 0x7fff);
 }
 
 static void readLoRomRetryWord_SNES(uint8_t* output) {
   for (uint8_t i = 0; i < 2; ++i) {
-    const uint16_t address = loRomRetryAddress++;
+    const uint16_t address = sharedRetryAddressR40_SNES++;
     PORTF = (uint8_t)address;
     PORTK = (uint8_t)(address >> 8);
     NOP; NOP; NOP; NOP; NOP; NOP;
@@ -1398,21 +1398,11 @@ static void readLoRomRetryWord_SNES(uint8_t* output) {
 // SA-1 and standard HiROM both expose their linear ROM image through
 // banks C0-FF. Re-establish the bank and 16-bit address for every 512-byte
 // retry chunk, including the transition from one 64 KiB bank to the next.
-static uint16_t c0BankRetryAddress;
 static void beginC0BankRetry_SNES(uint32_t offset) {
   PORTL = (uint8_t)(0xC0U + (offset >> 16));
-  c0BankRetryAddress = (uint16_t)offset;
+  sharedRetryAddressR40_SNES = (uint16_t)offset;
 }
 
-static void readC0BankRetryWord_SNES(uint8_t* output) {
-  for (uint8_t i = 0; i < 2; ++i) {
-    const uint16_t address = c0BankRetryAddress++;
-    PORTF = (uint8_t)address;
-    PORTK = (uint8_t)(address >> 8);
-    NOP; NOP; NOP; NOP; NOP; NOP;
-    output[i] = PINC;
-  }
-}
 
 // LoROM layouts used by the legacy reader:
 // 0 = banks 00+, 1 = banks 80+ for ROMs larger than 3 MiB,
@@ -1427,46 +1417,26 @@ static void beginExtendedLoRomRetry_SNES(uint32_t offset) {
     bank = (uint8_t)(0x80U + bankIndex - 64U);
   }
   PORTL = bank;
-  loRomRetryAddress = (uint16_t)(0x8000U | (offset & 0x7fffU));
+  sharedRetryAddressR40_SNES = (uint16_t)(0x8000U | (offset & 0x7fffU));
 }
 
 
 // ExHiROM retains the legacy physical bank sequence C0-FF then 00-3F.
 // The byte cast intentionally matches PORTL's 8-bit bank output.
-static uint16_t exHiRomRetryAddress;
 static void beginExHiRomRetry_SNES(uint32_t offset) {
   PORTL = (uint8_t)(192UL + (offset >> 16));
-  exHiRomRetryAddress = (uint16_t)offset;
-}
-static void readExHiRomRetryWord_SNES(uint8_t* output) {
-  for (uint8_t i = 0; i < 2; ++i) {
-    const uint16_t address = exHiRomRetryAddress++;
-    PORTF = (uint8_t)address;
-    PORTK = (uint8_t)(address >> 8);
-    NOP; NOP; NOP; NOP; NOP; NOP;
-    output[i] = PINC;
-  }
+  sharedRetryAddressR40_SNES = (uint16_t)offset;
 }
 
 // S-RTC uses C0-FF for the first 4 MiB and 40+ for the remaining banks,
 // matching the two readHiRomBanks() calls in the legacy path.
-static uint16_t srtcRetryAddress;
 static void beginSrtcRetry_SNES(uint32_t offset) {
   if (offset < 0x400000UL) {
     PORTL = (uint8_t)(0xC0U + (offset >> 16));
   } else {
     PORTL = (uint8_t)(0x40U + ((offset - 0x400000UL) >> 16));
   }
-  srtcRetryAddress = (uint16_t)offset;
-}
-static void readSrtcRetryWord_SNES(uint8_t* output) {
-  for (uint8_t i = 0; i < 2; ++i) {
-    const uint16_t address = srtcRetryAddress++;
-    PORTF = (uint8_t)address;
-    PORTK = (uint8_t)(address >> 8);
-    NOP; NOP; NOP; NOP; NOP; NOP;
-    output[i] = PINC;
-  }
+  sharedRetryAddressR40_SNES = (uint16_t)offset;
 }
 
 
@@ -1485,7 +1455,6 @@ static void writeSnesRegister_SNES(word address, byte value) {
 
 // S-DD1's legacy reader selects one 1 MiB ROM page in the F0-FF window
 // using SOMap ($4807), then reads all sixteen 64 KiB banks from that page.
-static uint16_t sdd1RetryAddress;
 static uint8_t sdd1RetryMap = 0xff;
 static void beginSdd1Retry_SNES(uint32_t offset) {
   const uint8_t map = (uint8_t)(offset >> 20);
@@ -1494,16 +1463,7 @@ static void beginSdd1Retry_SNES(uint32_t offset) {
     sdd1RetryMap = map;
   }
   PORTL = (uint8_t)(0xF0U + ((offset >> 16) & 0x0fU));
-  sdd1RetryAddress = (uint16_t)offset;
-}
-static void readSdd1RetryWord_SNES(uint8_t* output) {
-  for (uint8_t i = 0; i < 2; ++i) {
-    const uint16_t address = sdd1RetryAddress++;
-    PORTF = (uint8_t)address;
-    PORTK = (uint8_t)(address >> 8);
-    NOP; NOP; NOP; NOP; NOP; NOP;
-    output[i] = PINC;
-  }
+  sharedRetryAddressR40_SNES = (uint16_t)offset;
 }
 
 
@@ -1527,7 +1487,6 @@ static void setSpc7110RetryMode_SNES(uint8_t mode) {
   spc7110RetryMode = mode;
 }
 
-static uint16_t spc7110RetryAddress;
 static void beginSpc7110Retry_SNES(uint32_t offset) {
   uint8_t bank;
   if (offset < 0x100000UL) {
@@ -1547,16 +1506,7 @@ static void beginSpc7110Retry_SNES(uint32_t offset) {
     bank = (uint8_t)(0xF0U + ((offset - 0x400000UL) >> 16));
   }
   PORTL = bank;
-  spc7110RetryAddress = (uint16_t)offset;
-}
-static void readSpc7110RetryWord_SNES(uint8_t* output) {
-  for (uint8_t i = 0; i < 2; ++i) {
-    const uint16_t address = spc7110RetryAddress++;
-    PORTF = (uint8_t)address;
-    PORTK = (uint8_t)(address >> 8);
-    NOP; NOP; NOP; NOP; NOP; NOP;
-    output[i] = PINC;
-  }
+  sharedRetryAddressR40_SNES = (uint16_t)offset;
 }
 
 static void writeCx4Mapping_SNES(byte value) __attribute__((noinline));
@@ -1586,7 +1536,7 @@ void readROM_SNES() {
   if (romType == SA && (romChips == 52 || romChips == 53) &&
       numBanks > 0 && numBanks <= 64 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
-                       beginC0BankRetry_SNES, readC0BankRetryWord_SNES, true)) {
+                       beginC0BankRetry_SNES, readLoRomRetryWord_SNES, true)) {
     closeCurrentFile();
     return;
   }
@@ -1598,7 +1548,7 @@ void readROM_SNES() {
       romChips != 85 && romChips != 245 && romChips != 249 &&
       numBanks > 0 && numBanks <= 64 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
-                       beginC0BankRetry_SNES, readC0BankRetryWord_SNES, true)) {
+                       beginC0BankRetry_SNES, readLoRomRetryWord_SNES, true)) {
     closeCurrentFile();
     return;
   }
@@ -1688,7 +1638,7 @@ void readROM_SNES() {
     sdd1RetryMap = 0xff;
     const bool transferred = myFile.romRetry2M(
         (uint32_t)numBanks * 65536UL,
-        beginSdd1Retry_SNES, readSdd1RetryWord_SNES, true, true);
+        beginSdd1Retry_SNES, readLoRomRetryWord_SNES, true, true);
     if (transferred) {
       writeSnesRegister_SNES(0x4807, originalSOMap);
       sdd1RetryMap = originalSOMap;
@@ -1741,7 +1691,7 @@ void readROM_SNES() {
 
     const bool transferred = myFile.romRetry2M(
         (uint32_t)numBanks * 65536UL,
-        beginSpc7110Retry_SNES, readSpc7110RetryWord_SNES, true, true);
+        beginSpc7110Retry_SNES, readLoRomRetryWord_SNES, true, true);
     if (spc7110RetryMode != 0xff) {
       // Restore every mapping register to the value present before dumping.
       writeSnesRegister_SNES(0x4831, spc7110OriginalDMap);
@@ -1815,7 +1765,7 @@ void readROM_SNES() {
   // ExHiROM: preserve the legacy C0-FF, then 00-xx physical bank order.
   if (romType == EX && numBanks > 0 && numBanks <= 128 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
-                       beginExHiRomRetry_SNES, readExHiRomRetryWord_SNES, true, true)) {
+                       beginExHiRomRetry_SNES, readLoRomRetryWord_SNES, true, true)) {
     closeCurrentFile();
     return;
   }
@@ -1825,7 +1775,7 @@ void readROM_SNES() {
   if (romType == HI && romChips == 85) {
     const uint32_t srtcBanks = (numBanks < 64) ? 64UL : (uint32_t)numBanks;
     if (myFile.romRetry2M(srtcBanks * 65536UL,
-                          beginSrtcRetry_SNES, readSrtcRetryWord_SNES, true, true)) {
+                          beginSrtcRetry_SNES, readLoRomRetryWord_SNES, true, true)) {
       closeCurrentFile();
       return;
     }
