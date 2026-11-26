@@ -986,33 +986,15 @@ void setROMSize_MSX() {
       }
 #endif
       b = checkButton();
-      if (b == 2) {             // Previous (doubleclick)
-        if (msxmapper == 11) {  // PAC/FM-PAC 0K/64K
-          if (i == msxlo)
-            i = msxhi;  // 64K
-          else
-            i = msxlo;  // 0K
+      if (b == 1 || b == 2) {
+        if (msxmapper == 11) {
+          i = (i == msxlo) ? msxhi : msxlo;
+        } else if (b == 2) {
+          if (i == msxlo) i = msxhi;
+          else i--;
         } else {
-          if (i == msxlo)
-            i = msxhi;
-          else
-            i--;
-        }
-        // Update and re-arm PC input after either normal or special stepping.
-        printRomSize_MSX(i);
-        printInstructions();
-      }
-      if (b == 1) {             // Next (press)
-        if (msxmapper == 11) {  // PAC/FM-PAC 0K/64K
-          if (i == msxlo)
-            i = msxhi;  // 64K
-          else
-            i = msxlo;  // 0K
-        } else {
-          if (i == msxhi)
-            i = msxlo;
-          else
-            i++;
+          if (i == msxhi) i = msxlo;
+          else i++;
         }
         printRomSize_MSX(i);
         printInstructions();
@@ -1118,32 +1100,15 @@ void setRAMSize_MSX() {
       }
 #endif
       b = checkButton();
-      if (b == 2) {            // Previous (doubleclick)
-        if (msxmapper == 7) {  // Koei 8K/32K
-          if (i == msxramlo)
-            i = msxramhi;  // 32K
-          else
-            i = msxramlo;  // 8K
+      if (b == 1 || b == 2) {
+        if (msxmapper == 7) {
+          i = (i == msxramlo) ? msxramhi : msxramlo;
+        } else if (b == 2) {
+          if (i == msxramlo) i = msxramhi;
+          else i--;
         } else {
-          if (i == msxramlo)
-            i = msxramhi;
-          else
-            i--;
-        }
-        printRamSize_MSX(i);
-        printInstructions();
-      }
-      if (b == 1) {            // Next (press)
-        if (msxmapper == 7) {  // Koei 8K/32K
-          if (i == msxramlo)
-            i = msxramhi;  // 32K
-          else
-            i = msxramlo;  // 8K
-        } else {
-          if (i == msxramhi)
-            i = msxramlo;
-          else
-            i++;
+          if (i == msxramhi) i = msxramlo;
+          else i++;
         }
         printRamSize_MSX(i);
         printInstructions();
