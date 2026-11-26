@@ -73,6 +73,12 @@ void sfmMenu() {
   }
 }
 
+static void reportPowercycleP22_SFM() __attribute__((noinline));
+static void reportPowercycleP22_SFM() {
+  printBlankLine();
+  print_FatalError(FS(SharedFlashText::textPowercycleSFMCart));
+}
+
 void sfmGameMenu() {
   char menuOptionsSFMGames[8][20];
   byte numGames;
@@ -108,8 +114,7 @@ void sfmGameMenu() {
           print_Msg(gameSubMenu + 0x80, HEX);
           println_Msg(F(" Timeout"));
           println_Msg(readBank_SFM(0, 0x2400), HEX);
-          printBlankLine();
-          print_FatalError(FS(SharedFlashText::textPowercycleSFMCart));
+          reportPowercycleP22_SFM();
         }
       }
       // Copy gameCode to romName in case of japanese chars in romName
@@ -597,8 +602,7 @@ void setup_SFM() {
     if (timeout == 5) {
       println_Msg(F("Hirom All Timeout"));
       printBlankLine();
-      printBlankLine();
-      print_FatalError(FS(SharedFlashText::textPowercycleSFMCart));
+      reportPowercycleP22_SFM();
     }
   }
 }
