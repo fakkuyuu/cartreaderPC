@@ -1521,6 +1521,14 @@ void writeByteFlash_GBA(uint16_t myAddress, byte myData) {
 }
 
 // Erase FLASH
+static void readFlashSaveBlock_GBA(uint32_t currAddress) __attribute__((noinline));
+static void readFlashSaveBlock_GBA(uint32_t currAddress) {
+  for (int c = 0; c < 512; c++) {
+    // Read byte
+    sdBuffer[c] = readByteFlash_GBA(currAddress + c);
+  }
+}
+
 void eraseFLASH_GBA() {
   initOutputFlash_GBA();
 
@@ -1565,10 +1573,7 @@ boolean blankcheckFLASH_GBA(uint32_t flashSize) {
 
   for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 512) {
     // Fill buffer
-    for (int c = 0; c < 512; c++) {
-      // Read byte
-      sdBuffer[c] = readByteFlash_GBA(currAddress + c);
-    }
+    readFlashSaveBlock_GBA(currAddress);
     // Check buffer
     for (uint32_t currByte = 0; currByte < 512 && (currByte + currAddress) < flashSize; currByte++) {
       if (sdBuffer[currByte] != 0xFF) {
@@ -1637,10 +1642,7 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, bool cl
   PORTH &= ~(1 << 6);
 
   for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 512) {
-    for (int c = 0; c < 512; c++) {
-      // Read byte
-      sdBuffer[c] = readByteFlash_GBA(currAddress + c);
-    }
+    readFlashSaveBlock_GBA(currAddress);
     // Write sdBuffer to file
     writeSdBufferBlock();
   }
