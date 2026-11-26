@@ -921,9 +921,8 @@ void getCartInfo_GB() {
 
   if (headerChecksum != sdBuffer[0x14D]) {
     print_Error(F("HEADER CHECKSUM ERROR"));
-    printBlankLine();
-    printBlankLine();
-    printBlankLine();
+    for (byte line = 0; line < 3; ++line)
+      printBlankLine();
     println_Msg(FS(SharedFlashText::textPressButtonTo));
     println_Msg(F("ignore or clean"));
     println_Msg(F("cart and try again"));
