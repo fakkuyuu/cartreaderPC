@@ -316,8 +316,7 @@ void n64CartMenu() {
         writeSram(size);
         writeErrors = verifySram(size, 1);
         if (writeErrors == 0) {
-          println_Msg(largeSram ? FS(SharedFlashText::textSramVerifiedOK) : FS(SharedFlashText::textSRAMVerifiedOK));
-          display_Update();
+          showSaveReadP27_N64(largeSram ? FS(SharedFlashText::textSramVerifiedOK) : FS(SharedFlashText::textSRAMVerifiedOK));
         } else {
           showVerificationErrorCount(writeErrors);
         }
@@ -345,8 +344,7 @@ void n64CartMenu() {
         writeErrors = verifyEeprom_N64();
 
         if (writeErrors == 0) {
-          println_Msg(F("EEPROM verified OK"));
-          display_Update();
+          showSaveReadP27_N64(F("EEPROM verified OK"));
         } else {
           showVerificationErrorCount(writeErrors);
         }
