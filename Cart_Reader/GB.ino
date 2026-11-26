@@ -495,9 +495,9 @@ void gbMenu() {
   mainMenu = chooseFlashMenuOption(FS(SharedFlashText::textGBCartReader), menuOptionsGB, 4);
 
   // wait for user choice to come back from the question box menu
+  if (mainMenu <= 2) display_Clear();
   switch (mainMenu) {
     case 0:
-      display_Clear();
       // Change working dir to root
       changeToStorageRoot();
       readROM_GB();
@@ -509,7 +509,6 @@ void gbMenu() {
 
     case 1:
     case 2:
-      display_Clear();
       if (lastByte > 0) {
         changeToStorageRoot();
         if (mainMenu == 1) {
