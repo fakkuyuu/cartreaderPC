@@ -64,7 +64,7 @@ void gbaMenu() {
         GBARomMenu = chooseFlashMenuOption(F("Select ROM size"), romOptionsGBA, 6);
 
         // wait for user choice to come back from the question box menu
-        cartSize = pgm_read_byte(&romOptionsGBASize[GBARomMenu]);
+        cartSize = (GBARomMenu < 6) ? (1U << GBARomMenu) : pgm_read_byte(&romOptionsGBASize[GBARomMenu]);
       }
       if (cartSize < 128)  // Don't multiply cartSize on second dump
         cartSize *= 0x100000;
