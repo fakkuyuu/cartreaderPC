@@ -1,40 +1,29 @@
 {
-  "id": "parallel-021",
-  "base": "f45fb841911a61c5037d1f182ee95a037b913a2c",
+  "id": "parallel-021-integration",
+  "base": "49aae00fb974fa33055d7d42883ed2ec3c6b8ac0",
   "expected_base_flash": 209748,
   "expected_base_ram": 6123,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "gba-512k-flash",
-      "head": "3c2094cb007f749dae05f4e807c3b4f2fe7eb4ec"
+      "id": "integration-sms",
+      "head": "4a851cc5c690151857a7285115e898ceb1036a5a"
     },
     {
-      "id": "n64-cart-setup",
-      "head": "3188bcfbff2b130213a6bab2d84ab05e1820589d"
+      "id": "integration-sms-msx",
+      "head": "bb27fca035b3946e2bdc811d01ae4d5e76e2df90"
     },
     {
-      "id": "gb-cart-setup",
-      "head": "43dccb4de5c101e077063b5fa888442d7afc86e9"
+      "id": "integration-sms-msx-n64",
+      "head": "3b7b1d4e49c117a2d662c606445a65aa726081b7"
     },
     {
-      "id": "md-cart-setup",
-      "head": "a21ae5a700771a341d2c3fab3b84f871b60b1075"
+      "id": "integration-sms-msx-n64-gba",
+      "head": "e0ba76106a5628250985ec2ccd333cb8c1b49732"
     },
     {
-      "id": "sms-size-display",
-      "head": "0d0dce8f544e29688148cd4ffcd1546e7ea4d2f8"
-    },
-    {
-      "id": "sv-write-error",
-      "head": "1ec5aa1c03b7dc6a2861b48e735c9c9ac81e81ab"
-    },
-    {
-      "id": "msx-size-stepping",
-      "head": "2dfde447e6aefcca681718c9f1e00b6f867ae2ed"
-    },
-    {
-      "id": "ws-verify-report",
-      "head": "3d54e20ceb36741b303b43e838e4e56bb2f58aad"
+      "id": "integration-sms-msx-n64-gba-md",
+      "head": "3c47ad72d38ebbd8b3feaa4c2b86d2e9634f6680"
     }
   ]
 }
