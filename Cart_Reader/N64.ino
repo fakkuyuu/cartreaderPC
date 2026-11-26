@@ -1948,27 +1948,16 @@ void printCartInfo_N64() {
     printRomSizeLabel();
     showReproCartSizeMb();
     print_Msg(FS(SharedFlashText::textSaveType));
-    switch (saveType) {
-      case 1:
-        println_Msg(FS(SharedFlashText::textSRAM));
-        break;
-      case 2:
-        println_Msg(F("SRAM 768"));
-        break;
-      case 4:
-        println_Msg(FS(SharedFlashText::textFLASH));
-        break;
-      case 5:
-      case 6: {
-        const bool largeEeprom = saveType == 6;
-        println_Msg(largeEeprom ? FS(SharedFlashText::text16KEEPROM) : FS(SharedFlashText::text4KEEPROM));
-        eepPages = largeEeprom ? 256 : 64;
-        break;
-      }
-      default:
-        println_Msg(FS(SharedFlashText::textNoneUnknown));
-        break;
-    }
+    static const char sram768Label[] PROGMEM = "SRAM 768";
+    static const char* const saveLabels[] PROGMEM = {
+      SharedFlashText::textNoneUnknown, SharedFlashText::textSRAM, sram768Label,
+      SharedFlashText::textNoneUnknown, SharedFlashText::textFLASH,
+      SharedFlashText::text4KEEPROM, SharedFlashText::text16KEEPROM
+    };
+    const byte labelIndex = saveType < sizeof(saveLabels) / sizeof(saveLabels[0]) ? saveType : 0;
+    println_Msg(FS((const char*)pgm_read_ptr(&saveLabels[labelIndex])));
+    if (saveType == 5 || saveType == 6)
+      eepPages = saveType == 6 ? 256 : 64;
 
     print_Msg(FS(SharedFlashText::textCRC1));
     println_Msg(checksumStr);
