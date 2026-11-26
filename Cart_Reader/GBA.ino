@@ -109,12 +109,11 @@ void gbaMenu() {
 
           case 5:
             // 1M FLASH (divided into two banks)
-            switchBank_GBA(0x0);
-            setROM_GBA();
-            readFLASH_GBA(1, 65536, 0, false);
-            switchBank_GBA(0x1);
-            setROM_GBA();
-            readFLASH_GBA(0, 65536, 65536, true);
+            for (byte bank = 0; bank < 2; ++bank) {
+              switchBank_GBA(bank);
+              setROM_GBA();
+              readFLASH_GBA(!bank, 65536, bank ? 65536UL : 0UL, bank != 0);
+            }
             break;
 
 
