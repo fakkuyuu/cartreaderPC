@@ -611,6 +611,13 @@ byte checksumHeader_GBA(const byte* header) {
 }
 
 // Read info out of rom header
+static void readDbIdP31_GBA(char* tempStr) __attribute__((noinline));
+static void readDbIdP31_GBA(char* tempStr) {
+  for (byte i = 0; i < 4; i++) {
+    tempStr[i] = char(myFile.read());
+  }
+}
+
 void getCartInfo_GBA() {
   dbSaveTitle[0] = '\0';
   char saveTypeStr[14];
@@ -685,9 +692,7 @@ void getCartInfo_GBA() {
         myFile.seekCur(9);
 
         // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
-        for (byte i = 0; i < 4; i++) {
-          tempStr[i] = char(myFile.read());
-        }
+        readDbIdP31_GBA(tempStr);
 
         // Check if string is a match
         if (strcmp(tempStr, cartID) == 0) {
@@ -705,9 +710,7 @@ void getCartInfo_GBA() {
             myFile.seekCur(9);
 
             // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
-            for (byte i = 0; i < 4; i++) {
-              tempStr[i] = char(myFile.read());
-            }
+            readDbIdP31_GBA(tempStr);
 
             // Skip the , in the file
             myFile.seekCur(1);
