@@ -4892,6 +4892,12 @@ void EepromREAD(uint8_t address) {
   sdBuffer[address] = eeptemp;
 }
 
+static void unlockPrgFlash_NES() __attribute__((noinline));
+static void unlockPrgFlash_NES() {
+  write_prg_byte(0x9555, 0xAA);
+  write_prg_byte(0xAAAA, 0x55);
+}
+
 void EepromWRITE(uint8_t address) {
   eeptemp = sdBuffer[address];
   EepromStart_NES();              // START
@@ -5045,8 +5051,7 @@ void writeFLASH() {
 
 // A29040B Software ID
 void A29040B_ID() {  // Read Flash ID
-  write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xAAAA, 0x55);
+  unlockPrgFlash_NES();
   write_prg_byte(0x9555, 0x90);
 
   flashid = read_prg_byte(0x8000) << 8;
@@ -5059,16 +5064,14 @@ void A29040B_ID() {  // Read Flash ID
 }
 
 void A29040B_PRG_ResetFlash() {  // Reset Flash
-  write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xAAAA, 0x55);
+  unlockPrgFlash_NES();
   write_prg_byte(0x9555, 0xF0);  // Reset
   delayMicroseconds(14);         // Typical 14us
 }
 
 
 void A29040B_PRG_Write(uint16_t address, uint8_t data) {
-  write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xAAAA, 0x55);
+  unlockPrgFlash_NES();
   write_prg_byte(0x9555, 0xA0);
   write_prg_byte(address, data);  // $8000-$BFFF
   delayMicroseconds(20);          // Typical 14us
@@ -5076,11 +5079,9 @@ void A29040B_PRG_Write(uint16_t address, uint8_t data) {
 
 void A29040B_PRG_SectorErase(uint16_t sec) {
   if (flashfound) {
-    write_prg_byte(0x9555, 0xAA);
-    write_prg_byte(0xAAAA, 0x55);
+    unlockPrgFlash_NES();
     write_prg_byte(0x9555, 0x80);  //->setup
-    write_prg_byte(0x9555, 0xAA);
-    write_prg_byte(0xAAAA, 0x55);
+    unlockPrgFlash_NES();
     write_prg_byte(sec, 0x30);  //->erase
     delay(1000);                // WAIT MORE
   } else {
@@ -5090,11 +5091,9 @@ void A29040B_PRG_SectorErase(uint16_t sec) {
 
 void A29040B_PRG_ChipErase() {
   if (flashfound) {
-    write_prg_byte(0x9555, 0xAA);
-    write_prg_byte(0xAAAA, 0x55);
+    unlockPrgFlash_NES();
     write_prg_byte(0x9555, 0x80);  //->setup
-    write_prg_byte(0x9555, 0xAA);
-    write_prg_byte(0xAAAA, 0x55);
+    unlockPrgFlash_NES();
     write_prg_byte(0x9555, 0x10);  //->erase
     delay(8000);                   // WAIT MORE
   } else {
