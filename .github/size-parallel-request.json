@@ -1,41 +1,40 @@
 {
-  "id": "parallel-025-integration",
-  "base": "7cb98e67200cbd55759bb430b7727a5e977be1a6",
-  "expected_base_flash": 209164,
+  "id": "parallel-026",
+  "base": "505fe2edab583fe4a05ef0b0a04ba233147e5a06",
+  "expected_base_flash": 208894,
   "expected_base_ram": 6123,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-ws",
-      "head": "b9254b658b82df3e65d38e2b7674682ea7f56c2e"
+      "id": "n64-save-label-table",
+      "head": "81fc9623dfe0977ebe3fe52fe24ebe538aa2b7e3"
     },
     {
-      "id": "integration-ws-sms",
-      "head": "f43e65317d465832996a02c095b1e94aa4ab62b9"
+      "id": "sms-adapter-setup",
+      "head": "59e2564501c4ef5fd338cae8b178f184bc32b387"
     },
     {
-      "id": "integration-ws-sms-gb",
-      "head": "ec820d860292b205368a719ba0046078ba2118ed"
+      "id": "gb-sram-label-table",
+      "head": "438416ce0fb49e1038e895c14d52d3fb0b07a667"
     },
     {
-      "id": "integration-ws-sms-gb-gba",
-      "head": "b121619d63d8148f51a47ea5a9f9ce9a090cf0ef"
+      "id": "md-lockon-range",
+      "head": "581f9dcf9d982cb8bfda6201cf416a93ad1c1764"
     },
     {
-      "id": "integration-ws-sms-gb-gba-sfm",
-      "head": "15b057e87aab0f2fe65ac5a95a02667ea4e8d9b9"
+      "id": "pce-crc-save-message",
+      "head": "3647e781b17e9931eb9342a96ae0aec001cb4925"
     },
     {
-      "id": "integration-ws-sms-gb-gba-sfm-md",
-      "head": "97bc9bf344ff92b9973c07cda2a895409631edf5"
+      "id": "snes-manual-mapping-table",
+      "head": "34b30f6197ea9f1a8799e24fb5ad6d8fdd7c4e81"
     },
     {
-      "id": "integration-ws-sms-gb-gba-sfm-md-n64",
-      "head": "df4d92db99714895914cd7df2bbdb762f35f6ad8"
+      "id": "nes-ram-summary",
+      "head": "2e92a72a6760588500909d264669ca97279ac8fe"
     },
     {
-      "id": "integration-ws-sms-gb-gba-sfm-md-n64-nes",
-      "head": "0488b01a17e27d68c131822b3bf2afae60452b28"
+      "id": "gba-flash-label-selection",
+      "head": "05dafab57ff3221464589e0233cdf12fa125ee84"
     }
   ]
 }
