@@ -442,14 +442,13 @@ void gbxMenu() {
       switch (gbPelican) {
         case 0:
           readPelican_GB();
-          feedbackPressAndReset();
           break;
 
         case 1:
           writePelican_GB();
-          feedbackPressAndReset();
           break;
       }
+      if (gbPelican < 2) feedbackPressAndReset();
       break;
 
     case 5:
@@ -463,24 +462,21 @@ void gbxMenu() {
       switch (gbDatel) {
         case 0:
           readMegaMem_GB();
-          feedbackPressAndReset();
           break;
 
         case 1:
           writeMegaMem_GB();
-          feedbackPressAndReset();
           break;
 
         case 2:
           readGameshark_GB();
-          feedbackPressAndReset();
           break;
 
         case 3:
           writeGameshark_GB();
-          feedbackPressAndReset();
           break;
       }
+      if (gbDatel < 4) feedbackPressAndReset();
       break;
 
     case 6:
