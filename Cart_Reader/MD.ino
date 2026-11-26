@@ -357,11 +357,8 @@ void mdCartMenu() {
         } else {
           readROM_MD();
           // Calculate and compare CRC32 with database
-          if (is32x)
-            //database, crcString, renamerom, offset
-            compareCRC("32x.txt", 0, 1, 0);
-          else
-            compareCRC("md.txt", 0, 1, 0);
+          //database, crcString, renamerom, offset
+          compareCRC(is32x ? "32x.txt" : "md.txt", 0, 1, 0);
         }
       } else {
         print_Error(F("Cart has no ROM"));
