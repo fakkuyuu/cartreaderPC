@@ -2788,6 +2788,33 @@ void readRom_N64() {
   closeCurrentFile();
 }
 #else
+static void readRomBlockR38_N64(uint32_t &oldcrc32, bool calculateOnReader) __attribute__((noinline));
+static void readRomBlockR38_N64(uint32_t &oldcrc32, bool calculateOnReader) {
+  for (int c = 0; c < 512; c += 2) {
+    // Pull read(PH6) low
+    PORTH &= ~(1 << 6);
+    // Wait ~310ns
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+    NOP;
+
+    // data on PINK and PINF is valid now, read into sd card buffer
+    sdBuffer[c] = PINK;      // hiByte
+    sdBuffer[c + 1] = PINF;  // loByte
+
+    // Pull read(PH6) high
+    PORTH |= (1 << 6);
+
+    // crc32 update
+    if (calculateOnReader) {
+      UPDATE_CRC(oldcrc32, sdBuffer[c]);
+      UPDATE_CRC(oldcrc32, sdBuffer[c + 1]);
+    }
+  }
+}
+
 // dumping rom fast
 uint32_t readRom_N64() {
   // Get name, add extension and convert to char array for sd lib
@@ -2841,29 +2868,7 @@ uint32_t readRom_N64() {
     // Wait 62.5ns (safety)
     NOP;
 
-    for (int c = 0; c < 512; c += 2) {
-      // Pull read(PH6) low
-      PORTH &= ~(1 << 6);
-      // Wait ~310ns
-      NOP;
-      NOP;
-      NOP;
-      NOP;
-      NOP;
-
-      // data on PINK and PINF is valid now, read into sd card buffer
-      sdBuffer[c] = PINK;      // hiByte
-      sdBuffer[c + 1] = PINF;  // loByte
-
-      // Pull read(PH6) high
-      PORTH |= (1 << 6);
-
-      // crc32 update
-      if (calculateOnReader) {
-        UPDATE_CRC(oldcrc32, sdBuffer[c]);
-        UPDATE_CRC(oldcrc32, sdBuffer[c + 1]);
-      }
-    }
+    readRomBlockR38_N64(oldcrc32, calculateOnReader);
 
     PcLink::profileReadEnd(readStart);
     writeSdBufferBlock();
@@ -2874,29 +2879,7 @@ uint32_t readRom_N64() {
     // Wait 62.5ns (safety)
     NOP;
 
-    for (int c = 0; c < 512; c += 2) {
-      // Pull read(PH6) low
-      PORTH &= ~(1 << 6);
-      // Wait ~310ns
-      NOP;
-      NOP;
-      NOP;
-      NOP;
-      NOP;
-
-      // data on PINK and PINF is valid now, read into sd card buffer
-      sdBuffer[c] = PINK;      // hiByte
-      sdBuffer[c + 1] = PINF;  // loByte
-
-      // Pull read(PH6) high
-      PORTH |= (1 << 6);
-
-      // crc32 update
-      if (calculateOnReader) {
-        UPDATE_CRC(oldcrc32, sdBuffer[c]);
-        UPDATE_CRC(oldcrc32, sdBuffer[c + 1]);
-      }
-    }
+    readRomBlockR38_N64(oldcrc32, calculateOnReader);
 
     PcLink::profileReadEnd(readStart);
     writeSdBufferBlock();
