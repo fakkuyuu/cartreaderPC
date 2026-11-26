@@ -235,6 +235,12 @@ static const char SCDMenuItem2[] PROGMEM = "Write Backup RAM";
 static const char* const menuOptionsSCD[] PROGMEM = { SCDMenuItem1, SCDMenuItem2, FSTRING_RESET };
 
 // Sega start menu
+static void prepareCartP21_MD() __attribute__((noinline));
+static void prepareCartP21_MD() {
+  clearAndUpdateDisplay();
+  setup_MD();
+}
+
 void mdMenu() {
   // create menu with title and 4 options to choose from
   unsigned char mdDev;
@@ -244,21 +250,18 @@ void mdMenu() {
   // wait for user choice to come back from the question box menu
   switch (mdDev) {
     case 0:
-      clearAndUpdateDisplay();
-      setup_MD();
+      prepareCartP21_MD();
       mode = CORE_MD_CART;
       break;
 
     case 1:
-      clearAndUpdateDisplay();
-      setup_MD();
+      prepareCartP21_MD();
       mode = CORE_SEGA_CD;
       break;
 
 #ifdef ENABLE_FLASH
     case 2:
-      clearAndUpdateDisplay();
-      setup_MD();
+      prepareCartP21_MD();
       mode = CORE_MD_CART;
       // Change working dir to root
       browseRootFileAndClear();
@@ -302,8 +305,7 @@ void mdMenu() {
       break;
 
     case 3:
-      clearAndUpdateDisplay();
-      setup_MD();
+      prepareCartP21_MD();
       mode = CORE_MD_CART;
       // Change working dir to root
       browseRootFileAndClear();
