@@ -47,32 +47,25 @@ void svMenu() {
   mainMenu = chooseFlashMenuOption(F("Satellaview 8M Memory"), menuOptionsSVFlash, 5);
 
   // wait for user choice to come back from the question box menu
+  if (mainMenu <= 3) changeToStorageRoot();
   switch (mainMenu) {
     // Read memory pack
     case 0:
-      // Change working dir to root
-      changeToStorageRoot();
       readROM_SV();
       break;
 
     // Write memory pack
     case 1:
-      // Change working dir to root
-      changeToStorageRoot();
       writeROM_SV();
       break;
 
     // Read BS-X Sram
     case 2:
-      // Change working dir to root
-      changeToStorageRoot();
       readSRAM_SV();
       break;
 
     // Write BS-X Sram
     case 3:
-      // Change working dir to root
-      changeToStorageRoot();
       writeSRAM_SV();
       unsigned long wrErrors;
       wrErrors = verifySRAM_SV();
