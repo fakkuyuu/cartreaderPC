@@ -445,35 +445,20 @@ void readROM_VB() {
   // VIRTUAL BOY ADDRESSING IS TOP DOWN
   // ONLY FOR HYPER FIGHTING PLUGIN WITH ALL ADDRESS LINES CONNECTED
   // NORMAL PLUGIN DOES NOT HAVE THE UPPER ADDRESS LINES CONNECTED
-  if (cartSize == 0x400000) {
-    unsigned long romData = 0x1000000 - (cartSize / 2);
-    for (unsigned long currBuffer = romData; currBuffer < 0x1000000; currBuffer += 256) {
-      for (int currWord = 0; currWord < 256; currWord++) {
-        word myWord = readWord_VB(currBuffer + currWord);
-        // Split word into two bytes
-        sdBuffer[d] = ((myWord >> 8) & 0xFF);
-        sdBuffer[d + 1] = (myWord & 0xFF);
-        d += 2;
-      }
-      writeSdBufferBlock();
-      d = 0;
-      progress += 512;
-      draw_progressbar(progress, cartSize);
+  const unsigned long firstWord = cartSize == 0x400000 ? 0x1000000UL - cartSize / 2 : 0;
+  const unsigned long endWord = cartSize == 0x400000 ? 0x1000000UL : cartSize / 2;
+  for (unsigned long currBuffer = firstWord; currBuffer < endWord; currBuffer += 256) {
+    for (int currWord = 0; currWord < 256; currWord++) {
+      word myWord = readWord_VB(currBuffer + currWord);
+      // Split word into two bytes
+      sdBuffer[d] = ((myWord >> 8) & 0xFF);
+      sdBuffer[d + 1] = (myWord & 0xFF);
+      d += 2;
     }
-  } else {
-    for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
-      for (int currWord = 0; currWord < 256; currWord++) {
-        word myWord = readWord_VB(currBuffer + currWord);
-        // Split word into two bytes
-        sdBuffer[d] = ((myWord >> 8) & 0xFF);
-        sdBuffer[d + 1] = (myWord & 0xFF);
-        d += 2;
-      }
-      writeSdBufferBlock();
-      d = 0;
-      progress += 512;
-      draw_progressbar(progress, cartSize);
-    }
+    writeSdBufferBlock();
+    d = 0;
+    progress += 512;
+    draw_progressbar(progress, cartSize);
   }
   closeCurrentFile();
 
