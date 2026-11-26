@@ -1,25 +1,40 @@
 {
-  "id": "parallel-031-integration",
-  "base": "f373296759327b99e1007d0c21f34214bbe3717c",
-  "expected_base_flash": 208406,
+  "id": "parallel-032",
+  "base": "f4d1e4a61bec0ac31563ab50e47e266f557a8e0e",
+  "expected_base_flash": 208334,
   "expected_base_ram": 6105,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-ws",
-      "head": "74ce5b6e4be210710592e2e475c195be98b3b5f2"
+      "id": "msx-pc-ready-tail",
+      "head": "a492dc1f854083d449e6ab3da6ca648c32f20376"
     },
     {
-      "id": "integration-ws-sv",
-      "head": "3e0e06bd3d76f31c327843f3bb11b5807309d1d5"
+      "id": "snes-slowrom-condition",
+      "head": "3815ee9d44508ffad194b915c7b9fae40f7298b7"
     },
     {
-      "id": "integration-ws-sv-msx",
-      "head": "f8d95cd4de7b283ca901838b029f9fb05fed1928"
+      "id": "sms-folder-dispatch",
+      "head": "b0540b943da861cb2e62c7e8d7cd740f8b0ba37f"
     },
     {
-      "id": "integration-ws-sv-msx-n64",
-      "head": "d62f2ce9e23797f93e2f5401e9dad480a9e284ed"
+      "id": "gba-save-read-bank-loop",
+      "head": "95f67a688db5d9c46dbf5011be31e700f15fee0c"
+    },
+    {
+      "id": "n64-save-type-table",
+      "head": "abebdced6d18f59c588c0ec474da728895141857"
+    },
+    {
+      "id": "gb-cart-id-copy",
+      "head": "d6a4392aff9d629d9502f7ecd8c05f61e37085f4"
+    },
+    {
+      "id": "pce-checksum-path-display",
+      "head": "dd364d20a2beae0224aae74ee03e3f6d35ef339c"
+    },
+    {
+      "id": "nes-mapper-digits",
+      "head": "8b9265a6069afcaab36ae38939708e8523efefc1"
     }
   ]
 }
