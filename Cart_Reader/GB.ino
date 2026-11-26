@@ -512,44 +512,31 @@ void gbMenu() {
       break;
 
     case 1:
-      display_Clear();
-      // Does cartridge have SRAM
-      if (lastByte > 0) {
-        // Change working dir to root
-        changeToStorageRoot();
-        if (romType == 32)
-          readSRAMFLASH_MBC6_GB();
-        else if (romType == 34)
-          readEEPROM_MBC7_GB();
-        else
-          readSRAM_GB();
-      } else {
-        print_Error(FS(SharedFlashText::textNoSaveOrUnsupportedType));
-      }
-      printBlankLine();
-      break;
-
     case 2:
       display_Clear();
-      // Does cartridge have SRAM
       if (lastByte > 0) {
-        // Change working dir to root
         changeToStorageRoot();
-        filePath[0] = '\0';
-        fileBrowser(FS(SharedFlashText::textSelectSavFile));
-
-        if (romType == 32)
-          writeSRAMFLASH_MBC6_GB();
-        else if (romType == 34)
-          writeEEPROM_MBC7_GB();
-        else {
-          writeSRAM_GB();
-          unsigned long wrErrors;
-          wrErrors = verifySRAM_GB();
-          if (wrErrors == 0) {
-            showVerifiedAndUpdate();
-          } else {
-            showVerificationErrorCount(wrErrors);
+        if (mainMenu == 1) {
+          if (romType == 32)
+            readSRAMFLASH_MBC6_GB();
+          else if (romType == 34)
+            readEEPROM_MBC7_GB();
+          else
+            readSRAM_GB();
+        } else {
+          filePath[0] = '\0';
+          fileBrowser(FS(SharedFlashText::textSelectSavFile));
+          if (romType == 32)
+            writeSRAMFLASH_MBC6_GB();
+          else if (romType == 34)
+            writeEEPROM_MBC7_GB();
+          else {
+            writeSRAM_GB();
+            unsigned long wrErrors = verifySRAM_GB();
+            if (wrErrors == 0)
+              showVerifiedAndUpdate();
+            else
+              showVerificationErrorCount(wrErrors);
           }
         }
       } else {
