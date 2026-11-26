@@ -4392,6 +4392,13 @@ unsigned long scramble(unsigned long addr) {
 }
 
 
+static void readFlashStatusPair_N64() __attribute__((noinline));
+static void readFlashStatusPair_N64() {
+  setAddress_N64(0x10740000);
+  readWord_N64();
+  readWord_N64();
+}
+
 void oddXPaddrWrite(unsigned long addr, word data) {
   unsigned long oddAddr = (0x10400000 + ((unscramble((addr & 0xFFFFF) / 2) - 1) * 2));
   setAddress_N64(0x10770000);
@@ -4400,9 +4407,7 @@ void oddXPaddrWrite(unsigned long addr, word data) {
   setAddress_N64(oddAddr);
   writeWord_N64(data);
   writeWord_N64(data);
-  setAddress_N64(0x10740000);
-  readWord_N64();
-  readWord_N64();
+  readFlashStatusPair_N64();
 }
 
 void evenXPaddrWrite(unsigned long addr, word data) {
@@ -4413,9 +4418,7 @@ void evenXPaddrWrite(unsigned long addr, word data) {
   setAddress_N64(evenAddr);
   writeWord_N64(data);
   writeWord_N64(data);
-  setAddress_N64(0x10740000);
-  readWord_N64();
-  readWord_N64();
+  readFlashStatusPair_N64();
 }
 
 void eraseXplorer_N64() {
