@@ -1561,11 +1561,7 @@ void readROM_MD() {
       if (((currBuffer == 0) && (currWord >= 256)) || (currBuffer > 0)) {
         calcCKS += ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
       }
-      d += 2;
-      if (d == 512) {
-        writeSdBufferBlock();
-        d = 0;
-      }
+      d = advanceLockonBufferR39_MD(d);
     }
 
     // update progress bar
