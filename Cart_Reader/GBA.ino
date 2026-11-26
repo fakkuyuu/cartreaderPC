@@ -2079,6 +2079,12 @@ void readBlock_EEP(word startAddress, word eepSize) {
 }
 
 // Check if the SRAM was written without any error
+static void unlockGabFlash_GBA() __attribute__((noinline));
+static void unlockGabFlash_GBA() {
+  writeWord_GAB(0xAAA, 0xAA);
+  writeWord_GAB(0x555, 0x55);
+}
+
 unsigned long verifyEEP_GBA(word eepSize) {
   unsigned long wrError = 0;
 
@@ -2129,8 +2135,7 @@ void resetMX29GL128E_GBA() {
 
 boolean sectorCheckMX29GL128E_GBA() {
   boolean sectorProtect = 0;
-  writeWord_GAB(0xAAA, 0xAA);
-  writeWord_GAB(0x555, 0x55);
+  unlockGabFlash_GBA();
   writeWord_GAB(0xAAA, 0x90);
   for (unsigned long currSector = 0x0; currSector < 0xFFFFFF; currSector += 0x20000) {
     if (readWord_GAB(currSector + 0x04) != 0x0)
@@ -2175,8 +2180,7 @@ void idFlashrom_GBA() {
     cartSize = 0x10000000;
   } else {
     // Send swapped MX29GL128E/MSP55LV128 ID command to flashrom
-    writeWord_GAB(0xAAA, 0xAA);
-    writeWord_GAB(0x555, 0x55);
+    unlockGabFlash_GBA();
     writeWord_GAB(0xAAA, 0x90);
     __asm__("nop\n\t"
             "nop\n\t"
@@ -2331,11 +2335,9 @@ void eraseIntel4400_GBA() {
 static void sectorEraseAMD_GBA(unsigned long sectorStep) __attribute__((noinline));
 static void sectorEraseAMD_GBA(unsigned long sectorStep) {
   for (unsigned long currSector = 0; currSector < 0xFFFFFF; currSector += sectorStep) {
-    writeWord_GAB(0xAAA, 0xAA);
-    writeWord_GAB(0x555, 0x55);
+    unlockGabFlash_GBA();
     writeWord_GAB(0xAAA, 0x80);
-    writeWord_GAB(0xAAA, 0xAA);
-    writeWord_GAB(0x555, 0x55);
+    unlockGabFlash_GBA();
     writeWord_GAB(currSector, 0x30);
 
     // Read the status register
@@ -2417,8 +2419,7 @@ void writeMSP55LV128_GBA() {
       // Write 16 words at a time
       for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 32) {
         // Write Buffer command
-        writeWord_GAB(0xAAA, 0xAA);
-        writeWord_GAB(0x555, 0x55);
+        unlockGabFlash_GBA();
         writeWord_GAB(currSector, 0x25);
 
         // Write word count (minus 1)
@@ -2459,8 +2460,7 @@ void writeMX29GL128E_GBA() {
       // Write 32 words at a time
       for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 64) {
         // Write Buffer command
-        writeWord_GAB(0xAAA, 0xAA);
-        writeWord_GAB(0x555, 0x55);
+        unlockGabFlash_GBA();
         writeWord_GAB(currSector, 0x25);
 
         // Write word count (minus 1)
