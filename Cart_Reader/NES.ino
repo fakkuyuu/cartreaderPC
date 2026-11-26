@@ -455,6 +455,13 @@ static void configureMapperP16_NES() {
   setRAMSize();
 }
 
+static void finishChipMenuP29_NES() __attribute__((noinline));
+static void finishChipMenuP29_NES() {
+  resetROM();
+  printBlankLine();
+  promptAndWaitForButton();
+}
+
 void nesMenu() {
   unsigned char answer;
 
@@ -484,9 +491,7 @@ void nesMenu() {
         readRAM();
       else
         writeRAM();
-      resetROM();
-      printBlankLine();
-      promptAndWaitForButton();
+      finishChipMenuP29_NES();
       break;
 
     // Change Mapper
@@ -535,9 +540,7 @@ void nesChipMenu() {
         readPRG(false);
       else
         readCHR(false);
-      resetROM();
-      printBlankLine();
-      promptAndWaitForButton();
+      finishChipMenuP29_NES();
       break;
 
     // Return to Main Menu
