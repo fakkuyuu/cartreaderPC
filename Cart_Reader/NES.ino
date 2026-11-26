@@ -1985,10 +1985,15 @@ void dumpPRG(word base, word address) {
   writeSdBufferBlock();
 }
 
-void dumpCHR(word address) {
+static void readChrBlock_NES(word address) __attribute__((noinline));
+static void readChrBlock_NES(word address) {
   for (size_t x = 0; x < 512; x++) {
     sdBuffer[x] = read_chr_byte(address + x);
   }
+}
+
+void dumpCHR(word address) {
+  readChrBlock_NES(address);
   writeSdBufferBlock();
 }
 
@@ -4123,9 +4128,7 @@ void readCHR(bool readrom) {
             write_prg_byte(0x8000, i);
             uint8_t chrcheck = read_chr_byte(0);
             for (size_t address = 0x0; address < 0x2000; address += 512) {
-              for (size_t x = 0; x < 512; x++) {
-                sdBuffer[x] = read_chr_byte(address + x);
-              }
+              readChrBlock_NES(address);
               if (chrcheck != 0xFF)
                 writeSdBufferBlock();
             }
