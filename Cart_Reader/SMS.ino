@@ -463,13 +463,9 @@ void manual_selectRomSize() {
 void readROM_SMS() {
   changeToStorageRoot();
   // Get name, add extension depending on the system and convert to char array for sd lib
-  if (system_sms) {
-    createFolder("SMS", "ROM", romName, "sms");
-  } else if (system_gg) {
-    createFolder("GG", "ROM", romName, "gg");
-  } else {
-    createFolder("SG1000", "ROM", romName, "sg");
-  }
+  const char* system = system_sms ? "SMS" : (system_gg ? "GG" : "SG1000");
+  const char* extension = system_sms ? "sms" : (system_gg ? "gg" : "sg");
+  createFolder(system, "ROM", romName, extension);
   printAndIncrementFolder(true);
 
   print_Msg(F("ROM Size: "));
