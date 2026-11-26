@@ -1561,10 +1561,7 @@ static void readSpc7110RetryWord_SNES(uint8_t* output) {
 
 static void writeCx4Mapping_SNES(byte value) __attribute__((noinline));
 static void writeCx4Mapping_SNES(byte value) {
-  dataOut();
-  controlOut_SNES();
-  writeBank_SNES(0, 32594, value);
-  setBusInput_SNES();
+  writeSnesRegister_SNES(0x7F52, value);
 }
 static void prepareCx4Mapping_SNES() __attribute__((noinline));
 static void prepareCx4Mapping_SNES() {
