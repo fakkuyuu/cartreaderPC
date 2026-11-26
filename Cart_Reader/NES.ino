@@ -1096,6 +1096,16 @@ void write_mmc1_byte(unsigned int address, uint8_t data) {  // write loop for 5 
 // PORTF 0 = PHI2 (M2)
 
 // WRITE RAM SAFE TO REGISTERS 0xE000/0xF000
+static void restoreWriteReadModeR40_NES() __attribute__((noinline));
+static void restoreWriteReadModeR40_NES() {
+  // Back to read mode
+  PRG_READ;
+  MODE_READ;
+  set_address(0);
+  // Set phi2 to high state to keep cartridge unreseted
+  PHI2_HI;
+}
+
 static void write_reg_byte(unsigned int address, uint8_t data) {  // FIX FOR MMC1 RAM CORRUPTION
   PHI2_LOW;
   ROMSEL_HI;  // A15 HI = E000
@@ -1110,12 +1120,7 @@ static void write_reg_byte(unsigned int address, uint8_t data) {  // FIX FOR MMC
   PORTF = 0b01111101;  // ROMSEL LO/M2 HI
   PORTF = 0b01111110;  // ROMSEL HI/M2 LO
   _delay_us(1);
-  // Back to read mode
-  PRG_READ;
-  MODE_READ;
-  set_address(0);
-  // Set phi2 to high state to keep cartridge unreseted
-  PHI2_HI;
+  restoreWriteReadModeR40_NES();
 }
 
 static void write_ram_byte(unsigned int address, uint8_t data) {  // Mapper 19 (Namco 106/163) WRITE RAM SAFE ($E000-$FFFF)
@@ -1133,12 +1138,7 @@ static void write_ram_byte(unsigned int address, uint8_t data) {  // Mapper 19 (
   PHI2_LOW;
   _delay_us(1);
   ROMSEL_HI;
-  // Back to read mode
-  PRG_READ;
-  MODE_READ;
-  set_address(0);
-  // Set phi2 to high state to keep cartridge unreseted
-  PHI2_HI;
+  restoreWriteReadModeR40_NES();
 }
 
 static void write_wram_byte(unsigned int address, uint8_t data) {  // Mapper 5 (MMC5) RAM
@@ -1154,12 +1154,7 @@ static void write_wram_byte(unsigned int address, uint8_t data) {  // Mapper 5 (
   _delay_us(1);  // WRITING
   PHI2_LOW;
   ROMSEL_HI;
-  // Back to read mode
-  PRG_READ;
-  MODE_READ;
-  set_address(0);
-  // Set phi2 to high state to keep cartridge unreseted
-  PHI2_HI;
+  restoreWriteReadModeR40_NES();
 }
 
 // Pirate Mapper 59
