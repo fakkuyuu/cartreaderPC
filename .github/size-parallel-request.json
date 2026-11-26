@@ -1,40 +1,29 @@
 {
-  "id": "parallel-026",
-  "base": "505fe2edab583fe4a05ef0b0a04ba233147e5a06",
+  "id": "parallel-026-integration",
+  "base": "ef85bbcd416a00e3ddf399f4dc3d113acd5d29b1",
   "expected_base_flash": 208894,
   "expected_base_ram": 6123,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "n64-save-label-table",
-      "head": "81fc9623dfe0977ebe3fe52fe24ebe538aa2b7e3"
+      "id": "integration-snes",
+      "head": "7d978efc3d0ae5c4ba3f975f70156d29b32b1016"
     },
     {
-      "id": "sms-adapter-setup",
-      "head": "59e2564501c4ef5fd338cae8b178f184bc32b387"
+      "id": "integration-snes-nes",
+      "head": "c8c8494cdababaa6e10c0aa4cd5dfdf3e48325ed"
     },
     {
-      "id": "gb-sram-label-table",
-      "head": "438416ce0fb49e1038e895c14d52d3fb0b07a667"
+      "id": "integration-snes-nes-sms",
+      "head": "2b5564ac3f68971397a2ded8514e75abbd06d147"
     },
     {
-      "id": "md-lockon-range",
-      "head": "581f9dcf9d982cb8bfda6201cf416a93ad1c1764"
+      "id": "integration-snes-nes-sms-n64",
+      "head": "9715445cf0fb3915d9bc1d933b35225dd9a71dfa"
     },
     {
-      "id": "pce-crc-save-message",
-      "head": "3647e781b17e9931eb9342a96ae0aec001cb4925"
-    },
-    {
-      "id": "snes-manual-mapping-table",
-      "head": "34b30f6197ea9f1a8799e24fb5ad6d8fdd7c4e81"
-    },
-    {
-      "id": "nes-ram-summary",
-      "head": "2e92a72a6760588500909d264669ca97279ac8fe"
-    },
-    {
-      "id": "gba-flash-label-selection",
-      "head": "05dafab57ff3221464589e0233cdf12fa125ee84"
+      "id": "integration-snes-nes-sms-n64-md",
+      "head": "78db18be137fad15f1ff9d35db1abac5eaf60d51"
     }
   ]
 }
