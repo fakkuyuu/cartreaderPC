@@ -1,21 +1,40 @@
 {
-  "id": "parallel-029-integration",
-  "base": "3ea1297673974e1614fd2ac3a6dd1a9f0e8b7df5",
-  "expected_base_flash": 208482,
+  "id": "parallel-030",
+  "base": "f6ff9f5fb99a051ab4d07661af753d3621a795d7",
+  "expected_base_flash": 208456,
   "expected_base_ram": 6105,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-gba",
-      "head": "b5a8aabd4154fd8e29708a56dd3fc800b8de164f"
+      "id": "sms-crc-dispatch",
+      "head": "2f84d8a00c0493e19b35858f861ad1c3f6c08653"
     },
     {
-      "id": "integration-gba-sms",
-      "head": "c3d0c95f54edc8ab9e6a892ebfb89164ee8b54ce"
+      "id": "snes-rom-menu-clear",
+      "head": "3c95345da84124f26ca73a58e4e2213961b74e5f"
     },
     {
-      "id": "integration-gba-sms-md",
-      "head": "6e4ac673c9dafec15bfaa4277999996934ac16dc"
+      "id": "md-crc-dispatch",
+      "head": "9295401ede08089b6a0837fe218872cb886bd2bd"
+    },
+    {
+      "id": "n64-cart-info-tail",
+      "head": "4d0b7a9d995065ab05a3d0811f56bda54604d82a"
+    },
+    {
+      "id": "gba-ereader-bank-size",
+      "head": "75fb2149d375a0dba9d2da903a4b13c6cfafd41d"
+    },
+    {
+      "id": "gb-header-blank-loop",
+      "head": "49c866696d3e1280ea2de5ae8f2d2d03b6888b1c"
+    },
+    {
+      "id": "nes-pc-menu-ready",
+      "head": "f893fef5b9a4b0373e5849c5f783c9f9937f2033"
+    },
+    {
+      "id": "pce-ram-menu-finish",
+      "head": "6eeb978e3dd44706d5922432143240fa28055785"
     }
   ]
 }
