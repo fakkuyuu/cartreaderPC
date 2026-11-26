@@ -37,6 +37,15 @@ static const char GBASaveItem5[] PROGMEM = "512K FLASH";
 static const char GBASaveItem6[] PROGMEM = "1M FLASH";
 static const char* const saveOptionsGBA[] PROGMEM = { GBASaveItem1, GBASaveItem2, GBASaveItem3, GBASaveItem4, GBASaveItem5, GBASaveItem6 };
 
+static uint32_t flashBankSizeP30_GBA(bool skip) __attribute__((noinline));
+static uint32_t flashBankSizeP30_GBA(bool skip) {
+  if (skip) {
+    println_Log(FS(SharedFlashText::textSkippingLast128Bytes));
+    return 65408UL;
+  }
+  return 65536UL;
+}
+
 void gbaMenu() {
   // create menu with title and 5 options to choose from
   unsigned char mainMenu;
@@ -168,11 +177,7 @@ void gbaMenu() {
             verifyFLASH_GBA(65536, 0);
           } else {
             eraseFLASH_GBA();
-            uint32_t bankSize = 65536UL;
-            if (strcmp("PEAJ", cartID) == 0) {  // Japanese e-reader
-              println_Log(FS(SharedFlashText::textSkippingLast128Bytes));
-              bankSize = 65408UL;
-            }
+            const uint32_t bankSize = flashBankSizeP30_GBA(strcmp("PEAJ", cartID) == 0);
             if (blankcheckFLASH_GBA(bankSize)) {
               writeFLASH_GBA(1, bankSize, 0, 0);
               verifyFLASH_GBA(bankSize, 0);
@@ -198,11 +203,7 @@ void gbaMenu() {
             switchBank_GBA(bank);
             setROM_GBA();
             // Card e-Reader+ does not allow access to last 128 bytes of a bank
-            uint32_t bankSize = 65536UL;
-            if (strcmp("PSAE", cartID) == 0 || strcmp("PSAJ", cartID) == 0) { // Japanese e-reader+, USA e-reader
-              println_Log(FS(SharedFlashText::textSkippingLast128Bytes));
-              bankSize = 65408UL;
-            }
+            const uint32_t bankSize = flashBankSizeP30_GBA(strcmp("PSAE", cartID) == 0 || strcmp("PSAJ", cartID) == 0);
             if (!blankcheckFLASH_GBA(bankSize))
               break;
             writeFLASH_GBA(!bank, bankSize, bank ? 65536 : 0, 0);
