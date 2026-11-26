@@ -1,46 +1,31 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45853739681",
+  "run_id": "45907164141",
   "run_attempt": "1",
-  "workflow_commit": "13c507233a142045a38eeb20e94836df6e161849",
+  "workflow_commit": "f026a9af6237ea9101a637fe900f01a3b8bd7bae",
   "request": {
-    "id": "parallel-039",
+    "id": "parallel-039-integration",
     "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
     "expected_base_flash": 207892,
     "expected_base_ram": 6105,
+    "endpoints_only": true,
     "candidates": [
       {
-        "id": "nes-prg21-27-merge",
-        "head": "b453594e14c993a91fa009e45fb80b974c9d7c35"
+        "id": "integration-1-nes-helper",
+        "head": "0e8ebe4f0cb8dcf0685f9112392bbebfff080342"
       },
       {
-        "id": "nes-prg21-27-helper",
-        "head": "7b050941db5018dc01a70c748d035441b7faa6d5"
+        "id": "integration-2-ws-index",
+        "head": "3702c4279e2977a5061b42f82bde843cb29ec844"
       },
       {
-        "id": "ws-eeprom-read-word",
-        "head": "7655390c8f63067a8d37462d3ce93b2e5a76aa85"
+        "id": "integration-3-md-lockon",
+        "head": "f869372e3dba6b212f5e058aecd06fe519fa0892"
       },
       {
-        "id": "ws-verify-result",
-        "head": "3377d7fb6fdc4c2f8c51a0c4503bccbbf8cb8668"
-      },
-      {
-        "id": "ws-eeprom-index",
-        "head": "384ff99fa86efb2e0b22214481eb8bb241f8c517"
-      },
-      {
-        "id": "md-bram-address",
-        "head": "6caafb19a0dc2be0c9d2efc170d128d10b7c4e07"
-      },
-      {
-        "id": "md-lockon-buffer",
-        "head": "7417d48d613874e5f387702a0b5af48358c965d1"
-      },
-      {
-        "id": "pce-tennokoe-end",
-        "head": "1866b93ecb0f361167cdfc122ed512c3a85e8cab"
+        "id": "integration-4-ws-read",
+        "head": "53256d4630c167ffd7ec21538d47c363d5ec7dff"
       }
     ]
   },
@@ -48,18 +33,18 @@
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45853739681",
+      "run_id": "45907164141",
       "run_attempt": "1",
-      "workflow_commit": "13c507233a142045a38eeb20e94836df6e161849",
+      "workflow_commit": "f026a9af6237ea9101a637fe900f01a3b8bd7bae",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "nes-prg21-27-merge",
-        "head": "b453594e14c993a91fa009e45fb80b974c9d7c35",
+        "id": "integration-1-nes-helper",
+        "head": "0e8ebe4f0cb8dcf0685f9112392bbebfff080342",
         "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
         "expected_base_flash": 207892,
         "expected_base_ram": 6105,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
@@ -77,56 +62,8 @@
           "error": null
         },
         {
-          "commit": "b453594e14c993a91fa009e45fb80b974c9d7c35",
-          "subject": "Round 39: nes-prg21-27-merge",
-          "status": "ok",
-          "flash": 207840,
-          "ram": 6105,
-          "delta_previous": -52,
-          "delta_base": -52,
-          "classification": "reduced",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "nes-prg21-27-merge",
-        "head": "b453594e14c993a91fa009e45fb80b974c9d7c35"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45853739681",
-      "run_attempt": "1",
-      "workflow_commit": "13c507233a142045a38eeb20e94836df6e161849",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "ok",
-      "request": {
-        "id": "nes-prg21-27-helper",
-        "head": "7b050941db5018dc01a70c748d035441b7faa6d5",
-        "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
-        "expected_base_flash": 207892,
-        "expected_base_ram": 6105,
-        "endpoints_only": false
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
-          "subject": "Round 38 integrate SMS candidate bcef1cf",
-          "status": "ok",
-          "flash": 207892,
-          "ram": 6105,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "7b050941db5018dc01a70c748d035441b7faa6d5",
-          "subject": "Round 39: nes-prg21-27-helper",
+          "commit": "0e8ebe4f0cb8dcf0685f9112392bbebfff080342",
+          "subject": "Round 39 integrate nes-helper candidate 7b05094",
           "status": "ok",
           "flash": 207760,
           "ram": 6105,
@@ -138,24 +75,24 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "nes-prg21-27-helper",
-        "head": "7b050941db5018dc01a70c748d035441b7faa6d5"
+        "id": "integration-1-nes-helper",
+        "head": "0e8ebe4f0cb8dcf0685f9112392bbebfff080342"
       }
     },
     {
       "schema": 1,
-      "run_id": "45853739681",
+      "run_id": "45907164141",
       "run_attempt": "1",
-      "workflow_commit": "13c507233a142045a38eeb20e94836df6e161849",
+      "workflow_commit": "f026a9af6237ea9101a637fe900f01a3b8bd7bae",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "ws-eeprom-read-word",
-        "head": "7655390c8f63067a8d37462d3ce93b2e5a76aa85",
+        "id": "integration-2-ws-index",
+        "head": "3702c4279e2977a5061b42f82bde843cb29ec844",
         "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
         "expected_base_flash": 207892,
         "expected_base_ram": 6105,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
@@ -173,37 +110,37 @@
           "error": null
         },
         {
-          "commit": "7655390c8f63067a8d37462d3ce93b2e5a76aa85",
-          "subject": "Round 39: ws-eeprom-read-word",
+          "commit": "3702c4279e2977a5061b42f82bde843cb29ec844",
+          "subject": "Round 39 integrate ws-index candidate 384ff99",
           "status": "ok",
-          "flash": 207884,
+          "flash": 207734,
           "ram": 6105,
-          "delta_previous": -8,
-          "delta_base": -8,
+          "delta_previous": -158,
+          "delta_base": -158,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "ws-eeprom-read-word",
-        "head": "7655390c8f63067a8d37462d3ce93b2e5a76aa85"
+        "id": "integration-2-ws-index",
+        "head": "3702c4279e2977a5061b42f82bde843cb29ec844"
       }
     },
     {
       "schema": 1,
-      "run_id": "45853739681",
+      "run_id": "45907164141",
       "run_attempt": "1",
-      "workflow_commit": "13c507233a142045a38eeb20e94836df6e161849",
+      "workflow_commit": "f026a9af6237ea9101a637fe900f01a3b8bd7bae",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "ws-verify-result",
-        "head": "3377d7fb6fdc4c2f8c51a0c4503bccbbf8cb8668",
+        "id": "integration-3-md-lockon",
+        "head": "f869372e3dba6b212f5e058aecd06fe519fa0892",
         "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
         "expected_base_flash": 207892,
         "expected_base_ram": 6105,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
@@ -221,85 +158,37 @@
           "error": null
         },
         {
-          "commit": "3377d7fb6fdc4c2f8c51a0c4503bccbbf8cb8668",
-          "subject": "Round 39: ws-verify-result",
+          "commit": "f869372e3dba6b212f5e058aecd06fe519fa0892",
+          "subject": "Round 39 integrate md-lockon candidate 7417d48",
           "status": "ok",
-          "flash": 207906,
+          "flash": 207716,
           "ram": 6105,
-          "delta_previous": 14,
-          "delta_base": 14,
-          "classification": "increased",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "ws-verify-result",
-        "head": "3377d7fb6fdc4c2f8c51a0c4503bccbbf8cb8668"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45853739681",
-      "run_attempt": "1",
-      "workflow_commit": "13c507233a142045a38eeb20e94836df6e161849",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "ok",
-      "request": {
-        "id": "ws-eeprom-index",
-        "head": "384ff99fa86efb2e0b22214481eb8bb241f8c517",
-        "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
-        "expected_base_flash": 207892,
-        "expected_base_ram": 6105,
-        "endpoints_only": false
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
-          "subject": "Round 38 integrate SMS candidate bcef1cf",
-          "status": "ok",
-          "flash": 207892,
-          "ram": 6105,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "384ff99fa86efb2e0b22214481eb8bb241f8c517",
-          "subject": "Round 39: ws-eeprom-index",
-          "status": "ok",
-          "flash": 207866,
-          "ram": 6105,
-          "delta_previous": -26,
-          "delta_base": -26,
+          "delta_previous": -176,
+          "delta_base": -176,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "ws-eeprom-index",
-        "head": "384ff99fa86efb2e0b22214481eb8bb241f8c517"
+        "id": "integration-3-md-lockon",
+        "head": "f869372e3dba6b212f5e058aecd06fe519fa0892"
       }
     },
     {
       "schema": 1,
-      "run_id": "45853739681",
+      "run_id": "45907164141",
       "run_attempt": "1",
-      "workflow_commit": "13c507233a142045a38eeb20e94836df6e161849",
+      "workflow_commit": "f026a9af6237ea9101a637fe900f01a3b8bd7bae",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "md-bram-address",
-        "head": "6caafb19a0dc2be0c9d2efc170d128d10b7c4e07",
+        "id": "integration-4-ws-read",
+        "head": "53256d4630c167ffd7ec21538d47c363d5ec7dff",
         "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
         "expected_base_flash": 207892,
         "expected_base_ram": 6105,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
@@ -317,117 +206,21 @@
           "error": null
         },
         {
-          "commit": "6caafb19a0dc2be0c9d2efc170d128d10b7c4e07",
-          "subject": "Round 39: md-bram-address",
+          "commit": "53256d4630c167ffd7ec21538d47c363d5ec7dff",
+          "subject": "Round 39 integrate ws-read candidate 7655390",
           "status": "ok",
-          "flash": 207898,
+          "flash": 207726,
           "ram": 6105,
-          "delta_previous": 6,
-          "delta_base": 6,
-          "classification": "increased",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "md-bram-address",
-        "head": "6caafb19a0dc2be0c9d2efc170d128d10b7c4e07"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45853739681",
-      "run_attempt": "1",
-      "workflow_commit": "13c507233a142045a38eeb20e94836df6e161849",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "ok",
-      "request": {
-        "id": "md-lockon-buffer",
-        "head": "7417d48d613874e5f387702a0b5af48358c965d1",
-        "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
-        "expected_base_flash": 207892,
-        "expected_base_ram": 6105,
-        "endpoints_only": false
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
-          "subject": "Round 38 integrate SMS candidate bcef1cf",
-          "status": "ok",
-          "flash": 207892,
-          "ram": 6105,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "7417d48d613874e5f387702a0b5af48358c965d1",
-          "subject": "Round 39: md-lockon-buffer",
-          "status": "ok",
-          "flash": 207874,
-          "ram": 6105,
-          "delta_previous": -18,
-          "delta_base": -18,
+          "delta_previous": -166,
+          "delta_base": -166,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "md-lockon-buffer",
-        "head": "7417d48d613874e5f387702a0b5af48358c965d1"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45853739681",
-      "run_attempt": "1",
-      "workflow_commit": "13c507233a142045a38eeb20e94836df6e161849",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "ok",
-      "request": {
-        "id": "pce-tennokoe-end",
-        "head": "1866b93ecb0f361167cdfc122ed512c3a85e8cab",
-        "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
-        "expected_base_flash": 207892,
-        "expected_base_ram": 6105,
-        "endpoints_only": false
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
-          "subject": "Round 38 integrate SMS candidate bcef1cf",
-          "status": "ok",
-          "flash": 207892,
-          "ram": 6105,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "1866b93ecb0f361167cdfc122ed512c3a85e8cab",
-          "subject": "Round 39: pce-tennokoe-end",
-          "status": "ok",
-          "flash": 207894,
-          "ram": 6105,
-          "delta_previous": 2,
-          "delta_base": 2,
-          "classification": "increased",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "pce-tennokoe-end",
-        "head": "1866b93ecb0f361167cdfc122ed512c3a85e8cab"
+        "id": "integration-4-ws-read",
+        "head": "53256d4630c167ffd7ec21538d47c363d5ec7dff"
       }
     }
   ]

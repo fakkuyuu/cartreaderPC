@@ -1,0 +1,227 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45907164141",
+  "run_attempt": "1",
+  "workflow_commit": "f026a9af6237ea9101a637fe900f01a3b8bd7bae",
+  "request": {
+    "id": "parallel-039-integration",
+    "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
+    "expected_base_flash": 207892,
+    "expected_base_ram": 6105,
+    "endpoints_only": true,
+    "candidates": [
+      {
+        "id": "integration-1-nes-helper",
+        "head": "0e8ebe4f0cb8dcf0685f9112392bbebfff080342"
+      },
+      {
+        "id": "integration-2-ws-index",
+        "head": "3702c4279e2977a5061b42f82bde843cb29ec844"
+      },
+      {
+        "id": "integration-3-md-lockon",
+        "head": "f869372e3dba6b212f5e058aecd06fe519fa0892"
+      },
+      {
+        "id": "integration-4-ws-read",
+        "head": "53256d4630c167ffd7ec21538d47c363d5ec7dff"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45907164141",
+      "run_attempt": "1",
+      "workflow_commit": "f026a9af6237ea9101a637fe900f01a3b8bd7bae",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-1-nes-helper",
+        "head": "0e8ebe4f0cb8dcf0685f9112392bbebfff080342",
+        "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
+        "expected_base_flash": 207892,
+        "expected_base_ram": 6105,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
+          "subject": "Round 38 integrate SMS candidate bcef1cf",
+          "status": "ok",
+          "flash": 207892,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "0e8ebe4f0cb8dcf0685f9112392bbebfff080342",
+          "subject": "Round 39 integrate nes-helper candidate 7b05094",
+          "status": "ok",
+          "flash": 207760,
+          "ram": 6105,
+          "delta_previous": -132,
+          "delta_base": -132,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-1-nes-helper",
+        "head": "0e8ebe4f0cb8dcf0685f9112392bbebfff080342"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45907164141",
+      "run_attempt": "1",
+      "workflow_commit": "f026a9af6237ea9101a637fe900f01a3b8bd7bae",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-2-ws-index",
+        "head": "3702c4279e2977a5061b42f82bde843cb29ec844",
+        "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
+        "expected_base_flash": 207892,
+        "expected_base_ram": 6105,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
+          "subject": "Round 38 integrate SMS candidate bcef1cf",
+          "status": "ok",
+          "flash": 207892,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "3702c4279e2977a5061b42f82bde843cb29ec844",
+          "subject": "Round 39 integrate ws-index candidate 384ff99",
+          "status": "ok",
+          "flash": 207734,
+          "ram": 6105,
+          "delta_previous": -158,
+          "delta_base": -158,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-2-ws-index",
+        "head": "3702c4279e2977a5061b42f82bde843cb29ec844"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45907164141",
+      "run_attempt": "1",
+      "workflow_commit": "f026a9af6237ea9101a637fe900f01a3b8bd7bae",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-3-md-lockon",
+        "head": "f869372e3dba6b212f5e058aecd06fe519fa0892",
+        "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
+        "expected_base_flash": 207892,
+        "expected_base_ram": 6105,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
+          "subject": "Round 38 integrate SMS candidate bcef1cf",
+          "status": "ok",
+          "flash": 207892,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "f869372e3dba6b212f5e058aecd06fe519fa0892",
+          "subject": "Round 39 integrate md-lockon candidate 7417d48",
+          "status": "ok",
+          "flash": 207716,
+          "ram": 6105,
+          "delta_previous": -176,
+          "delta_base": -176,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-3-md-lockon",
+        "head": "f869372e3dba6b212f5e058aecd06fe519fa0892"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45907164141",
+      "run_attempt": "1",
+      "workflow_commit": "f026a9af6237ea9101a637fe900f01a3b8bd7bae",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-4-ws-read",
+        "head": "53256d4630c167ffd7ec21538d47c363d5ec7dff",
+        "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
+        "expected_base_flash": 207892,
+        "expected_base_ram": 6105,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
+          "subject": "Round 38 integrate SMS candidate bcef1cf",
+          "status": "ok",
+          "flash": 207892,
+          "ram": 6105,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "53256d4630c167ffd7ec21538d47c363d5ec7dff",
+          "subject": "Round 39 integrate ws-read candidate 7655390",
+          "status": "ok",
+          "flash": 207726,
+          "ram": 6105,
+          "delta_previous": -166,
+          "delta_base": -166,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-4-ws-read",
+        "head": "53256d4630c167ffd7ec21538d47c363d5ec7dff"
+      }
+    }
+  ]
+}
