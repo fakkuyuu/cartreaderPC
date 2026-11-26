@@ -376,47 +376,38 @@ void mdCartMenu() {
       break;
 
     case 1:
-      display_Clear();
-      // Does cartridge have SRAM
-      if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
-        // Change working dir to root
-        changeToStorageRoot();
-        println_Msg(F("Reading Sram..."));
-        display_Update();
-        enableSram_MD(1);
-        readSram_MD();
-        enableSram_MD(0);
-      } else if (saveType == 4) {
-        readEEP_MD();
-      } else {
-        print_Error(FS(SharedFlashText::textCartHasNoSave));
-      }
-      break;
-
     case 2:
       display_Clear();
-      // Does cartridge have SRAM
       if ((saveType == 1) || (saveType == 2) || (saveType == 3)) {
-        // Change working dir to root
         changeToStorageRoot();
-        // Launch file browser
-        fileBrowser(FS(SharedFlashText::textSelectSrmFile));
-        display_Clear();
-        enableSram_MD(1);
-        writeSram_MD();
-        writeErrors = verifySram_MD();
-        enableSram_MD(0);
-        if (writeErrors == 0) {
-          println_Msg(FS(SharedFlashText::textSramVerifiedOK));
+        if (mainMenu == 1) {
+          println_Msg(F("Reading Sram..."));
           display_Update();
+          enableSram_MD(1);
+          readSram_MD();
+          enableSram_MD(0);
         } else {
-          showVerificationErrorCount(writeErrors);
+          fileBrowser(FS(SharedFlashText::textSelectSrmFile));
+          display_Clear();
+          enableSram_MD(1);
+          writeSram_MD();
+          writeErrors = verifySram_MD();
+          enableSram_MD(0);
+          if (writeErrors == 0) {
+            println_Msg(FS(SharedFlashText::textSramVerifiedOK));
+            display_Update();
+          } else {
+            showVerificationErrorCount(writeErrors);
+          }
         }
       } else if (saveType == 4) {
-        // Launch file browser
-        fileBrowser(FS(SharedFlashText::textSelectEepFile));
-        display_Clear();
-        writeEEP_MD();
+        if (mainMenu == 1) {
+          readEEP_MD();
+        } else {
+          fileBrowser(FS(SharedFlashText::textSelectEepFile));
+          display_Clear();
+          writeEEP_MD();
+        }
       } else {
         print_Error(FS(SharedFlashText::textCartHasNoSave));
       }

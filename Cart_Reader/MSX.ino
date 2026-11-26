@@ -922,14 +922,14 @@ setmapper:
 }
 
 void checkMapperSize_MSX() {
-  for (int i = 0; i < msxmapcount; i++) {
+  const uint8_t *entry = msxmapsize;
+  for (int i = 0; i < msxmapcount; i++, entry += 5) {
     msxindex = i * 5;
-    byte mapcheck = pgm_read_byte(msxmapsize + msxindex);
-    if (mapcheck == msxmapper) {
-      msxlo = pgm_read_byte(msxmapsize + msxindex + 1);
-      msxhi = pgm_read_byte(msxmapsize + msxindex + 2);
-      msxramlo = pgm_read_byte(msxmapsize + msxindex + 3);
-      msxramhi = pgm_read_byte(msxmapsize + msxindex + 4);
+    if (pgm_read_byte(entry) == msxmapper) {
+      msxlo = pgm_read_byte(entry + 1);
+      msxhi = pgm_read_byte(entry + 2);
+      msxramlo = pgm_read_byte(entry + 3);
+      msxramhi = pgm_read_byte(entry + 4);
       break;
     }
   }
