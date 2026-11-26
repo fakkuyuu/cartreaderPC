@@ -130,20 +130,17 @@ void operationsMenu() {
     }
 
     switch (SMSOperation) {
-      case 0: // Read ROM
+      case 0:
+      case 1:
+      case 2:
         mode = CORE_SMS;
         setup_SMS();
-        readROM_SMS();
-        break;
-      case 1: // Read SRAM
-        mode = CORE_SMS;
-        setup_SMS();
-        readSRAM_SMS();
-        break;
-      case 2: // Write SRAM
-        mode = CORE_SMS;
-        setup_SMS();
-        writeSRAM_SMS();
+        if (SMSOperation == 0)
+          readROM_SMS();
+        else if (SMSOperation == 1)
+          readSRAM_SMS();
+        else
+          writeSRAM_SMS();
         break;
       case 3: // Select ROM Size
         manual_selectRomSize();
