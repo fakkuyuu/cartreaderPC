@@ -1,25 +1,40 @@
 {
-  "id": "parallel-039-integration",
-  "base": "56a7dff426b6a0097d169ebd055ee692e30b3cfc",
-  "expected_base_flash": 207892,
+  "id": "parallel-040",
+  "base": "205e9984529510ca94d7e3c681cbf186fc082733",
+  "expected_base_flash": 207716,
   "expected_base_ram": 6105,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-1-nes-helper",
-      "head": "0e8ebe4f0cb8dcf0685f9112392bbebfff080342"
+      "id": "vb-rom-range",
+      "head": "cf0e582c3580cce7d9d16e48b6b17cf7bc98ec0b"
     },
     {
-      "id": "integration-2-ws-index",
-      "head": "3702c4279e2977a5061b42f82bde843cb29ec844"
+      "id": "msx-paired-rom",
+      "head": "e5150ce457e686c226930eeb0e2084ce97c7a724"
     },
     {
-      "id": "integration-3-md-lockon",
-      "head": "f869372e3dba6b212f5e058aecd06fe519fa0892"
+      "id": "snes-retry-address",
+      "head": "8b6c0705215ee2ecac12d7793683aadc0718b61f"
     },
     {
-      "id": "integration-4-ws-read",
-      "head": "53256d4630c167ffd7ec21538d47c363d5ec7dff"
+      "id": "md-rom-buffer",
+      "head": "b48002d7cdc77fe01e74ae0bd3cfd93bdc4330f8"
+    },
+    {
+      "id": "ws-sram-bank",
+      "head": "3200fd5054a136da59eac0e5a05752d1f5cb66e3"
+    },
+    {
+      "id": "gba-369-geometry",
+      "head": "416c1c7448e5c6507907955f4d3f6b7b867703bc"
+    },
+    {
+      "id": "nes-write-mode-tail",
+      "head": "983fc1259d16ba85d192b799c77e41447be47c5d"
+    },
+    {
+      "id": "sv-write-abort",
+      "head": "09b9e4ed98064fd1beb1def39139feb52e5ea1a7"
     }
   ]
 }
