@@ -1,40 +1,12 @@
 {
-  "id": "parallel-033",
-  "base": "3b962cb8d38a352f9f7957bdc73a0a45e7471970",
-  "expected_base_flash": 208274,
+  "id": "parallel-038-baseline",
+  "base": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
+  "expected_base_flash": 207968,
   "expected_base_ram": 6105,
   "candidates": [
     {
-      "id": "gb-init",
-      "head": "7314d6a8421d7b54bf4847e758e8f588dd1d1ad2"
-    },
-    {
-      "id": "sms-save-finish",
-      "head": "32ff8ae9105cea3b574681d1eeddd82dfaa04b0b"
-    },
-    {
-      "id": "msx-prompt",
-      "head": "e783a93073ab2b464e2e62336951394a09f2f732"
-    },
-    {
-      "id": "nes-write-display",
-      "head": "6c824fec21b98a5740d41118a596f12808d46c59"
-    },
-    {
-      "id": "snes-reset",
-      "head": "a3282010203a730f3a33cf06e0ba7e05bf6e9d4d"
-    },
-    {
-      "id": "n64-flash-warning",
-      "head": "708714668d681fad18048a101227e01753d11cf5"
-    },
-    {
-      "id": "pce-checksum-tail",
-      "head": "f83132d337e92d5715590429f0c054e80dc42ba7"
-    },
-    {
-      "id": "gba-rom-size-selection",
-      "head": "57e44c0748a9be1be1b8f27cb844b7467b16c99e"
+      "id": "baseline-repeat",
+      "head": "e3838f440806bce03906fb2f201012c42364b036"
     }
   ]
 }
