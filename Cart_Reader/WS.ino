@@ -593,11 +593,16 @@ static void showFileProgressP18_WS() {
   display_Update();
 }
 
-static void selectSaveForWrite_WS(const __FlashStringHelper* caption) {
+static void browseWriteFileP31_WS(const __FlashStringHelper* caption) __attribute__((noinline));
+static void browseWriteFileP31_WS(const __FlashStringHelper* caption) {
   filePath[0] = 0;
   changeToStorageRoot();
   fileBrowser(caption);
   snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
+}
+
+static void selectSaveForWrite_WS(const __FlashStringHelper* caption) {
+  browseWriteFileP31_WS(caption);
 
   display_Clear();
   print_Msg(FS(SharedFlashText::textWriting));
@@ -781,10 +786,7 @@ static void writeWitchOS_WS() {
     display_Clear();
     print_Error(F("OS sectors are protected!"));
   } else {
-    filePath[0] = 0;
-    changeToStorageRoot();
-    fileBrowser(F("Select fbin file"));
-    snprintf(filePath, FILEPATH_LENGTH, "%s/%s", filePath, fileName);
+    browseWriteFileP31_WS(F("Select fbin file"));
 
     display_Clear();
 
