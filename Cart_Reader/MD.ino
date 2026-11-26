@@ -1359,6 +1359,16 @@ static void showChecksumMismatch_MD(uint16_t checksum, bool newline) {
   display_Update();
 }
 
+static word advanceLockonBufferR39_MD(word d) __attribute__((noinline));
+static word advanceLockonBufferR39_MD(word d) {
+  d += 2;
+  if (d == 512) {
+    writeSdBufferBlock();
+    d = 0;
+  }
+  return d;
+}
+
 void readROM_MD() {
   // Checksum
   uint16_t calcCKS = 0;
@@ -1618,11 +1628,7 @@ void readROM_MD() {
         if (((currBuffer == 0) && (currWord >= 256)) || (currBuffer > 0)) {
           calcCKSLockon += ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
         }
-        d += 2;
-        if (d == 512) {
-          writeSdBufferBlock();
-          d = 0;
-        }
+        d = advanceLockonBufferR39_MD(d);
       }
 
       // update progress bar
@@ -1683,11 +1689,7 @@ void readROM_MD() {
           PORTH ^= (1 << 1);
 
         calcCKSSonic2 += ((sdBuffer[d] << 8) | sdBuffer[d + 1]);
-        d += 2;
-        if (d == 512) {
-        writeSdBufferBlock();
-          d = 0;
-        }
+        d = advanceLockonBufferR39_MD(d);
       }
 
       // update progress bar
