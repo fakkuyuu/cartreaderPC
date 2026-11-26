@@ -425,6 +425,13 @@ void readROM_SV() {
   updateDisplayAndWait();
 }
 
+static void abortWriteR40_SV() __attribute__((noinline));
+static void abortWriteR40_SV() {
+  display_Update();
+  closeCurrentFile();
+  wait();
+}
+
 void writeROM_SV(void) {
   // Get Checksum as string to make sure that BS-X cart is inserted
   dataIn();
@@ -451,9 +458,7 @@ void writeROM_SV(void) {
     fileSize = myFile.fileSize();
     if (fileSize != 0x100000) {
       println_Msg(F("File must be 1MB"));
-      display_Update();
-      closeCurrentFile();
-      wait();
+      abortWriteR40_SV();
       return;
     }
 
@@ -480,9 +485,7 @@ void writeROM_SV(void) {
         if (0xFF != readBank_SV(currBank, currByte)) {
           printBlankLine();
           println_Msg(FS(SharedFlashText::textEraseFailed));
-          display_Update();
-          closeCurrentFile();
-          wait();
+          abortWriteR40_SV();
           return;
         }
       }
@@ -523,9 +526,7 @@ void writeROM_SV(void) {
         if (myFile.read() != readBank_SV(currBank, currByte)) {
           printBlankLine();
           println_Msg(F("Verify failed"));
-          display_Update();
-          closeCurrentFile();
-          wait();
+          abortWriteR40_SV();
           return;
         }
       }
