@@ -1,36 +1,21 @@
 {
-  "id": "parallel-038",
+  "id": "parallel-038-integration",
   "base": "f6ad14a6e6c2fd89841f7e44515b6f2d1cbe29f3",
   "expected_base_flash": 207968,
   "expected_base_ram": 6105,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "sms-read-block",
-      "head": "bcef1cf27b48aa60c5cfe79faa34d705edbed9c8"
+      "id": "integration-n64",
+      "head": "230d871e93dac146f08df87de839cb0c356ea036"
     },
     {
-      "id": "msx-sram-range",
-      "head": "ddfd00d0780064597b7eebd17ccda8cf83591709"
+      "id": "integration-n64-snes",
+      "head": "901086daa96ea9781ee1b597b07b68c8c81e175a"
     },
     {
-      "id": "ws-verify-index",
-      "head": "4b51e6696245a191b7364f74998b075610574e04"
-    },
-    {
-      "id": "ws-write-index",
-      "head": "00f6b8df5a3189465f824005724ba89aa3a2d3f4"
-    },
-    {
-      "id": "pce-tennokoe-address",
-      "head": "44a36a2e0b1191bd86b2e633f39378247894d801"
-    },
-    {
-      "id": "n64-rom-block",
-      "head": "c9714812444a612297f290420ab334b895c779c8"
-    },
-    {
-      "id": "snes-cx4-register",
-      "head": "87ea6caca2922fc779746c21fd2013f318d58be1"
+      "id": "integration-n64-snes-sms",
+      "head": "56a7dff426b6a0097d169ebd055ee692e30b3cfc"
     }
   ]
 }

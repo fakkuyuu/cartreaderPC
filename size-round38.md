@@ -18,3 +18,25 @@
 ## 基準再計測
 
 [Actions run 45850143712](https://github.com/fakkuyuu/cartreaderPC/actions/runs/45850143712): f6ad14a と同じツリーの確認コミット e3838f4 は両方とも Flash 207968 B、静的RAM 6105 B。基準一致。Portable V15.5、AVR GCC 15.2.0、HW3 FLASH OFF。afcdcbd..f6ad14a の変更は size-round37.md の追加のみ。独立7候補の計測 [run 45850459422](https://github.com/fakkuyuu/cartreaderPC/actions/runs/45850459422) を開始済み。結果確定前につき統合なし。
+
+## 独立計測結果
+
+[Actions run 45850459422](https://github.com/fakkuyuu/cartreaderPC/actions/runs/45850459422) 全7件成功。全基準一致、全静的RAM 6105 B（差0）。
+
+| # | Flash B | 差 B | 採否 |
+|---|---:|---:|---|
+|1 SMS|207964|-4|合成候補|
+|2 MSX|207986|+18|不採用|
+|3 MD|—|—|見送り|
+|4 WS verify|207968|0|不採用|
+|5 WS write|207968|0|不採用|
+|6 PCE|208006|+38|不採用|
+|7 N64|207926|-42|合成候補|
+|8 SNES|207938|-30|合成候補|
+
+合成履歴（機種別に個別revert可能）：
+- N64: 230d871e93dac146f08df87de839cb0c356ea036
+- SNES: 901086daa96ea9781ee1b597b07b68c8c81e175a
+- SMS: 56a7dff426b6a0097d169ebd055ee692e30b3cfc
+
+合成版は実測待ち。単独差の合計 -76 B は予想であり確定値ではない。実機未試験、master未変更。
