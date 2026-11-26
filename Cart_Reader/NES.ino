@@ -2065,10 +2065,10 @@ static void dumpCHR8KiB() {
 
 // Simple mappers select each bank with a single register write.
 static void dumpSequentialPRGBanks(uint16_t count, uint16_t reg, uint8_t shift,
-                                   uint16_t bankSize, uint16_t base) {
+                                   uint16_t bankSize, uint16_t base, uint16_t start = 0) {
   for (uint16_t bank = 0; bank < count; ++bank) {
     write_prg_byte(reg, bank << shift);
-    dumpBankPRG(0, bankSize, base);
+    dumpBankPRG(start, bankSize, base);
   }
 }
 
@@ -2427,11 +2427,7 @@ void readPRG(bool readrom) {
         break;
 
       case 21:  // 256K
-        banks = prgBanks16K * 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xA000, i);
-          dumpBankPRG(0x2000, 0x4000, base);
-        }
+        dumpSequentialPRGBanks(prgBanks16K * 2, 0xA000, 0, 0x4000, base, 0x2000);
         break;
 
       case 22:
@@ -2466,11 +2462,7 @@ void readPRG(bool readrom) {
         break;
 
       case 27:
-        banks = prgBanks16K * 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xA000, i);
-          dumpBankPRG(0x2000, 0x4000, base);
-        }
+        dumpSequentialPRGBanks(prgBanks16K * 2, 0xA000, 0, 0x4000, base, 0x2000);
         break;
 
       case 28:  // using 32k mode for inner and outer banks, switching only with outer
