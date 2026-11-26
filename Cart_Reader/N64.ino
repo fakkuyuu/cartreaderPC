@@ -280,14 +280,11 @@ void n64CartMenu() {
       changeToStorageRoot();
       display_Clear();
 
-      if (saveType == 1) {
-        println_Msg(FS(SharedFlashText::textReadingSRAM));
+      if (saveType == 1 || saveType == 2) {
+        const bool largeSram = saveType == 2;
+        println_Msg(largeSram ? F("Reading Sram 768...") : FS(SharedFlashText::textReadingSRAM));
         display_Update();
-        readSram(32768, 1);
-      } else if (saveType == 2) {
-        println_Msg(F("Reading Sram 768..."));
-        display_Update();
-        readSram(98304, 1);
+        readSram(largeSram ? 98304UL : 32768UL, 1);
       } else if (saveType == 4) {
         getFramType();
         println_Msg(F("Reading FLASH..."));
