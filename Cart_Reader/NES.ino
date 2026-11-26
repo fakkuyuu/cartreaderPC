@@ -1386,8 +1386,9 @@ chooseMapper:
     newmapper = 0;
   // Split into digits
   uint8_t hundreds = newmapper / 100;
-  uint8_t tens = newmapper / 10 - hundreds * 10;
-  uint8_t units = newmapper - hundreds * 100 - tens * 10;
+  uint8_t remainder = newmapper % 100;
+  uint8_t tens = remainder / 10;
+  uint8_t units = remainder % 10;
   bool pcMapperDirect = false;
 
 #ifdef PC_MENU
