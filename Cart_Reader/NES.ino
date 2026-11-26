@@ -478,21 +478,14 @@ void nesMenu() {
       nesChipMenu();
       break;
 
-    // Read RAM
     case 2:
-      readRAM();
-      resetROM();
-      printBlankLine();
-      // Prints string out of the common strings array either with or without newline
-      promptAndWaitForButton();
-      break;
-
-    // Write RAM
     case 3:
-      writeRAM();
+      if (answer == 2)
+        readRAM();
+      else
+        writeRAM();
       resetROM();
       printBlankLine();
-      // Prints string out of the common strings array either with or without newline
       promptAndWaitForButton();
       break;
 
