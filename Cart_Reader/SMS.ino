@@ -375,42 +375,11 @@ void getCartInfo_SMS() {
   // Get rom size from header
   //    Note: Common for this value to be smaller than the actual value.
   //          Normally used for BIOS checksum calculations on export hardware (non JP).
-  switch (cartNib) {
-    case 0xa:
-      cartSize = 8192; // 8 KiB
-      break;
-    case 0xb:
-      cartSize = 16384; // 16 KiB
-      break;
-    case 0xc:
-      cartSize = 32768; // 32 KiB
-      break;
-    case 0xd:
-      cartSize = 49152; // 48 KiB
-      break;
-    case 0xe:
-      cartSize = 65536; // 64 KiB
-      break;
-    case 0xf:
-      cartSize = 131072; // 128 KiB
-      break;
-    case 0x0:
-      cartSize = 262144; // 256 KiB
-      break;
-    case 0x1:
-    case 0x2:
-      cartSize = 524288; // 512 KiB
-      break;
-    case 0x3:
-      // 0x3 is (only?) used in The Pro Yakyuu '91 (Game Gear)
-      cartSize = 131072; // 128 KiB
-      break;
-    default:
-      cartSize = 49152; // 48 KiB
-      // LED Error
-      rgbLed(blue_color);
-      break;
-  }
+  // Header size in 8 KiB units; zero denotes an unsupported code.
+  static const uint8_t romSizeUnits[] PROGMEM = { 32, 64, 64, 16, 0, 0, 0, 0, 0, 0, 1, 2, 4, 6, 8, 16 };
+  const byte units = cartNib < sizeof(romSizeUnits) ? pgm_read_byte(&romSizeUnits[cartNib]) : 0;
+  cartSize = (uint32_t)(units ? units : 6) * 8192UL;
+  if (!units) rgbLed(blue_color);
 
   // Get rom name (expecting "TMR SEGA" string)
   for (byte i = 0; i < 8; i++) {
