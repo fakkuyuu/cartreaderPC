@@ -10,3 +10,4 @@ Base 8f9e9b46bfcaba8643f69cdd2afe159517e06226 206616/6095 HW3. Sources inspected
 - n64-aa8 36b82a694dedc25fc8540a225bfeeac2ae369de3
 - gb-sram-program e03e2d5ea2dd8d731d4503ac60f10527f24e9772
 - gb-rom-program 21aa98aaa33f437d5f879ceaac9110257ac42a92
+Independent run 45959447461: 8 builds passed, RAM 6095 B. NES pack -118 B, NES finish -22 B, NES outer -20 B; NES writing and both N64 unlocks 0 B, GB SRAM program +36 B, GB ROM program +2 B. Cumulative measurement pending.

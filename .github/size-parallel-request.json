@@ -1,40 +1,21 @@
 {
-  "id": "parallel-047-astra",
-  "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
-  "expected_base_flash": 206616,
   "expected_base_ram": 6095,
+  "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+  "id": "parallel-047-astra-integration",
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "nes-outer",
-      "head": "cfe350d58080486e0887dbea2a01c963cf37afcf"
+      "head": "833e7ccc8ba7fee5f2f426d06c104e57aacad811",
+      "id": "nes-pack"
     },
     {
-      "id": "nes-writing",
-      "head": "e31d1f5105fd7ea1320c61014c143d3494c59361"
+      "head": "65d93e071b279b1202d6db55817378e566d95047",
+      "id": "nes-finish"
     },
     {
-      "id": "nes-finish",
-      "head": "4160c6b0461b5eb508721652d0f0a92167390e7f"
-    },
-    {
-      "id": "nes-pack",
-      "head": "aa5e0873db0171b6a0427337ecdd254798833ea4"
-    },
-    {
-      "id": "n64-aa16",
-      "head": "9883072d9d5f9f9340dfd61d7d5718335f6452db"
-    },
-    {
-      "id": "n64-aa8",
-      "head": "36b82a694dedc25fc8540a225bfeeac2ae369de3"
-    },
-    {
-      "id": "gb-sram-program",
-      "head": "e03e2d5ea2dd8d731d4503ac60f10527f24e9772"
-    },
-    {
-      "id": "gb-rom-program",
-      "head": "21aa98aaa33f437d5f879ceaac9110257ac42a92"
+      "head": "7d3300e732a6d7c7bfe0f711def0867c63c590ae",
+      "id": "nes-outer"
     }
-  ]
+  ],
+  "expected_base_flash": 206616
 }
