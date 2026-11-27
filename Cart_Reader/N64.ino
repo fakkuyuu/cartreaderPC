@@ -1984,9 +1984,9 @@ void printCartInfo_N64() {
     // Loop through file
     while (myFile.available()) {
       // Read 8 bytes into String, do it one at a time so byte order doesn't get mixed up
-      sprintf(tempStr1, "%c", myFile.read());
+      tempStr1[0] = (char)myFile.read(); tempStr1[1] = 0;
       for (byte i = 0; i < 7; i++) {
-        sprintf(tempStr2, "%c", myFile.read());
+        tempStr2[0] = (char)myFile.read(); tempStr2[1] = 0;
         strcat(tempStr1, tempStr2);
       }
 
@@ -1996,9 +1996,9 @@ void printCartInfo_N64() {
         myFile.seekCur(1);
 
         // Read 4 bytes into String, do it one at a time so byte order doesn't get mixed up
-        sprintf(tempStr, "%c", myFile.read());
+        tempStr[0] = (char)myFile.read(); tempStr[1] = 0;
         for (byte i = 0; i < 3; i++) {
-          sprintf(tempStr2, "%c", myFile.read());
+          tempStr2[0] = (char)myFile.read(); tempStr2[1] = 0;
           strcat(tempStr, tempStr2);
         }
 
