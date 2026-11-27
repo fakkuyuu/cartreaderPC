@@ -1750,10 +1750,15 @@ void readROM_SNES() {
   SNES SRAM Functions
 *****************************************/
 // Write file to SRAM
-void writeSramFileRange_SNES(byte bank, long start, long end, byte) {
+static void writeSramRange_SNES(byte bank, long start, long end, bool fromFile, byte value) __attribute__((noinline));
+static void writeSramRange_SNES(byte bank, long start, long end, bool fromFile, byte value) {
   for (long address = start; address < end; ++address) {
-    writeBank_SNES(bank, address, myFile.read());
+    writeBank_SNES(bank, address, fromFile ? myFile.read() : value);
   }
+}
+
+void writeSramFileRange_SNES(byte bank, long start, long end, byte) {
+  writeSramRange_SNES(bank, start, end, true, 0);
 }
 
 void readSramFileRange_SNES(byte bank, long start, long end, byte) {
@@ -1956,9 +1961,7 @@ void verifySramFillRange_SNES(byte bank, long start, long end, byte value) {
 }
 
 void fillSramRange_SNES(byte bank, long start, long end, byte value) {
-  for (long address = start; address < end; ++address) {
-    writeBank_SNES(bank, address, value);
-  }
+  writeSramRange_SNES(bank, start, end, false, value);
 }
 
 unsigned long verifySRAM() {
