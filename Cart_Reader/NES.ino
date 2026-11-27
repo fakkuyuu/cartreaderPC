@@ -2114,6 +2114,11 @@ static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {
   write_prg_byte(0x6001, b);
 }
 
+static void __attribute__((noinline)) writePair68R61_NES(byte a, byte b) {
+  write_prg_byte(0x6000, a);
+  write_prg_byte(0x8000, b);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2606,8 +2611,7 @@ void readPRG(bool readrom) {
       case 46:
         banks = prgBanks16K / 2;  // 32k banks
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x6000, (i & 0x1E) >> 1);  // high bits
-          write_prg_byte(0x8000, i & 0x01);         // low bit
+          writePair68R61_NES((i & 0x1E) >> 1, i & 0x01);
           dumpPRG32KiB(base);
         }
         break;
@@ -2786,8 +2790,7 @@ void readPRG(bool readrom) {
       case 93:
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x6000, i);
-          write_prg_byte(0x8000, i << 4 | 0x01);
+          writePair68R61_NES(i, i << 4 | 0x01);
           dumpPRG16KiB(base);
         }
         break;
@@ -3586,8 +3589,7 @@ void readCHR(bool readrom) {
         case 159:  // 128K/256K
           banks = chrBanks4K * 4;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x6000, i);  // Submapper 4
-            write_prg_byte(0x8000, i);  // Submapper 5
+            writePair68R61_NES(i, i);
             dumpCHR1KiB();
           }
           break;
@@ -3768,8 +3770,7 @@ void readCHR(bool readrom) {
         case 46:
           banks = chrBanks4K;  // 8k banks
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x6000, (i & 0x78) << 1);  // high bits
-            write_prg_byte(0x8000, (i & 0x07) << 4);  // low bits
+            writePair68R61_NES((i & 0x78) << 1, (i & 0x07) << 4);
             dumpCHR8KiB();
           }
           break;
