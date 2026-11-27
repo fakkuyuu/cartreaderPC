@@ -138,7 +138,7 @@ bool getCartInfo_NGP() {
 
   // confirm NGP cart recognition
   dataIn();
-  for (uint32_t addr = 0; addr < 28; addr++)
+  for (uint8_t addr = 0; addr < 28; addr++)
     sdBuffer[addr] = readByte_NGP(addr);
   if (memcmp_P(sdBuffer, PSTR("COPYRIGHT BY SNK CORPORATION"), 28) != 0 && memcmp_P(sdBuffer, PSTR(" LICENSED BY SNK CORPORATION"), 28) != 0)
     return false;
@@ -157,7 +157,7 @@ bool getCartInfo_NGP() {
   ngpSystemType = readByte_NGP(0x23);
 
   // get app name
-  for (uint32_t i = 0; i < 17; i++) {
+  for (uint8_t i = 0; i < 17; i++) {
     romName[i] = readByte_NGP(0x24 + i);
 
     // replace '/' chars in game name to avoid path errors
