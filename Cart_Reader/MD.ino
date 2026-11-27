@@ -2372,11 +2372,6 @@ void EepromStart() {
     writeWord_SCL(0x100000, 0x01);  // scl high
     writeWord_SDA(0x100000, 0x00);  // sda low
     writeWord_SCL(0x100000, 0x00);  // scl low
-  } else if (eepType == 4) {        // EA
-    writeWord_MD(0x100000, 0x00);   // sda low, scl low
-    writeWord_MD(0x100000, 0xC0);   // sda, scl high
-    writeWord_MD(0x100000, 0x40);   // sda low, scl high
-    writeWord_MD(0x100000, 0x00);   // START
   } else if (eepType == 5) {        // Codemasters
     writeWord_CM(0x180000, 0x00);   // sda low, scl low
     writeWord_CM(0x180000, 0x02);   // sda low, scl high
@@ -2384,9 +2379,11 @@ void EepromStart() {
     writeWord_CM(0x180000, 0x02);   // sda low, scl high
     writeWord_CM(0x180000, 0x00);   // START
   } else {
+    const byte highValue = eepType == 4 ? 0xC0 : 0x03;
+    const byte lowValue = eepType == 4 ? 0x40 : 0x02;
     writeWord_MD(0x100000, 0x00);  // sda low, scl low
-    writeWord_MD(0x100000, 0x03);  // sda, scl high
-    writeWord_MD(0x100000, 0x02);  // sda low, scl high
+    writeWord_MD(0x100000, highValue);
+    writeWord_MD(0x100000, lowValue);
     writeWord_MD(0x100000, 0x00);  // START
   }
 }
