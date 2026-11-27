@@ -4801,14 +4801,18 @@ static void beginEepromAddress02R48_NES(uint8_t address) {
   EepromSetAddress02(address);
 }
 
+static void __attribute__((noinline)) finishEepromReadR62_NES() {
+  EepromReadMode_NES();
+  EepromReadData_NES();
+  EepromFinish_NES();
+  EepromStop_NES();
+}
+
 void EepromREAD(uint8_t address) {
   EepromStart_NES();              // START
   if (mapper == 159) {            // 24C01
     EepromSetAddress01(address);  // 24C01 [Little Endian]
-    EepromReadMode_NES();
-    EepromReadData_NES();
-    EepromFinish_NES();
-    EepromStop_NES();  // STOP
+    finishEepromReadR62_NES();
     // OR 8 bits into byte
     eeptemp = 0;
     for (byte i = 0; i < 8; ++i) {
@@ -4818,10 +4822,7 @@ void EepromREAD(uint8_t address) {
     beginEepromAddress02R48_NES(address);
     EepromStart_NES();   // START
     EepromDevice_NES();  // DEVICE [1010] + ADDR [A2-A0]
-    EepromReadMode_NES();
-    EepromReadData_NES();
-    EepromFinish_NES();
-    EepromStop_NES();  // STOP
+    finishEepromReadR62_NES();
     // OR 8 bits into byte
     eeptemp = 0;
     for (byte i = 0; i < 8; ++i) {
