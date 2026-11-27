@@ -1,19 +1,19 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "46012271722",
+  "run_id": "46012804835",
   "run_attempt": "1",
-  "workflow_commit": "4ac0ae9d708886a61383183a5152d04da97521d1",
+  "workflow_commit": "7d257e33ce49b53d6ee82f8eaefe5c512f365971",
   "request": {
-    "id": "round56-step02",
+    "id": "round56-step03",
     "endpoints_only": true,
     "base": "6997327e39477d3762e82536ce93e34e562a7f74",
     "expected_base_flash": 205608,
     "expected_base_ram": 6059,
     "candidates": [
       {
-        "id": "round56-step02-gb-sram-eep-ptr",
-        "head": "8f511bcfb0f4009b50e9d131e510b2bb7a7a6fbf"
+        "id": "round56-step03-gb-sram-eep-ptr-gba-break",
+        "head": "3c3f2f36379858c2d3654e8bda7264c7040fbc27"
       }
     ]
   },
@@ -21,14 +21,14 @@
   "candidates": [
     {
       "schema": 1,
-      "run_id": "46012271722",
+      "run_id": "46012804835",
       "run_attempt": "1",
-      "workflow_commit": "4ac0ae9d708886a61383183a5152d04da97521d1",
+      "workflow_commit": "7d257e33ce49b53d6ee82f8eaefe5c512f365971",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "round56-step02-gb-sram-eep-ptr",
-        "head": "8f511bcfb0f4009b50e9d131e510b2bb7a7a6fbf",
+        "id": "round56-step03-gb-sram-eep-ptr-gba-break",
+        "head": "3c3f2f36379858c2d3654e8bda7264c7040fbc27",
         "base": "6997327e39477d3762e82536ce93e34e562a7f74",
         "expected_base_flash": 205608,
         "expected_base_ram": 6059,
@@ -459,13 +459,13 @@
           }
         },
         {
-          "commit": "8f511bcfb0f4009b50e9d131e510b2bb7a7a6fbf",
-          "subject": "Integrate round 56 stage 2: GB SRAM and GBA EEPROM pointer",
+          "commit": "3c3f2f36379858c2d3654e8bda7264c7040fbc27",
+          "subject": "Integrate round 56 stage 3: add GBA flash blank-check exit",
           "status": "ok",
-          "flash": 205582,
+          "flash": 205580,
           "ram": 6059,
-          "delta_previous": -26,
-          "delta_base": -26,
+          "delta_previous": -28,
+          "delta_base": -28,
           "classification": "reduced",
           "error": null,
           "elf_analysis": {
@@ -876,7 +876,7 @@
               }
             ],
             "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
-            "changed_symbols": 3,
+            "changed_symbols": 4,
             "largest_increases": [
               {
                 "name": "_ZL24readAndWriteSramBlock_GBj",
@@ -900,6 +900,13 @@
                 "before": 360,
                 "after": 352,
                 "delta": -8
+              },
+              {
+                "name": "_Z19blankcheckFLASH_GBAm",
+                "kind": "t",
+                "before": 214,
+                "after": 212,
+                "delta": -2
               }
             ]
           }
@@ -907,8 +914,8 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "round56-step02-gb-sram-eep-ptr",
-        "head": "8f511bcfb0f4009b50e9d131e510b2bb7a7a6fbf"
+        "id": "round56-step03-gb-sram-eep-ptr-gba-break",
+        "head": "3c3f2f36379858c2d3654e8bda7264c7040fbc27"
       }
     }
   ]
