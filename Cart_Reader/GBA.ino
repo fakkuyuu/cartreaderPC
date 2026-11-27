@@ -2050,7 +2050,9 @@ void readBlock_EEP(word startAddress, word eepSize) {
 
     // OR 8 bits into one byte for a total of 8 bytes
     for (byte j = 0; j < 64; j += 8) {
-      sdBuffer[((currAddr - startAddress) * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
+      byte packed = 0;
+      for (byte bit = 0; bit < 8; ++bit) packed = (packed << 1) | tempBits[j + bit];
+      sdBuffer[((currAddr - startAddress) * 8) + (j / 8)] = packed;
     }
   }
 }
