@@ -1114,6 +1114,14 @@ boolean compare_checksum_GBA() {
 /******************************************
   GBA SRAM SAVE Functions
 *****************************************/
+static void __attribute__((noinline)) dumpSaveR58_GBA(uint32_t size, byte (*reader)(uint16_t)) {
+  for (uint32_t currAddress = 0; currAddress < size; currAddress += 512) {
+    for (int c = 0; c < 512; c++)
+      sdBuffer[c] = reader(currAddress + c);
+    writeSdBufferBlock();
+  }
+}
+
 void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (browseFile) {
     // Get name, add extension and convert to char array for sd lib
@@ -1130,15 +1138,7 @@ void readSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   if (pos != 0)
     myFile.seekCur(pos);
 
-  for (uint32_t currAddress = 0; currAddress < sramSize; currAddress += 512) {
-    for (int c = 0; c < 512; c++) {
-      // Read byte
-      sdBuffer[c] = readByte_GBA(currAddress + c);
-    }
-
-    // Write sdBuffer to file
-    writeSdBufferBlock();
-  }
+  dumpSaveR58_GBA(sramSize, readByte_GBA);
   // Close the file:
   closeCurrentFile();
 
@@ -1623,14 +1623,7 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, bool cl
   // Output a LOW signal on OE_FLASH(PH6)
   PORTH &= ~(1 << 6);
 
-  for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 512) {
-    for (int c = 0; c < 512; c++) {
-      // Read byte
-      sdBuffer[c] = readByteFlash_GBA(currAddress + c);
-    }
-    // Write sdBuffer to file
-    writeSdBufferBlock();
-  }
+  dumpSaveR58_GBA(flashSize, readByteFlash_GBA);
   if (closeFile)
     closeCurrentFile();
 
