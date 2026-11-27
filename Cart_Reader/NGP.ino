@@ -151,7 +151,7 @@ bool getCartInfo_NGP() {
     cartSize = 4194304;
 
   // get app version
-  snprintf(ngpRomVersion, 3, "%02X", readByte_NGP(0x22));
+  formatFixedHex(ngpRomVersion, readByte_NGP(0x22), 2);
 
   // get app system compatibility
   ngpSystemType = readByte_NGP(0x23);
