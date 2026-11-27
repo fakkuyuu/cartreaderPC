@@ -1604,23 +1604,13 @@ void readROM_SNES() {
 
     for (word currMemmap = 0; currMemmap < (numBanks / 16); currMemmap++) {
 
-      dataOut();
-      controlOut_SNES();
-
-      writeBank_SNES(0, 18439, currMemmap);
-
-      setBusInput_SNES();
+      writeSnesRegister_SNES(18439, currMemmap);
 
       readHiRomBanks(240, 256, &myFile);
       if (currMemmap == 2) display_Clear();  // need more space for the progress bars
     }
 
-    dataOut();
-    controlOut_SNES();
-
-    writeBank_SNES(0, 18439, initialSOMap);
-
-    setBusInput_SNES();
+    writeSnesRegister_SNES(18439, initialSOMap);
   }
 
   // SPC7110: rebuild the relevant ROM window mapping from the file offset.
@@ -1664,12 +1654,7 @@ void readROM_SNES() {
     readHiRomBanks(192, 224, &myFile);
 
     if (numBanks > 32) {
-      dataOut();
-      controlOut_SNES();
-      // Set 0x4834 to 0xFF
-      writeBank_SNES(0, 0x4834, 0xFF);
-
-      setBusInput_SNES();
+      writeSnesRegister_SNES(0x4834, 0xFF);
 
       // 0xE00000-0xEFFFFF
       //print_Msg(F(" 2"));
@@ -1682,13 +1667,7 @@ void readROM_SNES() {
         display_Update();
         readHiRomBanks(240, 256, &myFile);
 
-        dataOut();
-        controlOut_SNES();
-
-        // Set 0x4833 to 3
-        writeBank_SNES(0, 0x4833, 3);
-
-        setBusInput_SNES();
+        writeSnesRegister_SNES(0x4833, 3);
 
         // 0xF00000-0xFFFFFF
         //print_Msg(F(" 4"));
