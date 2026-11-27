@@ -10,7 +10,7 @@
     },
     {
       "id": "r50-cfi-mode",
-      "head": "b355def5fd47360bd308ecf642538c3a41ec36a7"
+      "head": "8240455d5245a369402f9dfbde0b12a2f559717c"
     },
     {
       "id": "r50-flash-read-loop",
@@ -18,7 +18,7 @@
     },
     {
       "id": "r50-verify-report",
-      "head": "74e0bb7b655352fe8689efb2322603446bf7b41c"
+      "head": "654e92a8519c410275afbcddcd4c800db34f8402"
     },
     {
       "id": "r50-legacy-bus-setup",
