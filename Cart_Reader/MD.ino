@@ -2414,16 +2414,17 @@ void EepromSetDeviceAddress(word addrhi) {  // 24C02+
 
 void EepromStatus() {  // ACK
   byte eepStatus = 1;
-  if (eepType == 1) {              // Acclaim Type 1
+  if (eepType == 1 || eepType == 3) {
+    const byte ackMask = eepType == 1 ? 0x02 : 0x01;
     writeWord_MD(0x100000, 0x01);  // sda high, scl low
     writeWord_MD(0x100000, 0x03);  // sda high, scl high
     do {
       dataIn_MD();
-      eepStatus = ((readWord_MD(0x100000) >> 1) & 0x1);
+      eepStatus = (readWord_MD(0x100000) & ackMask) != 0;
       dataOut_MD();
       delayMicroseconds(4);
     } while (eepStatus == 1);
-    writeWord_MD(0x100000, 0x01);   // sda high, scl low
+    writeWord_MD(0x100000, 0x01);  // sda high, scl low
   } else if (eepType == 2) {        // Acclaim Type 2
     writeWord_SDA(0x100000, 0x01);  // sda high
     writeWord_SCL(0x100000, 0x01);  // scl high
@@ -2434,16 +2435,6 @@ void EepromStatus() {  // ACK
       delayMicroseconds(4);
     } while (eepStatus == 1);
     writeWord_SCL(0x100000, 0x00);  // scl low
-  } else if (eepType == 3) {        // Capcom/Sega
-    writeWord_MD(0x100000, 0x01);   // sda high, scl low
-    writeWord_MD(0x100000, 0x03);   // sda high, scl high
-    do {
-      dataIn_MD();
-      eepStatus = (readWord_MD(0x100000) & 0x1);
-      dataOut_MD();
-      delayMicroseconds(4);
-    } while (eepStatus == 1);
-    writeWord_MD(0x100000, 0x01);  // sda high, scl low
   } else if (eepType == 4) {       // EA
     writeWord_MD(0x100000, 0x80);  // sda high, scl low
     writeWord_MD(0x100000, 0xC0);  // sda high, scl high
