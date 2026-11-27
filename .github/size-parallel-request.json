@@ -1,40 +1,25 @@
 {
-  "id": "parallel-049",
+  "id": "parallel-049-integration",
   "base": "f72a5d0da65f72eea915e1ba89a6dda607fe6d51",
   "expected_base_flash": 206382,
   "expected_base_ram": 6095,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "sfm-map-enter",
-      "head": "1263ee0138ae760631459d93d31d562bd4327f1d"
+      "id": "integration-1-snes-setup",
+      "head": "b91f603c3e6feeb716ad0abe421556818826bab4"
     },
     {
-      "id": "sfm-map-exit",
-      "head": "78a890a4ee9ad5681e004bbd8ae2f4525e8d1058"
+      "id": "integration-2-snes-tail",
+      "head": "743563878f99b81b82f0bb7a6ff6205d75fa16c8"
     },
     {
-      "id": "sfm-flash-command",
-      "head": "6241b95a798d99aa2d9ba0a9cd249d907819c3a9"
+      "id": "integration-3-8bit-setup",
+      "head": "14bafb1d689773b610ed3be794272e85c522014b"
     },
     {
-      "id": "snes-family-setup",
-      "head": "346574e2ed54e3852ac036faa8feb6283e33dd08"
-    },
-    {
-      "id": "snes-family-tail",
-      "head": "957ed8004fcdf327abe2075dc4b55c523d3f7fc9"
-    },
-    {
-      "id": "8bit-family-setup",
-      "head": "8e1d18c062ddc7b02d83ffed4ff4078cf6730956"
-    },
-    {
-      "id": "snes-family-writebank",
-      "head": "8e39e0ca804087a8bf03bb07fb8d6ab5855c2e60"
-    },
-    {
-      "id": "unknown-name-prefix",
-      "head": "be8849ec56de37304cfa4db2f2b88679cfea0708"
+      "id": "integration-4-unknown-prefix",
+      "head": "55d4f4394bae5a5a8cf9ef49cfe7f08bc73f6e4d"
     }
   ]
 }
