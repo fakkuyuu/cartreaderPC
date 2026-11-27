@@ -133,11 +133,16 @@ void setup_VSMILE()
 // READ FUNCTIONS
 //******************************************
 // Max Single ROM Size 0x800000 (Highest WORD Address = 0x3FFFFF)
-word read_rom_word_VSMILE(unsigned long address)
-{
+static void setRomAddressR41_VSMILE(unsigned long address) __attribute__((noinline));
+static void setRomAddressR41_VSMILE(unsigned long address) {
   PORTL = (address >> 16) & 0xFF;
   PORTK = (address >> 8) & 0xFF;
   PORTF = address & 0xFF;
+}
+
+word read_rom_word_VSMILE(unsigned long address)
+{
+  setRomAddressR41_VSMILE(address);
   _delay_us(1); // Need longer delay
   CSB2_HIGH;
   CSB1_LOW;
@@ -155,9 +160,7 @@ word read_rom_word_VSMILE(unsigned long address)
 // CSB2 LOW ONLY
 word read_rom2_word_VSMILE(unsigned long address)
 {
-  PORTL = (address >> 16) & 0xFF;
-  PORTK = (address >> 8) & 0xFF;
-  PORTF = address & 0xFF;
+  setRomAddressR41_VSMILE(address);
   _delay_us(1); // Need longer delay
   CSB1_HIGH;
   CSB2_LOW;
@@ -176,9 +179,7 @@ word read_rom2_word_VSMILE(unsigned long address)
 // CSB1 + CSB2 LOW
 word read_rom3_word_VSMILE(unsigned long address)
 {
-  PORTL = (address >> 16) & 0xFF;
-  PORTK = (address >> 8) & 0xFF;
-  PORTF = address & 0xFF;
+  setRomAddressR41_VSMILE(address);
   CSB1_LOW;
   CSB2_LOW;
   OE_LOW;
