@@ -1297,24 +1297,29 @@ void readSectorProtection_SFM(byte startBank) {
 }
 
 // Read the current mapping from the hidden "page buffer" and print it
-void printMapping() {
+static void enterMappingR49_SFM(byte bank) __attribute__((noinline));
+static void enterMappingR49_SFM(byte bank) {
   // Switch to write
   dataOut();
   controlOut_SFM();
 
   // Reset to defaults
-  writeBank_SFM(0xC0, 0x0000, 0x38);
-  writeBank_SFM(0xC0, 0x0000, 0xd0);
+  writeBank_SFM(bank, 0x0000, 0x38);
+  writeBank_SFM(bank, 0x0000, 0xd0);
   // Read Extended Status Register (GSR and PSR)
-  writeBank_SFM(0xC0, 0x0000, 0x71);
+  writeBank_SFM(bank, 0x0000, 0x71);
   // Page Buffer Swap
-  writeBank_SFM(0xC0, 0x0000, 0x72);
+  writeBank_SFM(bank, 0x0000, 0x72);
   // Read Page Buffer
-  writeBank_SFM(0xC0, 0x0000, 0x75);
+  writeBank_SFM(bank, 0x0000, 0x75);
 
   // Switch to read
   dataIn();
   controlIn_SFM();
+}
+
+void printMapping() {
+  enterMappingR49_SFM(0xC0);
 
   // Read the mapping out of the first chip
   char buffer[3];
@@ -1354,23 +1359,7 @@ void printMapping() {
 // Read the current mapping from the hidden "page buffer"
 void readMapping() {
 
-  // Switch to write
-  dataOut();
-  controlOut_SFM();
-
-  // Reset to defaults
-  writeBank_SFM(0xC0, 0x0000, 0x38);
-  writeBank_SFM(0xC0, 0x0000, 0xd0);
-  // Read Extended Status Register (GSR and PSR)
-  writeBank_SFM(0xC0, 0x0000, 0x71);
-  // Page Buffer Swap
-  writeBank_SFM(0xC0, 0x0000, 0x72);
-  // Read Page Buffer
-  writeBank_SFM(0xC0, 0x0000, 0x75);
-
-  // Switch to read
-  dataIn();
-  controlIn_SFM();
+  enterMappingR49_SFM(0xC0);
 
   // Get name, add extension and convert to char array for sd lib
   EEPROM_readAnything(0, foldern);
@@ -1393,23 +1382,7 @@ void readMapping() {
     myFile.write(readBank_SFM(0xC0, currByte));
   }
 
-  // Switch to write
-  dataOut();
-  controlOut_SFM();
-
-  // Reset to defaults
-  writeBank_SFM(0xE0, 0x0000, 0x38);
-  writeBank_SFM(0xE0, 0x0000, 0xd0);
-  // Read Extended Status Register (GSR and PSR)
-  writeBank_SFM(0xE0, 0x0000, 0x71);
-  // Page Buffer Swap
-  writeBank_SFM(0xE0, 0x0000, 0x72);
-  // Read Page Buffer
-  writeBank_SFM(0xE0, 0x0000, 0x75);
-
-  // Switch to read
-  dataIn();
-  controlIn_SFM();
+  enterMappingR49_SFM(0xE0);
 
   // Read the mapping info out of the 1st chip
   for (unsigned long currByte = 0xFF00; currByte <= 0xFFFF; currByte++) {
@@ -1482,23 +1455,7 @@ void eraseMapping(byte startBank) {
 byte blankcheckMapping_SFM() {
   byte blank = 1;
 
-  // Switch to write
-  dataOut();
-  controlOut_SFM();
-
-  // Reset to defaults
-  writeBank_SFM(0xC0, 0x0000, 0x38);
-  writeBank_SFM(0xC0, 0x0000, 0xd0);
-  // Read Extended Status Register (GSR and PSR)
-  writeBank_SFM(0xC0, 0x0000, 0x71);
-  // Page Buffer Swap
-  writeBank_SFM(0xC0, 0x0000, 0x72);
-  // Read Page Buffer
-  writeBank_SFM(0xC0, 0x0000, 0x75);
-
-  // Switch to read
-  dataIn();
-  controlIn_SFM();
+  enterMappingR49_SFM(0xC0);
 
   // Read the mapping info out of the 1st chip
   for (unsigned long currByte = 0xFF00; currByte <= 0xFFFF; currByte++) {
@@ -1507,23 +1464,7 @@ byte blankcheckMapping_SFM() {
     }
   }
 
-  // Switch to write
-  dataOut();
-  controlOut_SFM();
-
-  // Reset to defaults
-  writeBank_SFM(0xE0, 0x0000, 0x38);
-  writeBank_SFM(0xE0, 0x0000, 0xd0);
-  // Read Extended Status Register (GSR and PSR)
-  writeBank_SFM(0xE0, 0x0000, 0x71);
-  // Page Buffer Swap
-  writeBank_SFM(0xE0, 0x0000, 0x72);
-  // Read Page Buffer
-  writeBank_SFM(0xE0, 0x0000, 0x75);
-
-  // Switch to read
-  dataIn();
-  controlIn_SFM();
+  enterMappingR49_SFM(0xE0);
 
   // Read the mapping info out of the 1st chip
   for (unsigned long currByte = 0xFF00; currByte <= 0xFFFF; currByte++) {
