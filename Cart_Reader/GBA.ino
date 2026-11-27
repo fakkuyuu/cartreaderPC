@@ -1175,6 +1175,16 @@ void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   }
 }
 
+static void __attribute__((noinline)) verifySaveR58_GBA(unsigned long size, byte (*reader)(uint16_t), bool partial, unsigned long& errors) {
+  for (unsigned long currAddress = 0; currAddress < size; currAddress += 512) {
+    readSdBufferBlock();
+    for (int c = 0; c < 512 && (!partial || currAddress + c < size); c++) {
+      if (reader(currAddress + c) != sdBuffer[c])
+        errors++;
+    }
+  }
+}
+
 unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
   //open file on sd card
   if (openSelectedFileForRead()) {
@@ -1185,17 +1195,7 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
     if (pos != 0)
       myFile.seekCur(pos);
 
-    for (unsigned long currAddress = 0; currAddress < sramSize; currAddress += 512) {
-      //fill sdBuffer
-      readSdBufferBlock();
-
-      for (int c = 0; c < 512; c++) {
-        // Read byte
-        if (readByte_GBA(currAddress + c) != sdBuffer[c]) {
-          writeErrors++;
-        }
-      }
-    }
+    verifySaveR58_GBA(sramSize, readByte_GBA, false, writeErrors);
     // Close the file:
     closeCurrentFile();
 
@@ -1752,16 +1752,7 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
   if (pos != 0)
     myFile.seekCur(pos);
 
-  for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
-    readSdBufferBlock();
-
-    for (int c = 0; c < 512 && (currAddress + c) < flashSize; c++) {
-      // Read byte
-      if (sdBuffer[c] != readByteFlash_GBA(currAddress + c)) {
-        wrError++;
-      }
-    }
-  }
+  verifySaveR58_GBA(flashSize, readByteFlash_GBA, true, wrError);
   closeCurrentFile();
 
   // Set CS_FLASH(PH0) high
