@@ -1,11 +1,11 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45943424294",
+  "run_id": "45943589166",
   "run_attempt": "1",
-  "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+  "workflow_commit": "2c4f6c638e8f798d5f91c46a02fb7d4bbe220cc6",
   "request": {
-    "id": "parallel-045",
+    "id": "parallel-045-retry",
     "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
     "expected_base_flash": 206994,
     "expected_base_ram": 6095,
@@ -28,11 +28,11 @@
       },
       {
         "id": "md-eep-status45",
-        "head": "323063649da32f980c6c1eac17c20f80a0e18ef7"
+        "head": "e4451fc710650c950e6bad74b4ae9bfdcf2a79c0"
       },
       {
         "id": "md-eep-read45",
-        "head": "e1fdea2d99d1154dc806e8804d871a48f00196dc"
+        "head": "3a1841b721fceb49c26df32d75c3defb95d8d860"
       },
       {
         "id": "md-eep-address",
@@ -44,13 +44,13 @@
       }
     ]
   },
-  "status": "partial_or_failed",
+  "status": "ok",
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45943424294",
+      "run_id": "45943589166",
       "run_attempt": "1",
-      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "workflow_commit": "2c4f6c638e8f798d5f91c46a02fb7d4bbe220cc6",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -96,9 +96,9 @@
     },
     {
       "schema": 1,
-      "run_id": "45943424294",
+      "run_id": "45943589166",
       "run_attempt": "1",
-      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "workflow_commit": "2c4f6c638e8f798d5f91c46a02fb7d4bbe220cc6",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -144,9 +144,9 @@
     },
     {
       "schema": 1,
-      "run_id": "45943424294",
+      "run_id": "45943589166",
       "run_attempt": "1",
-      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "workflow_commit": "2c4f6c638e8f798d5f91c46a02fb7d4bbe220cc6",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -192,9 +192,9 @@
     },
     {
       "schema": 1,
-      "run_id": "45943424294",
+      "run_id": "45943589166",
       "run_attempt": "1",
-      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "workflow_commit": "2c4f6c638e8f798d5f91c46a02fb7d4bbe220cc6",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -240,14 +240,14 @@
     },
     {
       "schema": 1,
-      "run_id": "45943424294",
+      "run_id": "45943589166",
       "run_attempt": "1",
-      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "workflow_commit": "2c4f6c638e8f798d5f91c46a02fb7d4bbe220cc6",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "build_failed",
+      "status": "ok",
       "request": {
         "id": "md-eep-status45",
-        "head": "323063649da32f980c6c1eac17c20f80a0e18ef7",
+        "head": "e4451fc710650c950e6bad74b4ae9bfdcf2a79c0",
         "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
         "expected_base_flash": 206994,
         "expected_base_ram": 6095,
@@ -269,33 +269,33 @@
           "error": null
         },
         {
-          "commit": "323063649da32f980c6c1eac17c20f80a0e18ef7",
-          "subject": "Round 45 test MD EEPROM refactor 5",
-          "status": "failed",
-          "flash": null,
-          "ram": null,
-          "delta_previous": null,
-          "delta_base": null,
-          "classification": "unavailable",
-          "error": "Program \"arduino-builder.exe\" ended with non-zero exit code: 1 (0x00000001)."
+          "commit": "e4451fc710650c950e6bad74b4ae9bfdcf2a79c0",
+          "subject": "Round 45 share MD EEPROM ACK flow for EA and Codemasters",
+          "status": "ok",
+          "flash": 207004,
+          "ram": 6095,
+          "delta_previous": 10,
+          "delta_base": 10,
+          "classification": "increased",
+          "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
         "id": "md-eep-status45",
-        "head": "323063649da32f980c6c1eac17c20f80a0e18ef7"
+        "head": "e4451fc710650c950e6bad74b4ae9bfdcf2a79c0"
       }
     },
     {
       "schema": 1,
-      "run_id": "45943424294",
+      "run_id": "45943589166",
       "run_attempt": "1",
-      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "workflow_commit": "2c4f6c638e8f798d5f91c46a02fb7d4bbe220cc6",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "build_failed",
+      "status": "ok",
       "request": {
         "id": "md-eep-read45",
-        "head": "e1fdea2d99d1154dc806e8804d871a48f00196dc",
+        "head": "3a1841b721fceb49c26df32d75c3defb95d8d860",
         "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
         "expected_base_flash": 206994,
         "expected_base_ram": 6095,
@@ -317,28 +317,28 @@
           "error": null
         },
         {
-          "commit": "e1fdea2d99d1154dc806e8804d871a48f00196dc",
-          "subject": "Round 45 share MD EEPROM read 4 and 5",
-          "status": "failed",
-          "flash": null,
-          "ram": null,
-          "delta_previous": null,
-          "delta_base": null,
-          "classification": "unavailable",
-          "error": "Program \"arduino-builder.exe\" ended with non-zero exit code: 1 (0x00000001)."
+          "commit": "3a1841b721fceb49c26df32d75c3defb95d8d860",
+          "subject": "Round 45 share MD EEPROM read flow for EA and Codemasters",
+          "status": "ok",
+          "flash": 207036,
+          "ram": 6095,
+          "delta_previous": 42,
+          "delta_base": 42,
+          "classification": "increased",
+          "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
         "id": "md-eep-read45",
-        "head": "e1fdea2d99d1154dc806e8804d871a48f00196dc"
+        "head": "3a1841b721fceb49c26df32d75c3defb95d8d860"
       }
     },
     {
       "schema": 1,
-      "run_id": "45943424294",
+      "run_id": "45943589166",
       "run_attempt": "1",
-      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "workflow_commit": "2c4f6c638e8f798d5f91c46a02fb7d4bbe220cc6",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -384,9 +384,9 @@
     },
     {
       "schema": 1,
-      "run_id": "45943424294",
+      "run_id": "45943589166",
       "run_attempt": "1",
-      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "workflow_commit": "2c4f6c638e8f798d5f91c46a02fb7d4bbe220cc6",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
