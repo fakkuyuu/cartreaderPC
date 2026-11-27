@@ -1,25 +1,40 @@
 {
-  "id": "parallel-040-integration",
-  "base": "205e9984529510ca94d7e3c681cbf186fc082733",
-  "expected_base_flash": 207716,
-  "expected_base_ram": 6105,
-  "endpoints_only": true,
+  "id": "parallel-041",
+  "base": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+  "expected_base_flash": 207274,
+  "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "integration-1-snes-retry",
-      "head": "e29fa85f9a9a2d027cdda7402d8fa5c56801805d"
+      "id": "n64-stick-results",
+      "head": "45fb7c397ca581d70749dee4d92bd041e7d4017a"
     },
     {
-      "id": "integration-2-nes-tail",
-      "head": "0c8fa9edd8a68e100674c14a8fe892a503a84076"
+      "id": "jag-output-tail",
+      "head": "ca4e60999a379dbd1a34388dca585899411407f8"
     },
     {
-      "id": "integration-3-msx-pair",
-      "head": "324ed0284a94932ffd74a1ba0428e59306312fda"
+      "id": "pcw-address-latch",
+      "head": "ccde9b799d970900e3a0ddc5c3efe88d964e5e6d"
     },
     {
-      "id": "integration-4-md-buffer",
-      "head": "e68fc03a2079a9ef6907727203e713d856890f95"
+      "id": "5200-upper-rom",
+      "head": "20d2b925325c3fd405b7aa3caa197fa1c4cf7e6a"
+    },
+    {
+      "id": "atari8-upper-rom",
+      "head": "54738f19712ea1b1660a68c69b29c54f29356718"
+    },
+    {
+      "id": "jag-address-latch",
+      "head": "1e79c5b27351f81fea8827e19e5f956ec779904b"
+    },
+    {
+      "id": "nes-helper-case-merge",
+      "head": "f7266396defe687fa71068065d27824f41c914df"
+    },
+    {
+      "id": "vsmile-rom-address",
+      "head": "cb2dccb4afcd4b3e6d329825e8963d5d13354510"
     }
   ]
 }
