@@ -109,21 +109,7 @@ void setup_POKE() {
   // Set Address Pins to Output
   // Pokemon Mini uses A0-A9 (DUAL A10-A19) + A20 (CONNECT TO SNES A10) [A11-A23 UNUSED]
   //A0-A7
-  DDRF = 0xFF;
-  //A8-A15
-  DDRK = 0xFF;
-  //A16-A23
-  DDRL = 0xFF;
-
-  // Set Control Pins to Output
-  //       LALE(PH0)   ---(PH1)  CS(PH3)    HALE(PH4)  WE(PH5)    OE(PH6)
-  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
-
-  // Set TIME(PJ0) to Output (UNUSED)
-  DDRJ |= (1 << 0);
-
-  // Set Pins (D0-D7) to Input
-  DDRC = 0x00;
+  setupSharedBusR49();
 
   // Setting Control Pins to LOW (DISABLE)
   //       LALE(PH0)    CS(PH3)     HALE(PH4)   WE(PH5)     OE(PH6)

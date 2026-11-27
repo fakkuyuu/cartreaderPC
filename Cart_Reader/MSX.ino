@@ -263,21 +263,7 @@ void setup_MSX() {
   // Set Address Pins to Output
   // MSX uses A0-A15
   //A0-A7
-  DDRF = 0xFF;
-  //A8-A15
-  DDRK = 0xFF;
-  //A16-A23 - Use A16-A18 for /CS1, /CS2, /CS12
-  DDRL = 0xFF;
-
-  // Set Control Pins to Output
-  //       /RST(PH0) CLOCK(PH1) /SLTSL(PH3) /MERQ(PH4) /WR(PH5)   /RD(PH6)
-  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
-
-  // Set TIME(PJ0) to Output (UNUSED)
-  DDRJ |= (1 << 0);
-
-  // Set Pins (D0-D7) to Input
-  DDRC = 0x00;
+  setupSharedBusR49();
 
   // Setting Control Pins to HIGH
   //       /RST(PH0) CLOCK(PH1) /SLTSL(PH3) /MERQ(PH4) /WR(PH5)   /RD(PH6)

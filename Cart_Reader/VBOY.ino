@@ -60,21 +60,7 @@ void setup_VBOY() {
 
   // Set Address Pins to Output
   //A0-A7
-  DDRF = 0xFF;
-  //A8-A15
-  DDRK = 0xFF;
-  //A16-A23
-  DDRL = 0xFF;
-
-  // Set Control Pins to Output
-  //      CS2(PH0)   ---(PH1)   /CE(PH3)   /CS1(PH4)  /WE0(PH5)  /OE(PH6)
-  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
-
-  // Set TIME(PJ0) to Output (UNUSED)
-  DDRJ |= (1 << 0);
-
-  // Set Pins (D0-D15) to Input
-  DDRC = 0x00;
+  setupSharedBusR49();
   DDRA = 0x00;
 
   // Setting Control Pins to HIGH
