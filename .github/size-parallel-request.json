@@ -1,40 +1,40 @@
 {
-  "id": "parallel-045-retry",
-  "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
-  "expected_base_flash": 206994,
+  "id": "parallel-046-astra",
+  "base": "7d5c3d0795c4baf07f7c74e6de678034b0d72675",
+  "expected_base_flash": 206628,
   "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "md-eep-status13",
-      "head": "779f90fc86eef145d3cbac22141e840585f66338"
+      "id": "sv-input",
+      "head": "b5d30f3fc86237c087509b903faf426dce56c846"
     },
     {
-      "id": "md-eep-read13",
-      "head": "3b9f4701b46aef9b2c231af7eabd10f980d19882"
+      "id": "sv-output",
+      "head": "a3358c52fc1fe3e69a5539715364a2d1a9e42d6d"
     },
     {
-      "id": "md-eep-sda-scl",
-      "head": "dfae85a025249896a7389dbbc2455f0fad48b27c"
+      "id": "ws-unlock",
+      "head": "9fe5b5433c17bc8182cc4011edb64b3dbcaac1d3"
     },
     {
-      "id": "md-eep-start45",
-      "head": "242c4b2aa907239d71d57966e8c1b904bff6ff0d"
+      "id": "gb-setup",
+      "head": "ef7a9983b5802675e94b168751b66ae2c29d0b2b"
     },
     {
-      "id": "md-eep-status45",
-      "head": "e4451fc710650c950e6bad74b4ae9bfdcf2a79c0"
+      "id": "md-header",
+      "head": "76ea1251b9867a969af9c2b2034bdadfcecb2912"
     },
     {
-      "id": "md-eep-read45",
-      "head": "3a1841b721fceb49c26df32d75c3defb95d8d860"
+      "id": "nes-map",
+      "head": "1ca50edf95069fdffda2a8b81765add0bcccd176"
     },
     {
-      "id": "md-eep-address",
-      "head": "6f71cdc9e309ab1b4c573877b90a5980b86c3c8b"
+      "id": "gba-header",
+      "head": "c8dd079a358c03e124cc6f9f932b1b3022fb85ab"
     },
     {
-      "id": "md-eep-byte-pack",
-      "head": "cebb96867d2cf203212f157d6cf71a95a1f38180"
+      "id": "msx-setup",
+      "head": "bc3f2123741fe7ba1a279b14db6b5f7825abda6a"
     }
   ]
 }
