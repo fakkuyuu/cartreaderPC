@@ -243,19 +243,8 @@ void gbxMenu() {
             gbFlashErase = chooseFlashMenuOption(FS(SharedFlashText::textErase), menuOptionsGBFlashErase, 3);
 
             // wait for user choice to come back from the question box menu
-            switch (gbFlashErase) {
-              case 0:
-                selectedErase = 1;
-                break;
-
-              case 1:
-                selectedErase = 0;
-                break;
-
-              case 2:
-                resetArduino();
-                break;
-            }
+            selectedErase = (gbFlashErase == 0);
+            if (gbFlashErase == 2) resetArduino();
 
             // create submenu with title and 3 options to choose from
             unsigned char gbFlashCommand;
