@@ -4865,7 +4865,10 @@ void EepromREAD(uint8_t address) {
     EepromFinish_NES();
     EepromStop_NES();  // STOP
     // OR 8 bits into byte
-    eeptemp = eepbit[7] << 7 | eepbit[6] << 6 | eepbit[5] << 5 | eepbit[4] << 4 | eepbit[3] << 3 | eepbit[2] << 2 | eepbit[1] << 1 | eepbit[0];
+    eeptemp = 0;
+    for (byte i = 0; i < 8; ++i) {
+      eeptemp = (eeptemp << 1) | eepbit[7 - i];
+    }
   } else {               // 24C02
     EepromDevice_NES();  // DEVICE [1010] + ADDR [A2-A0]
     EepromWriteMode_NES();
@@ -4877,7 +4880,10 @@ void EepromREAD(uint8_t address) {
     EepromFinish_NES();
     EepromStop_NES();  // STOP
     // OR 8 bits into byte
-    eeptemp = eepbit[0] << 7 | eepbit[1] << 6 | eepbit[2] << 5 | eepbit[3] << 4 | eepbit[4] << 3 | eepbit[5] << 2 | eepbit[6] << 1 | eepbit[7];
+    eeptemp = 0;
+    for (byte i = 0; i < 8; ++i) {
+      eeptemp = (eeptemp << 1) | eepbit[i];
+    }
   }
   sdBuffer[address] = eeptemp;
 }
