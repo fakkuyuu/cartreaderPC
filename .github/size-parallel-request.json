@@ -1,40 +1,17 @@
 {
-  "id": "parallel-044",
+  "id": "parallel-044-integration",
   "base": "c86f54450543072d535bd50f29da13df69cdf25c",
   "expected_base_flash": 207002,
   "expected_base_ram": 6095,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "gb-sram-check-index",
-      "head": "a2b2dd40a67638f550ffbd08224c1f330741950c"
+      "id": "snes-only-endpoint",
+      "head": "ec4714c2462834284e9c36a3dbb9b10f8f8e7683"
     },
     {
-      "id": "gba-header-check-index",
-      "head": "02f8810f5c6a74fc478caa7d5711c061af79e263"
-    },
-    {
-      "id": "snes-special-bank-index",
-      "head": "bae0fc3528c3021da0dfa9be7f0d0f20750c9308"
-    },
-    {
-      "id": "msx-mapper-index",
-      "head": "01ac8837122ad1a8c28bd6f0ac0981ffc7d11072"
-    },
-    {
-      "id": "ngp-header-index",
-      "head": "e1a6f6e8537964dd35d0091d1a90684b3af1f3d1"
-    },
-    {
-      "id": "st-header-index",
-      "head": "5b5caaff2c4f4b84d566760460b0c85a669abb89"
-    },
-    {
-      "id": "vboy-name-index",
-      "head": "fcfe208964cf6b962f265f39a7eba22c1fa1fcee"
-    },
-    {
-      "id": "sv-bank-index",
-      "head": "2f9f1e285bd34d726e91139c4db3a0f74d302fff"
+      "id": "snes-msx-endpoint",
+      "head": "c4ec6235eddc0f6e0429f57b00758870daa5fcee"
     }
   ]
 }
