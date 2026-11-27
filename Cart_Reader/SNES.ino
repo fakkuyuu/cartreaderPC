@@ -1423,10 +1423,6 @@ static void beginExtendedLoRomRetry_SNES(uint32_t offset) {
 
 // ExHiROM retains the legacy physical bank sequence C0-FF then 00-3F.
 // The byte cast intentionally matches PORTL's 8-bit bank output.
-static void beginExHiRomRetry_SNES(uint32_t offset) {
-  PORTL = (uint8_t)(192UL + (offset >> 16));
-  sharedRetryAddressR40_SNES = (uint16_t)offset;
-}
 
 // S-RTC uses C0-FF for the first 4 MiB and 40+ for the remaining banks,
 // matching the two readHiRomBanks() calls in the legacy path.
@@ -1755,7 +1751,7 @@ void readROM_SNES() {
   // ExHiROM: preserve the legacy C0-FF, then 00-xx physical bank order.
   if (romType == EX && numBanks > 0 && numBanks <= 128 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
-                       beginExHiRomRetry_SNES, readLoRomRetryWord_SNES, true, true)) {
+                       beginC0BankRetry_SNES, readLoRomRetryWord_SNES, true, true)) {
     closeCurrentFile();
     return;
   }
