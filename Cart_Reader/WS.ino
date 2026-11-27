@@ -187,6 +187,12 @@ static void unlockWordFlash_WS() {
   writeWord_WS(0x80555, 0x5555);
 }
 
+static void driveAndUnlockFlash_WS() __attribute__((noinline));
+static void driveAndUnlockFlash_WS() {
+  dataOut_WS();
+  unlockWordFlash_WS();
+}
+
 static uint8_t getCartInfo_WS() {
   dataIn_WS();
 
@@ -242,8 +248,7 @@ static uint8_t getCartInfo_WS() {
           if (readWord_WS(0xfff5e) == 0x006c && readWord_WS(0xfff60) == 0x5b1b) {
             // check flashchip
             // should be a MBM29DL400TC
-            dataOut_WS();
-            unlockWordFlash_WS();
+            driveAndUnlockFlash_WS();
             writeWord_WS(0x80aaa, 0x9090);
 
             dataIn_WS();
@@ -781,8 +786,7 @@ static void writeEEPROM_WS() {
 
 static void writeWitchOS_WS() {
   // make sure that OS sectors not protected
-  dataOut_WS();
-  unlockWordFlash_WS();
+  driveAndUnlockFlash_WS();
   writeWord_WS(0xe0aaa, 0x9090);
 
   dataIn_WS();
@@ -816,8 +820,7 @@ static void writeWitchOS_WS() {
         fbin_length = 65520;
 
       // enter fast program mode
-      dataOut_WS();
-      unlockWordFlash_WS();
+      driveAndUnlockFlash_WS();
       writeWord_WS(0x80aaa, 0x2020);
 
       // 128bytes per block
@@ -880,8 +883,7 @@ static void eraseWitchFlashSector_WS(uint32_t sector_addr) {
   // blink LED
   blinkLED();
 
-  dataOut_WS();
-  unlockWordFlash_WS();
+  driveAndUnlockFlash_WS();
   writeWord_WS(0x80aaa, 0x8080);
   unlockWordFlash_WS();
   writeWord_WS(sector_addr, 0x3030);

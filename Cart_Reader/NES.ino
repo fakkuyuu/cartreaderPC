@@ -3407,6 +3407,13 @@ void readPRG(bool readrom) {
   finishRead_NES();
 }
 
+static void setOuterChr45_NES(size_t i) {
+  write_prg_byte(0x6000, 0);                          // CHR-OR
+  write_prg_byte(0x6000, 0);                          // PRG-OR
+  write_prg_byte(0x6000, (((i / 256) << 4) | 0x0F));  // CHR-AND,CHR-OR/PRG-OR
+  write_prg_byte(0x6000, 0x80);                       // PRG-AND
+}
+
 void readCHR(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3780,10 +3787,7 @@ void readCHR(bool readrom) {
           write_prg_byte(0xA001, 0x80);  // Unlock Write Protection - not used by some carts
           for (size_t i = 0; i < banks; i++) {
             // set outer bank registers
-            write_prg_byte(0x6000, 0);                          // CHR-OR
-            write_prg_byte(0x6000, 0);                          // PRG-OR
-            write_prg_byte(0x6000, (((i / 256) << 4) | 0x0F));  // CHR-AND,CHR-OR/PRG-OR
-            write_prg_byte(0x6000, 0x80);                       // PRG-AND
+            setOuterChr45_NES(i);
             // set inner bank registers
             write_prg_byte(0x8000, 0x2);  // CHR Bank 2 ($1000-$13FF)
             write_prg_byte(0x8001, i);
@@ -3791,10 +3795,7 @@ void readCHR(bool readrom) {
               dumpCHR_M2(address);  // Read CHR with M2 Pulse
             }
             // set outer bank registers
-            write_prg_byte(0x6000, 0);                          // CHR-OR
-            write_prg_byte(0x6000, 0);                          // PRG-OR
-            write_prg_byte(0x6000, (((i / 256) << 4) | 0x0F));  // CHR-AND,CHR-OR/PRG-OR
-            write_prg_byte(0x6000, 0x80);                       // PRG-AND
+            setOuterChr45_NES(i);
             // set inner bank registers
             write_prg_byte(0x8000, 0x2);  // CHR Bank 2 ($1000-$13FF)
             write_prg_byte(0x8001, i);
@@ -4807,10 +4808,7 @@ void EepromWriteMode_NES() {
 
 void EepromFinish_NES() {
   write_prg_byte(0x800D, 0x00);  // sda low, scl low
-  write_prg_byte(0x800D, 0x40);  // sda high, scl low
-  write_prg_byte(0x800D, 0x60);  // sda high, scl high
-  write_prg_byte(0x800D, 0x40);  // sda high, scl low
-  write_prg_byte(0x800D, 0x00);  // sda low, scl low
+  EepromSet1_NES();
 }
 
 void EepromSetAddress01(uint8_t address) {  // 24C01 [Little Endian]
@@ -4865,7 +4863,10 @@ void EepromREAD(uint8_t address) {
     EepromFinish_NES();
     EepromStop_NES();  // STOP
     // OR 8 bits into byte
-    eeptemp = eepbit[7] << 7 | eepbit[6] << 6 | eepbit[5] << 5 | eepbit[4] << 4 | eepbit[3] << 3 | eepbit[2] << 2 | eepbit[1] << 1 | eepbit[0];
+    eeptemp = 0;
+    for (byte i = 0; i < 8; ++i) {
+      eeptemp = (eeptemp << 1) | eepbit[7 - i];
+    }
   } else {               // 24C02
     EepromDevice_NES();  // DEVICE [1010] + ADDR [A2-A0]
     EepromWriteMode_NES();
@@ -4877,7 +4878,10 @@ void EepromREAD(uint8_t address) {
     EepromFinish_NES();
     EepromStop_NES();  // STOP
     // OR 8 bits into byte
-    eeptemp = eepbit[0] << 7 | eepbit[1] << 6 | eepbit[2] << 5 | eepbit[3] << 4 | eepbit[4] << 3 | eepbit[5] << 2 | eepbit[6] << 1 | eepbit[7];
+    eeptemp = 0;
+    for (byte i = 0; i < 8; ++i) {
+      eeptemp = (eeptemp << 1) | eepbit[i];
+    }
   }
   sdBuffer[address] = eeptemp;
 }
