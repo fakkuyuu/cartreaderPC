@@ -1042,6 +1042,11 @@ static void write_prg_byte(unsigned int address, uint8_t data) {
   //  _delay_us(1);
 }
 
+static void __attribute__((noinline)) writeMirroredR59_NES(byte value) {
+  write_prg_byte(0x5000, value);
+  write_prg_byte(0x6000, value);
+}
+
 #if defined(ENABLE_FLASH)
 static void write_chr_byte(unsigned int address, uint8_t data) {
   PHI2_LOW;
@@ -2303,11 +2308,9 @@ void readPRG(bool readrom) {
             }
             if (mapper == 997) {
               if (i >= banks / 2) {
-                write_prg_byte(0x5000, ((i & 0x70) >> 4) | ((i & 0xC00) >> 6) | 0x88);
-                write_prg_byte(0x6000, ((i & 0x70) >> 4) | ((i & 0xC00) >> 6) | 0x88);
+                writeMirroredR59_NES(((i & 0x70) >> 4) | ((i & 0xC00) >> 6) | 0x88);
               } else {
-                write_prg_byte(0x5000, ((i & 0x70) >> 4) | ((i & 0xC00) >> 6));
-                write_prg_byte(0x6000, ((i & 0x70) >> 4) | ((i & 0xC00) >> 6));
+                writeMirroredR59_NES(((i & 0x70) >> 4) | ((i & 0xC00) >> 6));
               }
               write_prg_byte(0x6001, ((i & 0x80) >> 3) | ((i & 0x300) >> 6) | 0x60);
               write_prg_byte(0x6002, 0x00);
@@ -3543,8 +3546,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0x5FF2, (i & 0x700) >> 3);  // outer 256k bank
             }
             if ((mapperForMmc3 == 224) || (mapperForMmc3 == 268) || (mapperForMmc3 == 995) || (mapperForMmc3 == 996) || (mapperForMmc3 == 997)) {
-              write_prg_byte(0x5000, ((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
-              write_prg_byte(0x6000, ((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
+              writeMirroredR59_NES(((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
             }
             if (mapperForMmc3 == 315) {
               write_prg_byte(0x6800, ((i & 0x100) >> 8) | ((i & 0x80) >> 6) | ((i & 0x40) >> 3));
@@ -3559,8 +3561,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0x6800, (i & 0x380) >> 4);
             }
             if ((mapperForMmc3 == 998) || (mapperForMmc3 == 999)) {
-              write_prg_byte(0x5000, (i & 0x80) >> 4);
-              write_prg_byte(0x6000, (i & 0x80) >> 4);
+              writeMirroredR59_NES((i & 0x80) >> 4);
             }
             write_prg_byte(0x8000, 0x02);
             write_prg_byte(0x8001, i);
