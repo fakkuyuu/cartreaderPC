@@ -1,18 +1,19 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "46019868841",
+  "run_id": "46021106551",
   "run_attempt": "1",
-  "workflow_commit": "fa9e4363ebd0afea437af6be11969e72b9cc92b3",
+  "workflow_commit": "82585b1df609cb0eedb9658b5b97be686f56ca9c",
   "request": {
-    "id": "round58-nes-fixed",
+    "id": "round58-integrated",
     "base": "8f467f53082b4366ac2f590304b7fcba37452198",
     "expected_base_flash": 205254,
     "expected_base_ram": 6059,
+    "endpoints_only": true,
     "candidates": [
       {
-        "id": "nes-bank-write-fixed",
-        "head": "37a3cf8635dace245b020f3ee513f3e5ddd8753d"
+        "id": "nes-and-ws",
+        "head": "44d2c26b6ce0a71a0c854dcdc7114ca9462e6a2d"
       }
     ]
   },
@@ -20,18 +21,18 @@
   "candidates": [
     {
       "schema": 1,
-      "run_id": "46019868841",
+      "run_id": "46021106551",
       "run_attempt": "1",
-      "workflow_commit": "fa9e4363ebd0afea437af6be11969e72b9cc92b3",
+      "workflow_commit": "82585b1df609cb0eedb9658b5b97be686f56ca9c",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "nes-bank-write-fixed",
-        "head": "37a3cf8635dace245b020f3ee513f3e5ddd8753d",
+        "id": "nes-and-ws",
+        "head": "44d2c26b6ce0a71a0c854dcdc7114ca9462e6a2d",
         "base": "8f467f53082b4366ac2f590304b7fcba37452198",
         "expected_base_flash": 205254,
         "expected_base_ram": 6059,
-        "endpoints_only": false
+        "endpoints_only": true
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
@@ -458,13 +459,13 @@
           }
         },
         {
-          "commit": "37a3cf8635dace245b020f3ee513f3e5ddd8753d",
-          "subject": "Round 58: NES bank write, preserve forward declarations and readRAM",
+          "commit": "44d2c26b6ce0a71a0c854dcdc7114ca9462e6a2d",
+          "subject": "Round 58 integrate WS SRAM read and verify reduction",
           "status": "ok",
-          "flash": 205200,
+          "flash": 205188,
           "ram": 6059,
-          "delta_previous": -54,
-          "delta_base": -54,
+          "delta_previous": -66,
+          "delta_base": -66,
           "classification": "reduced",
           "error": null,
           "elf_analysis": {
@@ -529,7 +530,7 @@
               {
                 "name": "_Z6wsMenuv",
                 "kind": "t",
-                "bytes": 2838
+                "bytes": 2738
               },
               {
                 "name": "_Z7n64Menuv",
@@ -799,7 +800,7 @@
                 "bytes": 22
               },
               {
-                "name": "CSWTCH.2808",
+                "name": "CSWTCH.2810",
                 "kind": "d",
                 "bytes": 18
               },
@@ -875,8 +876,15 @@
               }
             ],
             "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
-            "changed_symbols": 7,
+            "changed_symbols": 12,
             "largest_increases": [
+              {
+                "name": "_ZL21processSramReadR58_WSmPm",
+                "kind": "t",
+                "before": 0,
+                "after": 126,
+                "delta": 126
+              },
               {
                 "name": "_ZL16writeBankR58_NESjjjPFvjhE.constprop.0",
                 "kind": "t",
@@ -890,6 +898,13 @@
                 "before": 3082,
                 "after": 3112,
                 "delta": 30
+              },
+              {
+                "name": "CSWTCH.2810",
+                "kind": "d",
+                "before": 0,
+                "after": 18,
+                "delta": 18
               },
               {
                 "name": "_ZL17visitMmc1Sram_NESjb.constprop.0",
@@ -922,6 +937,27 @@
                 "delta": -104
               },
               {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "before": 2838,
+                "after": 2738,
+                "delta": -100
+              },
+              {
+                "name": "_ZL11readByte_WSm",
+                "kind": "t",
+                "before": 38,
+                "after": 0,
+                "delta": -38
+              },
+              {
+                "name": "CSWTCH.2808",
+                "kind": "d",
+                "before": 18,
+                "after": 0,
+                "delta": -18
+              },
+              {
                 "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
                 "kind": "t",
                 "before": 1508,
@@ -934,8 +970,8 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "nes-bank-write-fixed",
-        "head": "37a3cf8635dace245b020f3ee513f3e5ddd8753d"
+        "id": "nes-and-ws",
+        "head": "44d2c26b6ce0a71a0c854dcdc7114ca9462e6a2d"
       }
     }
   ]
