@@ -1551,7 +1551,7 @@ boolean blankcheckFLASH_GBA(uint32_t flashSize) {
   // Output a LOW signal on OE_FLASH(PH6)
   PORTH &= ~(1 << 6);
 
-  for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 512) {
+  for (uint32_t currAddress = 0; currAddress < flashSize && blank; currAddress += 512) {
     // Fill buffer
     for (int c = 0; c < 512; c++) {
       // Read byte
@@ -1561,9 +1561,8 @@ boolean blankcheckFLASH_GBA(uint32_t flashSize) {
     for (uint32_t currByte = 0; currByte < 512 && (currByte + currAddress) < flashSize; currByte++) {
       if (sdBuffer[currByte] != 0xFF) {
         print_Error(FS(SharedFlashText::textEraseFailed));
-        currByte = 512;
-        currAddress = flashSize;
         blank = 0;
+        break;
       }
     }
   }
