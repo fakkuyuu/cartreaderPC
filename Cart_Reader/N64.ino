@@ -1607,6 +1607,13 @@ byte readBlock(byte* output, word myAddress) {
 }
 
 // reads the MPK file to the sd card
+static void closeMpkFilesR43_N64(FsFile& crcFile) __attribute__((noinline));
+static void closeMpkFilesR43_N64(FsFile& crcFile) {
+  // Close the file:
+  closeCurrentFile();
+  crcFile.close();
+}
+
 void readMPK() {
   // Change to root
   changeToStorageRoot();
@@ -1671,9 +1678,7 @@ void readMPK() {
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
-  // Close the file:
-  closeCurrentFile();
-  crcFile.close();
+  closeMpkFilesR43_N64(crcFile);
 }
 
 // verifies if read was successful
@@ -1716,9 +1721,7 @@ void verifyCRC() {
     processedProgressBar += 512;
     draw_progressbar(processedProgressBar, totalProgressBar);
   }
-  // Close the file:
-  closeCurrentFile();
-  crcFile.close();
+  closeMpkFilesR43_N64(crcFile);
 
   if (writeErrors == 0) {
     println_Msg(F("Saved successfully"));
