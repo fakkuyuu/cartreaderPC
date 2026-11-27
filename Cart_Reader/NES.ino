@@ -4553,22 +4553,20 @@ void readRAM() {
   finishRead_NES();
 }
 
-void writeBankPRG(const size_t from, const size_t to, const size_t base) {
+static void __attribute__((noinline)) writeBankR58_NES(size_t from, size_t to, size_t base, void (*writer)(unsigned int, uint8_t)) {
   for (size_t address = from; address < to; address += 512) {
     readSdBufferBlock();
-    for (size_t x = 0; x < 512; x++) {
-      write_prg_byte(base + address + x, sdBuffer[x]);
-    }
+    for (size_t x = 0; x < 512; x++)
+      writer(base + address + x, sdBuffer[x]);
   }
 }
 
+void writeBankPRG(const size_t from, const size_t to, const size_t base) {
+  writeBankR58_NES(from, to, base, write_prg_byte);
+}
+
 void writeBankWRAM(const size_t from, const size_t to, const size_t base) {
-  for (size_t address = from; address < to; address += 512) {
-    readSdBufferBlock();
-    for (size_t x = 0; x < 512; x++) {
-      write_wram_byte(base + address + x, sdBuffer[x]);
-    }
-  }
+  writeBankR58_NES(from, to, base, write_wram_byte);
 }
 
 void writeRAM() {
