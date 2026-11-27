@@ -717,10 +717,12 @@ void dataIn_MD() {
 *****************************************/
 byte copyToRomName_MD(char* output, const byte* input, byte length) {
   byte myLength = 0;
+  if (length == 0) return 0;
 
   for (byte i = 0; i < 48; i++) {
-    if (((input[i] >= '0' && input[i] <= '9') || (input[i] >= 'A' && input[i] <= 'z')) && myLength < length) {
+    if ((input[i] >= '0' && input[i] <= '9') || (input[i] >= 'A' && input[i] <= 'z')) {
       output[myLength++] = input[i];
+      if (myLength == length) break;
     }
   }
 
