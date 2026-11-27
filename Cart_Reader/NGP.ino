@@ -235,7 +235,7 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
       blinkLED();
 
     // read block
-    for (uint32_t i = 0; i < 512; i++)
+    for (uint16_t i = 0; i < 512; i++)
       sdBuffer[i] = readByte_NGP(addr + i);
 
     writeSdBufferBlock();
