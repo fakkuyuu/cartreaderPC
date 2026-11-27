@@ -2103,6 +2103,13 @@ static void finishRead_NES() {
   rgbLed(black_color);
 }
 
+static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {
+  write_prg_byte(0x5000, a);
+  write_prg_byte(0x5001, b);
+  write_prg_byte(0x6000, a);
+  write_prg_byte(0x6001, b);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2277,10 +2284,7 @@ void readPRG(bool readrom) {
               }
             }
             if ((mapper == 224) || (mapper == 268)) {
-              write_prg_byte(0x5000, ((i & 0x70) >> 4) | ((i & 0xC00) >> 6));
-              write_prg_byte(0x5001, ((i & 0x80) >> 3) | ((i & 0x300) >> 6) | 0x60);
-              write_prg_byte(0x6000, ((i & 0x70) >> 4) | ((i & 0xC00) >> 6));
-              write_prg_byte(0x6001, ((i & 0x80) >> 3) | ((i & 0x300) >> 6) | 0x60);
+              writeOuterPairR59_NES(((i & 0x70) >> 4) | ((i & 0xC00) >> 6), ((i & 0x80) >> 3) | ((i & 0x300) >> 6) | 0x60);
             }
             if (mapper == 315) {
               write_prg_byte(0x6800, (i & 30) >> 3);
@@ -2292,16 +2296,10 @@ void readPRG(bool readrom) {
               write_prg_byte(0x6800 + (i & 0x70), i);
             }
             if (mapper == 995) {
-              write_prg_byte(0x5000, ((i & 0x70) >> 4) | ((i & 0xC00) >> 6));
-              write_prg_byte(0x5001, ((i & 0x80) >> 4) | ((i & 0x100) >> 6) | ((i & 0x200) >> 8) | 0x60);
-              write_prg_byte(0x6000, ((i & 0x70) >> 4) | ((i & 0xC00) >> 6));
-              write_prg_byte(0x6001, ((i & 0x80) >> 4) | ((i & 0x100) >> 6) | ((i & 0x200) >> 8) | 0x60);
+              writeOuterPairR59_NES(((i & 0x70) >> 4) | ((i & 0xC00) >> 6), ((i & 0x80) >> 4) | ((i & 0x100) >> 6) | ((i & 0x200) >> 8) | 0x60);
             }
             if (mapper == 996) {
-              write_prg_byte(0x5000, ((i & 0x70) >> 4) | ((i & 0x180) >> 3));
-              write_prg_byte(0x5001, 0x60);
-              write_prg_byte(0x6000, ((i & 0x70) >> 4) | ((i & 0x180) >> 3));
-              write_prg_byte(0x6001, 0x60);
+              writeOuterPairR59_NES(((i & 0x70) >> 4) | ((i & 0x180) >> 3), 0x60);
             }
             if (mapper == 997) {
               if (i >= banks / 2) {
@@ -2316,10 +2314,7 @@ void readPRG(bool readrom) {
               write_prg_byte(0x6003, 0x00);
             }
             if ((mapper == 998) || (mapper == 999)) {
-              write_prg_byte(0x5000, ((i & 0x70) >> 4));
-              write_prg_byte(0x5001, 0x60);
-              write_prg_byte(0x6000, ((i & 0x70) >> 4));
-              write_prg_byte(0x6001, 0x60);
+              writeOuterPairR59_NES(((i & 0x70) >> 4), 0x60);
             }
             if ((mapper == 224) || (mapper == 268) || (mapper == 995) || (mapper == 996) || (mapper == 997) || (mapper == 998) || (mapper == 999)) {
               write_prg_byte(0x5002, 0x00);
