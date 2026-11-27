@@ -136,6 +136,13 @@ void n64Menu() {
   // Copy menuOptions out of progmem
   n64Dev = chooseFlashMenuOption(FS(SharedFlashText::textSelectN64Device), menuOptionsN64, 6);
 
+  // Prepare the cartridge once for the flash-device paths.
+  if (n64Dev == 3 || n64Dev == 4
+#if defined(ENABLE_FLASH)
+      || n64Dev == 2
+#endif
+  ) prepareCartP21_N64(true);
+
   // wait for user choice to come back from the question box menu
   switch (n64Dev) {
     case 0:
@@ -152,7 +159,6 @@ void n64Menu() {
 
 #if defined(ENABLE_FLASH)
     case 2:
-      prepareCartP21_N64(true);
       flashRepro_N64();
       printCartInfo_N64();
       mode = CORE_N64_CART;
@@ -160,14 +166,12 @@ void n64Menu() {
 #endif
 
     case 3:
-      prepareCartP21_N64(true);
       flashGameshark_N64();
       printCartInfo_N64();
       mode = CORE_N64_CART;
       break;
 
     case 4:
-      prepareCartP21_N64(true);
       flashXplorer_N64();
       mode = CORE_N64_CART;
       promptAndWaitForButton();
