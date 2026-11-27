@@ -1342,6 +1342,13 @@ void readSRAM_GB() {
 }
 
 // Write RAM
+static void writeSramFileBank_GB() __attribute__((noinline));
+static void writeSramFileBank_GB() {
+  for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress++) {
+    writeByteSRAM_GB(sramAddress, myFile.read());
+  }
+}
+
 void writeSRAM_GB() {
   // Does cartridge have SRAM
   if (lastByte > 0) {
@@ -1366,9 +1373,7 @@ void writeSRAM_GB() {
         writeByte_GB(0x4000, currBank);
 
         // Write RAM
-        for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress++) {
-          writeByteSRAM_GB(sramAddress, myFile.read());
-        }
+        writeSramFileBank_GB();
       }
       // Disable SRAM
       writeByte_GB(0x0000, 0x00);
@@ -1534,9 +1539,7 @@ void writeSRAMFLASH_MBC6_GB() {
       writeByte_GB(0x0800, currBank);
 
       // Write SRAM
-      for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress++) {
-        writeByteSRAM_GB(sramAddress, myFile.read());
-      }
+      writeSramFileBank_GB();
 
       processedProgressBar += (lastByte + 1) - 0xA000;
       draw_progressbar(processedProgressBar, totalProgressBar);
