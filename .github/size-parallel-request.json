@@ -1,5 +1,5 @@
 {
-  "id": "parallel-046-astra",
+  "id": "parallel-046-astra-fix",
   "base": "7d5c3d0795c4baf07f7c74e6de678034b0d72675",
   "expected_base_flash": 206628,
   "expected_base_ram": 6095,
@@ -18,23 +18,23 @@
     },
     {
       "id": "gb-setup",
-      "head": "ef7a9983b5802675e94b168751b66ae2c29d0b2b"
+      "head": "955871ba560bce480b0ab5ef8b564d1b2539eb02"
     },
     {
       "id": "md-header",
-      "head": "76ea1251b9867a969af9c2b2034bdadfcecb2912"
+      "head": "586e28c45887b430e5af301450a7653c296f731b"
     },
     {
       "id": "nes-map",
-      "head": "1ca50edf95069fdffda2a8b81765add0bcccd176"
+      "head": "592910746aeddec8889c310f62724faa333846c8"
     },
     {
       "id": "gba-header",
-      "head": "c8dd079a358c03e124cc6f9f932b1b3022fb85ab"
+      "head": "e47688653fa8536ad83b8b89908c2b2ae0c4ba9b"
     },
     {
       "id": "msx-setup",
-      "head": "bc3f2123741fe7ba1a279b14db6b5f7825abda6a"
+      "head": "e79eb1deec38355ee57a435c108551d7d29da72f"
     }
   ]
 }
