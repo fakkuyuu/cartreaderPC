@@ -933,6 +933,19 @@ void readROM_SFM() {
    29F1601 flashrom functions (NP)
  *****************************************/
 // Reset the MX29F1601 flashrom, startbank is 0xC0 for first and 0xE0 for second flashrom
+static void flashCommandR49_SFM(byte startBank, byte cmd, bool hirom) __attribute__((noinline));
+static void flashCommandR49_SFM(byte startBank, byte cmd, bool hirom) {
+  if (hirom) {
+    writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
+    writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
+    writeBank_SFM(startBank, 0x5555L * 2, cmd);
+  } else {
+    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
+    writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
+    writeBank_SFM(1, 0x8000 + 0x1555L * 2, cmd);
+  }
+}
+
 void resetFlash_SFM(int startBank) {
   // Configure control pins
   controlOut_SFM();
@@ -941,13 +954,9 @@ void resetFlash_SFM(int startBank) {
 
   // Reset command sequence
   if (romType) {
-    writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
-    writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
-    writeBank_SFM(startBank, 0x5555L * 2, 0xf0);
+    flashCommandR49_SFM(startBank, 0xf0, true);
   } else {
-    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
-    writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
-    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xf0);
+    flashCommandR49_SFM(startBank, 0xf0, false);
   }
 }
 
@@ -960,9 +969,7 @@ void idFlash_SFM(int startBank) {
 
   if (romType) {
     // ID command sequence
-    writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
-    writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
-    writeBank_SFM(startBank, 0x5555L * 2, 0x90);
+    flashCommandR49_SFM(startBank, 0x90, true);
 
     // Set data pins to input again
     dataIn();
@@ -974,9 +981,7 @@ void idFlash_SFM(int startBank) {
     flashid |= readBank_SFM(startBank, 0x02);
     sprintf(flashid_str, "%04x", flashid);
   } else {
-    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
-    writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
-    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0x90);
+    flashCommandR49_SFM(startBank, 0x90, false);
 
     // Set data pins to input again
     dataIn();
@@ -1126,19 +1131,11 @@ void eraseFlash_SFM(int startBank) {
 
   if (romType) {
     // Erase command sequence
-    writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
-    writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
-    writeBank_SFM(startBank, 0x5555L * 2, 0x80);
-    writeBank_SFM(startBank, 0x5555L * 2, 0xaa);
-    writeBank_SFM(startBank, 0x2AAAL * 2, 0x55);
-    writeBank_SFM(startBank, 0x5555L * 2, 0x10);
+    flashCommandR49_SFM(startBank, 0x80, true);
+    flashCommandR49_SFM(startBank, 0x10, true);
   } else {
-    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
-    writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
-    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0x80);
-    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0xaa);
-    writeBank_SFM(0, 0x8000 + 0x2AAAL * 2, 0x55);
-    writeBank_SFM(1, 0x8000 + 0x1555L * 2, 0x10);
+    flashCommandR49_SFM(startBank, 0x80, false);
+    flashCommandR49_SFM(startBank, 0x10, false);
   }
 
   // Wait for erase to complete
