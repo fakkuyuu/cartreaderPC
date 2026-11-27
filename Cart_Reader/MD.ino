@@ -2445,6 +2445,14 @@ void EepromSetDeviceAddress(word addrhi) {  // 24C02+
   }
 }
 
+static void writeEepromAckClock_MD(bool codemasters, byte value) __attribute__((noinline));
+static void writeEepromAckClock_MD(bool codemasters, byte value) {
+  if (codemasters)
+    writeWord_CM(0x180000, value);
+  else
+    writeWord_MD(0x100000, value);
+}
+
 void EepromStatus() {  // ACK
   byte eepStatus = 1;
   if (eepType == 1) {              // Acclaim Type 1
@@ -2456,7 +2464,7 @@ void EepromStatus() {  // ACK
       dataOut_MD();
       delayMicroseconds(4);
     } while (eepStatus == 1);
-    writeWord_MD(0x100000, 0x01);   // sda high, scl low
+    writeWord_MD(0x100000, 0x01);  // sda high, scl low
   } else if (eepType == 2) {        // Acclaim Type 2
     writeWord_SDA(0x100000, 0x01);  // sda high
     writeWord_SCL(0x100000, 0x01);  // scl high
@@ -2477,28 +2485,23 @@ void EepromStatus() {  // ACK
       delayMicroseconds(4);
     } while (eepStatus == 1);
     writeWord_MD(0x100000, 0x01);  // sda high, scl low
-  } else if (eepType == 4) {       // EA
-    writeWord_MD(0x100000, 0x80);  // sda high, scl low
-    writeWord_MD(0x100000, 0xC0);  // sda high, scl high
+  } else if (eepType == 4 || eepType == 5) {
+    const bool codemasters = eepType == 5;
+    const unsigned long readAddress = codemasters ? 0x1C0000 : 0x100000;
+    const byte lowValue = codemasters ? 0x01 : 0x80;
+    const byte highValue = codemasters ? 0x03 : 0xC0;
+    writeEepromAckClock_MD(codemasters, lowValue);
+    writeEepromAckClock_MD(codemasters, highValue);
     do {
       dataIn_MD();
-      eepStatus = ((readWord_MD(0x100000) >> 7) & 0x1);
+      eepStatus = ((readWord_MD(readAddress) >> 7) & 0x1);
       dataOut_MD();
       delayMicroseconds(4);
     } while (eepStatus == 1);
-    writeWord_MD(0x100000, 0x80);  // sda high, scl low
-  } else if (eepType == 5) {       // Codemasters
-    writeWord_CM(0x180000, 0x01);  // sda high, scl low
-    writeWord_CM(0x180000, 0x03);  // sda high, scl high
-    do {
-      dataIn_MD();
-      eepStatus = ((readWord_MD(0x1C0000) >> 7) & 0x1);
-      dataOut_MD();
-      delayMicroseconds(4);
-    } while (eepStatus == 1);
-    writeWord_CM(0x180000, 0x01);  // sda high, scl low
+    writeEepromAckClock_MD(codemasters, lowValue);
   }
 }
+
 
 void EepromReadMode() {
   EepromSet1();    // READ
