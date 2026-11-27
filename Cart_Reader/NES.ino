@@ -5184,11 +5184,11 @@ void A29040B_writeFLASH() {
       display_Clear();
       showA29040Title_NES();
       println_Msg(F("PRG Size:"));
-      sprintf(data_str, "%lu", prgSize);
+      ultoa(prgSize, data_str, 10);
       println_Msg(data_str);
 
       println_Msg(F("CHR Size:"));
-      sprintf(data_str, "%lu", chrSize);
+      ultoa(chrSize, data_str, 10);
       println_Msg(data_str);
       display_Update();
       delay(3000);
