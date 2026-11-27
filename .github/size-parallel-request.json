@@ -1,13 +1,40 @@
 {
-  "id": "round52-integrated-final",
-  "base": "10562f056651b82dd7a3dc30ec69517ca7a1f279",
-  "expected_base_flash": 205814,
+  "id": "round53-independent",
+  "base": "b431a3b8156ca07566ffdeca0cf6e2b65e1177b8",
+  "expected_base_flash": 205790,
   "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "round52-gb-nes-combined",
-      "head": "9d53a6f48dcedde4063c6c1110ab9c63994afa5e"
+      "id": "r53-gb-mbc-map",
+      "head": "28daf39bc6a37cbb52d85222617d128b68aa0882"
+    },
+    {
+      "id": "r53-gb-we-select",
+      "head": "4168a2f3fc09e39b916c73b2474d70994adada17"
+    },
+    {
+      "id": "r53-gb-erase-select",
+      "head": "e9ec11520a0399cd26ec6982aafc110a94ef0b96"
+    },
+    {
+      "id": "r53-gb-command-select",
+      "head": "e486622bd53bdf132a60a4c25b827dbaa3a97e45"
+    },
+    {
+      "id": "r53-md-eeprom-check",
+      "head": "11e71fc19e49cd81b77703dc64d2b8ec20e926a1"
+    },
+    {
+      "id": "r53-md-cart-size",
+      "head": "3e1713bafa0619590b638fca7ad2139d2754d114"
+    },
+    {
+      "id": "r53-n64-flash-setup",
+      "head": "b27358662812d377dc162f575fc7cc09847117c6"
+    },
+    {
+      "id": "r53-snes-sram-write",
+      "head": "bc1b58640580c20eba9ed75eda265582b07a846f"
     }
-  ],
-  "endpoints_only": true
+  ]
 }
