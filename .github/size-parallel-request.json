@@ -7,6 +7,34 @@
     {
       "id": "r51-core-loop-table",
       "head": "45c666322ed94ee267d45adeb0da635ba9d7c1be"
+    },
+    {
+      "id": "r51-md-header-zero-fill",
+      "head": "c599493f608f0a265e95b7d9ca5acf4689956113"
+    },
+    {
+      "id": "r51-md-header-reader",
+      "head": "c8318d4a3d10b7c82cd8572a74991ad39c31ffaf"
+    },
+    {
+      "id": "r51-system-menu-table",
+      "head": "e061cd78eed2d84cb09361edf344340aeafa0200"
+    },
+    {
+      "id": "r51-combined-menu-tables",
+      "head": "077251f9e8b103e8890e0a5e2d859ea5cbc4240c"
+    },
+    {
+      "id": "r51-nes-prg-mapper-snapshot",
+      "head": "410c7b32e4dcb440edfc729522ce9366bf6866bf"
+    },
+    {
+      "id": "r51-nes-chr-mapper-snapshot",
+      "head": "fa817952426c973bd8e602fa5dcac452c284e8fd"
+    },
+    {
+      "id": "r51-nes-sequential-loops",
+      "head": "64f9f43895ba777cc5fa9e97d491a4db44eb9f9e"
     }
   ]
 }
