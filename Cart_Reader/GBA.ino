@@ -1902,11 +1902,7 @@ void writeBlock_EEP(word startAddr, word eepSize) {
     PORTH |= (1 << 5);
 
     // Send either 6 or 14 bit address
-    if (eepSize == 4) {
-      send_GBA(currAddr, 6);
-    } else {
-      send_GBA(currAddr, 14);
-    }
+    send_GBA(currAddr, eepSize == 4 ? 6 : 14);
 
     __asm__("nop\n\t"
             "nop\n\t"
@@ -1987,11 +1983,7 @@ void readBlock_EEP(word startAddress, word eepSize) {
     PORTH |= (1 << 5);
 
     // Send either 6 or 14 bit address
-    if (eepSize == 4) {
-      send_GBA(currAddr, 6);
-    } else {
-      send_GBA(currAddr, 14);
-    }
+    send_GBA(currAddr, eepSize == 4 ? 6 : 14);
 
     // Send stop bit
     // Set A0(PF0) to LOW
