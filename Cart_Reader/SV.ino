@@ -425,6 +425,12 @@ void readROM_SV() {
   updateDisplayAndWait();
 }
 
+static void setOutputBus_SV() __attribute__((noinline));
+static void setOutputBus_SV() {
+  dataOut();
+  controlOut_SNES();
+}
+
 void writeROM_SV(void) {
   // Get Checksum as string to make sure that BS-X cart is inserted
   dataIn();
@@ -458,8 +464,7 @@ void writeROM_SV(void) {
     }
 
     //Disable 8M memory pack write protection
-    dataOut();
-    controlOut_SNES();
+    setOutputBus_SV();
     writeBank_SV(0x0C, 0x5000, 0x80);  //Modify write enable register
     writeBank_SV(0x0E, 0x5000, 0x80);  //Commit register modification
 
@@ -490,8 +495,7 @@ void writeROM_SV(void) {
     draw_progressbar(0x100000, 0x100000);
 
     //Write memory pack
-    dataOut();
-    controlOut_SNES();
+    setOutputBus_SV();
     println_Msg(F("Writing pack..."));
     display_Update();
     for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
@@ -575,8 +579,7 @@ void eraseCheck_SV(void) {
     ret = readBank_SV(0xC0, 0x0004);
   }
   // Switch to write
-  dataOut();
-  controlOut_SNES();
+  setOutputBus_SV();
 }
 
 void supplyCheck_SV(void) {
@@ -612,8 +615,7 @@ void supplyCheck_SV(void) {
     ret = readBank_SV(0xC0, 0x0004);
   }
   // Switch to write
-  dataOut();
-  controlOut_SNES();
+  setOutputBus_SV();
 }
 
 void writeCheck_SV(void) {
@@ -649,8 +651,7 @@ void writeCheck_SV(void) {
     ret = readBank_SV(0xC0, 0x0000);
   }
   // Switch to write
-  dataOut();
-  controlOut_SNES();
+  setOutputBus_SV();
 }
 
 
@@ -693,14 +694,12 @@ void detectCheck_SV(void) {
     ret = readBank_SV(0xC0, 0x0002);
   }
   // Switch to write
-  dataOut();
-  controlOut_SNES();
+  setOutputBus_SV();
 }
 
 
 void eraseAll_SV(void) {
-  dataOut();
-  controlOut_SNES();
+  setOutputBus_SV();
   writeBank_SV(0xC0, 0x0000, 0x50);  //Clear Status Registers
   writeBank_SV(0xC0, 0x0000, 0x71);  //Status Mode
   supplyCheck_SV();
