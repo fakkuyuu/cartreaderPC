@@ -107,6 +107,7 @@ jobs:
             $sizeTool = Join-Path $gcc[0].DirectoryName 'avr-size.exe'
             $report.compiler_version = ($version -join ' ')
             $previousFlash = $null
+            $baselineSymbols = Join-Path $out ($base.Substring(0,7) + '-symbols.json')
             foreach ($ref in $refs) {
               $short = $ref.Substring(0,7)
               $row = [ordered]@{commit=$ref; subject=''; status='failed'; flash=$null; ram=$null; delta_previous=$null; delta_base=$null; classification='unavailable'; error=$null}
@@ -156,6 +157,15 @@ jobs:
                 $row.flash = [int]$flash
                 $row.ram = [int]$ram
                 $row.status = 'ok'
+                try {
+                  $analysisArgs = @((Join-Path $repo '.github/scripts/size-elf-analysis.py'), '--elf', $elf, '--bin-dir', $gcc[0].DirectoryName, '--out', $out, '--short', $short)
+                  if ($ref -ne $base) { $analysisArgs += @('--baseline', $baselineSymbols) }
+                  & python @analysisArgs
+                  $row.elf_analysis = Get-Content -LiteralPath (Join-Path $out "$short-elf-analysis.json") -Raw | ConvertFrom-Json
+                } catch {
+                  $row.elf_analysis = @{status='error'; error=$_.Exception.Message}
+                  Write-Warning "ELF analysis failed for $short : $($_.Exception.Message)"
+                }
                 if ($ref -eq $base) {
                   $row.classification = 'baseline'
                   $row.delta_base = 0
