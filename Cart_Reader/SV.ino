@@ -132,19 +132,7 @@ void setup_SV() {
   PORTG |= (1 << 5);
 
   // Set Data Pins (D0-D7) to Input
-  DDRC = 0x00;
-  // Enable Internal Pullups
-  //PORTC = 0xFF;
-
-  // Unused pins
-  // Set wram(PE4) to Output
-  DDRE |= (1 << 4);
-  //PORTE &= ~(1 << 4);
-  // Set pawr(PJ1) to Output
-  DDRJ |= (1 << 1);
-  //PORTJ &= ~(1 << 1);
-  // Set pard(PJ0) to Output
-  DDRJ |= (1 << 0);
+  setupSnesTailR49();
   //PORTJ &= ~(1 << 0);
 
   // Start CIC by outputting a low signal to cicrstPin(PG1)
