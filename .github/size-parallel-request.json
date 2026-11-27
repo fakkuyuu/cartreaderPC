@@ -1,17 +1,40 @@
 {
-  "id": "parallel-044-integration",
-  "base": "c86f54450543072d535bd50f29da13df69cdf25c",
-  "expected_base_flash": 207002,
+  "id": "parallel-045",
+  "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+  "expected_base_flash": 206994,
   "expected_base_ram": 6095,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "snes-only-endpoint",
-      "head": "ec4714c2462834284e9c36a3dbb9b10f8f8e7683"
+      "id": "md-eep-status13",
+      "head": "779f90fc86eef145d3cbac22141e840585f66338"
     },
     {
-      "id": "snes-msx-endpoint",
-      "head": "c4ec6235eddc0f6e0429f57b00758870daa5fcee"
+      "id": "md-eep-read13",
+      "head": "3b9f4701b46aef9b2c231af7eabd10f980d19882"
+    },
+    {
+      "id": "md-eep-sda-scl",
+      "head": "dfae85a025249896a7389dbbc2455f0fad48b27c"
+    },
+    {
+      "id": "md-eep-start45",
+      "head": "242c4b2aa907239d71d57966e8c1b904bff6ff0d"
+    },
+    {
+      "id": "md-eep-status45",
+      "head": "323063649da32f980c6c1eac17c20f80a0e18ef7"
+    },
+    {
+      "id": "md-eep-read45",
+      "head": "e1fdea2d99d1154dc806e8804d871a48f00196dc"
+    },
+    {
+      "id": "md-eep-address",
+      "head": "6f71cdc9e309ab1b4c573877b90a5980b86c3c8b"
+    },
+    {
+      "id": "md-eep-byte-pack",
+      "head": "cebb96867d2cf203212f157d6cf71a95a1f38180"
     }
   ]
 }
