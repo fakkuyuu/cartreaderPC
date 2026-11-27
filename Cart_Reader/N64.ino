@@ -3545,6 +3545,13 @@ void eraseFlashrom_N64() {
 }
 
 // Common sector erase command
+static void unlockByteFlash_N64(unsigned long flashBase) {
+  setAddress_N64(flashBase + (0x555 << 1));
+  writeWord_N64(0xAA);
+  setAddress_N64(flashBase + (0x2AA << 1));
+  writeWord_N64(0x55);
+}
+
 void eraseSector_N64(unsigned long sectorSize) {
   unsigned long flashBase = romBase;
 
@@ -3567,10 +3574,7 @@ void eraseSector_N64(unsigned long sectorSize) {
 
     // Send Erase Command
     sendFlashromCommand_N64(flashBase, 0x80);
-    setAddress_N64(flashBase + (0x555 << 1));
-    writeWord_N64(0xAA);
-    setAddress_N64(flashBase + (0x2AA << 1));
-    writeWord_N64(0x55);
+    unlockByteFlash_N64(flashBase);
     setAddress_N64(romBase + currSector);
     writeWord_N64(0x30);
 
@@ -3753,10 +3757,7 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
       for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += bufferSize) {
 
         // 2 unlock commands
-        setAddress_N64(flashBase + (0x555 << 1));
-        writeWord_N64(0xAA);
-        setAddress_N64(flashBase + (0x2AA << 1));
-        writeWord_N64(0x55);
+        unlockByteFlash_N64(flashBase);
 
         // Write buffer load command at sector address
         setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
