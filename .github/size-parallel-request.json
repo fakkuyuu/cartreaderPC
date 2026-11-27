@@ -1,5 +1,5 @@
 {
-  "id": "round57-independent",
+  "id": "round57-independent-fixed",
   "base": "dfad6c5c7ad00f98bcb4f135a1f7ff77220ba4dd",
   "expected_base_flash": 205580,
   "expected_base_ram": 6059,
@@ -34,7 +34,7 @@
     },
     {
       "id": "r57-n64-flash-ready",
-      "head": "3aca32ee6680a8350ff1a826fa19ddfde684b48c"
+      "head": "26e937b74f86791f647856f520c367213959c465"
     }
   ]
 }
