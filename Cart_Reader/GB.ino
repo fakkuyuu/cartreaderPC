@@ -223,19 +223,8 @@ void gbxMenu() {
             gbFlashWE = chooseFlashMenuOption(F("Select WE Pin"), menuOptionsGBFlashWE, 3);
 
             // wait for user choice to come back from the question box menu
-            switch (gbFlashWE) {
-              case 0:
-                selectedWE = 1;
-                break;
-
-              case 1:
-                selectedWE = 0;
-                break;
-
-              case 2:
-                resetArduino();
-                break;
-            }
+            selectedWE = (gbFlashWE == 0);
+            if (gbFlashWE == 2) resetArduino();
 
             // create submenu with title and 3 options to choose from
             unsigned char gbFlashErase;
