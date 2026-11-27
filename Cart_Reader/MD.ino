@@ -863,7 +863,7 @@ void getCartInfo_MD() {
 
   // Get cart ID
   char id[15];
-  memset(id, 0, 15);
+  id[14] = '\0';
   readHeaderWords_MD(0x180 / 2, id, 14);
 
   // Get cart name
@@ -902,7 +902,7 @@ void getCartInfo_MD() {
   SnKmode = 0;
   if (!strcmp("GM MK-1563 -00", id) && (chksum == 0xDFB3)) {
     char labelLockon[17];
-    memset(labelLockon, 0, 17);
+    labelLockon[16] = '\0';
 
     // Get labelLockon
     readHeaderWords_MD(0x200100UL / 2, labelLockon, 16);
@@ -910,7 +910,7 @@ void getCartInfo_MD() {
     // check Lock-on game presence
     if (!(strcmp("SEGA MEGA DRIVE ", labelLockon) & strcmp("SEGA GENESIS    ", labelLockon))) {
       char idLockon[15];
-      memset(idLockon, 0, 15);
+      idLockon[14] = '\0';
 
       // Lock-on cart checksum
       chksumLockon = readWord_MD(0x1000C7);
