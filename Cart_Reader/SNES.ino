@@ -1430,7 +1430,7 @@ static void beginSrtcRetry_SNES(uint32_t offset) {
   if (offset < 0x400000UL) {
     PORTL = (uint8_t)(0xC0U + (offset >> 16));
   } else {
-    PORTL = (uint8_t)(0x40U + ((offset - 0x400000UL) >> 16));
+    PORTL = (uint8_t)(offset >> 16);
   }
   sharedRetryAddressR40_SNES = (uint16_t)offset;
 }
