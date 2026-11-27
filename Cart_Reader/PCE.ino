@@ -210,6 +210,12 @@ void set_cs_rd_low_PCE() {
   PORTH &= ~(1 << 3);
 }
 
+static uint8_t reverseHuCardBits_PCE(uint8_t value) {
+  value = (value >> 4) | (value << 4);
+  value = ((value & 0xCC) >> 2) | ((value & 0x33) << 2);
+  return ((value & 0xAA) >> 1) | ((value & 0x55) << 1);
+}
+
 uint8_t read_byte_PCE(uint32_t address) {
   uint8_t ret;
 
@@ -238,7 +244,7 @@ uint8_t read_byte_PCE(uint32_t address) {
 
   //Swap bit order for PC Engine HuCARD
   if (pce_internal_mode == HUCARD || pce_internal_mode == PCE_FLASH) {
-    ret = ((ret & 0x01) << 7) | ((ret & 0x02) << 5) | ((ret & 0x04) << 3) | ((ret & 0x08) << 1) | ((ret & 0x10) >> 1) | ((ret & 0x20) >> 3) | ((ret & 0x40) >> 5) | ((ret & 0x80) >> 7);
+    ret = reverseHuCardBits_PCE(ret);
   }
 
   //return read data
@@ -283,7 +289,7 @@ void write_byte_PCE(uint32_t address, uint8_t data) {
 
   //Swap bit order for PC Engine HuCARD
   if (pce_internal_mode == HUCARD || pce_internal_mode == PCE_FLASH) {
-    data = ((data & 0x01) << 7) | ((data & 0x02) << 5) | ((data & 0x04) << 3) | ((data & 0x08) << 1) | ((data & 0x10) >> 1) | ((data & 0x20) >> 3) | ((data & 0x40) >> 5) | ((data & 0x80) >> 7);
+    data = reverseHuCardBits_PCE(data);
   }
 
   //write byte

@@ -1841,29 +1841,17 @@ void readEeprom_GBA(word eepSize) {
 
 // Send address as bits to eeprom
 void send_GBA(word currAddr, word numBits) {
-  for (word addrBit = numBits; addrBit > 0; addrBit--) {
-    // If you want the k-th bit of n, then do
-    // (n & ( 1 << k )) >> k
-    if (((currAddr & (1 << (addrBit - 1))) >> (addrBit - 1))) {
-      // Set A0(PF0) to High
-      PORTF |= (1 << 0);
-      // Set WR(PH5) to LOW
-      PORTH &= ~(1 << 5);
-      // Set WR(PH5) to High
-      PORTH |= (1 << 5);
-    } else {
-      // Set A0(PF0) to Low
-      PORTF &= ~(1 << 0);
-      // Set WR(PH5) to LOW
-      PORTH &= ~(1 << 5);
-      // Set WR(PH5) to High
-      PORTH |= (1 << 5);
-    }
+  if (!numBits) return;
+  for (word mask = 1U << (numBits - 1); mask; mask >>= 1) {
+    if (currAddr & mask) PORTF |= (1 << 0);
+    else PORTF &= ~(1 << 0);
+    PORTH &= ~(1 << 5);
+    PORTH |= (1 << 5);
   }
 }
 
 // Write 512K eeprom block
-void writeBlock_EEP(word startAddr, word eepSize) {
+static void setupEepromPins_GBA() {
   // Setup
   // Set CS_ROM(PH3) WR(PH5) RD(PH6) to Output
   DDRH |= (1 << 3) | (1 << 5) | (1 << 6);
@@ -1881,7 +1869,12 @@ void writeBlock_EEP(word startAddr, word eepSize) {
 
   __asm__("nop\n\t"
           "nop\n\t");
+}
 
+void writeBlock_EEP(word startAddr, word eepSize) {
+  setupEepromPins_GBA();
+
+  const byte* nextByte = sdBuffer;
   // Write 64*8=512 bytes
   for (word currAddr = startAddr; currAddr < startAddr + 64; currAddr++) {
     // Set CS_ROM(PH3) to LOW
@@ -1919,7 +1912,7 @@ void writeBlock_EEP(word startAddr, word eepSize) {
 
     // Send data
     for (byte currByte = 0; currByte < 8; currByte++) {
-      send_GBA(sdBuffer[(currAddr - startAddr) * 8 + currByte], 8);
+      send_GBA(*nextByte++, 8);
     }
 
     // Send stop bit
@@ -1951,23 +1944,7 @@ void writeBlock_EEP(word startAddr, word eepSize) {
 
 // Reads 512 bytes from eeprom
 void readBlock_EEP(word startAddress, word eepSize) {
-  // Setup
-  // Set CS_ROM(PH3) WR(PH5) RD(PH6) to Output
-  DDRH |= (1 << 3) | (1 << 5) | (1 << 6);
-  // Set A0(PF0) to Output
-  DDRF |= (1 << 0);
-  // Set A23/D7(PC7) to Output
-  DDRC |= (1 << 7);
-
-  // Set CS_ROM(PH3) WR(PH5) RD(PH6) to High
-  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
-  // Set A0(PF0) to High
-  PORTF |= (1 << 0);
-  // Set A23/D7(PC7) to High
-  PORTC |= (1 << 7);
-
-  __asm__("nop\n\t"
-          "nop\n\t");
+  setupEepromPins_GBA();
 
   // Read 64*8=512 bytes
   for (word currAddr = startAddress; currAddr < startAddress + 64; currAddr++) {
@@ -2050,7 +2027,9 @@ void readBlock_EEP(word startAddress, word eepSize) {
 
     // OR 8 bits into one byte for a total of 8 bytes
     for (byte j = 0; j < 64; j += 8) {
-      sdBuffer[((currAddr - startAddress) * 8) + (j / 8)] = tempBits[0 + j] << 7 | tempBits[1 + j] << 6 | tempBits[2 + j] << 5 | tempBits[3 + j] << 4 | tempBits[4 + j] << 3 | tempBits[5 + j] << 2 | tempBits[6 + j] << 1 | tempBits[7 + j];
+      byte packed = 0;
+      for (byte bit = 0; bit < 8; ++bit) packed = (packed << 1) | tempBits[j + bit];
+      sdBuffer[((currAddr - startAddress) * 8) + (j / 8)] = packed;
     }
   }
 }
