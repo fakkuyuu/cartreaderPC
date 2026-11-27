@@ -1408,13 +1408,17 @@ void initOutputFlash_GBA() {
 }
 
 // SST 39VF512 Flashrom
+static void __attribute__((noinline)) sendSaveFlashCmdR62_GBA(byte command) {
+  writeByteFlash_GBA(0x5555, 0xaa);
+  writeByteFlash_GBA(0x2aaa, 0x55);
+  writeByteFlash_GBA(0x5555, command);
+}
+
 void idFlash_GBA() {
   initOutputFlash_GBA();
 
   // ID command sequence
-  writeByteFlash_GBA(0x5555, 0xaa);
-  writeByteFlash_GBA(0x2aaa, 0x55);
-  writeByteFlash_GBA(0x5555, 0x90);
+  sendSaveFlashCmdR62_GBA(0x90);
 
   // Set data pins to input
   DDRC = 0x00;
@@ -1513,12 +1517,8 @@ void eraseFLASH_GBA() {
   initOutputFlash_GBA();
 
   // Erase command sequence
-  writeByteFlash_GBA(0x5555, 0xaa);
-  writeByteFlash_GBA(0x2aaa, 0x55);
-  writeByteFlash_GBA(0x5555, 0x80);
-  writeByteFlash_GBA(0x5555, 0xaa);
-  writeByteFlash_GBA(0x2aaa, 0x55);
-  writeByteFlash_GBA(0x5555, 0x10);
+  sendSaveFlashCmdR62_GBA(0x80);
+  sendSaveFlashCmdR62_GBA(0x10);
 
   // Set CS_FLASH(PH0) high
   PORTH |= (1 << 0);
@@ -1656,9 +1656,7 @@ void busyCheck_GBA(uint16_t currByte) {
 
 static void beginSaveFlashProgram_GBA() __attribute__((noinline));
 static void beginSaveFlashProgram_GBA() {
-  writeByteFlash_GBA(0x5555, 0xaa);
-  writeByteFlash_GBA(0x2aaa, 0x55);
-  writeByteFlash_GBA(0x5555, 0xa0);
+  sendSaveFlashCmdR62_GBA(0xa0);
 }
 
 static void showMissingSaveP17_GBA() __attribute__((noinline));
