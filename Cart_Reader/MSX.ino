@@ -750,6 +750,11 @@ static void writeSramBlock_MSX(word address) {
   }
 }
 
+static void __attribute__((noinline)) writeSramRangeR58_MSX(word base, word size) {
+  for (word address = 0; address < size; address += 512)
+    writeSramBlock_MSX(base + address);
+}
+
 void writeRAM_MSX() {
   display_Clear();
 
@@ -784,9 +789,7 @@ void writeRAM_MSX() {
         case 4:  // Game Master 2 (8K)
           for (int y = 0; y < 2; y++) {
             writeData_MSX(0xA000, 0x10 + (y * 0x20));  // Bit 4 Enable, Bit 5 SRAM Segment 0/1
-            for (word address = 0x0; address < 0x1000; address += 512) {  // 4K
-              writeSramBlock_MSX(0xB000 + address);
-            }
+            writeSramRangeR58_MSX(0xB000, 0x1000);
           }
           writeData_MSX(0xA000, 0);  // SRAM Disable
           break;
@@ -794,9 +797,7 @@ void writeRAM_MSX() {
         case 5:  // HAL Note (16K)
           MERQ_ENABLE;
           writeData_MSX(0x4FFF, 0x80);  // Bit 7 Enable
-          for (word address = 0; address < 0x4000; address += 512) {  // 16K
-            writeSramBlock_MSX(address);
-          }
+          writeSramRangeR58_MSX(0, 0x4000);
           writeData_MSX(0x4FFF, 0);  // SRAM Disable
           MERQ_DISABLE;
           break;
@@ -808,9 +809,7 @@ void writeRAM_MSX() {
               writeData_MSX(0x7000, 0xC0 + y);
             else
               writeData_MSX(0x7000, 0xA0 + y);
-            for (word address = 0x0; address < 0x2000; address += 512) {
-              writeSramBlock_MSX(0x8000 + address);
-            }
+            writeSramRangeR58_MSX(0x8000, 0x2000);
           }
           writeData_MSX(0x7000, 0);  // SRAM Disable
           break;
@@ -818,9 +817,7 @@ void writeRAM_MSX() {
         case 11:  // PAC/FM-PAC (8K)
           writeData_MSX(0x5FFE, 0x4D);  // SRAM Enable Step 1
           writeData_MSX(0x5FFF, 0x69);  // SRAM Enable Step 2
-          for (word address = 0x0; address < 0x2000; address += 512) {  // 8K
-            writeSramBlock_MSX(0x4000 + address);
-          }
+          writeSramRangeR58_MSX(0x4000, 0x2000);
           writeData_MSX(0x5FFE, 0);  // SRAM Disable
           break;
       }
