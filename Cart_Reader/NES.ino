@@ -2114,6 +2114,11 @@ static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {
   write_prg_byte(0x6001, b);
 }
 
+static void __attribute__((noinline)) writePairA8R61_NES(byte a, byte b) {
+  write_prg_byte(0xA000, a);
+  write_prg_byte(0x8000, b);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2953,8 +2958,7 @@ void readPRG(bool readrom) {
       case 175:  // 256K
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xA000, i << 2);
-          write_prg_byte(0x8000, i);
+          writePairA8R61_NES(i << 2, i);
           dumpPRG16KiB(base);
         }
         break;
@@ -3319,8 +3323,7 @@ void readPRG(bool readrom) {
       case 396:
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xA000, (i >> 3) & 0x07);
-          write_prg_byte(0x8000, i & 0x07);
+          writePairA8R61_NES((i >> 3) & 0x07, i & 0x07);
           dumpPRG16KiB(base);
         }
         break;
@@ -4045,8 +4048,7 @@ void readCHR(bool readrom) {
         case 175:  // 128K
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xA000, i << 2);
-            write_prg_byte(0x8000, i);
+            writePairA8R61_NES(i << 2, i);
             dumpCHR8KiB();
           }
           break;
