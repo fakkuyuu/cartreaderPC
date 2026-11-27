@@ -1,11 +1,11 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "46015306369",
+  "run_id": "46015728280",
   "run_attempt": "1",
-  "workflow_commit": "f83d6baae22cb16f1d3046c7d6c07133d119ce4b",
+  "workflow_commit": "888f2d152e58d314b874ddbd3e717c7a753c1067",
   "request": {
-    "id": "round57-independent",
+    "id": "round57-independent-fixed",
     "base": "dfad6c5c7ad00f98bcb4f135a1f7ff77220ba4dd",
     "expected_base_flash": 205580,
     "expected_base_ram": 6059,
@@ -40,7 +40,7 @@
       },
       {
         "id": "r57-n64-flash-ready",
-        "head": "3aca32ee6680a8350ff1a826fa19ddfde684b48c"
+        "head": "26e937b74f86791f647856f520c367213959c465"
       }
     ]
   },
@@ -48,9 +48,9 @@
   "candidates": [
     {
       "schema": 1,
-      "run_id": "46015306369",
+      "run_id": "46015728280",
       "run_attempt": "1",
-      "workflow_commit": "f83d6baae22cb16f1d3046c7d6c07133d119ce4b",
+      "workflow_commit": "888f2d152e58d314b874ddbd3e717c7a753c1067",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -961,9 +961,9 @@
     },
     {
       "schema": 1,
-      "run_id": "46015306369",
+      "run_id": "46015728280",
       "run_attempt": "1",
-      "workflow_commit": "f83d6baae22cb16f1d3046c7d6c07133d119ce4b",
+      "workflow_commit": "888f2d152e58d314b874ddbd3e717c7a753c1067",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -1860,9 +1860,9 @@
     },
     {
       "schema": 1,
-      "run_id": "46015306369",
+      "run_id": "46015728280",
       "run_attempt": "1",
-      "workflow_commit": "f83d6baae22cb16f1d3046c7d6c07133d119ce4b",
+      "workflow_commit": "888f2d152e58d314b874ddbd3e717c7a753c1067",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -2745,9 +2745,9 @@
     },
     {
       "schema": 1,
-      "run_id": "46015306369",
+      "run_id": "46015728280",
       "run_attempt": "1",
-      "workflow_commit": "f83d6baae22cb16f1d3046c7d6c07133d119ce4b",
+      "workflow_commit": "888f2d152e58d314b874ddbd3e717c7a753c1067",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -3651,9 +3651,9 @@
     },
     {
       "schema": 1,
-      "run_id": "46015306369",
+      "run_id": "46015728280",
       "run_attempt": "1",
-      "workflow_commit": "f83d6baae22cb16f1d3046c7d6c07133d119ce4b",
+      "workflow_commit": "888f2d152e58d314b874ddbd3e717c7a753c1067",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -4557,9 +4557,9 @@
     },
     {
       "schema": 1,
-      "run_id": "46015306369",
+      "run_id": "46015728280",
       "run_attempt": "1",
-      "workflow_commit": "f83d6baae22cb16f1d3046c7d6c07133d119ce4b",
+      "workflow_commit": "888f2d152e58d314b874ddbd3e717c7a753c1067",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -5449,9 +5449,9 @@
     },
     {
       "schema": 1,
-      "run_id": "46015306369",
+      "run_id": "46015728280",
       "run_attempt": "1",
-      "workflow_commit": "f83d6baae22cb16f1d3046c7d6c07133d119ce4b",
+      "workflow_commit": "888f2d152e58d314b874ddbd3e717c7a753c1067",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -6341,14 +6341,14 @@
     },
     {
       "schema": 1,
-      "run_id": "46015306369",
+      "run_id": "46015728280",
       "run_attempt": "1",
-      "workflow_commit": "f83d6baae22cb16f1d3046c7d6c07133d119ce4b",
+      "workflow_commit": "888f2d152e58d314b874ddbd3e717c7a753c1067",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
         "id": "r57-n64-flash-ready",
-        "head": "3aca32ee6680a8350ff1a826fa19ddfde684b48c",
+        "head": "26e937b74f86791f647856f520c367213959c465",
         "base": "dfad6c5c7ad00f98bcb4f135a1f7ff77220ba4dd",
         "expected_base_flash": 205580,
         "expected_base_ram": 6059,
@@ -6779,8 +6779,8 @@
           }
         },
         {
-          "commit": "3aca32ee6680a8350ff1a826fa19ddfde684b48c",
-          "subject": "Round 57 candidate 8: share N64 flash ready polling",
+          "commit": "26e937b74f86791f647856f520c367213959c465",
+          "subject": "Round 57 candidate 8: preserve secondary N64 status variable",
           "status": "ok",
           "flash": 205580,
           "ram": 6059,
@@ -7205,7 +7205,7 @@
       "fatal_error": null,
       "candidate": {
         "id": "r57-n64-flash-ready",
-        "head": "3aca32ee6680a8350ff1a826fa19ddfde684b48c"
+        "head": "26e937b74f86791f647856f520c367213959c465"
       }
     }
   ]
