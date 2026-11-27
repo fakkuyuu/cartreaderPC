@@ -2621,7 +2621,7 @@ static void identifyPelicanSstFlash_GB() {
 
 static void showAccessoryVerifyResult_GB() __attribute__((noinline));
 static void showAccessoryVerifyResult_GB() {
-  if (writeErrors == 0) {
+  if (accessoryWriteOkR48()) {
     showTurnOffPowerAndUpdate();
   } else {
     showFatalWriteVerification();
