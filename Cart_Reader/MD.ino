@@ -845,12 +845,16 @@ static void readHeaderWords_MD(uint32_t startWord, void* destination, uint8_t by
   }
 }
 
+static uint32_t __attribute__((noinline)) readHeaderLongR59_MD(uint32_t address) {
+  return (uint32_t(readWord_MD(address)) << 16) | readWord_MD(address + 1);
+}
+
 void getCartInfo_MD() {
   // Set control
   dataIn_MD();
 
   // Get cart size
-  cartSize = ((long(readWord_MD(0xD2)) << 16) | readWord_MD(0xD3)) + 1;
+  cartSize = readHeaderLongR59_MD(0xD2) + 1;
 
   // Check for 32x compatibility
   if ((readWord_MD(0x104 / 2) == 0x2033) && (readWord_MD(0x106 / 2) == 0x3258))
@@ -915,7 +919,7 @@ void getCartInfo_MD() {
       // Lock-on cart checksum
       chksumLockon = readWord_MD(0x1000C7);
       // Lock-on cart size
-      cartSizeLockon = ((long(readWord_MD(0x1000D2)) << 16) | readWord_MD(0x1000D3)) + 1;
+      cartSizeLockon = readHeaderLongR59_MD(0x1000D2) + 1;
 
       // Get IdLockon
       readHeaderWords_MD(0x200180UL / 2, idLockon, 14);
@@ -994,8 +998,8 @@ void getCartInfo_MD() {
       word sramType = readWord_MD(0xD9);
       if ((sramType == 0xF820) || (sramType == 0xF840)) {  // SRAM/FRAM ODD/EVEN BYTES
         // Get sram start and end
-        sramBase = ((long(readWord_MD(0xDA)) << 16) | readWord_MD(0xDB));
-        sramEnd = ((long(readWord_MD(0xDC)) << 16) | readWord_MD(0xDD));
+        sramBase = readHeaderLongR59_MD(0xDA);
+        sramEnd = readHeaderLongR59_MD(0xDC);
         if (sramBase == 0x20000020 && sramEnd == 0x00010020) {  // Fix for Psy-o-blade
           sramBase = 0x200001;
           sramEnd = 0x203fff;
@@ -1020,8 +1024,8 @@ void getCartInfo_MD() {
         }
       } else if (sramType == 0xE020) {  // SRAM BOTH BYTES
         // Get sram start and end
-        sramBase = ((long(readWord_MD(0xDA)) << 16) | readWord_MD(0xDB));
-        sramEnd = ((long(readWord_MD(0xDC)) << 16) | readWord_MD(0xDD));
+        sramBase = readHeaderLongR59_MD(0xDA);
+        sramEnd = readHeaderLongR59_MD(0xDC);
 
         if (sramBase == 0x200001) {
           saveType = 3;  // BOTH
