@@ -834,6 +834,17 @@ static void showUnknownSramBase_MD(word sramType) {
   print_FatalError(FS(SharedFlashText::textUnknownSramBase));
 }
 
+// Read adjacent big-endian cartridge header words into a byte buffer.
+static void readHeaderWords_MD(uint32_t startWord, void* destination, uint8_t byteCount) __attribute__((noinline));
+static void readHeaderWords_MD(uint32_t startWord, void* destination, uint8_t byteCount) {
+  uint8_t* output = (uint8_t*)destination;
+  for (uint8_t offset = 0; offset < byteCount; offset += 2) {
+    const word value = readWord_MD(startWord + (offset >> 1));
+    output[offset] = value >> 8;
+    output[offset + 1] = value & 0xFF;
+  }
+}
+
 void getCartInfo_MD() {
   // Set control
   dataIn_MD();
@@ -853,28 +864,10 @@ void getCartInfo_MD() {
   // Get cart ID
   char id[15];
   memset(id, 0, 15);
-  for (byte c = 0; c < 14; c += 2) {
-    // split word
-    word myWord = readWord_MD((0x180 + c) / 2);
-    byte loByte = myWord & 0xFF;
-    byte hiByte = myWord >> 8;
-
-    // write to buffer
-    id[c] = hiByte;
-    id[c + 1] = loByte;
-  }
+  readHeaderWords_MD(0x180 / 2, id, 14);
 
   // Get cart name
-  for (byte c = 0; c < 48; c += 2) {
-    // split word
-    word myWord = readWord_MD((0x150 + c) / 2);
-    byte loByte = myWord & 0xFF;
-    byte hiByte = myWord >> 8;
-
-    // write to buffer
-    sdBuffer[c] = hiByte;
-    sdBuffer[c + 1] = loByte;
-  }
+  readHeaderWords_MD(0x150 / 2, sdBuffer, 48);
   romName[copyToRomName_MD(romName, sdBuffer, sizeof(romName) - 1)] = 0;
 
   // Identify games using SVP chip
@@ -912,16 +905,7 @@ void getCartInfo_MD() {
     memset(labelLockon, 0, 17);
 
     // Get labelLockon
-    for (byte c = 0; c < 16; c += 2) {
-      // split word
-      word myWord = readWord_MD((0x200100 + c) / 2);
-      byte loByte = myWord & 0xFF;
-      byte hiByte = myWord >> 8;
-
-      // write to buffer
-      labelLockon[c] = hiByte;
-      labelLockon[c + 1] = loByte;
-    }
+    readHeaderWords_MD(0x200100UL / 2, labelLockon, 16);
 
     // check Lock-on game presence
     if (!(strcmp("SEGA MEGA DRIVE ", labelLockon) & strcmp("SEGA GENESIS    ", labelLockon))) {
@@ -934,16 +918,7 @@ void getCartInfo_MD() {
       cartSizeLockon = ((long(readWord_MD(0x1000D2)) << 16) | readWord_MD(0x1000D3)) + 1;
 
       // Get IdLockon
-      for (byte c = 0; c < 14; c += 2) {
-        // split word
-        word myWord = readWord_MD((0x200180 + c) / 2);
-        byte loByte = myWord & 0xFF;
-        byte hiByte = myWord >> 8;
-
-        // write to buffer
-        idLockon[c] = hiByte;
-        idLockon[c + 1] = loByte;
-      }
+      readHeaderWords_MD(0x200180UL / 2, idLockon, 14);
 
       if (!strncmp("GM 00001009-0", idLockon, 13) || !strncmp("GM 00004049-0", idLockon, 13)) { // Sonic1 ID:GM 00001009-0? or GM 00004049-0?
         SnKmode = 2;
