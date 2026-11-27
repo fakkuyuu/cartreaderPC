@@ -1,21 +1,40 @@
 {
-  "id": "parallel-043-integration",
-  "base": "c269d9613a53c22b8e54e6832d34a7f22aabd70f",
-  "expected_base_flash": 207114,
+  "id": "parallel-044",
+  "base": "c86f54450543072d535bd50f29da13df69cdf25c",
+  "expected_base_flash": 207002,
   "expected_base_ram": 6095,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-1-msx-scc",
-      "head": "fdc42387246f59f9b663d2830669db3f75493388"
+      "id": "gb-sram-check-index",
+      "head": "a2b2dd40a67638f550ffbd08224c1f330741950c"
     },
     {
-      "id": "integration-2-ngp-hex",
-      "head": "8f8cf780d0b84e53bc65aa9f55d8ff62d02cfa7b"
+      "id": "gba-header-check-index",
+      "head": "02f8810f5c6a74fc478caa7d5711c061af79e263"
     },
     {
-      "id": "integration-3-ws-rom-index",
-      "head": "e138f8d3dc99efc32b5bf2ea3148d0e5e7b6ef64"
+      "id": "snes-special-bank-index",
+      "head": "bae0fc3528c3021da0dfa9be7f0d0f20750c9308"
+    },
+    {
+      "id": "msx-mapper-index",
+      "head": "01ac8837122ad1a8c28bd6f0ac0981ffc7d11072"
+    },
+    {
+      "id": "ngp-header-index",
+      "head": "e1a6f6e8537964dd35d0091d1a90684b3af1f3d1"
+    },
+    {
+      "id": "st-header-index",
+      "head": "5b5caaff2c4f4b84d566760460b0c85a669abb89"
+    },
+    {
+      "id": "vboy-name-index",
+      "head": "fcfe208964cf6b962f265f39a7eba22c1fa1fcee"
+    },
+    {
+      "id": "sv-bank-index",
+      "head": "2f9f1e285bd34d726e91139c4db3a0f74d302fff"
     }
   ]
 }
