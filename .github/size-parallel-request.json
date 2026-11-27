@@ -1,13 +1,25 @@
 {
-  "id": "round57-step01",
+  "id": "round57-steps02-05",
   "endpoints_only": true,
   "base": "dfad6c5c7ad00f98bcb4f135a1f7ff77220ba4dd",
   "expected_base_flash": 205580,
   "expected_base_ram": 6059,
   "candidates": [
     {
-      "id": "r57-step01-md-sram-write",
-      "head": "e417a14baac7461ad536b070369b422fc6a723ce"
+      "id": "r57-step02-snes-verify",
+      "head": "e114286f359032ee3fac0e06f54dffaa01193dbc"
+    },
+    {
+      "id": "r57-step03-gb-verify",
+      "head": "427cc46d575a2fdbf8c526c05dc53ece2bc7b147"
+    },
+    {
+      "id": "r57-step04-gb-write",
+      "head": "b5061e3d7ab435112cc91ab73c5aaa63514656b7"
+    },
+    {
+      "id": "r57-step05-snes-write-fill",
+      "head": "8df8a35207e7d0c438a2d24e1f4f1adf6fd785d1"
     }
   ]
 }
