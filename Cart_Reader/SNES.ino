@@ -1380,10 +1380,6 @@ boolean compare_checksum() {
 
 // Read rom to SD card
 static uint16_t sharedRetryAddressR40_SNES;
-static void beginLoRomRetry_SNES(uint32_t offset) {
-  PORTL = (uint8_t)(offset >> 15);
-  sharedRetryAddressR40_SNES = 0x8000 | (offset & 0x7fff);
-}
 
 static void readLoRomRetryWord_SNES(uint8_t* output) {
   for (uint8_t i = 0; i < 2; ++i) {
@@ -1575,11 +1571,13 @@ void readROM_SNES() {
   }
 
   // Ordinary LoROM only. The full existing path handles unusual bank maps.
-  if (romType == LO && romChips <= 2 && numBanks > 0 && numBanks <= 64 &&
-      myFile.romRetry2M((uint32_t)numBanks * 32768UL,
-                       beginLoRomRetry_SNES, readLoRomRetryWord_SNES, true)) {
-    closeCurrentFile();
-    return;
+  if (romType == LO && romChips <= 2 && numBanks > 0 && numBanks <= 64) {
+    loRomRetryLayout = 0;
+    if (myFile.romRetry2M((uint32_t)numBanks * 32768UL,
+                         beginExtendedLoRomRetry_SNES, readLoRomRetryWord_SNES, true)) {
+      closeCurrentFile();
+      return;
+    }
   }
 
   //Dump Derby Stallion '96 (Japan) and Sound Novel Tsukuru (Japan) - Actual Size is 24Mb
