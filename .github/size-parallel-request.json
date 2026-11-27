@@ -1,40 +1,12 @@
 {
-  "id": "parallel-045-retry",
-  "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
-  "expected_base_flash": 206994,
+  "id": "elf-analysis-test-001",
+  "base": "c86f54450543072d535bd50f29da13df69cdf25c",
+  "expected_base_flash": 207002,
   "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "md-eep-status13",
-      "head": "779f90fc86eef145d3cbac22141e840585f66338"
-    },
-    {
-      "id": "md-eep-read13",
-      "head": "3b9f4701b46aef9b2c231af7eabd10f980d19882"
-    },
-    {
-      "id": "md-eep-sda-scl",
-      "head": "dfae85a025249896a7389dbbc2455f0fad48b27c"
-    },
-    {
-      "id": "md-eep-start45",
-      "head": "242c4b2aa907239d71d57966e8c1b904bff6ff0d"
-    },
-    {
-      "id": "md-eep-status45",
-      "head": "e4451fc710650c950e6bad74b4ae9bfdcf2a79c0"
-    },
-    {
-      "id": "md-eep-read45",
-      "head": "3a1841b721fceb49c26df32d75c3defb95d8d860"
-    },
-    {
-      "id": "md-eep-address",
-      "head": "6f71cdc9e309ab1b4c573877b90a5980b86c3c8b"
-    },
-    {
-      "id": "md-eep-byte-pack",
-      "head": "cebb96867d2cf203212f157d6cf71a95a1f38180"
+      "id": "snes-bank-test",
+      "head": "bae0fc3528c3021da0dfa9be7f0d0f20750c9308"
     }
   ]
 }

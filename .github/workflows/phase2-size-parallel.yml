@@ -2,7 +2,7 @@ name: Phase 2 parallel independent size candidates
 
 on:
   push:
-    branches: [experiment/size-reduction-phase2]
+    branches: [experiment/size-reduction-phase2, experiment/size-elf-analysis-test]
     paths:
       - '.github/size-parallel-request.json'
   workflow_dispatch:
@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: phase2-size-measurement
+  group: ${{ github.ref_name == 'experiment/size-elf-analysis-test' && 'phase2-elf-analysis-test' || 'phase2-size-measurement' }}
   cancel-in-progress: false
 
 jobs:
@@ -107,6 +107,7 @@ jobs:
             $sizeTool = Join-Path $gcc[0].DirectoryName 'avr-size.exe'
             $report.compiler_version = ($version -join ' ')
             $previousFlash = $null
+            $baselineSymbols = Join-Path $out ($base.Substring(0,7) + '-symbols.json')
             foreach ($ref in $refs) {
               $short = $ref.Substring(0,7)
               $row = [ordered]@{commit=$ref; subject=''; status='failed'; flash=$null; ram=$null; delta_previous=$null; delta_base=$null; classification='unavailable'; error=$null}
@@ -156,6 +157,15 @@ jobs:
                 $row.flash = [int]$flash
                 $row.ram = [int]$ram
                 $row.status = 'ok'
+                try {
+                  $analysisArgs = @((Join-Path $repo '.github/scripts/size-elf-analysis.py'), '--elf', $elf, '--bin-dir', $gcc[0].DirectoryName, '--out', $out, '--short', $short)
+                  if ($ref -ne $base) { $analysisArgs += @('--baseline', $baselineSymbols) }
+                  & python @analysisArgs
+                  $row.elf_analysis = Get-Content -LiteralPath (Join-Path $out "$short-elf-analysis.json") -Raw | ConvertFrom-Json
+                } catch {
+                  $row.elf_analysis = @{status='error'; error=$_.Exception.Message}
+                  Write-Warning "ELF analysis failed for $short : $($_.Exception.Message)"
+                }
                 if ($ref -eq $base) {
                   $row.classification = 'baseline'
                   $row.delta_base = 0
@@ -264,7 +274,9 @@ jobs:
           $id = [string]$report.request.id
           if ($id -notmatch '^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$') { $id = 'invalid-request' }
           Copy-Item -LiteralPath $file -Destination (Join-Path $dest "$id-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT).json")
-          Copy-Item -LiteralPath $file -Destination (Join-Path $dest 'latest.json') -Force
+          if ($env:GITHUB_REF_NAME -ne 'experiment/size-elf-analysis-test') {
+            Copy-Item -LiteralPath $file -Destination (Join-Path $dest 'latest.json') -Force
+          }
           git -C $worktree config user.name 'github-actions[bot]'
           git -C $worktree config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git -C $worktree add -- size-measurements
