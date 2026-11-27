@@ -1588,7 +1588,7 @@ void readROM_SNES() {
     for (int bank = 0; bank < 96; bank++) {
       int currBank = bank < 64 ? bank : bank + 64;
       // Dump the bytes to SD 512B at a time
-      for (long currByte = 32768; currByte < 65536; currByte += 512) {
+      for (uint16_t currByte = 32768; currByte != 0; currByte += 512) {
         for (int c = 0; c < 512; c++) {
           sdBuffer[c] = readBank_SNES(currBank, currByte + c);
         }
