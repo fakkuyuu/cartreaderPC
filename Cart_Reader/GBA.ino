@@ -1947,6 +1947,7 @@ void readBlock_EEP(word startAddress, word eepSize) {
   setupEepromPins_GBA();
 
   // Read 64*8=512 bytes
+  byte* output = sdBuffer;
   for (word currAddr = startAddress; currAddr < startAddress + 64; currAddr++) {
     // Set CS_ROM(PH3) to LOW
     PORTH &= ~(1 << 3);
@@ -2029,7 +2030,7 @@ void readBlock_EEP(word startAddress, word eepSize) {
     for (byte j = 0; j < 64; j += 8) {
       byte packed = 0;
       for (byte bit = 0; bit < 8; ++bit) packed = (packed << 1) | tempBits[j + bit];
-      sdBuffer[((currAddr - startAddress) * 8) + (j / 8)] = packed;
+      *output++ = packed;
     }
   }
 }
