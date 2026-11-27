@@ -23,3 +23,4 @@ Final independent run 46006317690. Baseline 205616 / 6095. Flash/RAM byte deltas
 
 Only one accepted endpoint, 70552c6ba5b59a1ec4519961b70fe56bd825b9f8. Integrated firmware source tree verified identical to measured endpoint. 205608 B Flash / 6087 B static RAM. GB standalone save filename creation not hardware tested.
 Decision revised at user request: gb-rom-path and gba-rom-path accepted for static RAM. Cumulative firmware 9d7615d371e506b830e1c1a435c4a2971364de93. Combined size measurement requested.
+Confirmed cumulative run 46007432003: 03f374d baseline 205608/6087, 9474789 GB 205608/6073, 9d7615d GB+GBA 205608/6059. Additional RAM saving 28 B. Full round vs 2d013d2: Flash -8 B, static RAM -36 B. Hardware untested.
