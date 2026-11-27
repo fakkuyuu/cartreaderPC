@@ -1680,6 +1680,195 @@ uint8_t pageMenu(const __FlashStringHelper* question, const char* const* menuStr
 }
 
 // All included slots
+typedef void (*SystemMenuActionR51)();
+struct SystemMenuEntryR51 {
+  SystemMenuActionR51 setup;
+  SystemMenuActionR51 menu;
+};
+
+#ifdef ENABLE_NES
+static void enterNesSystemMenuR51() {
+  mode = CORE_NES;
+  clearAndUpdateDisplay();
+  setup_NES();
+  for (size_t c = 0; c < 512; c++) {
+    read_prg_byte(0x8000 + c);
+    read_prg_byte(0xE000 + c);
+  }
+  getMapping();
+  checkStatus_NES();
+  nesMenu();
+}
+#endif
+
+
+#ifdef ENABLE_SNES
+static void enterSnesSystemMenuR51() {
+  PcConsole.println(F("[Menu] entering SNES"));
+  snsMenu();
+}
+#endif
+
+
+#ifdef ENABLE_WS
+static void enterWsSystemMenuR51() {
+  clearAndUpdateDisplay();
+  if (!setup_WS()) return;
+  mode = CORE_WS;
+  wsMenu();
+}
+#endif
+
+
+#ifdef ENABLE_NGP
+static void enterNgpSystemMenuR51() {
+  clearAndUpdateDisplay();
+  setup_NGP();
+  mode = CORE_NGP;
+}
+#endif
+
+
+static const SystemMenuEntryR51 systemMenuActionsR51[] PROGMEM = {
+#ifdef ENABLE_GBX
+  { nullptr, gbxMenu },
+#endif
+#ifdef ENABLE_NES
+  { nullptr, enterNesSystemMenuR51 },
+#endif
+#ifdef ENABLE_SNES
+  { nullptr, enterSnesSystemMenuR51 },
+#endif
+#ifdef ENABLE_N64
+  { nullptr, n64Menu },
+#endif
+#ifdef ENABLE_MD
+  { nullptr, mdMenu },
+#endif
+#ifdef ENABLE_SMS
+  { nullptr, smsMenu },
+#endif
+#ifdef ENABLE_PCE
+  { nullptr, pcsMenu },
+#endif
+#ifdef ENABLE_WS
+  { nullptr, enterWsSystemMenuR51 },
+#endif
+#ifdef ENABLE_NGP
+  { nullptr, enterNgpSystemMenuR51 },
+#endif
+#ifdef ENABLE_INTV
+  { setup_INTV, intvMenu },
+#endif
+#ifdef ENABLE_COLV
+  { setup_COL, colMenu },
+#endif
+#ifdef ENABLE_VBOY
+  { setup_VBOY, vboyMenu },
+#endif
+#ifdef ENABLE_WSV
+  { setup_WSV, wsvMenu },
+#endif
+#ifdef ENABLE_PCW
+  { setup_PCW, pcwMenu },
+#endif
+#ifdef ENABLE_2600
+  { setup_2600, a2600Menu },
+#endif
+#ifdef ENABLE_ODY2
+  { setup_ODY2, ody2Menu },
+#endif
+#ifdef ENABLE_ARC
+  { setup_ARC, arcMenu },
+#endif
+#ifdef ENABLE_FAIRCHILD
+  { setup_FAIRCHILD, fairchildMenu },
+#endif
+#ifdef ENABLE_SUPRACAN
+  { nullptr, setup_SuprAcan },
+#endif
+#ifdef ENABLE_MSX
+  { setup_MSX, msxMenu },
+#endif
+#ifdef ENABLE_POKE
+  { setup_POKE, pokeMenu },
+#endif
+#ifdef ENABLE_LOOPY
+  { setup_LOOPY, loopyMenu },
+#endif
+#ifdef ENABLE_C64
+  { setup_C64, c64Menu },
+#endif
+#ifdef ENABLE_5200
+  { setup_5200, a5200Menu },
+#endif
+#ifdef ENABLE_7800
+  { setup_7800, a7800Menu },
+#endif
+#ifdef ENABLE_JAGUAR
+  { setup_Jag, jagMenu },
+#endif
+#ifdef ENABLE_LYNX
+  { setup_LYNX, lynxMenu },
+#endif
+#ifdef ENABLE_VECTREX
+  { setup_VECTREX, vectrexMenu },
+#endif
+#ifdef ENABLE_ATARI8
+  { setup_ATARI8, atari8Menu },
+#endif
+#ifdef ENABLE_BALLY
+  { setup_BALLY, ballyMenu },
+#endif
+#ifdef ENABLE_LJ
+  { setup_LJ, ljMenu },
+#endif
+#ifdef ENABLE_LJPRO
+  { setup_LJPRO, ljproMenu },
+#endif
+#ifdef ENABLE_PV1000
+  { setup_PV1000, pv1000Menu },
+#endif
+#ifdef ENABLE_VIC20
+  { setup_VIC20, vic20Menu },
+#endif
+#ifdef ENABLE_LEAP
+  { setup_LEAP, leapMenu },
+#endif
+#ifdef ENABLE_RCA
+  { setup_RCA, rcaMenu },
+#endif
+#ifdef ENABLE_TI99
+  { setup_TI99, ti99Menu },
+#endif
+#ifdef ENABLE_PYUUTA
+  { setup_PYUUTA, pyuutaMenu },
+#endif
+#ifdef ENABLE_TRS80
+  { setup_TRS80, trs80Menu },
+#endif
+#ifdef ENABLE_VSMILE
+  { setup_VSMILE, vsmileMenu },
+#endif
+#ifdef ENABLE_FLASH8
+#ifdef ENABLE_VSELECT
+  { setup_FlashVoltage, flashMenu },
+#else
+  { nullptr, flashMenu },
+#endif
+#endif
+#if (defined(ENABLE_CPS3) && defined(ENABLE_FLASH8) && defined(ENABLE_FLASH16))
+  { nullptr, cpsMenu },
+#endif
+#ifdef ENABLE_SELFTEST
+  { nullptr, selfTest },
+#endif
+  { nullptr, aboutScreen },
+  { nullptr, resetArduino }
+};
+static_assert((sizeof(systemMenuActionsR51) / sizeof(systemMenuActionsR51[0])) == SYSTEM_MENU_TOTAL,
+              "systemMenuActionsR51 must follow SYSTEM_MENU");
+
 void mainMenu() {
   // wait for user choice to come back from the question box menu
   switch (pageMenu(F("OPEN SOURCE CART READER"), modeOptions, SYSTEM_MENU_TOTAL)) {
@@ -4712,166 +4901,344 @@ page:
 /******************************************
   Main loop
 *****************************************/
-void loop() {
-  switch (mode) {
+typedef void (*CoreLoopHandler)();
+static const CoreLoopHandler coreLoopHandlers[] PROGMEM = {
 #ifdef ENABLE_N64
-    case CORE_N64_CART: return n64CartMenu();
-    case CORE_N64_CONTROLLER: return n64ControllerMenu();
+  n64CartMenu,
+  n64ControllerMenu,
 #endif
 #ifdef ENABLE_SNES
-    case CORE_SNES: return snesMenu();
+  snesMenu,
 #endif
 #if (defined(ENABLE_SFM) && defined(ENABLE_SNES))
-    case CORE_SFM: return sfmMenu();
+  sfmMenu,
 #ifdef ENABLE_FLASH
-    case CORE_SFM_FLASH: return sfmFlashMenu();
+  sfmFlashMenu,
 #endif
-    case CORE_SFM_GAME: return sfmGameOptions();
+  sfmGameOptions,
 #endif
 #ifdef ENABLE_GBX
-    case CORE_GB: return gbMenu();
-    case CORE_GBA: return gbaMenu();
-    case CORE_GBM: return gbmMenu();
-#if defined(ENABLE_FLASH)
-    case CORE_GB_GBSMART: return gbSmartMenu();
-    case CORE_GB_GBSMART_FLASH: return gbSmartFlashMenu();
-    case CORE_GB_GBSMART_GAME: return gbSmartGameOptions();
+  gbMenu,
+  gbaMenu,
+  gbmMenu,
+#ifdef ENABLE_FLASH
+  gbSmartMenu,
+  gbSmartFlashMenu,
+  gbSmartGameOptions,
 #endif
 #endif
 #ifdef ENABLE_FLASH8
-    case CORE_FLASH8: return flashromMenu8();
+  flashromMenu8,
 #ifdef ENABLE_FLASH16
-    case CORE_FLASH16: return flashromMenu16();
-    case CORE_EPROM: return epromMenu();
+  flashromMenu16,
+  epromMenu,
 #endif
 #endif
 #ifdef ENABLE_MD
-    case CORE_MD_CART: return mdCartMenu();
-    case CORE_SEGA_CD: return segaCDMenu();
+  mdCartMenu,
+  segaCDMenu,
 #endif
 #ifdef ENABLE_PCE
-    case CORE_PCE: return pceMenu();
+  pceMenu,
 #endif
 #if (defined(ENABLE_SV) && defined(ENABLE_SNES))
-    case CORE_SV: return svMenu();
+  svMenu,
 #endif
 #ifdef ENABLE_NES
-    case CORE_NES: return nesMenu();
+  nesMenu,
 #endif
 #ifdef ENABLE_SMS
-    case CORE_SMS: return smsMenu();
+  smsMenu,
 #endif
 #ifdef ENABLE_WS
-    case CORE_WS: return wsMenu();
+  wsMenu,
 #endif
 #ifdef ENABLE_NGP
-    case CORE_NGP: return ngpMenu();
+  ngpMenu,
 #endif
 #ifdef ENABLE_INTV
-    case CORE_INTV: return intvMenu();
+  intvMenu,
 #endif
 #ifdef ENABLE_COLV
-    case CORE_COL: return colMenu();
+  colMenu,
 #endif
 #ifdef ENABLE_VBOY
-    case CORE_VBOY: return vboyMenu();
+  vboyMenu,
 #endif
 #ifdef ENABLE_WSV
-    case CORE_WSV: return wsvMenu();
+  wsvMenu,
 #endif
 #ifdef ENABLE_PCW
-    case CORE_PCW: return pcwMenu();
+  pcwMenu,
 #endif
 #ifdef ENABLE_ODY2
-    case CORE_ODY2: return ody2Menu();
+  ody2Menu,
 #endif
 #ifdef ENABLE_ARC
-    case CORE_ARC: return arcMenu();
+  arcMenu,
 #endif
 #ifdef ENABLE_FAIRCHILD
-    case CORE_FAIRCHILD: return fairchildMenu();
+  fairchildMenu,
 #endif
 #ifdef ENABLE_SUPRACAN
-    case CORE_SUPRACAN: return suprAcanMenu();
+  suprAcanMenu,
 #endif
 #ifdef ENABLE_MSX
-    case CORE_MSX: return msxMenu();
+  msxMenu,
 #endif
 #ifdef ENABLE_POKE
-    case CORE_POKE: return pokeMenu();
+  pokeMenu,
 #endif
 #ifdef ENABLE_LOOPY
-    case CORE_LOOPY: return loopyMenu();
+  loopyMenu,
 #endif
 #ifdef ENABLE_C64
-    case CORE_C64: return c64Menu();
+  c64Menu,
 #endif
 #ifdef ENABLE_2600
-    case CORE_2600: return a2600Menu();
+  a2600Menu,
 #endif
 #ifdef ENABLE_5200
-    case CORE_5200: return a5200Menu();
+  a5200Menu,
 #endif
 #ifdef ENABLE_7800
-    case CORE_7800: return a7800Menu();
-#endif
-#ifdef ENABLE_LYNX
-    case CORE_LYNX: return lynxMenu();
-#endif
-#ifdef ENABLE_VECTREX
-    case CORE_VECTREX: return vectrexMenu();
+  a7800Menu,
 #endif
 #ifdef ENABLE_JAGUAR
-    case CORE_JAGUAR: return jagMenu();
+  jagMenu,
+#endif
+#ifdef ENABLE_LYNX
+  lynxMenu,
+#endif
+#ifdef ENABLE_VECTREX
+  vectrexMenu,
 #endif
 #if (defined(ENABLE_ST) && defined(ENABLE_SNES))
-    case CORE_ST: return stMenu();
+  stMenu,
 #endif
 #if (defined(ENABLE_GPC) && defined(ENABLE_SNES))
-    case CORE_GPC: return gpcMenu();
+  gpcMenu,
 #endif
 #ifdef ENABLE_ATARI8
-    case CORE_ATARI8: return atari8Menu();
+  atari8Menu,
 #endif
 #ifdef ENABLE_BALLY
-    case CORE_BALLY: return ballyMenu();
+  ballyMenu,
 #endif
 #ifdef ENABLE_LJ
-    case CORE_LJ: return ljMenu();
+  ljMenu,
 #endif
 #ifdef ENABLE_LJPRO
-    case CORE_LJPRO: return ljproMenu();
+  ljproMenu,
 #endif
 #ifdef ENABLE_PV1000
-    case CORE_PV1000: return pv1000Menu();
+  pv1000Menu,
 #endif
 #ifdef ENABLE_VIC20
-    case CORE_VIC20: return vic20Menu();
+  vic20Menu,
 #endif
 #ifdef ENABLE_LEAP
-    case CORE_LEAP: return leapMenu();
+  leapMenu,
 #endif
 #ifdef ENABLE_RCA
-    case CORE_RCA: return rcaMenu();
+  rcaMenu,
 #endif
 #ifdef ENABLE_TI99
-    case CORE_TI99: return ti99Menu();
+  ti99Menu,
 #endif
 #ifdef ENABLE_PYUUTA
-    case CORE_PYUUTA: return pyuutaMenu();
+  pyuutaMenu,
 #endif
 #ifdef ENABLE_TRS80
-    case CORE_TRS80: return trs80Menu();
+  trs80Menu,
 #endif
 #ifdef ENABLE_VSMILE
-    case CORE_VSMILE: return vsmileMenu();
+  vsmileMenu,
 #endif
 #if (defined(ENABLE_CPS3) && defined(ENABLE_FLASH8) && defined(ENABLE_FLASH16))
-    case CORE_CPS3_CART: return flashromCPS_Cartridge();
-    case CORE_CPS3_128SIMM: return flashromCPS_SIMM2x8();
-    case CORE_CPS3_64SIMM: return flashromCPS_SIMM4x8();
+  flashromCPS_Cartridge,
+  flashromCPS_SIMM4x8,
+  flashromCPS_SIMM2x8,
+  nullptr,
+  nullptr,
 #endif
-    case CORE_MAX: return resetArduino();
+  resetArduino
+};
+static_assert((sizeof(coreLoopHandlers) / sizeof(coreLoopHandlers[0])) == (CORE_MAX + 1),
+              "coreLoopHandlers must follow the CORES enum");
+
+typedef void (*CoreLoopHandler)();
+static const CoreLoopHandler coreLoopHandlers[] PROGMEM = {
+#ifdef ENABLE_N64
+  n64CartMenu,
+  n64ControllerMenu,
+#endif
+#ifdef ENABLE_SNES
+  snesMenu,
+#endif
+#if (defined(ENABLE_SFM) && defined(ENABLE_SNES))
+  sfmMenu,
+#ifdef ENABLE_FLASH
+  sfmFlashMenu,
+#endif
+  sfmGameOptions,
+#endif
+#ifdef ENABLE_GBX
+  gbMenu,
+  gbaMenu,
+  gbmMenu,
+#ifdef ENABLE_FLASH
+  gbSmartMenu,
+  gbSmartFlashMenu,
+  gbSmartGameOptions,
+#endif
+#endif
+#ifdef ENABLE_FLASH8
+  flashromMenu8,
+#ifdef ENABLE_FLASH16
+  flashromMenu16,
+  epromMenu,
+#endif
+#endif
+#ifdef ENABLE_MD
+  mdCartMenu,
+  segaCDMenu,
+#endif
+#ifdef ENABLE_PCE
+  pceMenu,
+#endif
+#if (defined(ENABLE_SV) && defined(ENABLE_SNES))
+  svMenu,
+#endif
+#ifdef ENABLE_NES
+  nesMenu,
+#endif
+#ifdef ENABLE_SMS
+  smsMenu,
+#endif
+#ifdef ENABLE_WS
+  wsMenu,
+#endif
+#ifdef ENABLE_NGP
+  ngpMenu,
+#endif
+#ifdef ENABLE_INTV
+  intvMenu,
+#endif
+#ifdef ENABLE_COLV
+  colMenu,
+#endif
+#ifdef ENABLE_VBOY
+  vboyMenu,
+#endif
+#ifdef ENABLE_WSV
+  wsvMenu,
+#endif
+#ifdef ENABLE_PCW
+  pcwMenu,
+#endif
+#ifdef ENABLE_ODY2
+  ody2Menu,
+#endif
+#ifdef ENABLE_ARC
+  arcMenu,
+#endif
+#ifdef ENABLE_FAIRCHILD
+  fairchildMenu,
+#endif
+#ifdef ENABLE_SUPRACAN
+  suprAcanMenu,
+#endif
+#ifdef ENABLE_MSX
+  msxMenu,
+#endif
+#ifdef ENABLE_POKE
+  pokeMenu,
+#endif
+#ifdef ENABLE_LOOPY
+  loopyMenu,
+#endif
+#ifdef ENABLE_C64
+  c64Menu,
+#endif
+#ifdef ENABLE_2600
+  a2600Menu,
+#endif
+#ifdef ENABLE_5200
+  a5200Menu,
+#endif
+#ifdef ENABLE_7800
+  a7800Menu,
+#endif
+#ifdef ENABLE_JAGUAR
+  jagMenu,
+#endif
+#ifdef ENABLE_LYNX
+  lynxMenu,
+#endif
+#ifdef ENABLE_VECTREX
+  vectrexMenu,
+#endif
+#if (defined(ENABLE_ST) && defined(ENABLE_SNES))
+  stMenu,
+#endif
+#if (defined(ENABLE_GPC) && defined(ENABLE_SNES))
+  gpcMenu,
+#endif
+#ifdef ENABLE_ATARI8
+  atari8Menu,
+#endif
+#ifdef ENABLE_BALLY
+  ballyMenu,
+#endif
+#ifdef ENABLE_LJ
+  ljMenu,
+#endif
+#ifdef ENABLE_LJPRO
+  ljproMenu,
+#endif
+#ifdef ENABLE_PV1000
+  pv1000Menu,
+#endif
+#ifdef ENABLE_VIC20
+  vic20Menu,
+#endif
+#ifdef ENABLE_LEAP
+  leapMenu,
+#endif
+#ifdef ENABLE_RCA
+  rcaMenu,
+#endif
+#ifdef ENABLE_TI99
+  ti99Menu,
+#endif
+#ifdef ENABLE_PYUUTA
+  pyuutaMenu,
+#endif
+#ifdef ENABLE_TRS80
+  trs80Menu,
+#endif
+#ifdef ENABLE_VSMILE
+  vsmileMenu,
+#endif
+#if (defined(ENABLE_CPS3) && defined(ENABLE_FLASH8) && defined(ENABLE_FLASH16))
+  flashromCPS_Cartridge,
+  flashromCPS_SIMM4x8,
+  flashromCPS_SIMM2x8,
+  nullptr,
+  nullptr,
+#endif
+  resetArduino
+};
+static_assert((sizeof(coreLoopHandlers) / sizeof(coreLoopHandlers[0])) == (CORE_MAX + 1),
+              "coreLoopHandlers must follow the CORES enum");
+
+void loop() {
+  const uint8_t currentMode = static_cast<uint8_t>(mode);
+  if (currentMode <= CORE_MAX) {
+    CoreLoopHandler handler;
+    memcpy_P(&handler, &coreLoopHandlers[currentMode], sizeof(handler));
+    if (handler) handler();
   }
 }
 
