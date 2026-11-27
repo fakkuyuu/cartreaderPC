@@ -1075,6 +1075,11 @@ static void dumpRomBlock_GB(word romAddress) {
   writeSdBufferBlock();
 }
 
+static void __attribute__((noinline)) writeMbc1PairR61_GB(byte a, byte b) {
+  writeByte_GB(0x4000, a);
+  writeByte_GB(0x2000, b);
+}
+
 void readROM_GB() {
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("GB", "ROM", romName, "gb");
@@ -1122,8 +1127,7 @@ void readROM_GB() {
 
     // Set ROM bank for MBC1M
     else if (romType == 0x101 || romType == 0x103) {
-      writeByte_GB(0x4000, currBank >> 4);
-      writeByte_GB(0x2000, (currBank & 0x1f) | (currBank >= 10 ? 0x10 : 0));
+      writeMbc1PairR61_GB(currBank >> 4, (currBank & 0x1f) | (currBank >= 10 ? 0x10 : 0));
     }
 
     // Set ROM bank for MBC6
@@ -1173,14 +1177,12 @@ void readROM_GB() {
       // Banks 0x20/0x40/0x60 are only accessible in mode 1 via 0x0000-0x3FFF.
       if (currBank == 0x20 || currBank == 0x40 || currBank == 0x60) {
         writeByte_GB(0x6000, 1);
-        writeByte_GB(0x4000, (currBank >> 5) & 0x03);
-        writeByte_GB(0x2000, 0);
+        writeMbc1PairR61_GB((currBank >> 5) & 0x03, 0);
         romAddress = 0x0000;
         endAddress = 0x3FFF;
       } else {
         writeByte_GB(0x6000, 0);
-        writeByte_GB(0x4000, (currBank >> 5) & 0x03);
-        writeByte_GB(0x2000, currBank & 0x1F);
+        writeMbc1PairR61_GB((currBank >> 5) & 0x03, currBank & 0x1F);
         romAddress = (currBank == 1) ? 0x0000 : 0x4000;
         endAddress = 0x7FFF;
       }
@@ -1997,8 +1999,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
         else
           writeByte_GB(0x6000, 0);
         //ROM Bank Number
-        writeByte_GB(0x4000, currBank >> 5);    // Set bits 5–6
-        writeByte_GB(0x2000, currBank & 0x1F);  // Set bits 0–4
+        writeMbc1PairR61_GB(currBank >> 5, currBank & 0x1F);
         // Set address region of selected bank
         if ((currBank == 0) || (currBank == 0x20) || (currBank == 0x40) || (currBank == 0x60)) {
           currAddr = 0x0;
@@ -2195,8 +2196,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
         else
           writeByte_GB(0x6000, 0);
         //ROM Bank Number
-        writeByte_GB(0x4000, currBank >> 5);    // Set bits 5–6
-        writeByte_GB(0x2000, currBank & 0x1F);  // Set bits 0–4
+        writeMbc1PairR61_GB(currBank >> 5, currBank & 0x1F);
         // Set address region of selected bank
         if ((currBank == 0) || (currBank == 0x20) || (currBank == 0x40) || (currBank == 0x60)) {
           currAddr = 0x0;
@@ -2229,8 +2229,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
             writeByte_GB(0x2100, bank);         // Set ROM bank
           } else {                              // MBC1
             writeByte_GB(0x6000, 0);            // Set ROM Mode
-            writeByte_GB(0x4000, bank >> 5);    // Set bits 5 & 6 (01100000) of ROM bank
-            writeByte_GB(0x2000, bank & 0x1F);  // Set bits 0 & 4 (00011111) of ROM bank
+            writeMbc1PairR61_GB(bank >> 5, bank & 0x1F);
           }
 
           if (bank > 1) {
@@ -2535,8 +2534,7 @@ bool writeCFI_GB() {
         writeByte_GB(0x2100, bank);         // Set ROM bank
       } else {                              // MBC1
         writeByte_GB(0x6000, 0);            // Set ROM Mode
-        writeByte_GB(0x4000, bank >> 5);    // Set bits 5 & 6 (01100000) of ROM bank
-        writeByte_GB(0x2000, bank & 0x1F);  // Set bits 0 & 4 (00011111) of ROM bank
+        writeMbc1PairR61_GB(bank >> 5, bank & 0x1F);
       }
 
       if (bank > 1) {
