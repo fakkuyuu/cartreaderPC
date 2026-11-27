@@ -3508,11 +3508,12 @@ void readCHR(bool readrom) {
         case 534:
           banks = chrBanks4K * 4;
           initMmc3OuterBanks_NES();
+          const auto mapperForMmc3 = mapper;
           for (size_t i = 0; i < banks; i++) {
-            if (mapper == 12) {
+            if (mapperForMmc3 == 12) {
               write_prg_byte(0x4132, (i & 0x100) >> 8 | (i & 0x100) >> 4);
             }
-            if (mapper == 37) {
+            if (mapperForMmc3 == 37) {
               if (i == 0) {
                 write_prg_byte(0x6000, 0);
               } else if (i == 64) {
@@ -3521,51 +3522,51 @@ void readCHR(bool readrom) {
                 write_prg_byte(0x6000, 4);
               }
             }
-            if (mapper == 44) {
+            if (mapperForMmc3 == 44) {
               write_prg_byte(0xA001, 0x80 | ((i >> 7) & 0x07));
             }
-            if (mapper == 47) {
+            if (mapperForMmc3 == 47) {
               write_prg_byte(0x6800 + ((i & 0x180) >> 7), 0);
             }
-            if (mapper == 49) {
+            if (mapperForMmc3 == 49) {
               write_prg_byte(0x6800, ((i & 0x180) >> 1) | 1);
             }
-            if (mapper == 52) {
+            if (mapperForMmc3 == 52) {
               write_prg_byte(0x6000, (i & 0x180) >> 3 | (i & 0x200) >> 7);
             }
-            if ((mapper == 115) || (mapper == 248)) {
+            if ((mapperForMmc3 == 115) || (mapperForMmc3 == 248)) {
               write_prg_byte(0x6001, (i & 0x100) >> 8);  // A18
             }
-            if (mapper == 116) {
+            if (mapperForMmc3 == 116) {
               write_prg_byte(0x4100, 0x01 | ((i & 0x100) >> 6));  // A18
             }
-            if (mapper == 126) {
+            if (mapperForMmc3 == 126) {
               write_prg_byte(0x6800, (i & 0x200) >> 5 | (i & 0x100) >> 3);  // select outer bank
             }
-            if (mapper == 134) {
+            if (mapperForMmc3 == 134) {
               write_prg_byte(0x6000, (i & 0x200) >> 4);  // A19
               write_prg_byte(0x6001, (i & 0x180) >> 3);  // A18-17
             }
-            if (mapper == 176) {
+            if (mapperForMmc3 == 176) {
               write_prg_byte(0x5FF2, (i & 0x700) >> 3);  // outer 256k bank
             }
-            if ((mapper == 224) || (mapper == 268) || (mapper == 995) || (mapper == 996) || (mapper == 997)) {
+            if ((mapperForMmc3 == 224) || (mapperForMmc3 == 268) || (mapperForMmc3 == 995) || (mapperForMmc3 == 996) || (mapperForMmc3 == 997)) {
               write_prg_byte(0x5000, ((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
               write_prg_byte(0x6000, ((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
             }
-            if (mapper == 315) {
+            if (mapperForMmc3 == 315) {
               write_prg_byte(0x6800, ((i & 0x100) >> 8) | ((i & 0x80) >> 6) | ((i & 0x40) >> 3));
             }
-            if (mapper == 351) {
+            if (mapperForMmc3 == 351) {
               write_prg_byte(0x5000, (i >> 1) & 0xFC);
             }
-            if (mapper == 366) {
+            if (mapperForMmc3 == 366) {
               write_prg_byte(0x6800 + ((i & 0x380) >> 3), i);
             }
-            if ((mapper == 422) || (mapper == 534)) {
+            if ((mapperForMmc3 == 422) || (mapperForMmc3 == 534)) {
               write_prg_byte(0x6800, (i & 0x380) >> 4);
             }
-            if ((mapper == 998) || (mapper == 999)) {
+            if ((mapperForMmc3 == 998) || (mapperForMmc3 == 999)) {
               write_prg_byte(0x5000, (i & 0x80) >> 4);
               write_prg_byte(0x6000, (i & 0x80) >> 4);
             }
