@@ -1122,13 +1122,8 @@ void readROM_GB() {
 
     // Set ROM bank for MBC1M
     else if (romType == 0x101 || romType == 0x103) {
-      if (currBank < 10) {
-        writeByte_GB(0x4000, currBank >> 4);
-        writeByte_GB(0x2000, (currBank & 0x1f));
-      } else {
-        writeByte_GB(0x4000, currBank >> 4);
-        writeByte_GB(0x2000, 0x10 | (currBank & 0x1f));
-      }
+      writeByte_GB(0x4000, currBank >> 4);
+      writeByte_GB(0x2000, (currBank & 0x1f) | (currBank >= 10 ? 0x10 : 0));
     }
 
     // Set ROM bank for MBC6
