@@ -1100,9 +1100,13 @@ void getCartInfo_MD() {
     romNameLockon[copyToRomName_MD(romNameLockon, sdBuffer, sizeof(romNameLockon) - 1)] = 0;
 
     switch (SnKmode) {
-      case 2: strcat(romName, "SONIC1"); break;
-      case 3: strcat(romName, "SONIC2"); break;
-      case 4: strcat(romName, "SONIC3"); break;
+      case 2: case 3: case 4: {
+        char *end = romName + strlen(romName);
+        memcpy(end, "SONIC", 5);
+        end[5] = '1' + (SnKmode - 2);
+        end[6] = 0;
+        break;
+      }
       case 5: strcat(romName, romNameLockon); break;
     }
   }
