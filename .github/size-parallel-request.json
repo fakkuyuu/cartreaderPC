@@ -1,40 +1,21 @@
 {
-  "id": "parallel-043",
+  "id": "parallel-043-integration",
   "base": "c269d9613a53c22b8e54e6832d34a7f22aabd70f",
   "expected_base_flash": 207114,
   "expected_base_ram": 6095,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "ngp-rom-index",
-      "head": "1b69b4124c4d060c4d021749635200a1531a49d8"
+      "id": "integration-1-msx-scc",
+      "head": "fdc42387246f59f9b663d2830669db3f75493388"
     },
     {
-      "id": "ngp-header-hex",
-      "head": "3a9954ae4e6e4aadd95a0342c293fcdb7b37d150"
+      "id": "integration-2-ngp-hex",
+      "head": "8f8cf780d0b84e53bc65aa9f55d8ff62d02cfa7b"
     },
     {
-      "id": "ws-rom-index",
-      "head": "13eccb49bc2ffb57d207ffd9d7556e8e2aafbb62"
-    },
-    {
-      "id": "ws-header-index",
-      "head": "e8b0f28958519fb4e0afbf2f4d332685c668364d"
-    },
-    {
-      "id": "gba-blank-index",
-      "head": "762bc135970841271a03601980a98067aeb087b5"
-    },
-    {
-      "id": "msx-scc-loop",
-      "head": "d78674472c803ce816b18af12d05016c207d005e"
-    },
-    {
-      "id": "snes-special-lorom-index",
-      "head": "2e856ecc160f4c90a8212e3f0be3fad0f8e88235"
-    },
-    {
-      "id": "n64-mpk-close",
-      "head": "fb4eb0c748869d275967ca2b416ea2ccfa594ac1"
+      "id": "integration-3-ws-rom-index",
+      "head": "e138f8d3dc99efc32b5bf2ea3148d0e5e7b6ef64"
     }
   ]
 }
