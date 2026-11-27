@@ -1175,6 +1175,11 @@ void writeSRAM_GBA(boolean browseFile, uint32_t sramSize, uint32_t pos) {
   }
 }
 
+static void showSaveVerifyResult_GBA(unsigned long errors) {
+  if (errors == 0) showVerifiedAndUpdate();
+  else showVerificationErrorCount(errors);
+}
+
 unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
   //open file on sd card
   if (openSelectedFileForRead()) {
@@ -1199,11 +1204,7 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
     // Close the file:
     closeCurrentFile();
 
-    if (writeErrors == 0) {
-      showVerifiedAndUpdate();
-    } else {
-      showVerificationErrorCount(writeErrors);
-    }
+    showSaveVerifyResult_GBA(writeErrors);
 
     return writeErrors;
   } else {
@@ -2080,11 +2081,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
   }
   closeCurrentFile();
 
-  if (wrError == 0) {
-    showVerifiedAndUpdate();
-  } else {
-    showVerificationErrorCount(wrError);
-  }
+  showSaveVerifyResult_GBA(wrError);
 
   return wrError;
 }
