@@ -2622,7 +2622,9 @@ void readEepromByte(word address) {
   if (eepType == 2)
     EepromInit(1);  // Disable EEPROM
   // OR 8 bits into byte
-  eeptemp = eepbit[0] << 7 | eepbit[1] << 6 | eepbit[2] << 5 | eepbit[3] << 4 | eepbit[4] << 3 | eepbit[5] << 2 | eepbit[6] << 1 | eepbit[7];
+  eeptemp = 0;
+  for (byte i = 0; i < 8; i++)
+    eeptemp = (eeptemp << 1) | eepbit[i];
   sdBuffer[addrlo] = eeptemp;
 }
 
