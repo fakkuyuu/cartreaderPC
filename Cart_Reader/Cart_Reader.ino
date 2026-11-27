@@ -399,6 +399,10 @@ bool flashSwitchLastBits;
 // Variable to count errors
 unsigned long writeErrors;
 
+void __attribute__((noinline)) setUnknownPrefixR49(char* dest) {
+  memcpy_P(dest, PSTR("UNKNOWN"), 7);
+}
+
 bool __attribute__((noinline)) accessoryWriteOkR48() {
   return writeErrors == 0;
 }
