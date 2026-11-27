@@ -1730,21 +1730,20 @@ void setCHRSize() {
 void printRamSize_NES(int index) {
   display_Clear();
   print_Msg(F("RAM Size: "));
+  if (mapper == 19 && index == 2) {
+    println_Msg(F("128"));
+    return;
+  }
+  uint16_t size = pgm_read_byte(&(RAM[index]));
   if (mapper == 0)
-    println_Msg(pgm_read_byte(&(RAM[index])) / 4);
+    size /= 4;
   else if (mapper == 16)
-    println_Msg(pgm_read_byte(&(RAM[index])) * 32);
-  else if (mapper == 19) {
-    if (index == 2)
-      println_Msg(F("128"));
-    else
-      println_Msg(pgm_read_byte(&(RAM[index])));
-  } else if ((mapper == 159) || (mapper == 80))
-    println_Msg(pgm_read_byte(&(RAM[index])) * 16);
+    size *= 32;
+  else if ((mapper == 159) || (mapper == 80))
+    size *= 16;
   else if (mapper == 82)
-    println_Msg(index * 5);
-  else
-    println_Msg(pgm_read_byte(&(RAM[index])));
+    size = index * 5;
+  println_Msg(size);
 }
 #endif
 
