@@ -399,6 +399,10 @@ bool flashSwitchLastBits;
 // Variable to count errors
 unsigned long writeErrors;
 
+bool __attribute__((noinline)) accessoryWriteOkR48() {
+  return writeErrors == 0;
+}
+
 // Operation mode
 CORES mode = CORE_MAX;
 

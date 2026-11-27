@@ -3911,7 +3911,7 @@ static void readAndShowFlashFileSize_N64() {
 
 static void showAccessoryFlashVerify_N64() __attribute__((noinline));
 static void showAccessoryFlashVerify_N64() {
-  if (writeErrors == 0) {
+  if (accessoryWriteOkR48()) {
     clearAndUpdateDisplay();
     println_Msg(FS(SharedFlashText::textVerfiedOK));
     printBlankLine();
