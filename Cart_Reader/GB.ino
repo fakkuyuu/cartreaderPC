@@ -263,23 +263,8 @@ void gbxMenu() {
             gbFlashCommand = chooseFlashMenuOption(F("Select Command Set"), menuOptionsGBFlashCommand, 3);
 
             // wait for user choice to come back from the question box menu
-            switch (gbFlashCommand) {
-              case 0:
-                selectedCommand = 0;
-                break;
-
-              case 1:
-                selectedCommand = 1;
-                break;
-
-              case 2:
-                selectedCommand = 2;
-                break;
-
-              case 3:
-                resetArduino();
-                break;
-            }
+            if (gbFlashCommand < 3) selectedCommand = gbFlashCommand;
+            else if (gbFlashCommand == 3) resetArduino();
 
             if (selectedMBC == 30) {
               //Flash GB Camera
