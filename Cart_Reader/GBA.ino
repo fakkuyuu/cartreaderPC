@@ -1812,6 +1812,12 @@ void writeEeprom_GBA(word eepSize) {
 }
 
 // Read eeprom to file
+static void readTimedEepromBlock_GBA(word address, word size) {
+  noInterrupts();
+  readBlock_EEP(address, size);
+  interrupts();
+}
+
 void readEeprom_GBA(word eepSize) {
   // Get name, add extension and convert to char array for sd lib
   createDbSaveFolder("GBA", "eep");
@@ -1825,10 +1831,7 @@ void readEeprom_GBA(word eepSize) {
   // Each block contains 8 Bytes, so for a 8KB eeprom 1024 blocks need to be read
   for (word currAddress = 0; currAddress < eepSize * 16; currAddress += 64) {
     // Disable interrupts for more uniform clock pulses
-    noInterrupts();
-    // Fill sd Buffer
-    readBlock_EEP(currAddress, eepSize);
-    interrupts();
+    readTimedEepromBlock_GBA(currAddress, eepSize);
 
     // Write sdBuffer to file
     writeSdBufferBlock();
@@ -2067,9 +2070,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
   // Fill sd Buffer
   for (word currAddress = 0; currAddress < eepSize * 16; currAddress += 64) {
     // Disable interrupts for more uniform clock pulses
-    noInterrupts();
-    readBlock_EEP(currAddress, eepSize);
-    interrupts();
+    readTimedEepromBlock_GBA(currAddress, eepSize);
 
     // Compare
     for (int currByte = 0; currByte < 512; currByte++) {
