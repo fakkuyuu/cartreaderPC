@@ -1075,8 +1075,7 @@ boolean compare_checksum_GBA() {
   print_Msg(FS(FSTRING_CHECKSUM));
   display_Update();
 
-  strcpy(fileName, romName);
-  strcat(fileName, ".gba");
+  strcpy_P(stpcpy(fileName, romName), PSTR(".gba"));
 
   // last used rom folder
   EEPROM_readAnything(0, foldern);
