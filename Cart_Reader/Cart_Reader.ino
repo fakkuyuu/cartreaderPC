@@ -420,6 +420,15 @@ void __attribute__((noinline)) setupSnesTailR49() {
   DDRJ |= (1 << 0);
 }
 
+void __attribute__((noinline)) setupSharedBusR49() {
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+  DDRL = 0xFF;
+  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  DDRJ |= (1 << 0);
+  DDRC = 0x00;
+}
+
 bool __attribute__((noinline)) accessoryWriteOkR48() {
   return writeErrors == 0;
 }
