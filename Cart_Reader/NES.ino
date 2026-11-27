@@ -2451,14 +2451,11 @@ void readPRG(bool readrom) {
 
       case 28:  // using 32k mode for inner and outer banks, switching only with outer
         banks = prgBanks16K / 2;
-        write_prg_byte(0x5000, 0x81);
-        write_prg_byte(0x8000, 0);
-        write_prg_byte(0x5000, 0x80);
-        write_prg_byte(0x8000, 0);
-        write_prg_byte(0x5000, 0x01);
-        write_prg_byte(0x8000, 0);
-        write_prg_byte(0x5000, 0);
-        write_prg_byte(0x8000, 0);
+        for (byte k = 4; k != 0; ) {
+          --k;
+          write_prg_byte(0x5000, ((k & 2) << 6) | (k & 1));
+          write_prg_byte(0x8000, 0);
+        }
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0x5000, 0x81);
           write_prg_byte(0x8000, i);
