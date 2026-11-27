@@ -212,8 +212,8 @@ void read_setup_PCW()
 
 // READ ROM BYTE WITH ADDITIONAL DELAY
 // NEEDED FOR PROBLEM CARTS TO SWITCH FROM ADDRESS TO DATA
-unsigned char read_rom_byte_PCW(unsigned long address)
-{
+static void latchAddressR41_PCW(unsigned long address) __attribute__((noinline));
+static void latchAddressR41_PCW(unsigned long address) {
   PORTL = (address >> 16) & 0xFF;
   PORTK = (address >> 8) & 0xFF;
   // Latch Address on AD0-AD7
@@ -221,6 +221,11 @@ unsigned char read_rom_byte_PCW(unsigned long address)
   LE_HIGH;                 // Latch Enable
   PORTC = address & 0xFF;  // A0-A7
   LE_LOW;                  // Address Latched
+}
+
+unsigned char read_rom_byte_PCW(unsigned long address)
+{
+  latchAddressR41_PCW(address);
   __asm__("nop\n\t"
           "nop\n\t");
   // Read Data on AD0-AD7
@@ -238,13 +243,7 @@ unsigned char read_rom_byte_PCW(unsigned long address)
 unsigned char read_ram_byte_1A_PCW(unsigned long address)
 {
   NAND_1A_LOW;
-  PORTL = (address >> 16) & 0xFF;
-  PORTK = (address >> 8) & 0xFF;
-  // Latch Address on AD0-AD7
-  ADDR_WRITE;
-  LE_HIGH;                 // Latch Enable
-  PORTC = address & 0xFF;  // A0-A7
-  LE_LOW;                  // Address Latched
+  latchAddressR41_PCW(address);
   __asm__("nop\n\t"
           "nop\n\t"
           "nop\n\t"
@@ -284,13 +283,7 @@ unsigned char read_ram_byte_1A_PCW(unsigned long address)
 unsigned char read_ram_byte_1B_PCW(unsigned long address)
 {
   NAND_1B_LOW;
-  PORTL = (address >> 16) & 0xFF;
-  PORTK = (address >> 8) & 0xFF;
-  // Latch Address on AD0-AD7
-  ADDR_WRITE;
-  LE_HIGH;                 // Latch Enable
-  PORTC = address & 0xFF;  // A0-A7
-  LE_LOW;                  // Address Latched
+  latchAddressR41_PCW(address);
   __asm__("nop\n\t"
           "nop\n\t"
           "nop\n\t"
@@ -323,13 +316,7 @@ unsigned char read_ram_byte_1B_PCW(unsigned long address)
 void write_ram_byte_1A_PCW(unsigned long address, unsigned char data)
 {
   NAND_1A_LOW;
-  PORTL = (address >> 16) & 0xFF;
-  PORTK = (address >> 8) & 0xFF;
-  // Latch Address on AD0-AD7
-  ADDR_WRITE;
-  LE_HIGH;                 // Latch Enable
-  PORTC = address & 0xFF;  // A0-A7
-  LE_LOW;                  // Address Latched
+  latchAddressR41_PCW(address);
   // Write Data on AD0-AD7 - WE LOW ~240-248ns
   WE_LOW_PCW;
   PORTC = data;
@@ -348,13 +335,7 @@ void write_ram_byte_1B_PCW(unsigned long address, unsigned char data)
   NAND_1A_LOW;
   NAND_1A_HIGH;
   NAND_1B_LOW;
-  PORTL = (address >> 16) & 0xFF;
-  PORTK = (address >> 8) & 0xFF;
-  // Latch Address on AD0-AD7
-  ADDR_WRITE;
-  LE_HIGH;                 // Latch Enable
-  PORTC = address & 0xFF;  // A0-A7
-  LE_LOW;                  // Address Latched
+  latchAddressR41_PCW(address);
   // Write Data on AD0-AD7 - WE LOW ~740ns
   WE_LOW_PCW;
   PORTC = data;
