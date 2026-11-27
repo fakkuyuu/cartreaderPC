@@ -1087,16 +1087,7 @@ void getCartInfo_MD() {
     //Change romName
     strcpy(romName, "SnK_");
 
-    for (byte c = 0; c < 48; c += 2) {
-      // split word
-      word myWord = readWord_MD((0x200150 + c) / 2);
-      byte loByte = myWord & 0xFF;
-      byte hiByte = myWord >> 8;
-
-      // write to buffer
-      sdBuffer[c] = hiByte;
-      sdBuffer[c + 1] = loByte;
-    }
+    readHeaderWords_MD(0x200150UL / 2, sdBuffer, 48);
     romNameLockon[copyToRomName_MD(romNameLockon, sdBuffer, sizeof(romNameLockon) - 1)] = 0;
 
     switch (SnKmode) {
