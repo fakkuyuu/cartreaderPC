@@ -2114,6 +2114,13 @@ static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {
   write_prg_byte(0x6001, b);
 }
 
+static void __attribute__((noinline)) writeOuter45R60_NES(byte prg, byte chr) {
+  write_prg_byte(0x6000, 0);
+  write_prg_byte(0x6000, prg);
+  write_prg_byte(0x6000, chr);
+  write_prg_byte(0x6000, 0x80);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2583,20 +2590,14 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i += 2) {   // 128K/256K/512K/1024K
           for (word address = 0x0; address < 0x2000; address += 512) {
             // set outer bank registers
-            write_prg_byte(0x6000, 0x00);               // CHR-OR
-            write_prg_byte(0x6000, (i & 0xC0));         // PRG-OR
-            write_prg_byte(0x6000, ((i >> 2) & 0xC0));  // CHR-AND,CHR-OR/PRG-OR
-            write_prg_byte(0x6000, 0x80);               // PRG-AND
+            writeOuter45R60_NES(i & 0xC0, (i >> 2) & 0xC0);
             // set inner bank registers
             writeMmc3PairR59_NES(6, i);
             dumpPRG(base, address);
           }
           for (word address = 0x2000; address < 0x4000; address += 512) {
             // set outer bank registers
-            write_prg_byte(0x6000, 0x00);                     // CHR-OR
-            write_prg_byte(0x6000, ((i + 1) & 0xC0));         // PRG-OR
-            write_prg_byte(0x6000, (((i + 1) >> 2) & 0xC0));  // CHR-AND,CHR-OR/PRG-OR
-            write_prg_byte(0x6000, 0x80);                     // PRG-AND
+            writeOuter45R60_NES((i + 1) & 0xC0, ((i + 1) >> 2) & 0xC0);
             // set inner bank registers
             writeMmc3PairR59_NES(7, i + 1);
             dumpPRG(base, address);
@@ -2604,10 +2605,7 @@ void readPRG(bool readrom) {
         }
         for (word address = 0x4000; address < 0x8000; address += 512) {  // Final 2 Banks ($C000-$FFFF)
           // set outer bank registers
-          write_prg_byte(0x6000, 0x00);  // CHR-OR
-          write_prg_byte(0x6000, 0xC0);  // PRG-OR
-          write_prg_byte(0x6000, 0xC0);  // CHR-AND,CHR-OR/PRG-OR
-          write_prg_byte(0x6000, 0x80);  // PRG-AND
+          writeOuter45R60_NES(0xC0, 0xC0);
           dumpPRG(base, address);
         }
         break;
@@ -3393,10 +3391,7 @@ void readPRG(bool readrom) {
 }
 
 static void setOuterChr45_NES(size_t i) {
-  write_prg_byte(0x6000, 0);                          // CHR-OR
-  write_prg_byte(0x6000, 0);                          // PRG-OR
-  write_prg_byte(0x6000, (((i / 256) << 4) | 0x0F));  // CHR-AND,CHR-OR/PRG-OR
-  write_prg_byte(0x6000, 0x80);                       // PRG-AND
+  writeOuter45R60_NES(0, ((i / 256) << 4) | 0x0F);
 }
 
 void readCHR(bool readrom) {
