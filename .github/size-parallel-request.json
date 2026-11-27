@@ -1,40 +1,13 @@
 {
-  "id": "parallel-051e",
+  "id": "round51-integrated-final",
   "base": "aa8a60f21fa2a13fd7505edd0fe6d0537d37c692",
   "expected_base_flash": 206116,
   "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "r51-core-loop-table",
-      "head": "45c666322ed94ee267d45adeb0da635ba9d7c1be"
-    },
-    {
-      "id": "r51-md-header-zero-fill",
-      "head": "c599493f608f0a265e95b7d9ca5acf4689956113"
-    },
-    {
-      "id": "r51-md-header-reader-crlf",
-      "head": "85adf37ae017876a105a594791bf3f2b278a1a3a"
-    },
-    {
-      "id": "r51-system-menu-table-crlf",
-      "head": "fb9bba3168836e3b59aeead93b25c1d4dad26f81"
-    },
-    {
-      "id": "r51-combined-menu-tables-crlf",
-      "head": "90ed5fa876d9e165f2754ed5a1b7cf823993de53"
-    },
-    {
-      "id": "r51-nes-prg-mapper-snapshot",
-      "head": "410c7b32e4dcb440edfc729522ce9366bf6866bf"
-    },
-    {
-      "id": "r51-nes-chr-mapper-snapshot-crlf",
-      "head": "ed68a6cf971a3a13a69774a0a90c117355f11c6a"
-    },
-    {
-      "id": "r51-nes-sequential-loops",
-      "head": "64f9f43895ba777cc5fa9e97d491a4db44eb9f9e"
+      "id": "round51-all-distinct-reductions",
+      "head": "10562f056651b82dd7a3dc30ec69517ca7a1f279"
     }
-  ]
+  ],
+  "endpoints_only": true
 }
