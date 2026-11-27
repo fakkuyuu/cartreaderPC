@@ -1,21 +1,40 @@
 {
+  "id": "parallel-048",
+  "base": "ff8d5619e7481ec681eec3594f56e87da9df63cc",
+  "expected_base_flash": 206456,
   "expected_base_ram": 6095,
-  "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
-  "id": "parallel-047-astra-integration",
-  "endpoints_only": true,
   "candidates": [
     {
-      "head": "833e7ccc8ba7fee5f2f426d06c104e57aacad811",
-      "id": "nes-pack"
+      "id": "accessory-error-test",
+      "head": "d064a578e47699c1099b67f637e6abdf5f14288d"
     },
     {
-      "head": "65d93e071b279b1202d6db55817378e566d95047",
-      "id": "nes-finish"
+      "id": "snes-lorom-callback",
+      "head": "45b1f86ece38f03374e60c52e15fef18a90da80b"
     },
     {
-      "head": "7d3300e732a6d7c7bfe0f711def0867c63c590ae",
-      "id": "nes-outer"
+      "id": "snes-srtc-bank",
+      "head": "6fbaf55db12b2437292562b3dc2528e049137146"
+    },
+    {
+      "id": "nes-eeprom-read-tail",
+      "head": "a6d104aa2a082af0c160843916d71748d100a6ac"
+    },
+    {
+      "id": "nes-eeprom-device-address",
+      "head": "24dfbc7cd181b08a501bf84437d7a14200f249c0"
+    },
+    {
+      "id": "msx-ascii8-read",
+      "head": "b95ef96ae780210faa4e572a32c35da01a49dad5"
+    },
+    {
+      "id": "msx-gm2-read",
+      "head": "7978e73d8ed05682025966d0cce73f1e233971a9"
+    },
+    {
+      "id": "msx-koei-write",
+      "head": "cc7c687c233844d392aa8e0ff6c6ed2f6192686d"
     }
-  ],
-  "expected_base_flash": 206616
+  ]
 }
