@@ -10,3 +10,4 @@ Base 7d5c3d0795c4baf07f7c74e6de678034b0d72675 (206628 B / 6095 B), HW3 FLASH OFF
 - nes-map 1ca50edf95069fdffda2a8b81765add0bcccd176
 - gba-header c8dd079a358c03e124cc6f9f932b1b3022fb85ab
 - msx-setup bc3f2123741fe7ba1a279b14db6b5f7825abda6a
+Independent run 45948309955: all eight bases 206628/6095. Flash deltas SV input +164, SV output +172, WS unlock -10, GB setup +10, MD header -2, NES map +86, GBA header 0, MSX setup 0. RAM delta zero throughout. Measuring WS then WS+MD.

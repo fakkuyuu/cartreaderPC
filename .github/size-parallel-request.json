@@ -1,40 +1,17 @@
 {
-  "id": "parallel-046-astra-fix",
+  "id": "parallel-046-astra-integration",
   "base": "7d5c3d0795c4baf07f7c74e6de678034b0d72675",
   "expected_base_flash": 206628,
   "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "sv-input",
-      "head": "b5d30f3fc86237c087509b903faf426dce56c846"
-    },
-    {
-      "id": "sv-output",
-      "head": "a3358c52fc1fe3e69a5539715364a2d1a9e42d6d"
-    },
-    {
-      "id": "ws-unlock",
+      "id": "ws",
       "head": "9fe5b5433c17bc8182cc4011edb64b3dbcaac1d3"
     },
     {
-      "id": "gb-setup",
-      "head": "955871ba560bce480b0ab5ef8b564d1b2539eb02"
-    },
-    {
-      "id": "md-header",
-      "head": "586e28c45887b430e5af301450a7653c296f731b"
-    },
-    {
-      "id": "nes-map",
-      "head": "592910746aeddec8889c310f62724faa333846c8"
-    },
-    {
-      "id": "gba-header",
-      "head": "e47688653fa8536ad83b8b89908c2b2ae0c4ba9b"
-    },
-    {
-      "id": "msx-setup",
-      "head": "e79eb1deec38355ee57a435c108551d7d29da72f"
+      "id": "ws-md",
+      "head": "8f9e9b46bfcaba8643f69cdd2afe159517e06226"
     }
-  ]
+  ],
+  "endpoints_only": true
 }
