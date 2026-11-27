@@ -1882,6 +1882,7 @@ void writeBlock_EEP(word startAddr, word eepSize) {
   __asm__("nop\n\t"
           "nop\n\t");
 
+  const byte* nextByte = sdBuffer;
   // Write 64*8=512 bytes
   for (word currAddr = startAddr; currAddr < startAddr + 64; currAddr++) {
     // Set CS_ROM(PH3) to LOW
@@ -1919,7 +1920,7 @@ void writeBlock_EEP(word startAddr, word eepSize) {
 
     // Send data
     for (byte currByte = 0; currByte < 8; currByte++) {
-      send_GBA(sdBuffer[(currAddr - startAddr) * 8 + currByte], 8);
+      send_GBA(*nextByte++, 8);
     }
 
     // Send stop bit
