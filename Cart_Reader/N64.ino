@@ -2360,6 +2360,10 @@ unsigned long verifyEeprom_N64() {
 /******************************************
   SRAM functions
 *****************************************/
+static inline word readSdBufferWord_N64(unsigned int index) {
+  return (word(sdBuffer[index]) << 8) | word(sdBuffer[index + 1]);
+}
+
 // Write sram to cartridge
 void writeSram(unsigned long sramSize) {
   if (saveType == 1 || saveType == 2) {
@@ -2378,7 +2382,7 @@ void writeSram(unsigned long sramSize) {
 
         for (int c = 0; c < 512; c += 2) {
           // Join bytes to word
-          word myWord = ((sdBuffer[c] & 0xFF) << 8) | (sdBuffer[c + 1] & 0xFF);
+          word myWord = readSdBufferWord_N64(c);
 
           // Write word
           writeWord_N64(myWord);
@@ -2542,7 +2546,7 @@ void writeFram(byte flashramType) {
           // Send 128 bytes, 64 words
           for (byte c = 0; c < 128; c += 2) {
             // Join two bytes into one word
-            word myWord = ((sdBuffer[c] & 0xFF) << 8) | (sdBuffer[c + 1] & 0xFF);
+            word myWord = readSdBufferWord_N64(c);
             // Write word
             writeWord_N64(myWord);
           }
@@ -3640,7 +3644,7 @@ void writeIntel4400_N64() {
         // Write buffer
         for (byte currByte = 0; currByte < 64; currByte += 2) {
           // Join two bytes into one word
-          word currWord = ((sdBuffer[currWriteBuffer + currByte] & 0xFF) << 8) | (sdBuffer[currWriteBuffer + currByte + 1] & 0xFF);
+          word currWord = readSdBufferWord_N64(currWriteBuffer + currByte);
           setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + currByte);
           writeWord_N64(currWord);
         }
@@ -3701,7 +3705,7 @@ void writeMSP55LV100_N64(unsigned long sectorSize) {
 
         for (byte currByte = 0; currByte < 32; currByte += 2) {
           // Join two bytes into one word
-          currWord = ((sdBuffer[currWriteBuffer + currByte] & 0xFF) << 8) | (sdBuffer[currWriteBuffer + currByte + 1] & 0xFF);
+          currWord = readSdBufferWord_N64(currWriteBuffer + currByte);
 
           // Load Buffer Words
           setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + currByte);
@@ -3770,7 +3774,7 @@ void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
 
         for (byte currByte = 0; currByte < bufferSize; currByte += 2) {
           // Join two bytes into one word
-          currWord = ((sdBuffer[currWriteBuffer + currByte] & 0xFF) << 8) | (sdBuffer[currWriteBuffer + currByte + 1] & 0xFF);
+          currWord = readSdBufferWord_N64(currWriteBuffer + currByte);
 
           // Load Buffer Words
           setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + currByte);
@@ -3819,7 +3823,7 @@ void writeFlashrom_N64(unsigned long sectorSize) {
       readSdBufferBlock();
       for (int currByte = 0; currByte < 512; currByte += 2) {
         // Join two bytes into one word
-        word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
+        word currWord = readSdBufferWord_N64(currByte);
         // 2 unlock commands
         sendFlashromCommand_N64(flashBase, 0xA0);
         // Write word
@@ -3858,7 +3862,7 @@ unsigned long verifyFlashrom_N64() {
         readSdBufferBlock();
         for (int currByte = 0; currByte < 512; currByte += 2) {
           // Join two bytes into one word
-          word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
+          word currWord = readSdBufferWord_N64(currByte);
           // Read flash
           setAddress_N64(romBase + currSector + currSdBuffer + currByte);
           // Compare both
@@ -4164,7 +4168,7 @@ void writeGameshark_N64() {
         // Set address
         setAddress_N64(romBase + 0xEC00000 + (currPage * 2) + currByte);
         // Join two bytes into one word
-        word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
+        word currWord = readSdBufferWord_N64(currByte);
         // Send byte data
         writeWord_N64(currWord);
       }
@@ -4195,7 +4199,7 @@ void writeGameshark_N64() {
           setAddress_N64(romBase + 0xEC00000 + currSector + currSdBuffer + currByte);
 
           // Join two bytes into one word
-          word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
+          word currWord = readSdBufferWord_N64(currByte);
 
           // Send byte data
           writeWord_N64(currWord);
@@ -4221,7 +4225,7 @@ static void verifyAccessoryRange_N64(unsigned long start, unsigned long totalPro
       readSdBufferBlock();
       for (int currByte = 0; currByte < 512; currByte += 2) {
         // Join two bytes into one word
-        word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
+        word currWord = readSdBufferWord_N64(currByte);
         // Read flash
         setAddress_N64(start + currSector + currSdBuffer + currByte);
         // Compare both
@@ -4452,7 +4456,7 @@ void writeXplorer_N64() {
     // Write 1 page each, one flashrom gets the low byte, the other the high byte.
     for (unsigned long currByte = 0; currByte < 256; currByte += 2) {
       // Join two bytes into one word
-      word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
+      word currWord = readSdBufferWord_N64(currByte);
       // Set address
       if ((((currByte / 2) >> 4) & 0x1) == 0) {
         evenXPaddrWrite(0x10400000 + (currPage * 2) + currByte, currWord);
