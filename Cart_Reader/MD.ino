@@ -787,7 +787,7 @@ void applyMdSizeFixes() {
 }
 
 static const struct {
-  char prefix[15];
+  const char* prefix;
   uint16_t checksum, correctedChecksum;
   uint8_t sizeIn64KiB;
 } mdIdFixes[] PROGMEM = {
@@ -813,7 +813,8 @@ static const struct {
 void applyMdIdFixes(const char* id) {
   for (const auto& fix : mdIdFixes) {
     if (chksum != pgm_read_word(&fix.checksum)) continue;
-    if (strncmp_P(id, fix.prefix, strlen_P(fix.prefix)) != 0) continue;
+    const char* prefix = (const char*)pgm_read_ptr(&fix.prefix);
+    if (strncmp_P(id, prefix, strlen_P(prefix)) != 0) continue;
     chksum = pgm_read_word(&fix.correctedChecksum);
     const byte units = pgm_read_byte(&fix.sizeIn64KiB);
     if (units) cartSize = (uint32_t)units << 16;
