@@ -1080,7 +1080,7 @@ boolean compare_checksum_GBA() {
 
   // last used rom folder
   EEPROM_readAnything(0, foldern);
-  sprintf(folder, "GBA/ROM/%s/%d", romName, foldern - 1);
+  sprintf_P(folder, PSTR("GBA/ROM/%s/%d"), romName, foldern - 1);
   sd.chdir(folder);
 
   // If file exists
