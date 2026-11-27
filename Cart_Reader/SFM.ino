@@ -1297,6 +1297,27 @@ void readSectorProtection_SFM(byte startBank) {
 }
 
 // Read the current mapping from the hidden "page buffer" and print it
+static void exitMappingR49_SFM() __attribute__((noinline));
+static void exitMappingR49_SFM() {
+  // Switch to write
+  dataOut();
+  controlOut_SFM();
+
+  // Reset Flash
+  writeBank_SFM(0xC0, 0x5555L * 2, 0xaa);
+  writeBank_SFM(0xC0, 0x2AAAL * 2, 0x55);
+  writeBank_SFM(0xC0, 0x5555L * 2, 0xf0);
+
+  // Reset Flash
+  writeBank_SFM(0xE0, 0x5555L * 2, 0xaa);
+  writeBank_SFM(0xE0, 0x2AAAL * 2, 0x55);
+  writeBank_SFM(0xE0, 0x5555L * 2, 0xf0);
+
+  // Switch to read
+  dataIn();
+  controlIn_SFM();
+}
+
 void printMapping() {
   // Switch to write
   dataOut();
@@ -1332,23 +1353,7 @@ void printMapping() {
   }
   display_Update();
 
-  // Switch to write
-  dataOut();
-  controlOut_SFM();
-
-  // Reset Flash
-  writeBank_SFM(0xC0, 0x5555L * 2, 0xaa);
-  writeBank_SFM(0xC0, 0x2AAAL * 2, 0x55);
-  writeBank_SFM(0xC0, 0x5555L * 2, 0xf0);
-
-  // Reset Flash
-  writeBank_SFM(0xE0, 0x5555L * 2, 0xaa);
-  writeBank_SFM(0xE0, 0x2AAAL * 2, 0x55);
-  writeBank_SFM(0xE0, 0x5555L * 2, 0xf0);
-
-  // Switch to read
-  dataIn();
-  controlIn_SFM();
+  exitMappingR49_SFM();
 }
 
 // Read the current mapping from the hidden "page buffer"
@@ -1419,23 +1424,7 @@ void readMapping() {
   // Close the file:
   closeCurrentFile();
 
-  // Switch to write
-  dataOut();
-  controlOut_SFM();
-
-  // Reset Flash
-  writeBank_SFM(0xC0, 0x5555L * 2, 0xaa);
-  writeBank_SFM(0xC0, 0x2AAAL * 2, 0x55);
-  writeBank_SFM(0xC0, 0x5555L * 2, 0xf0);
-
-  // Reset Flash
-  writeBank_SFM(0xE0, 0x5555L * 2, 0xaa);
-  writeBank_SFM(0xE0, 0x2AAAL * 2, 0x55);
-  writeBank_SFM(0xE0, 0x5555L * 2, 0xf0);
-
-  // Switch to read
-  dataIn();
-  controlIn_SFM();
+  exitMappingR49_SFM();
 
   // Signal end of process
   print_Msg(FS(SharedFlashText::textSavedToNP));
@@ -1532,23 +1521,7 @@ byte blankcheckMapping_SFM() {
     }
   }
 
-  // Switch to write
-  dataOut();
-  controlOut_SFM();
-
-  // Reset Flash
-  writeBank_SFM(0xC0, 0x5555L * 2, 0xaa);
-  writeBank_SFM(0xC0, 0x2AAAL * 2, 0x55);
-  writeBank_SFM(0xC0, 0x5555L * 2, 0xf0);
-
-  // Reset Flash
-  writeBank_SFM(0xE0, 0x5555L * 2, 0xaa);
-  writeBank_SFM(0xE0, 0x2AAAL * 2, 0x55);
-  writeBank_SFM(0xE0, 0x5555L * 2, 0xf0);
-
-  // Switch to read
-  dataIn();
-  controlIn_SFM();
+  exitMappingR49_SFM();
 
   return blank;
 }
