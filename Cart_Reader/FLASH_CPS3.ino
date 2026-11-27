@@ -1,3 +1,4 @@
+void readFlashBytesToSdR50(unsigned long totalBytes);
 //******************************************
 // CP System III Module
 // Cartridge
@@ -640,23 +641,7 @@ void readCartridge() {
 
   createFolderAndOpenFile("CPS3", "Cartridge", "29f400", "u2");
 
-  //Initialize progress bar
-  uint32_t processedProgressBar = 0;
-  uint32_t totalProgressBar = flashSize;
-  startProgressBar(totalProgressBar);
-
-  for (unsigned long currByte = 0; currByte < flashSize; currByte += 512) {
-    for (int c = 0; c < 512; c++) {
-      sdBuffer[c] = readByte_Flash(currByte + c);
-    }
-    writeSdBufferBlock();
-    // Update progress bar
-    processedProgressBar += 512;
-    draw_progressbar(processedProgressBar, totalProgressBar);
-    // Blink led
-    if (currByte % 25600 == 0)
-      blinkLED();
-  }
+  readFlashBytesToSdR50(flashSize);
 
   // Close the file:
   closeCurrentFile();
