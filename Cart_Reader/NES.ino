@@ -2422,6 +2422,7 @@ void readPRG(bool readrom) {
         break;
 
       case 21:  // 256K
+      case 27:
         dumpSequentialPRGBanks(prgBanks16K * 2, 0xA000, 0, 0x4000, base, 0x2000);
         break;
 
@@ -2454,10 +2455,6 @@ void readPRG(bool readrom) {
       case 29:
       case 78:  // 128K
         dumpSequentialPRGBanks(prgBanks16K, 0x8000, 0, 0x4000, base);
-        break;
-
-      case 27:
-        dumpSequentialPRGBanks(prgBanks16K * 2, 0xA000, 0, 0x4000, base, 0x2000);
         break;
 
       case 28:  // using 32k mode for inner and outer banks, switching only with outer
