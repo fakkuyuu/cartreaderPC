@@ -63,6 +63,7 @@
 #include "ConnectedReaderDisplay.h"
 #include "BootDumpCursor.h"
 
+void getCartInfo_GBA() __attribute__((noinline));
 void pcVerificationResult(uint8_t code);
 void appendPathAndShowWritingProgress() __attribute__((noinline));
 void resetStorageAndAppendPath() __attribute__((noinline));
