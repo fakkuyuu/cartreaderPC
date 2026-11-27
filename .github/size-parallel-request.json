@@ -1,17 +1,40 @@
 {
-  "id": "round61-cumulative",
-  "base": "42a283e1eaadddcbd722524c8217ed9389c77d95",
-  "expected_base_flash": 204178,
+  "id": "round62-independent",
+  "base": "654d322cbff2ab753be06cdc19d992c6053b939e",
+  "expected_base_flash": 204098,
   "expected_base_ram": 6059,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "stage2",
-      "head": "21d71903f9a361c9389c378edc5b13e88f7f041a"
+      "id": "nes-menu-reset",
+      "head": "c2dba93a53f36cd2c9ca8fb1e9b41392823b9df5"
     },
     {
-      "id": "stage3",
-      "head": "b3fef9b389b72d4d5cdf32c4c6eb60afea2f93e1"
+      "id": "nes-eeprom-read",
+      "head": "7b0ddcebdd4479d0c84fbbaeb32ad072f6eeb80b"
+    },
+    {
+      "id": "nes-writing-display",
+      "head": "cfd4a95e9468d6b76ba5a085fa4e3d4691a99850"
+    },
+    {
+      "id": "n64-progress",
+      "head": "0946efe939637f3725524423de9578a03fa7e64e"
+    },
+    {
+      "id": "n64-prompt-clear",
+      "head": "60b44ca93ae51e5258e6c91352de64126e70a830"
+    },
+    {
+      "id": "ws-eeprom-output",
+      "head": "0fc5da036fd1049ee165155ce0f3e6bcf55ef8ac"
+    },
+    {
+      "id": "snes-register-reuse",
+      "head": "8e601f647e37a69b36a9f45ccfcc2e93e3e2cb58"
+    },
+    {
+      "id": "gba-save-flash-command",
+      "head": "ea1079bc9b52d4dfa9e607f8ded21618b2d86d8f"
     }
   ]
 }
