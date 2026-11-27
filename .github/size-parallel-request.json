@@ -1,40 +1,33 @@
 {
-  "id": "parallel-048",
+  "id": "parallel-048-integration",
   "base": "ff8d5619e7481ec681eec3594f56e87da9df63cc",
   "expected_base_flash": 206456,
   "expected_base_ram": 6095,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "accessory-error-test",
-      "head": "d064a578e47699c1099b67f637e6abdf5f14288d"
+      "id": "integration-1-snes-lorom",
+      "head": "f0aa2b6908ce5d8fb597edf627cfca62fa99d46a"
     },
     {
-      "id": "snes-lorom-callback",
-      "head": "45b1f86ece38f03374e60c52e15fef18a90da80b"
+      "id": "integration-2-msx-gm2",
+      "head": "f527c241f54f5f2befe56f876c350a36592d4675"
     },
     {
-      "id": "snes-srtc-bank",
-      "head": "6fbaf55db12b2437292562b3dc2528e049137146"
+      "id": "integration-3-nes-eeprom",
+      "head": "b8bf912cfc060872cb00fa8dd91b10b2da24ab00"
     },
     {
-      "id": "nes-eeprom-read-tail",
-      "head": "a6d104aa2a082af0c160843916d71748d100a6ac"
+      "id": "integration-4-snes-srtc",
+      "head": "e04f21e5333e2ab7bff9946955b2119c48dc6960"
     },
     {
-      "id": "nes-eeprom-device-address",
-      "head": "24dfbc7cd181b08a501bf84437d7a14200f249c0"
+      "id": "integration-5-msx-ascii8",
+      "head": "824978a485c52dc11dc1c589b6a15ceecd790750"
     },
     {
-      "id": "msx-ascii8-read",
-      "head": "b95ef96ae780210faa4e572a32c35da01a49dad5"
-    },
-    {
-      "id": "msx-gm2-read",
-      "head": "7978e73d8ed05682025966d0cce73f1e233971a9"
-    },
-    {
-      "id": "msx-koei-write",
-      "head": "cc7c687c233844d392aa8e0ff6c6ed2f6192686d"
+      "id": "integration-6-accessory-test",
+      "head": "81f4c620403b2ee2433d4142332c257bf3035974"
     }
   ]
 }
