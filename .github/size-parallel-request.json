@@ -1,40 +1,12 @@
 {
-  "id": "parallel-050",
+  "id": "parallel-051",
   "base": "aa8a60f21fa2a13fd7505edd0fe6d0537d37c692",
   "expected_base_flash": 206116,
   "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "r50-snes-writebank",
-      "head": "3d7fcf4fb38381b17aabbc2c2c6934361a3c6f9e"
-    },
-    {
-      "id": "r50-cfi-mode",
-      "head": "8240455d5245a369402f9dfbde0b12a2f559717c"
-    },
-    {
-      "id": "r50-flash-read-loop",
-      "head": "6df44ab3627788397706b5e340d2575049caa92f"
-    },
-    {
-      "id": "r50-verify-report",
-      "head": "654e92a8519c410275afbcddcd4c800db34f8402"
-    },
-    {
-      "id": "r50-legacy-bus-setup",
-      "head": "3315ff02a1e34577269987a5dac5e6543c263d0f"
-    },
-    {
-      "id": "r50-pc-rom-input",
-      "head": "d47dd3fccb1d6485470bcc695724b2a08d0db4b5"
-    },
-    {
-      "id": "r50-pc-size-error",
-      "head": "4fba64af244976ccf19224542dc8d8f313d4a905"
-    },
-    {
-      "id": "r50-pc-size-options",
-      "head": "5cd611a8da7efb0ca1740543370d3c3f91de5f88"
+      "id": "r51-core-loop-table",
+      "head": "45c666322ed94ee267d45adeb0da635ba9d7c1be"
     }
   ]
 }
