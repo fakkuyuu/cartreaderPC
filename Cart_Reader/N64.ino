@@ -4437,9 +4437,11 @@ void writeXplorer_N64() {
   startProgressBar(totalProgressBar);
   for (unsigned long currPage = 0; currPage < fileSize / 2; currPage += 128) {
 
+    const unsigned long pageBaseAddress = currPage * 2;
+
     // Fill SD buffer with data in the order it will be expected by the CPLD
     for (unsigned long i = 0; i < 256; i += 2) {
-      unsigned long unscrambled_address = (unscramble(((currPage * 2) + i) / 2) * 2);
+      unsigned long unscrambled_address = (unscramble((pageBaseAddress + i) / 2) * 2);
       myFile.seek(unscrambled_address);
       myFile.read(&sdBuffer[i], 1);
       myFile.seek(unscrambled_address + 1);
@@ -4455,9 +4457,9 @@ void writeXplorer_N64() {
       word currWord = ((sdBuffer[currByte] & 0xFF) << 8) | (sdBuffer[currByte + 1] & 0xFF);
       // Set address
       if ((((currByte / 2) >> 4) & 0x1) == 0) {
-        evenXPaddrWrite(0x10400000 + (currPage * 2) + currByte, currWord);
+        evenXPaddrWrite(0x10400000 + pageBaseAddress + currByte, currWord);
       } else {
-        oddXPaddrWrite(0x10400000 + (currPage * 2) + currByte, currWord);
+        oddXPaddrWrite(0x10400000 + pageBaseAddress + currByte, currWord);
       }
     }
     processedProgressBar += 256;
