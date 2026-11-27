@@ -2560,25 +2560,21 @@ void EepromStop() {
 }
 
 void EepromSetAddress(word address) {
-  if (eepSize > 0x80) {  // 24C02+
-    for (int i = 0; i < 8; i++) {
-      if ((address >> 7) & 0x1)  // Bit is HIGH
-        EepromSet1();
-      else  // Bit is LOW
-        EepromSet0();
-      address <<= 1;  // rotate to the next bit
-    }
-    EepromStatus();  // ACK
-  } else {           // 24C01
-    for (int i = 0; i < 7; i++) {
-      if ((address >> 6) & 0x1)  // Bit is HIGH
-        EepromSet1();
-      else  // Bit is LOW
-        EepromSet0();
-      address <<= 1;  // rotate to the next bit
-    }
+  const bool extendedAddress = eepSize > 0x80;
+  if (!extendedAddress)
+    address <<= 1;
+  const byte bitCount = extendedAddress ? 8 : 7;
+  for (byte i = 0; i < bitCount; i++) {
+    if ((address >> 7) & 0x1)  // Bit is HIGH
+      EepromSet1();
+    else  // Bit is LOW
+      EepromSet0();
+    address <<= 1;  // rotate to the next bit
   }
+  if (extendedAddress)
+    EepromStatus();  // ACK
 }
+
 
 static void addressEepromByte_MD() __attribute__((noinline));
 static void addressEepromByte_MD() {
