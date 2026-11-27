@@ -2510,6 +2510,14 @@ void EepromWriteMode() {
   EepromStatus();  // ACK
 }
 
+static void writeEepromReadClock_MD(bool codemasters, byte value) __attribute__((noinline));
+static void writeEepromReadClock_MD(bool codemasters, byte value) {
+  if (codemasters)
+    writeWord_CM(0x180000, value);
+  else
+    writeWord_MD(0x100000, value);
+}
+
 void EepromReadData() {
   if (eepType == 1) {  // Acclaim Type 1
     for (int i = 0; i < 8; i++) {
@@ -2537,24 +2545,21 @@ void EepromReadData() {
       dataOut_MD();
       writeWord_MD(0x100000, 0x01);  // sda high, scl low
     }
-  } else if (eepType == 4) {  // EA
+  } else if (eepType == 4 || eepType == 5) {
+    const bool codemasters = eepType == 5;
+    const unsigned long readAddress = codemasters ? 0x1C0000 : 0x100000;
+    const byte highValue = codemasters ? 0x03 : 0xC0;
+    const byte lowValue = codemasters ? 0x01 : 0x80;
     for (int i = 0; i < 8; i++) {
-      writeWord_MD(0x100000, 0xC0);  // sda high, scl high
+      writeEepromReadClock_MD(codemasters, highValue);
       dataIn_MD();
-      eepbit[i] = ((readWord_MD(0x100000) >> 7) & 0x1);  // Read 0x100000 with Mask (bit 7)
+      eepbit[i] = ((readWord_MD(readAddress) >> 7) & 0x1);
       dataOut_MD();
-      writeWord_MD(0x100000, 0x80);  // sda high, scl low
-    }
-  } else if (eepType == 5) {  // Codemasters
-    for (int i = 0; i < 8; i++) {
-      writeWord_CM(0x180000, 0x03);  // sda high, scl high
-      dataIn_MD();
-      eepbit[i] = ((readWord_MD(0x1C0000) >> 7) & 0x1);  // Read 0x1C0000 with Mask 0x1 (bit 7)
-      dataOut_MD();
-      writeWord_CM(0x180000, 0x01);  // sda high, scl low
+      writeEepromReadClock_MD(codemasters, lowValue);
     }
   }
 }
+
 
 void EepromWriteData(byte data) {
   for (int i = 0; i < 8; i++) {
