@@ -4807,10 +4807,7 @@ void EepromWriteMode_NES() {
 
 void EepromFinish_NES() {
   write_prg_byte(0x800D, 0x00);  // sda low, scl low
-  write_prg_byte(0x800D, 0x40);  // sda high, scl low
-  write_prg_byte(0x800D, 0x60);  // sda high, scl high
-  write_prg_byte(0x800D, 0x40);  // sda high, scl low
-  write_prg_byte(0x800D, 0x00);  // sda low, scl low
+  EepromSet1_NES();
 }
 
 void EepromSetAddress01(uint8_t address) {  // 24C01 [Little Endian]
