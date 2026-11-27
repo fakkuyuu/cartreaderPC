@@ -611,6 +611,7 @@ byte checksumHeader_GBA(const byte* header) {
 }
 
 // Read info out of rom header
+void getCartInfo_GBA() __attribute__((noinline));
 void getCartInfo_GBA() {
   dbSaveTitle[0] = '\0';
   char saveTypeStr[14];
