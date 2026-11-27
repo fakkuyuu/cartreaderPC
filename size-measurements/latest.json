@@ -1,11 +1,11 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45976334049",
+  "run_id": "45976944370",
   "run_attempt": "1",
-  "workflow_commit": "2b6b833e1ff027b8d3ab4ea60826860a91d674e5",
+  "workflow_commit": "9a426530e18885eeb8c362d50967fcede5d6a054",
   "request": {
-    "id": "parallel-051d",
+    "id": "parallel-051e",
     "base": "aa8a60f21fa2a13fd7505edd0fe6d0537d37c692",
     "expected_base_flash": 206116,
     "expected_base_ram": 6095,
@@ -19,24 +19,24 @@
         "head": "c599493f608f0a265e95b7d9ca5acf4689956113"
       },
       {
-        "id": "r51-md-header-reader",
-        "head": "c8318d4a3d10b7c82cd8572a74991ad39c31ffaf"
+        "id": "r51-md-header-reader-crlf",
+        "head": "85adf37ae017876a105a594791bf3f2b278a1a3a"
       },
       {
-        "id": "r51-system-menu-table-fixed2",
-        "head": "c67882fa9b08aafbe1f10add96b5b14d329f6d54"
+        "id": "r51-system-menu-table-crlf",
+        "head": "fb9bba3168836e3b59aeead93b25c1d4dad26f81"
       },
       {
-        "id": "r51-combined-menu-tables-fixed3",
-        "head": "6a9c6a6beffd64d70dd3be1b43894238e4fea282"
+        "id": "r51-combined-menu-tables-crlf",
+        "head": "90ed5fa876d9e165f2754ed5a1b7cf823993de53"
       },
       {
         "id": "r51-nes-prg-mapper-snapshot",
         "head": "410c7b32e4dcb440edfc729522ce9366bf6866bf"
       },
       {
-        "id": "r51-nes-chr-mapper-snapshot-fixed",
-        "head": "88d9e6d9f26c55da7fa28b0650041b348f0fb422"
+        "id": "r51-nes-chr-mapper-snapshot-crlf",
+        "head": "ed68a6cf971a3a13a69774a0a90c117355f11c6a"
       },
       {
         "id": "r51-nes-sequential-loops",
@@ -48,9 +48,9 @@
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45976334049",
+      "run_id": "45976944370",
       "run_attempt": "1",
-      "workflow_commit": "2b6b833e1ff027b8d3ab4ea60826860a91d674e5",
+      "workflow_commit": "9a426530e18885eeb8c362d50967fcede5d6a054",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -1080,9 +1080,9 @@
     },
     {
       "schema": 1,
-      "run_id": "45976334049",
+      "run_id": "45976944370",
       "run_attempt": "1",
-      "workflow_commit": "2b6b833e1ff027b8d3ab4ea60826860a91d674e5",
+      "workflow_commit": "9a426530e18885eeb8c362d50967fcede5d6a054",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -1957,14 +1957,14 @@
     },
     {
       "schema": 1,
-      "run_id": "45976334049",
+      "run_id": "45976944370",
       "run_attempt": "1",
-      "workflow_commit": "2b6b833e1ff027b8d3ab4ea60826860a91d674e5",
+      "workflow_commit": "9a426530e18885eeb8c362d50967fcede5d6a054",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "r51-md-header-reader",
-        "head": "c8318d4a3d10b7c82cd8572a74991ad39c31ffaf",
+        "id": "r51-md-header-reader-crlf",
+        "head": "85adf37ae017876a105a594791bf3f2b278a1a3a",
         "base": "aa8a60f21fa2a13fd7505edd0fe6d0537d37c692",
         "expected_base_flash": 206116,
         "expected_base_ram": 6095,
@@ -2395,8 +2395,8 @@
           }
         },
         {
-          "commit": "c8318d4a3d10b7c82cd8572a74991ad39c31ffaf",
-          "subject": "Share MD cartridge header word reads",
+          "commit": "85adf37ae017876a105a594791bf3f2b278a1a3a",
+          "subject": "Preserve original CRLF line endings",
           "status": "ok",
           "flash": 206042,
           "ram": 6095,
@@ -2850,20 +2850,20 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "r51-md-header-reader",
-        "head": "c8318d4a3d10b7c82cd8572a74991ad39c31ffaf"
+        "id": "r51-md-header-reader-crlf",
+        "head": "85adf37ae017876a105a594791bf3f2b278a1a3a"
       }
     },
     {
       "schema": 1,
-      "run_id": "45976334049",
+      "run_id": "45976944370",
       "run_attempt": "1",
-      "workflow_commit": "2b6b833e1ff027b8d3ab4ea60826860a91d674e5",
+      "workflow_commit": "9a426530e18885eeb8c362d50967fcede5d6a054",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "r51-system-menu-table-fixed2",
-        "head": "c67882fa9b08aafbe1f10add96b5b14d329f6d54",
+        "id": "r51-system-menu-table-crlf",
+        "head": "fb9bba3168836e3b59aeead93b25c1d4dad26f81",
         "base": "aa8a60f21fa2a13fd7505edd0fe6d0537d37c692",
         "expected_base_flash": 206116,
         "expected_base_ram": 6095,
@@ -3294,8 +3294,8 @@
           }
         },
         {
-          "commit": "c67882fa9b08aafbe1f10add96b5b14d329f6d54",
-          "subject": "Fix line boundaries for optional menu guards",
+          "commit": "fb9bba3168836e3b59aeead93b25c1d4dad26f81",
+          "subject": "Preserve original CRLF line endings",
           "status": "ok",
           "flash": 205946,
           "ram": 6095,
@@ -3966,20 +3966,20 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "r51-system-menu-table-fixed2",
-        "head": "c67882fa9b08aafbe1f10add96b5b14d329f6d54"
+        "id": "r51-system-menu-table-crlf",
+        "head": "fb9bba3168836e3b59aeead93b25c1d4dad26f81"
       }
     },
     {
       "schema": 1,
-      "run_id": "45976334049",
+      "run_id": "45976944370",
       "run_attempt": "1",
-      "workflow_commit": "2b6b833e1ff027b8d3ab4ea60826860a91d674e5",
+      "workflow_commit": "9a426530e18885eeb8c362d50967fcede5d6a054",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "r51-combined-menu-tables-fixed3",
-        "head": "6a9c6a6beffd64d70dd3be1b43894238e4fea282",
+        "id": "r51-combined-menu-tables-crlf",
+        "head": "90ed5fa876d9e165f2754ed5a1b7cf823993de53",
         "base": "aa8a60f21fa2a13fd7505edd0fe6d0537d37c692",
         "expected_base_flash": 206116,
         "expected_base_ram": 6095,
@@ -4410,8 +4410,8 @@
           }
         },
         {
-          "commit": "6a9c6a6beffd64d70dd3be1b43894238e4fea282",
-          "subject": "Measure combined menu tables without duplicate dispatch table",
+          "commit": "90ed5fa876d9e165f2754ed5a1b7cf823993de53",
+          "subject": "Preserve original CRLF line endings",
           "status": "ok",
           "flash": 206064,
           "ram": 6095,
@@ -5152,15 +5152,15 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "r51-combined-menu-tables-fixed3",
-        "head": "6a9c6a6beffd64d70dd3be1b43894238e4fea282"
+        "id": "r51-combined-menu-tables-crlf",
+        "head": "90ed5fa876d9e165f2754ed5a1b7cf823993de53"
       }
     },
     {
       "schema": 1,
-      "run_id": "45976334049",
+      "run_id": "45976944370",
       "run_attempt": "1",
-      "workflow_commit": "2b6b833e1ff027b8d3ab4ea60826860a91d674e5",
+      "workflow_commit": "9a426530e18885eeb8c362d50967fcede5d6a054",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
@@ -6050,14 +6050,14 @@
     },
     {
       "schema": 1,
-      "run_id": "45976334049",
+      "run_id": "45976944370",
       "run_attempt": "1",
-      "workflow_commit": "2b6b833e1ff027b8d3ab4ea60826860a91d674e5",
+      "workflow_commit": "9a426530e18885eeb8c362d50967fcede5d6a054",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "r51-nes-chr-mapper-snapshot-fixed",
-        "head": "88d9e6d9f26c55da7fa28b0650041b348f0fb422",
+        "id": "r51-nes-chr-mapper-snapshot-crlf",
+        "head": "ed68a6cf971a3a13a69774a0a90c117355f11c6a",
         "base": "aa8a60f21fa2a13fd7505edd0fe6d0537d37c692",
         "expected_base_flash": 206116,
         "expected_base_ram": 6095,
@@ -6488,8 +6488,8 @@
           }
         },
         {
-          "commit": "88d9e6d9f26c55da7fa28b0650041b348f0fb422",
-          "subject": "Snapshot NES CHR mapper before switch dispatch",
+          "commit": "ed68a6cf971a3a13a69774a0a90c117355f11c6a",
+          "subject": "Preserve original CRLF line endings",
           "status": "ok",
           "flash": 205988,
           "ram": 6095,
@@ -6936,15 +6936,15 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "r51-nes-chr-mapper-snapshot-fixed",
-        "head": "88d9e6d9f26c55da7fa28b0650041b348f0fb422"
+        "id": "r51-nes-chr-mapper-snapshot-crlf",
+        "head": "ed68a6cf971a3a13a69774a0a90c117355f11c6a"
       }
     },
     {
       "schema": 1,
-      "run_id": "45976334049",
+      "run_id": "45976944370",
       "run_attempt": "1",
-      "workflow_commit": "2b6b833e1ff027b8d3ab4ea60826860a91d674e5",
+      "workflow_commit": "9a426530e18885eeb8c362d50967fcede5d6a054",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
