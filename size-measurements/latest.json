@@ -1,52 +1,75 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45958928813",
+  "run_id": "45959447461",
   "run_attempt": "1",
-  "workflow_commit": "57babf5aa62b9852e2051e56dc7f40bd1a3b753d",
+  "workflow_commit": "635a44bae4364cc27797a2479278a4db099658fb",
   "request": {
-    "id": "parallel-046-astra-integration",
-    "base": "7d5c3d0795c4baf07f7c74e6de678034b0d72675",
-    "expected_base_flash": 206628,
+    "id": "parallel-047-astra",
+    "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+    "expected_base_flash": 206616,
     "expected_base_ram": 6095,
     "candidates": [
       {
-        "id": "ws",
-        "head": "9fe5b5433c17bc8182cc4011edb64b3dbcaac1d3"
+        "id": "nes-outer",
+        "head": "cfe350d58080486e0887dbea2a01c963cf37afcf"
       },
       {
-        "id": "ws-md",
-        "head": "8f9e9b46bfcaba8643f69cdd2afe159517e06226"
+        "id": "nes-writing",
+        "head": "e31d1f5105fd7ea1320c61014c143d3494c59361"
+      },
+      {
+        "id": "nes-finish",
+        "head": "4160c6b0461b5eb508721652d0f0a92167390e7f"
+      },
+      {
+        "id": "nes-pack",
+        "head": "aa5e0873db0171b6a0427337ecdd254798833ea4"
+      },
+      {
+        "id": "n64-aa16",
+        "head": "9883072d9d5f9f9340dfd61d7d5718335f6452db"
+      },
+      {
+        "id": "n64-aa8",
+        "head": "36b82a694dedc25fc8540a225bfeeac2ae369de3"
+      },
+      {
+        "id": "gb-sram-program",
+        "head": "e03e2d5ea2dd8d731d4503ac60f10527f24e9772"
+      },
+      {
+        "id": "gb-rom-program",
+        "head": "21aa98aaa33f437d5f879ceaac9110257ac42a92"
       }
-    ],
-    "endpoints_only": true
+    ]
   },
   "status": "ok",
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45958928813",
+      "run_id": "45959447461",
       "run_attempt": "1",
-      "workflow_commit": "57babf5aa62b9852e2051e56dc7f40bd1a3b753d",
+      "workflow_commit": "635a44bae4364cc27797a2479278a4db099658fb",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "ws",
-        "head": "9fe5b5433c17bc8182cc4011edb64b3dbcaac1d3",
-        "base": "7d5c3d0795c4baf07f7c74e6de678034b0d72675",
-        "expected_base_flash": 206628,
+        "id": "nes-outer",
+        "head": "cfe350d58080486e0887dbea2a01c963cf37afcf",
+        "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+        "expected_base_flash": 206616,
         "expected_base_ram": 6095,
-        "endpoints_only": true
+        "endpoints_only": false
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "7d5c3d0795c4baf07f7c74e6de678034b0d72675",
-          "subject": "Integrate MD EEPROM address bit loop",
+          "commit": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+          "subject": "Measure md-header with visible declaration",
           "status": "ok",
-          "flash": 206628,
+          "flash": 206616,
           "ram": 6095,
           "delta_previous": null,
           "delta_base": 0,
@@ -54,12 +77,12 @@
           "error": null,
           "elf_analysis": {
             "status": "ok",
-            "symbol_count": 2069,
+            "symbol_count": 2071,
             "top_flash_symbols": [
               {
                 "name": "_Z8mainMenuv",
                 "kind": "t",
-                "bytes": 11014
+                "bytes": 11010
               },
               {
                 "name": "main",
@@ -102,14 +125,14 @@
                 "bytes": 3204
               },
               {
-                "name": "_ZL17prepareCartP21_MDv",
+                "name": "_Z14getCartInfo_MDv",
                 "kind": "t",
-                "bytes": 3110
+                "bytes": 3034
               },
               {
                 "name": "_Z6wsMenuv",
                 "kind": "t",
-                "bytes": 2846
+                "bytes": 2838
               },
               {
                 "name": "_Z7snsMenuv",
@@ -384,7 +407,7 @@
                 "bytes": 22
               },
               {
-                "name": "CSWTCH.2841",
+                "name": "CSWTCH.2842",
                 "kind": "d",
                 "bytes": 18
               },
@@ -463,18 +486,18 @@
           }
         },
         {
-          "commit": "9fe5b5433c17bc8182cc4011edb64b3dbcaac1d3",
-          "subject": "Measure ws-unlock size on HW3",
+          "commit": "cfe350d58080486e0887dbea2a01c963cf37afcf",
+          "subject": "Measure nes-outer",
           "status": "ok",
-          "flash": 206618,
+          "flash": 206596,
           "ram": 6095,
-          "delta_previous": -10,
-          "delta_base": -10,
+          "delta_previous": -20,
+          "delta_base": -20,
           "classification": "reduced",
           "error": null,
           "elf_analysis": {
             "status": "ok",
-            "symbol_count": 2070,
+            "symbol_count": 2072,
             "top_flash_symbols": [
               {
                 "name": "_Z8mainMenuv",
@@ -499,7 +522,7 @@
               {
                 "name": "_Z7readCHRb",
                 "kind": "t",
-                "bytes": 5764
+                "bytes": 5684
               },
               {
                 "name": "_Z10mdCartMenuv",
@@ -522,9 +545,9 @@
                 "bytes": 3204
               },
               {
-                "name": "_ZL17prepareCartP21_MDv",
+                "name": "_Z14getCartInfo_MDv",
                 "kind": "t",
-                "bytes": 3110
+                "bytes": 3034
               },
               {
                 "name": "_Z6wsMenuv",
@@ -880,51 +903,23 @@
               }
             ],
             "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
-            "changed_symbols": 6,
+            "changed_symbols": 2,
             "largest_increases": [
               {
-                "name": "CSWTCH.2842",
-                "kind": "d",
-                "before": 0,
-                "after": 18,
-                "delta": 18
-              },
-              {
-                "name": "_ZL22driveAndUnlockFlash_WSv",
+                "name": "_ZL17setOuterChr45_NESj",
                 "kind": "t",
                 "before": 0,
-                "after": 6,
-                "delta": 6
+                "after": 60,
+                "delta": 60
               }
             ],
             "largest_decreases": [
               {
-                "name": "CSWTCH.2841",
-                "kind": "d",
-                "before": 18,
-                "after": 0,
-                "delta": -18
-              },
-              {
-                "name": "_Z6wsMenuv",
+                "name": "_Z7readCHRb",
                 "kind": "t",
-                "before": 2846,
-                "after": 2838,
-                "delta": -8
-              },
-              {
-                "name": "_Z8mainMenuv",
-                "kind": "t",
-                "before": 11014,
-                "after": 11010,
-                "delta": -4
-              },
-              {
-                "name": "_ZL24eraseWitchFlashSector_WSm",
-                "kind": "t",
-                "before": 94,
-                "after": 90,
-                "delta": -4
+                "before": 5764,
+                "after": 5684,
+                "delta": -80
               }
             ]
           }
@@ -932,34 +927,34 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "ws",
-        "head": "9fe5b5433c17bc8182cc4011edb64b3dbcaac1d3"
+        "id": "nes-outer",
+        "head": "cfe350d58080486e0887dbea2a01c963cf37afcf"
       }
     },
     {
       "schema": 1,
-      "run_id": "45958928813",
+      "run_id": "45959447461",
       "run_attempt": "1",
-      "workflow_commit": "57babf5aa62b9852e2051e56dc7f40bd1a3b753d",
+      "workflow_commit": "635a44bae4364cc27797a2479278a4db099658fb",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "ws-md",
-        "head": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
-        "base": "7d5c3d0795c4baf07f7c74e6de678034b0d72675",
-        "expected_base_flash": 206628,
+        "id": "nes-writing",
+        "head": "e31d1f5105fd7ea1320c61014c143d3494c59361",
+        "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+        "expected_base_flash": 206616,
         "expected_base_ram": 6095,
-        "endpoints_only": true
+        "endpoints_only": false
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "7d5c3d0795c4baf07f7c74e6de678034b0d72675",
-          "subject": "Integrate MD EEPROM address bit loop",
+          "commit": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+          "subject": "Measure md-header with visible declaration",
           "status": "ok",
-          "flash": 206628,
+          "flash": 206616,
           "ram": 6095,
           "delta_previous": null,
           "delta_base": 0,
@@ -967,12 +962,12 @@
           "error": null,
           "elf_analysis": {
             "status": "ok",
-            "symbol_count": 2069,
+            "symbol_count": 2071,
             "top_flash_symbols": [
               {
                 "name": "_Z8mainMenuv",
                 "kind": "t",
-                "bytes": 11014
+                "bytes": 11010
               },
               {
                 "name": "main",
@@ -1015,14 +1010,14 @@
                 "bytes": 3204
               },
               {
-                "name": "_ZL17prepareCartP21_MDv",
+                "name": "_Z14getCartInfo_MDv",
                 "kind": "t",
-                "bytes": 3110
+                "bytes": 3034
               },
               {
                 "name": "_Z6wsMenuv",
                 "kind": "t",
-                "bytes": 2846
+                "bytes": 2838
               },
               {
                 "name": "_Z7snsMenuv",
@@ -1297,7 +1292,7 @@
                 "bytes": 22
               },
               {
-                "name": "CSWTCH.2841",
+                "name": "CSWTCH.2842",
                 "kind": "d",
                 "bytes": 18
               },
@@ -1376,14 +1371,14 @@
           }
         },
         {
-          "commit": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
-          "subject": "Measure md-header with visible declaration",
+          "commit": "e31d1f5105fd7ea1320c61014c143d3494c59361",
+          "subject": "Measure nes-writing",
           "status": "ok",
           "flash": 206616,
           "ram": 6095,
-          "delta_previous": -12,
-          "delta_base": -12,
-          "classification": "reduced",
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
           "error": null,
           "elf_analysis": {
             "status": "ok",
@@ -1793,65 +1788,892 @@
               }
             ],
             "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
-            "changed_symbols": 8,
-            "largest_increases": [
+            "changed_symbols": 0,
+            "largest_increases": [],
+            "largest_decreases": []
+          }
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "nes-writing",
+        "head": "e31d1f5105fd7ea1320c61014c143d3494c59361"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45959447461",
+      "run_attempt": "1",
+      "workflow_commit": "635a44bae4364cc27797a2479278a4db099658fb",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "nes-finish",
+        "head": "4160c6b0461b5eb508721652d0f0a92167390e7f",
+        "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+        "expected_base_flash": 206616,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+          "subject": "Measure md-header with visible declaration",
+          "status": "ok",
+          "flash": 206616,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2071,
+            "top_flash_symbols": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "bytes": 11010
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3204
+              },
               {
                 "name": "_Z14getCartInfo_MDv",
                 "kind": "t",
-                "before": 0,
-                "after": 3034,
-                "delta": 3034
-              },
-              {
-                "name": "CSWTCH.2842",
-                "kind": "d",
-                "before": 0,
-                "after": 18,
-                "delta": 18
-              },
-              {
-                "name": "_ZL22driveAndUnlockFlash_WSv",
-                "kind": "t",
-                "before": 0,
-                "after": 6,
-                "delta": 6
-              }
-            ],
-            "largest_decreases": [
-              {
-                "name": "_ZL17prepareCartP21_MDv",
-                "kind": "t",
-                "before": 3110,
-                "after": 74,
-                "delta": -3036
-              },
-              {
-                "name": "CSWTCH.2841",
-                "kind": "d",
-                "before": 18,
-                "after": 0,
-                "delta": -18
+                "bytes": 3034
               },
               {
                 "name": "_Z6wsMenuv",
                 "kind": "t",
-                "before": 2846,
-                "after": 2838,
-                "delta": -8
+                "bytes": 2838
               },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact."
+          }
+        },
+        {
+          "commit": "4160c6b0461b5eb508721652d0f0a92167390e7f",
+          "subject": "Measure nes-finish",
+          "status": "ok",
+          "flash": 206594,
+          "ram": 6095,
+          "delta_previous": -22,
+          "delta_base": -22,
+          "classification": "reduced",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2070,
+            "top_flash_symbols": [
               {
                 "name": "_Z8mainMenuv",
                 "kind": "t",
-                "before": 11014,
-                "after": 11010,
-                "delta": -4
+                "bytes": 11010
               },
               {
-                "name": "_ZL24eraseWitchFlashSector_WSm",
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
                 "kind": "t",
-                "before": 94,
-                "after": 90,
-                "delta": -4
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3224
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 3034
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2838
+              },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
+            "changed_symbols": 2,
+            "largest_increases": [
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "before": 3204,
+                "after": 3224,
+                "delta": 20
+              }
+            ],
+            "largest_decreases": [
+              {
+                "name": "_Z16EepromFinish_NESv",
+                "kind": "t",
+                "before": 42,
+                "after": 0,
+                "delta": -42
               }
             ]
           }
@@ -1859,8 +2681,4436 @@
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "ws-md",
-        "head": "8f9e9b46bfcaba8643f69cdd2afe159517e06226"
+        "id": "nes-finish",
+        "head": "4160c6b0461b5eb508721652d0f0a92167390e7f"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45959447461",
+      "run_attempt": "1",
+      "workflow_commit": "635a44bae4364cc27797a2479278a4db099658fb",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "nes-pack",
+        "head": "aa5e0873db0171b6a0427337ecdd254798833ea4",
+        "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+        "expected_base_flash": 206616,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+          "subject": "Measure md-header with visible declaration",
+          "status": "ok",
+          "flash": 206616,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2071,
+            "top_flash_symbols": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "bytes": 11010
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3204
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 3034
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2838
+              },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact."
+          }
+        },
+        {
+          "commit": "aa5e0873db0171b6a0427337ecdd254798833ea4",
+          "subject": "Measure nes-pack",
+          "status": "ok",
+          "flash": 206498,
+          "ram": 6095,
+          "delta_previous": -118,
+          "delta_base": -118,
+          "classification": "reduced",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2071,
+            "top_flash_symbols": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "bytes": 11010
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3086
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 3034
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2838
+              },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2846",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
+            "changed_symbols": 3,
+            "largest_increases": [
+              {
+                "name": "CSWTCH.2846",
+                "kind": "d",
+                "before": 0,
+                "after": 18,
+                "delta": 18
+              }
+            ],
+            "largest_decreases": [
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "before": 3204,
+                "after": 3086,
+                "delta": -118
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "before": 18,
+                "after": 0,
+                "delta": -18
+              }
+            ]
+          }
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "nes-pack",
+        "head": "aa5e0873db0171b6a0427337ecdd254798833ea4"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45959447461",
+      "run_attempt": "1",
+      "workflow_commit": "635a44bae4364cc27797a2479278a4db099658fb",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "n64-aa16",
+        "head": "9883072d9d5f9f9340dfd61d7d5718335f6452db",
+        "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+        "expected_base_flash": 206616,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+          "subject": "Measure md-header with visible declaration",
+          "status": "ok",
+          "flash": 206616,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2071,
+            "top_flash_symbols": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "bytes": 11010
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3204
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 3034
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2838
+              },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact."
+          }
+        },
+        {
+          "commit": "9883072d9d5f9f9340dfd61d7d5718335f6452db",
+          "subject": "Measure n64-aa16",
+          "status": "ok",
+          "flash": 206616,
+          "ram": 6095,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2071,
+            "top_flash_symbols": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "bytes": 11010
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3204
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 3034
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2838
+              },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
+            "changed_symbols": 0,
+            "largest_increases": [],
+            "largest_decreases": []
+          }
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "n64-aa16",
+        "head": "9883072d9d5f9f9340dfd61d7d5718335f6452db"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45959447461",
+      "run_attempt": "1",
+      "workflow_commit": "635a44bae4364cc27797a2479278a4db099658fb",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "n64-aa8",
+        "head": "36b82a694dedc25fc8540a225bfeeac2ae369de3",
+        "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+        "expected_base_flash": 206616,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+          "subject": "Measure md-header with visible declaration",
+          "status": "ok",
+          "flash": 206616,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2071,
+            "top_flash_symbols": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "bytes": 11010
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3204
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 3034
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2838
+              },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact."
+          }
+        },
+        {
+          "commit": "36b82a694dedc25fc8540a225bfeeac2ae369de3",
+          "subject": "Measure n64-aa8",
+          "status": "ok",
+          "flash": 206616,
+          "ram": 6095,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2071,
+            "top_flash_symbols": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "bytes": 11010
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3204
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 3034
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2838
+              },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
+            "changed_symbols": 0,
+            "largest_increases": [],
+            "largest_decreases": []
+          }
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "n64-aa8",
+        "head": "36b82a694dedc25fc8540a225bfeeac2ae369de3"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45959447461",
+      "run_attempt": "1",
+      "workflow_commit": "635a44bae4364cc27797a2479278a4db099658fb",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "gb-sram-program",
+        "head": "e03e2d5ea2dd8d731d4503ac60f10527f24e9772",
+        "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+        "expected_base_flash": 206616,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+          "subject": "Measure md-header with visible declaration",
+          "status": "ok",
+          "flash": 206616,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2071,
+            "top_flash_symbols": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "bytes": 11010
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3204
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 3034
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2838
+              },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact."
+          }
+        },
+        {
+          "commit": "e03e2d5ea2dd8d731d4503ac60f10527f24e9772",
+          "subject": "Measure gb-sram-program",
+          "status": "ok",
+          "flash": 206652,
+          "ram": 6095,
+          "delta_previous": 36,
+          "delta_base": 36,
+          "classification": "increased",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2072,
+            "top_flash_symbols": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "bytes": 10982
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3204
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 3034
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2838
+              },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2843",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
+            "changed_symbols": 4,
+            "largest_increases": [
+              {
+                "name": "_ZL22programSramBankByte_GBjjh",
+                "kind": "t",
+                "before": 0,
+                "after": 64,
+                "delta": 64
+              },
+              {
+                "name": "CSWTCH.2843",
+                "kind": "d",
+                "before": 0,
+                "after": 18,
+                "delta": 18
+              }
+            ],
+            "largest_decreases": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "before": 11010,
+                "after": 10982,
+                "delta": -28
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "before": 18,
+                "after": 0,
+                "delta": -18
+              }
+            ]
+          }
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gb-sram-program",
+        "head": "e03e2d5ea2dd8d731d4503ac60f10527f24e9772"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45959447461",
+      "run_attempt": "1",
+      "workflow_commit": "635a44bae4364cc27797a2479278a4db099658fb",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "gb-rom-program",
+        "head": "21aa98aaa33f437d5f879ceaac9110257ac42a92",
+        "base": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+        "expected_base_flash": 206616,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "8f9e9b46bfcaba8643f69cdd2afe159517e06226",
+          "subject": "Measure md-header with visible declaration",
+          "status": "ok",
+          "flash": 206616,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2071,
+            "top_flash_symbols": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "bytes": 11010
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3204
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 3034
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2838
+              },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact."
+          }
+        },
+        {
+          "commit": "21aa98aaa33f437d5f879ceaac9110257ac42a92",
+          "subject": "Measure gb-rom-program",
+          "status": "ok",
+          "flash": 206618,
+          "ram": 6095,
+          "delta_previous": 2,
+          "delta_base": 2,
+          "classification": "increased",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2072,
+            "top_flash_symbols": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "bytes": 10952
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 10444
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 8258
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 5764
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 4720
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 3760
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3218
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 3204
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 3034
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2838
+              },
+              {
+                "name": "_Z7snsMenuv",
+                "kind": "t",
+                "bytes": 2508
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_Z8snesMenuv",
+                "kind": "t",
+                "bytes": 2054
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1516
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1214
+              },
+              {
+                "name": "_Z12scanChip_NGPv",
+                "kind": "t",
+                "bytes": 1090
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 1022
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_Z14getCartInfo_GBv",
+                "kind": "t",
+                "bytes": 986
+              },
+              {
+                "name": "_ZL7mapsize",
+                "kind": "t",
+                "bytes": 980
+              },
+              {
+                "name": "_ZN9ExFatFile4readEPvj",
+                "kind": "t",
+                "bytes": 964
+              },
+              {
+                "name": "_ZN6Si535115multisynth_calcEyyP12Si5351RegSet.constprop.0",
+                "kind": "t",
+                "bytes": 956
+              },
+              {
+                "name": "u8g2_font_haxrcorp4089_tr",
+                "kind": "t",
+                "bytes": 935
+              },
+              {
+                "name": "_Z12read_rom_PCEv",
+                "kind": "t",
+                "bytes": 912
+              },
+              {
+                "name": "_ZN6Si53517set_pllEy10si5351_pll.constprop.0",
+                "kind": "t",
+                "bytes": 900
+              },
+              {
+                "name": "_ZN10FsBaseFile6renameEPKc.isra.0",
+                "kind": "t",
+                "bytes": 852
+              },
+              {
+                "name": "_sub_I_65535_0.0",
+                "kind": "t",
+                "bytes": 782
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2843",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
+            "changed_symbols": 4,
+            "largest_increases": [
+              {
+                "name": "_ZL21programRomBankByte_GBjjh",
+                "kind": "t",
+                "before": 0,
+                "after": 60,
+                "delta": 60
+              },
+              {
+                "name": "CSWTCH.2843",
+                "kind": "d",
+                "before": 0,
+                "after": 18,
+                "delta": 18
+              }
+            ],
+            "largest_decreases": [
+              {
+                "name": "_Z8mainMenuv",
+                "kind": "t",
+                "before": 11010,
+                "after": 10952,
+                "delta": -58
+              },
+              {
+                "name": "CSWTCH.2842",
+                "kind": "d",
+                "before": 18,
+                "after": 0,
+                "delta": -18
+              }
+            ]
+          }
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "gb-rom-program",
+        "head": "21aa98aaa33f437d5f879ceaac9110257ac42a92"
       }
     }
   ]
