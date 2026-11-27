@@ -4854,6 +4854,13 @@ void EepromWriteData02() {  // 24C02
   EepromStatus_NES();  // ACK
 }
 
+static void beginEepromAddress02R48_NES(uint8_t address) __attribute__((noinline));
+static void beginEepromAddress02R48_NES(uint8_t address) {
+  EepromDevice_NES();
+  EepromWriteMode_NES();
+  EepromSetAddress02(address);
+}
+
 void EepromREAD(uint8_t address) {
   EepromStart_NES();              // START
   if (mapper == 159) {            // 24C01
@@ -4868,9 +4875,7 @@ void EepromREAD(uint8_t address) {
       eeptemp = (eeptemp << 1) | eepbit[7 - i];
     }
   } else {               // 24C02
-    EepromDevice_NES();  // DEVICE [1010] + ADDR [A2-A0]
-    EepromWriteMode_NES();
-    EepromSetAddress02(address);
+    beginEepromAddress02R48_NES(address);
     EepromStart_NES();   // START
     EepromDevice_NES();  // DEVICE [1010] + ADDR [A2-A0]
     EepromReadMode_NES();
@@ -4894,9 +4899,7 @@ void EepromWRITE(uint8_t address) {
     EepromWriteMode_NES();
     EepromWriteData01();  // 24C01 [Little Endian]
   } else {                // 24C02
-    EepromDevice_NES();   // DEVICE [1010] + ADDR [A2-A0]
-    EepromWriteMode_NES();
-    EepromSetAddress02(address);
+    beginEepromAddress02R48_NES(address);
     EepromWriteData02();
   }
   EepromStop_NES();  // STOP
