@@ -5,12 +5,12 @@
 | # | 候補 | 独立コミット | 変更 | 実機確認 | 計測・採否 |
 |---:|---|---|---|---|---|
 |1|vb-rom-range|cf0e582c3580cce7d9d16e48b6b17cf7bc98ec0b|通常ROMと4MiB Hyper Fightingの開始・終了ワードアドレス共通化|通常/4MiB ROM CRC、進捗|207728 B (+12 B) / RAM 6105 B (0 B) / 不採用|
-|2|msx-paired-rom|e5150ce457e686c226930eeb0e2084ce97c7a724|Game Master 2とKonami SCCなしの2バンク走査共通化|両マッパーROM CRC|207692 B (-24 B) / RAM 6105 B (0 B) / 合成候補|
-|3|snes-retry-address|8b6c0705215ee2ecac12d7793683aadc0718b61f|相互排他的な6種2M読出のアドレス変数・ワードコールバック共通化|LoROM/HiROM/ExHiROM/SRTC/S-DD1/SPC7110、SA1、再送境界とCRC、タイミング|207392 B (-324 B) / RAM 6095 B (-10 B) / 合成候補|
-|4|md-rom-buffer|b48002d7cdc77fe01e74ae0bd3cfd93bdc4330f8|第39回のバッファ更新ヘルパーを通常ROMにも適用|通常ROM、SVP、Lock-onのCRC/速度|207696 B (-20 B) / RAM 6105 B (0 B) / 合成候補|
+|2|msx-paired-rom|e5150ce457e686c226930eeb0e2084ce97c7a724|Game Master 2とKonami SCCなしの2バンク走査共通化|両マッパーROM CRC|207692 B (-24 B) / RAM 6105 B (0 B) / 採用|
+|3|snes-retry-address|8b6c0705215ee2ecac12d7793683aadc0718b61f|相互排他的な6種2M読出のアドレス変数・ワードコールバック共通化|LoROM/HiROM/ExHiROM/SRTC/S-DD1/SPC7110、SA1、再送境界とCRC、タイミング|207392 B (-324 B) / RAM 6095 B (-10 B) / 採用|
+|4|md-rom-buffer|b48002d7cdc77fe01e74ae0bd3cfd93bdc4330f8|第39回のバッファ更新ヘルパーを通常ROMにも適用|通常ROM、SVP、Lock-onのCRC/速度|207696 B (-20 B) / RAM 6105 B (0 B) / 採用|
 |5|ws-sram-bank|3200fd5054a136da59eac0e5a05752d1f5cb66e3|SRAM読出・検証のバンク設定共通化|複数バンク読出と検証|207728 B (+12 B) / RAM 6105 B (0 B) / 不採用|
 |6|gba-369-geometry|416c1c7448e5c6507907955f4d3f6b7b867703bc|369-in-1の読出・消去・書込の範囲計算共通化|先頭/途中/末尾ブロック、ファイルサイズ境界、消去書込|207716 B (+0 B) / RAM 6105 B (0 B) / 不採用|
-|7|nes-write-mode-tail|983fc1259d16ba85d192b799c77e41447be47c5d|3種の安全な書込後の読出モード復帰共通化|MMC1/mapper19/MMC5 SRAM、信号タイミングとCRC|207642 B (-74 B) / RAM 6105 B (0 B) / 合成候補|
+|7|nes-write-mode-tail|983fc1259d16ba85d192b799c77e41447be47c5d|3種の安全な書込後の読出モード復帰共通化|MMC1/mapper19/MMC5 SRAM、信号タイミングとCRC|207642 B (-74 B) / RAM 6105 B (0 B) / 採用|
 |8|sv-write-abort|09b9e4ed98064fd1beb1def39139feb52e5ea1a7|書込失敗時の表示更新・ファイル閉鎖・待機共通化|不正サイズ・消去失敗・検証失敗|207916 B (+200 B) / RAM 6105 B (0 B) / 不採用|
 
 SNESは各開始コールバックで共通アドレスを設定しGPIO/NOP順を維持する。ただし同時利用されない前提と生成命令のタイミングは実機で要検証。NESは個々の書込みパルス部分を維持するが復帰時の命令タイミングに影響しうる。MD通常ROMは第39回で採用した関数の再利用のみ。小幅減でもRAM増加なしなら合成候補とし合成実測で判定。
@@ -24,4 +24,18 @@ SNESは各開始コールバックで共通アドレスを設定しGPIO/NOP順�
 - integration-3-msx-pair: 324ed0284a94932ffd74a1ba0428e59306312fda
 - integration-4-md-buffer: e68fc03a2079a9ef6907727203e713d856890f95
 
-合成予想207274 B、静的RAM6095 B。確定は合成実測による。SNESの2M転送・再送、NES書込後の信号タイミングを含め実機未試験、master未変更。
+合成実測207274 B、静的RAM6095 B。予想と一致。SNESの2M転送・再送、NES書込後の信号タイミングを含め実機未試験、master未変更。
+
+## 合成実測・採用確定
+
+[Actions run 45915446930](https://github.com/fakkuyuu/cartreaderPC/actions/runs/45915446930) 全4段階成功、全基準一致。
+
+|段階|コミット|Flash B|段階差 B|基準差 B|静的RAM B|
+|---|---|---:|---:|---:|---:|
+|基準|205e998|207716|0|0|6105|
+|③ SNES|e29fa85|207392|-324|-324|6095|
+|⑦ NES|0c8fa9e|207318|-74|-398|6095|
+|② MSX|324ed02|207294|-24|-422|6095|
+|④ MD|e68fc03|207274|-20|-442|6095|
+
+③⑦②④の4件を正式採用。次回基準は実測済み e68fc03 のファームと同一（Flash 207274 B／静的RAM 6095 B）。各変更は個別revert可能。SNESの2M転送・再送・CRCと信号タイミング、NESの書込後の復帰タイミング、MSX Game Master 2/Konami SCCなしROM、MD通常ROM/SVP/Lock-onのCRC・速度は実機未試験。masterへの統合・実機書込みなし。
