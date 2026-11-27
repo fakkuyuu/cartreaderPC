@@ -468,7 +468,7 @@ static uint16_t readROM_WS(char *outPathBuf, size_t bufferSize) {
       if ((addr & ((1 << 14) - 1)) == 0)
         blinkLED();
 
-      for (uint32_t w = 0; w < 512; w += 2) {
+      for (uint16_t w = 0; w < 512; w += 2) {
         *((uint16_t *)(sdBuffer + w)) = readWord_WS(0x20000 + addr + w);
 
         // only calculate last two banks of checksum (os and bios region)
