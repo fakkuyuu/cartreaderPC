@@ -845,6 +845,11 @@ static void readHeaderWords_MD(uint32_t startWord, void* destination, uint8_t by
   }
 }
 
+static void __attribute__((noinline)) showChecksumR59_MD(word checksum) {
+  print_Msg_PaddedHexByte(checksum >> 8);
+  print_Msg_PaddedHexByte(checksum & 0x00ff);
+}
+
 void getCartInfo_MD() {
   // Set control
   dataIn_MD();
@@ -1155,16 +1160,13 @@ void getCartInfo_MD() {
   }
   println_Msg(FS(SharedFlashText::textMBit));
   print_Msg(F("ChkS: "));
-  print_Msg_PaddedHexByte((chksum >> 8));
-  print_Msg_PaddedHexByte((chksum & 0x00ff));
+  showChecksumR59_MD(chksum);
   if (SnKmode >= 2 && SnKmode <= 5) {
     print_Msg(F("+"));
-    print_Msg_PaddedHexByte((chksumLockon >> 8));
-    print_Msg_PaddedHexByte((chksumLockon & 0x00ff));
+    showChecksumR59_MD(chksumLockon);
     if (SnKmode == 3) {
       print_Msg(F("+"));
-      print_Msg_PaddedHexByte((chksumSonic2 >> 8));
-      print_Msg_PaddedHexByte((chksumSonic2 & 0x00ff));
+      showChecksumR59_MD(chksumSonic2);
     }
   }
   printBlankLine();
