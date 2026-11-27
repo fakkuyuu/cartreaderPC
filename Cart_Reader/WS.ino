@@ -662,12 +662,16 @@ static void writeSRAM_WS() {
 }
 
 static void issueEepromRead_WS(uint16_t address) __attribute__((noinline));
-static void issueEepromRead_WS(uint16_t address) {
-  generateEepromInstruction_WS(wsEepromShiftReg, 0x2, address);
-
+static void __attribute__((noinline)) outputEepromR62_WS() {
   dataOut_WS();
   writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
   writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
+}
+
+static void issueEepromRead_WS(uint16_t address) {
+  generateEepromInstruction_WS(wsEepromShiftReg, 0x2, address);
+
+  outputEepromR62_WS();
   writeByte_WSPort(0xc8, 0x10);
 
   // MMC will shift out from port 0xc7 to 0xc6
@@ -767,9 +771,7 @@ static void writeEEPROM_WS() {
 
         generateEepromInstruction_WS(wsEepromShiftReg, 0x1, ((i + j) >> 1));
 
-        dataOut_WS();
-        writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
-        writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
+        outputEepromR62_WS();
         writeByte_WSPort(0xc4, sdBuffer[j]);
         writeByte_WSPort(0xc5, sdBuffer[j + 1]);
         writeByte_WSPort(0xc8, 0x20);
@@ -1045,9 +1047,7 @@ static uint8_t readByte_WS(uint32_t addr) {
 static void unprotectEEPROM_WS() {
   generateEepromInstruction_WS(wsEepromShiftReg, 0x0, 0x3);
 
-  dataOut_WS();
-  writeByte_WSPort(0xc6, wsEepromShiftReg[0]);
-  writeByte_WSPort(0xc7, wsEepromShiftReg[1]);
+  outputEepromR62_WS();
   writeByte_WSPort(0xc8, 0x40);
 
   // MMC will shift out port 0xc7 to 0xc6 to EEPROM
