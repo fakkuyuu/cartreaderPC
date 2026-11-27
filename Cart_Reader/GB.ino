@@ -1075,6 +1075,11 @@ static void dumpRomBlock_GB(word romAddress) {
   writeSdBufferBlock();
 }
 
+static void __attribute__((noinline)) writeMbc6BankR61_GB(byte a) {
+  writeByte_GB(0x2000, a);
+  writeByte_GB(0x3000, a);
+}
+
 void readROM_GB() {
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("GB", "ROM", romName, "gb");
@@ -1130,8 +1135,7 @@ void readROM_GB() {
     else if (romType == 32) {
       writeByte_GB(0x2800, 0);
       writeByte_GB(0x3800, 0);
-      writeByte_GB(0x2000, currBank);
-      writeByte_GB(0x3000, currBank);
+      writeMbc6BankR61_GB(currBank);
     }
 
     // Set ROM bank for TAMA5
@@ -1477,8 +1481,7 @@ void readSRAMFLASH_MBC6_GB() {
   for (byte currBank = 0; currBank < 128; currBank++) {
     word romAddress = 0x4000;
 
-    writeByte_GB(0x2000, currBank);
-    writeByte_GB(0x3000, currBank);
+    writeMbc6BankR61_GB(currBank);
 
     // Read banks and save to SD
     while (romAddress <= 0x5FFF) {
@@ -1503,8 +1506,7 @@ static void selectMbc6FlashBank_GB(byte bank) __attribute__((noinline));
 static void selectMbc6FlashBank_GB(byte bank) {
   writeByte_GB(0x2800, 0x08);
   writeByte_GB(0x3800, 0x08);
-  writeByte_GB(0x2000, bank);
-  writeByte_GB(0x3000, bank);
+  writeMbc6BankR61_GB(bank);
 }
 
 static void mbc6UnlockSequenceP16_GB() __attribute__((noinline));
@@ -2319,8 +2321,7 @@ void identifyCFI_GB() {
   // Reset flash
   display_Clear();
   writeByte_GB(0x6000, 0);  // Set ROM Mode
-  writeByte_GB(0x2000, 0);  // Set Bank to 0
-  writeByte_GB(0x3000, 0);
+  writeMbc6BankR61_GB(0);
 
   startCFIMode(false);  // Trying x8 mode first
 
