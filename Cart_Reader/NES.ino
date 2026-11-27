@@ -792,6 +792,7 @@ static bool matchesNesHeaderCrc(const uint32_t* table, uint8_t count) {
   return false;
 }
 
+void getMapping() __attribute__((noinline));
 void getMapping() {
   standaloneCandidateAllowed(false);
   FsFile database;
