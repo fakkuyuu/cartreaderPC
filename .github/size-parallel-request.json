@@ -1,40 +1,33 @@
 {
-  "id": "round60-independent",
+  "id": "round60-cumulative",
   "base": "e0db799c6a2d341e96d1eea32f7b020a1ee3dad9",
   "expected_base_flash": 204714,
   "expected_base_ram": 6059,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "nes-m28-init",
-      "head": "41dec7f191ce4395e0f6bd0c97b61b404efa547b"
+      "id": "stage2",
+      "head": "baf2c9b22b4a1245acff901247cb9811609c0acf"
     },
     {
-      "id": "nes-m31-registers",
-      "head": "ad0787eb9bd3d4175646de022efa571ac334de5d"
+      "id": "stage3",
+      "head": "3181df6383fd0d33044fca82bf27e56006149a35"
     },
     {
-      "id": "nes-m45-outer",
-      "head": "e95584668ca2543231eea63114c3a8433ecd5122"
+      "id": "stage4",
+      "head": "c05449b251d80287453eb13b983ce5b7245f36e4"
     },
     {
-      "id": "nes-m142-registers",
-      "head": "c6227af7d2c46f65d1c091b5caf1d6d5c48e5c3a"
+      "id": "stage5",
+      "head": "a7898e5d8f4045671cd00cf0bab87649bb642129"
     },
     {
-      "id": "nes-m246-registers",
-      "head": "3d576f5e6e0fd008a167919b362b2afb816dc0c2"
+      "id": "stage6",
+      "head": "fe23503ea43fbad10600b55f5935357960e5fbc1"
     },
     {
-      "id": "nes-m68-chr",
-      "head": "3cfcd6d75aea58aa86a6cc4620940c07f4d05959"
-    },
-    {
-      "id": "nes-m85-chr",
-      "head": "8c2866241c0eabea18f35e0638e66c307ab5be95"
-    },
-    {
-      "id": "md-ssf2-pair",
-      "head": "22ec7c529b9e43df7c801c30e2559787a5e521a9"
+      "id": "stage7",
+      "head": "06738e3a5401bc6737dc6ebec301bf1819db7a64"
     }
   ]
 }
