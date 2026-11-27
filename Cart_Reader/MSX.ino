@@ -553,14 +553,11 @@ void readROM_MSX() {
       case 9:  // Konami MegaROM with SCC
         msxbanks = int_pow(2, msxsize - 1);
         for (int x = 0; x < msxbanks; x += 4) {
-          writeData_MSX(0x5000, x);
-          readSegment_MSX(0x4000, 0x6000);  // 8K
-          writeData_MSX(0x7000, x + 1);
-          readSegment_MSX(0x6000, 0x8000);  // 8K
-          writeData_MSX(0x9000, x + 2);
-          readSegment_MSX(0x8000, 0xA000);  // 8K
-          writeData_MSX(0xB000, x + 3);
-          readSegment_MSX(0xA000, 0xC000);  // 8K
+          for (byte j = 0; j < 4; ++j) {
+            word start = 0x4000U + j * 0x2000U;
+            writeData_MSX(0x5000U + j * 0x2000U, x + j);
+            readSegment_MSX(start, start + 0x2000U);
+          }
         }
         break;
 
