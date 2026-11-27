@@ -2712,6 +2712,13 @@ void send28LF040Potection_GB(bool enable) {
 }
 
 // Write Pelican GBC Device - All Brainboys, MonsterBrains, Codebreakers
+static void programSramBankByte_GB(word currBank, word address, byte value) {
+  writeByteSRAM_GB(0xA000, 0x2);
+  writeByte_GB(0x3555, 0x10);
+  writeByteSRAM_GB(0xA000, currBank);
+  writeByte_GB(address, value);
+}
+
 void writePelican_GB() {
   // Launch filebrowser
   browseRootFileAndClear();
@@ -2840,10 +2847,7 @@ void writePelican_GB() {
 
           toggle = true;
           // Write current byte
-          writeByteSRAM_GB(0xA000, 0x2);
-          writeByte_GB(0x3555, 0x10);
-          writeByteSRAM_GB(0xA000, currBank);
-          writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
+          programSramBankByte_GB(currBank, currAddr + currByte, sdBuffer[currByte]);
           while (toggle) {
             byte1 = readByte_GB(currAddr + currByte);
             byte2 = readByte_GB(currAddr + currByte);
@@ -2851,10 +2855,7 @@ void writePelican_GB() {
           }
           byte1 = readByte_GB(currAddr + currByte);
           if (byte1 != sdBuffer[currByte]) {
-            writeByteSRAM_GB(0xA000, 0x2);
-            writeByte_GB(0x3555, 0x10);
-            writeByteSRAM_GB(0xA000, currBank);
-            writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
+            programSramBankByte_GB(currBank, currAddr + currByte, sdBuffer[currByte]);
             while (toggle) {
               byte1 = readByte_GB(currAddr + currByte);
               byte2 = readByte_GB(currAddr + currByte);
