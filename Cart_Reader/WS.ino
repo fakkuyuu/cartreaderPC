@@ -675,6 +675,21 @@ static uint32_t eepromGeometry_WS(uint32_t& eepromSize) {
   return eepromSize < 512 ? eepromSize : 512;
 }
 
+static void __attribute__((noinline)) processEepromPairR58_WS(uint32_t i, uint16_t j, uint32_t* errors) {
+  if ((j & 0x1f) == 0x00)
+    blinkLED();
+  issueEepromRead_WS((i + j) >> 1);
+  if (errors) {
+    if (readByte_WSPort(0xc4) != sdBuffer[j])
+      ++*errors;
+    if (readByte_WSPort(0xc5) != sdBuffer[j + 1])
+      ++*errors;
+  } else {
+    sdBuffer[j] = readByte_WSPort(0xc4);
+    sdBuffer[j + 1] = readByte_WSPort(0xc5);
+  }
+}
+
 static void readEEPROM_WS() {
   // generate fullname of eep file
   createFolderAndOpenFile("WS", "SAVE", romName, "eep");
@@ -684,13 +699,7 @@ static void readEEPROM_WS() {
 
   for (uint32_t i = 0; i < eepromSize; i += bufSize) {
     for (uint16_t j = 0; j < bufSize; j += 2) {
-      // blink LED
-      if ((j & 0x1f) == 0x00)
-        blinkLED();
-
-      issueEepromRead_WS((i + j) >> 1);
-      sdBuffer[j] = readByte_WSPort(0xc4);
-      sdBuffer[j + 1] = readByte_WSPort(0xc5);
+      processEepromPairR58_WS(i, j, nullptr);
     }
 
     myFile.write(sdBuffer, bufSize);
@@ -713,16 +722,7 @@ static void verifyEEPROM_WS() {
       myFile.read(sdBuffer, bufSize);
 
       for (uint16_t j = 0; j < bufSize; j += 2) {
-        // blink LED
-        if ((j & 0x1f) == 0x00)
-          blinkLED();
-
-        issueEepromRead_WS((i + j) >> 1);
-        if (readByte_WSPort(0xc4) != sdBuffer[j])
-          write_errors++;
-
-        if (readByte_WSPort(0xc5) != sdBuffer[j + 1])
-          write_errors++;
+        processEepromPairR58_WS(i, j, &write_errors);
       }
     }
 
