@@ -430,10 +430,8 @@ void snesMenu() {
             readSRAM();
             eraseSRAM(0x0F);
             eraseSRAM(0xF0);
-            writeSRAM(0);
-          } else {
-            writeSRAM(1);
           }
+          writeSRAM(mainMenu == 3 ? 0 : 1);
           unsigned long wrErrors = verifySRAM();
           if (wrErrors != 0) {
             showVerificationErrorCount(wrErrors);
