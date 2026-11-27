@@ -321,8 +321,7 @@ uint8_t readData_MSX(uint16_t addr) {
 void readSegment_MSX(uint32_t startaddr, uint32_t endaddr) {
   for (uint32_t addr = startaddr; addr < endaddr; addr += 512) {
     for (int w = 0; w < 512; w++) {
-      uint8_t temp = readData_MSX(addr + w);
-      sdBuffer[w] = temp;
+      sdBuffer[w] = readData_MSX(addr + w);
     }
     writeSdBufferBlock();
   }
