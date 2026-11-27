@@ -388,7 +388,7 @@ void getCartInfo_VB() {
     sdBuffer[c + 1] = loByte;
   }
   byte myLength = 0;
-  for (unsigned int i = 0; i < 20; i++) {
+  for (uint8_t i = 0; i < 20; i++) {
     if (((char(sdBuffer[i]) >= 48 && char(sdBuffer[i]) <= 57) || (char(sdBuffer[i]) >= 65 && char(sdBuffer[i]) <= 122)) && myLength < 15) {
       romName[myLength] = char(sdBuffer[i]);
       myLength++;
