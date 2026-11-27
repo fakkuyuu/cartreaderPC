@@ -1,40 +1,25 @@
 {
-  "id": "parallel-040",
+  "id": "parallel-040-integration",
   "base": "205e9984529510ca94d7e3c681cbf186fc082733",
   "expected_base_flash": 207716,
   "expected_base_ram": 6105,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "vb-rom-range",
-      "head": "cf0e582c3580cce7d9d16e48b6b17cf7bc98ec0b"
+      "id": "integration-1-snes-retry",
+      "head": "e29fa85f9a9a2d027cdda7402d8fa5c56801805d"
     },
     {
-      "id": "msx-paired-rom",
-      "head": "e5150ce457e686c226930eeb0e2084ce97c7a724"
+      "id": "integration-2-nes-tail",
+      "head": "0c8fa9edd8a68e100674c14a8fe892a503a84076"
     },
     {
-      "id": "snes-retry-address",
-      "head": "8b6c0705215ee2ecac12d7793683aadc0718b61f"
+      "id": "integration-3-msx-pair",
+      "head": "324ed0284a94932ffd74a1ba0428e59306312fda"
     },
     {
-      "id": "md-rom-buffer",
-      "head": "b48002d7cdc77fe01e74ae0bd3cfd93bdc4330f8"
-    },
-    {
-      "id": "ws-sram-bank",
-      "head": "3200fd5054a136da59eac0e5a05752d1f5cb66e3"
-    },
-    {
-      "id": "gba-369-geometry",
-      "head": "416c1c7448e5c6507907955f4d3f6b7b867703bc"
-    },
-    {
-      "id": "nes-write-mode-tail",
-      "head": "983fc1259d16ba85d192b799c77e41447be47c5d"
-    },
-    {
-      "id": "sv-write-abort",
-      "head": "09b9e4ed98064fd1beb1def39139feb52e5ea1a7"
+      "id": "integration-4-md-buffer",
+      "head": "e68fc03a2079a9ef6907727203e713d856890f95"
     }
   ]
 }
