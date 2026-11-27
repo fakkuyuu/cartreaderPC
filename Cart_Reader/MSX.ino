@@ -695,13 +695,10 @@ void readRAM_MSX() {
         // Bit 4 (0x10) - Dires (2K)
         // Bit 5 (0x20) - Xanadu
         // Bit 7 (0x80) - Wizardry
-        if (msxramsize == 1) {              // Dires (2K)
-          writeData_MSX(0x7000, 0x10);      // Bit 4
-          readSegment_MSX(0x8000, 0x8800);  // 2K
-        } else {
-          // Combine SRAM Enable Bit 5 + Bit 7 = 0xA0
-          writeData_MSX(0x7000, 0xA0);      // Bit 5 + Bit 7
-          readSegment_MSX(0x8000, 0xA000);  // 8K
+        {
+          const bool small = msxramsize == 1;
+          writeData_MSX(0x7000, small ? 0x10 : 0xA0);
+          readSegment_MSX(0x8000, small ? 0x8800 : 0xA000);
         }
         writeData_MSX(0x7000, 0);  // SRAM Disable
         break;
