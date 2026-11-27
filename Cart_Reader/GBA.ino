@@ -1863,7 +1863,7 @@ void send_GBA(word currAddr, word numBits) {
 }
 
 // Write 512K eeprom block
-void writeBlock_EEP(word startAddr, word eepSize) {
+static void setupEepromPins_GBA() {
   // Setup
   // Set CS_ROM(PH3) WR(PH5) RD(PH6) to Output
   DDRH |= (1 << 3) | (1 << 5) | (1 << 6);
@@ -1881,6 +1881,10 @@ void writeBlock_EEP(word startAddr, word eepSize) {
 
   __asm__("nop\n\t"
           "nop\n\t");
+}
+
+void writeBlock_EEP(word startAddr, word eepSize) {
+  setupEepromPins_GBA();
 
   // Write 64*8=512 bytes
   for (word currAddr = startAddr; currAddr < startAddr + 64; currAddr++) {
@@ -1951,23 +1955,7 @@ void writeBlock_EEP(word startAddr, word eepSize) {
 
 // Reads 512 bytes from eeprom
 void readBlock_EEP(word startAddress, word eepSize) {
-  // Setup
-  // Set CS_ROM(PH3) WR(PH5) RD(PH6) to Output
-  DDRH |= (1 << 3) | (1 << 5) | (1 << 6);
-  // Set A0(PF0) to Output
-  DDRF |= (1 << 0);
-  // Set A23/D7(PC7) to Output
-  DDRC |= (1 << 7);
-
-  // Set CS_ROM(PH3) WR(PH5) RD(PH6) to High
-  PORTH |= (1 << 3) | (1 << 5) | (1 << 6);
-  // Set A0(PF0) to High
-  PORTF |= (1 << 0);
-  // Set A23/D7(PC7) to High
-  PORTC |= (1 << 7);
-
-  __asm__("nop\n\t"
-          "nop\n\t");
+  setupEepromPins_GBA();
 
   // Read 64*8=512 bytes
   for (word currAddr = startAddress; currAddr < startAddress + 64; currAddr++) {
