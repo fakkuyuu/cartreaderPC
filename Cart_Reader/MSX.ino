@@ -715,10 +715,10 @@ void readRAM_MSX() {
         break;
 
       case 4:  // Game Master 2 (8K)
-        writeData_MSX(0xA000, 0x10);      // Bit 4 Enable, Bit 5 SRAM Segment 0
-        readSegment_MSX(0xB000, 0xC000);  // 4K
-        writeData_MSX(0xA000, 0x30);      // Bit 4 Enable, Bit 5 SRAM Segment 1
-        readSegment_MSX(0xB000, 0xC000);  // 4K
+        for (uint8_t bank = 0x10; bank <= 0x30; bank += 0x20) {
+          writeData_MSX(0xA000, bank);
+          readSegment_MSX(0xB000, 0xC000);
+        }
         writeData_MSX(0xA000, 0);         // SRAM Disable
         break;
 
