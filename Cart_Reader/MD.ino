@@ -845,12 +845,17 @@ static void readHeaderWords_MD(uint32_t startWord, void* destination, uint8_t by
   }
 }
 
+static unsigned long readCartSize_MD(uint32_t startWord) __attribute__((noinline));
+static unsigned long readCartSize_MD(uint32_t startWord) {
+  return ((long(readWord_MD(startWord)) << 16) | readWord_MD(startWord + 1)) + 1;
+}
+
 void getCartInfo_MD() {
   // Set control
   dataIn_MD();
 
   // Get cart size
-  cartSize = ((long(readWord_MD(0xD2)) << 16) | readWord_MD(0xD3)) + 1;
+  cartSize = readCartSize_MD(0xD2);
 
   // Check for 32x compatibility
   if ((readWord_MD(0x104 / 2) == 0x2033) && (readWord_MD(0x106 / 2) == 0x3258))
@@ -915,7 +920,7 @@ void getCartInfo_MD() {
       // Lock-on cart checksum
       chksumLockon = readWord_MD(0x1000C7);
       // Lock-on cart size
-      cartSizeLockon = ((long(readWord_MD(0x1000D2)) << 16) | readWord_MD(0x1000D3)) + 1;
+      cartSizeLockon = readCartSize_MD(0x1000D2);
 
       // Get IdLockon
       readHeaderWords_MD(0x200180UL / 2, idLockon, 14);
