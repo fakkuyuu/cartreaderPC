@@ -398,10 +398,15 @@ unsigned long verifySRAM_SV() {
    SatellaView 8M Memory Pack functions
  *****************************************/
 // Read memory pack to SD card
-void readROM_SV() {
-  // Set control
+static void setInputBus_SV() __attribute__((noinline));
+static void setInputBus_SV() {
   dataIn();
   controlIn_SNES();
+}
+
+void readROM_SV() {
+  // Set control
+  setInputBus_SV();
 
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("SNES", "ROM", "MEMPACK", "bs");
@@ -427,8 +432,7 @@ void readROM_SV() {
 
 void writeROM_SV(void) {
   // Get Checksum as string to make sure that BS-X cart is inserted
-  dataIn();
-  controlIn_SNES();
+  setInputBus_SV();
   sprintf(checksumStr, "%02X%02X", readBank_SV(0, 65503), readBank_SV(0, 65502));
 
   //if CRC is not 8B86, BS-X cart is not inserted. Display error and reset
@@ -470,8 +474,7 @@ void writeROM_SV(void) {
 
     //Blank check
     //Set pins to input
-    dataIn();
-    controlIn_SNES();
+    setInputBus_SV();
     println_Msg(F("Blank check..."));
     display_Update();
     for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
@@ -544,8 +547,7 @@ void writeROM_SV(void) {
 
 void eraseCheck_SV(void) {
   byte ret;
-  dataIn();
-  controlIn_SNES();
+  setInputBus_SV();
 
   // Read register
   ret = readBank_SV(0xC0, 0x0004);
@@ -581,8 +583,7 @@ void eraseCheck_SV(void) {
 
 void supplyCheck_SV(void) {
   byte ret;
-  dataIn();
-  controlIn_SNES();
+  setInputBus_SV();
 
   // Read register
   ret = readBank_SV(0xC0, 0x0004);
@@ -618,8 +619,7 @@ void supplyCheck_SV(void) {
 
 void writeCheck_SV(void) {
   byte ret;
-  dataIn();
-  controlIn_SNES();
+  setInputBus_SV();
 
   // Read register
   ret = readBank_SV(0xC0, 0x0000);
@@ -657,8 +657,7 @@ void writeCheck_SV(void) {
 void detectCheck_SV(void) {
   int i = 0;
   byte ret;
-  dataIn();
-  controlIn_SNES();
+  setInputBus_SV();
 
   // Read register
   ret = readBank_SV(0xC0, 0x0002);
