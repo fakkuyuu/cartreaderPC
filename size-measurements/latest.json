@@ -1,52 +1,75 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45942082750",
+  "run_id": "45943424294",
   "run_attempt": "1",
-  "workflow_commit": "8508447d18ad6995f8c89d6692ecdd744cad7f25",
+  "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
   "request": {
-    "id": "parallel-044-integration",
-    "base": "c86f54450543072d535bd50f29da13df69cdf25c",
-    "expected_base_flash": 207002,
+    "id": "parallel-045",
+    "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+    "expected_base_flash": 206994,
     "expected_base_ram": 6095,
-    "endpoints_only": true,
     "candidates": [
       {
-        "id": "snes-only-endpoint",
-        "head": "ec4714c2462834284e9c36a3dbb9b10f8f8e7683"
+        "id": "md-eep-status13",
+        "head": "779f90fc86eef145d3cbac22141e840585f66338"
       },
       {
-        "id": "snes-msx-endpoint",
-        "head": "c4ec6235eddc0f6e0429f57b00758870daa5fcee"
+        "id": "md-eep-read13",
+        "head": "3b9f4701b46aef9b2c231af7eabd10f980d19882"
+      },
+      {
+        "id": "md-eep-sda-scl",
+        "head": "dfae85a025249896a7389dbbc2455f0fad48b27c"
+      },
+      {
+        "id": "md-eep-start45",
+        "head": "242c4b2aa907239d71d57966e8c1b904bff6ff0d"
+      },
+      {
+        "id": "md-eep-status45",
+        "head": "323063649da32f980c6c1eac17c20f80a0e18ef7"
+      },
+      {
+        "id": "md-eep-read45",
+        "head": "e1fdea2d99d1154dc806e8804d871a48f00196dc"
+      },
+      {
+        "id": "md-eep-address",
+        "head": "6f71cdc9e309ab1b4c573877b90a5980b86c3c8b"
+      },
+      {
+        "id": "md-eep-byte-pack",
+        "head": "cebb96867d2cf203212f157d6cf71a95a1f38180"
       }
     ]
   },
-  "status": "ok",
+  "status": "partial_or_failed",
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45942082750",
+      "run_id": "45943424294",
       "run_attempt": "1",
-      "workflow_commit": "8508447d18ad6995f8c89d6692ecdd744cad7f25",
+      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "snes-only-endpoint",
-        "head": "ec4714c2462834284e9c36a3dbb9b10f8f8e7683",
-        "base": "c86f54450543072d535bd50f29da13df69cdf25c",
-        "expected_base_flash": 207002,
+        "id": "md-eep-status13",
+        "head": "779f90fc86eef145d3cbac22141e840585f66338",
+        "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+        "expected_base_flash": 206994,
         "expected_base_ram": 6095,
-        "endpoints_only": true
+        "endpoints_only": false
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "c86f54450543072d535bd50f29da13df69cdf25c",
-          "subject": "Record round 43 combined measurements and adopt three reductions",
+          "commit": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+          "subject": "Record round 44 measured size reductions",
           "status": "ok",
-          "flash": 207002,
+          "flash": 206994,
           "ram": 6095,
           "delta_previous": null,
           "delta_base": 0,
@@ -54,47 +77,47 @@
           "error": null
         },
         {
-          "commit": "ec4714c2462834284e9c36a3dbb9b10f8f8e7683",
-          "subject": "Round 44 integrate SNES bank index reduction",
+          "commit": "779f90fc86eef145d3cbac22141e840585f66338",
+          "subject": "Round 45 share MD EEPROM status 1 and 3",
           "status": "ok",
-          "flash": 206998,
+          "flash": 206934,
           "ram": 6095,
-          "delta_previous": -4,
-          "delta_base": -4,
+          "delta_previous": -60,
+          "delta_base": -60,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "snes-only-endpoint",
-        "head": "ec4714c2462834284e9c36a3dbb9b10f8f8e7683"
+        "id": "md-eep-status13",
+        "head": "779f90fc86eef145d3cbac22141e840585f66338"
       }
     },
     {
       "schema": 1,
-      "run_id": "45942082750",
+      "run_id": "45943424294",
       "run_attempt": "1",
-      "workflow_commit": "8508447d18ad6995f8c89d6692ecdd744cad7f25",
+      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "snes-msx-endpoint",
-        "head": "c4ec6235eddc0f6e0429f57b00758870daa5fcee",
-        "base": "c86f54450543072d535bd50f29da13df69cdf25c",
-        "expected_base_flash": 207002,
+        "id": "md-eep-read13",
+        "head": "3b9f4701b46aef9b2c231af7eabd10f980d19882",
+        "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+        "expected_base_flash": 206994,
         "expected_base_ram": 6095,
-        "endpoints_only": true
+        "endpoints_only": false
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "c86f54450543072d535bd50f29da13df69cdf25c",
-          "subject": "Record round 43 combined measurements and adopt three reductions",
+          "commit": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+          "subject": "Record round 44 measured size reductions",
           "status": "ok",
-          "flash": 207002,
+          "flash": 206994,
           "ram": 6095,
           "delta_previous": null,
           "delta_base": 0,
@@ -102,21 +125,309 @@
           "error": null
         },
         {
-          "commit": "c4ec6235eddc0f6e0429f57b00758870daa5fcee",
-          "subject": "Round 44 integrate MSX mapper index reductions",
+          "commit": "3b9f4701b46aef9b2c231af7eabd10f980d19882",
+          "subject": "Round 45 test MD EEPROM refactor 2",
           "status": "ok",
-          "flash": 206994,
+          "flash": 206932,
           "ram": 6095,
-          "delta_previous": -8,
-          "delta_base": -8,
+          "delta_previous": -62,
+          "delta_base": -62,
           "classification": "reduced",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "snes-msx-endpoint",
-        "head": "c4ec6235eddc0f6e0429f57b00758870daa5fcee"
+        "id": "md-eep-read13",
+        "head": "3b9f4701b46aef9b2c231af7eabd10f980d19882"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45943424294",
+      "run_attempt": "1",
+      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "md-eep-sda-scl",
+        "head": "dfae85a025249896a7389dbbc2455f0fad48b27c",
+        "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+        "expected_base_flash": 206994,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+          "subject": "Record round 44 measured size reductions",
+          "status": "ok",
+          "flash": 206994,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "dfae85a025249896a7389dbbc2455f0fad48b27c",
+          "subject": "Round 45 test MD EEPROM refactor 3",
+          "status": "ok",
+          "flash": 206842,
+          "ram": 6095,
+          "delta_previous": -152,
+          "delta_base": -152,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "md-eep-sda-scl",
+        "head": "dfae85a025249896a7389dbbc2455f0fad48b27c"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45943424294",
+      "run_attempt": "1",
+      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "md-eep-start45",
+        "head": "242c4b2aa907239d71d57966e8c1b904bff6ff0d",
+        "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+        "expected_base_flash": 206994,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+          "subject": "Record round 44 measured size reductions",
+          "status": "ok",
+          "flash": 206994,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "242c4b2aa907239d71d57966e8c1b904bff6ff0d",
+          "subject": "Round 45 test MD EEPROM refactor 4",
+          "status": "ok",
+          "flash": 206974,
+          "ram": 6095,
+          "delta_previous": -20,
+          "delta_base": -20,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "md-eep-start45",
+        "head": "242c4b2aa907239d71d57966e8c1b904bff6ff0d"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45943424294",
+      "run_attempt": "1",
+      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "build_failed",
+      "request": {
+        "id": "md-eep-status45",
+        "head": "323063649da32f980c6c1eac17c20f80a0e18ef7",
+        "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+        "expected_base_flash": 206994,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+          "subject": "Record round 44 measured size reductions",
+          "status": "ok",
+          "flash": 206994,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "323063649da32f980c6c1eac17c20f80a0e18ef7",
+          "subject": "Round 45 test MD EEPROM refactor 5",
+          "status": "failed",
+          "flash": null,
+          "ram": null,
+          "delta_previous": null,
+          "delta_base": null,
+          "classification": "unavailable",
+          "error": "Program \"arduino-builder.exe\" ended with non-zero exit code: 1 (0x00000001)."
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "md-eep-status45",
+        "head": "323063649da32f980c6c1eac17c20f80a0e18ef7"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45943424294",
+      "run_attempt": "1",
+      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "build_failed",
+      "request": {
+        "id": "md-eep-read45",
+        "head": "e1fdea2d99d1154dc806e8804d871a48f00196dc",
+        "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+        "expected_base_flash": 206994,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+          "subject": "Record round 44 measured size reductions",
+          "status": "ok",
+          "flash": 206994,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "e1fdea2d99d1154dc806e8804d871a48f00196dc",
+          "subject": "Round 45 share MD EEPROM read 4 and 5",
+          "status": "failed",
+          "flash": null,
+          "ram": null,
+          "delta_previous": null,
+          "delta_base": null,
+          "classification": "unavailable",
+          "error": "Program \"arduino-builder.exe\" ended with non-zero exit code: 1 (0x00000001)."
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "md-eep-read45",
+        "head": "e1fdea2d99d1154dc806e8804d871a48f00196dc"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45943424294",
+      "run_attempt": "1",
+      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "md-eep-address",
+        "head": "6f71cdc9e309ab1b4c573877b90a5980b86c3c8b",
+        "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+        "expected_base_flash": 206994,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+          "subject": "Record round 44 measured size reductions",
+          "status": "ok",
+          "flash": 206994,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "6f71cdc9e309ab1b4c573877b90a5980b86c3c8b",
+          "subject": "Round 45 unify MD EEPROM address bit loop",
+          "status": "ok",
+          "flash": 206988,
+          "ram": 6095,
+          "delta_previous": -6,
+          "delta_base": -6,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "md-eep-address",
+        "head": "6f71cdc9e309ab1b4c573877b90a5980b86c3c8b"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45943424294",
+      "run_attempt": "1",
+      "workflow_commit": "47976b178f7a77466a64d1f02185d8fc1c6de682",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "md-eep-byte-pack",
+        "head": "cebb96867d2cf203212f157d6cf71a95a1f38180",
+        "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+        "expected_base_flash": 206994,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
+          "subject": "Record round 44 measured size reductions",
+          "status": "ok",
+          "flash": 206994,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "cebb96867d2cf203212f157d6cf71a95a1f38180",
+          "subject": "Round 45 pack MD EEPROM bits with shift loop",
+          "status": "ok",
+          "flash": 206934,
+          "ram": 6095,
+          "delta_previous": -60,
+          "delta_base": -60,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "md-eep-byte-pack",
+        "head": "cebb96867d2cf203212f157d6cf71a95a1f38180"
       }
     }
   ]
