@@ -600,6 +600,8 @@ void writeByte_GBA(uint16_t myAddress, byte myData) {
 /******************************************
   GBA ROM Functions
 *****************************************/
+static void readTimedEepromBlock_GBA(word address, word size);
+
 // Compute the checksum of rom header
 // "header" must contain at least the rom's first 188 bytes
 byte checksumHeader_GBA(const byte* header) {
@@ -845,11 +847,7 @@ void getCartInfo_GBA() {
     } else if (saveTypeStr[0] == 'E') {
       // Test if 4kbit or 64kbit EEPROM
 
-      // Disable interrupts for more uniform clock pulses
-      noInterrupts();
-      // Fill sd Buffer
-      readBlock_EEP(0, 64);
-      interrupts();
+      readTimedEepromBlock_GBA(0, 64);
       delay(1000);
       // Enable ROM again
       setROM_GBA();
@@ -1811,6 +1809,12 @@ void writeEeprom_GBA(word eepSize) {
   }
 }
 
+static void readTimedEepromBlock_GBA(word address, word size) {
+  noInterrupts();
+  readBlock_EEP(address, size);
+  interrupts();
+}
+
 // Read eeprom to file
 void readEeprom_GBA(word eepSize) {
   // Get name, add extension and convert to char array for sd lib
@@ -1824,11 +1828,7 @@ void readEeprom_GBA(word eepSize) {
 
   // Each block contains 8 Bytes, so for a 8KB eeprom 1024 blocks need to be read
   for (word currAddress = 0; currAddress < eepSize * 16; currAddress += 64) {
-    // Disable interrupts for more uniform clock pulses
-    noInterrupts();
-    // Fill sd Buffer
-    readBlock_EEP(currAddress, eepSize);
-    interrupts();
+    readTimedEepromBlock_GBA(currAddress, eepSize);
 
     // Write sdBuffer to file
     writeSdBufferBlock();
@@ -2045,10 +2045,7 @@ unsigned long verifyEEP_GBA(word eepSize) {
 
   // Fill sd Buffer
   for (word currAddress = 0; currAddress < eepSize * 16; currAddress += 64) {
-    // Disable interrupts for more uniform clock pulses
-    noInterrupts();
-    readBlock_EEP(currAddress, eepSize);
-    interrupts();
+    readTimedEepromBlock_GBA(currAddress, eepSize);
 
     // Compare
     for (int currByte = 0; currByte < 512; currByte++) {
