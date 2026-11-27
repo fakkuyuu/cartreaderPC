@@ -3481,6 +3481,13 @@ void eraseIntel4400_N64() {
 }
 
 // Erase Fujutsu MSP55LV100S
+static void unlockWideFlash_N64(unsigned long flashBase) {
+  setAddress_N64(flashBase + (0x555 << 1));
+  writeWord_N64(0xAAAA);
+  setAddress_N64(flashBase + (0x2AA << 1));
+  writeWord_N64(0x5555);
+}
+
 void eraseMSP55LV100_N64() {
   unsigned long flashBase = romBase;
   unsigned long sectorSize = 0x20000;
@@ -3492,16 +3499,10 @@ void eraseMSP55LV100_N64() {
     blinkLED();
 
     // Send Erase Command
-    setAddress_N64(flashBase + (0x555 << 1));
-    writeWord_N64(0xAAAA);
-    setAddress_N64(flashBase + (0x2AA << 1));
-    writeWord_N64(0x5555);
+    unlockWideFlash_N64(flashBase);
     setAddress_N64(flashBase + (0x555 << 1));
     writeWord_N64(0x8080);
-    setAddress_N64(flashBase + (0x555 << 1));
-    writeWord_N64(0xAAAA);
-    setAddress_N64(flashBase + (0x2AA << 1));
-    writeWord_N64(0x5555);
+    unlockWideFlash_N64(flashBase);
     setAddress_N64(romBase + currSector);
     writeWord_N64(0x3030);
 
@@ -3684,10 +3685,7 @@ void writeMSP55LV100_N64(unsigned long sectorSize) {
       for (int currWriteBuffer = 0; currWriteBuffer < 512; currWriteBuffer += 32) {
 
         // 2 unlock commands
-        setAddress_N64(flashBase + (0x555 << 1));
-        writeWord_N64(0xAAAA);
-        setAddress_N64(flashBase + (0x2AA << 1));
-        writeWord_N64(0x5555);
+        unlockWideFlash_N64(flashBase);
 
         // Write buffer load command at sector address
         setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
