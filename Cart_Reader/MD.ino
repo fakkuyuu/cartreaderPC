@@ -1226,6 +1226,11 @@ void writeSSF2Map(unsigned long myAddress, word myData) {
   dataIn_MD();
 }
 
+static void __attribute__((noinline)) writeSSF2PairR60_MD(word bank) {
+  writeSSF2Map(0x50987E, bank);
+  writeSSF2Map(0x50987F, bank + 1);
+}
+
 // Read rom and save to the SD card
 // MD 16-bit reader for the benchmark-gated CRC-checked 2 Mbps PC stream.
 static uint32_t md2mWordAddress = 0;
@@ -1354,8 +1359,7 @@ void readROM_MD() {
 
   // Prepare SSF2 Banks
   if (cartSize > 0x400000) {
-    writeSSF2Map(0x50987E, 6);  // 0xA130FD
-    writeSSF2Map(0x50987F, 7);  // 0xA130FF
+    writeSSF2PairR60_MD(6);
   }
   byte offsetSSF2Bank = 0;
   word d = 0;
@@ -1429,51 +1433,40 @@ void readROM_MD() {
       blinkLED();
 
     if (currBuffer == 0x200000) {
-      writeSSF2Map(0x50987E, 8);  // 0xA130FD
-      writeSSF2Map(0x50987F, 9);  // 0xA130FF
+      writeSSF2PairR60_MD(8);
       offsetSSF2Bank = 1;
     }
 
     // Demons of Asteborg Additional Banks
     else if (currBuffer == 0x280000) {
-      writeSSF2Map(0x50987E, 10);  // 0xA130FD
-      writeSSF2Map(0x50987F, 11);  // 0xA130FF
+      writeSSF2PairR60_MD(10);
       offsetSSF2Bank = 2;
     } else if (currBuffer == 0x300000) {
-      writeSSF2Map(0x50987E, 12);  // 0xA130FD
-      writeSSF2Map(0x50987F, 13);  // 0xA130FF
+      writeSSF2PairR60_MD(12);
       offsetSSF2Bank = 3;
     } else if (currBuffer == 0x380000) {
-      writeSSF2Map(0x50987E, 14);  // 0xA130FD
-      writeSSF2Map(0x50987F, 15);  // 0xA130FF
+      writeSSF2PairR60_MD(14);
       offsetSSF2Bank = 4;
     } else if (currBuffer == 0x400000) {
-      writeSSF2Map(0x50987E, 16);  // 0xA130FD
-      writeSSF2Map(0x50987F, 17);  // 0xA130FF
+      writeSSF2PairR60_MD(16);
       offsetSSF2Bank = 5;
     } else if (currBuffer == 0x480000) {
-      writeSSF2Map(0x50987E, 18);  // 0xA130FD
-      writeSSF2Map(0x50987F, 19);  // 0xA130FF
+      writeSSF2PairR60_MD(18);
       offsetSSF2Bank = 6;
     } else if (currBuffer == 0x500000) {
-      writeSSF2Map(0x50987E, 20);  // 0xA130FD
-      writeSSF2Map(0x50987F, 21);  // 0xA130FF
+      writeSSF2PairR60_MD(20);
       offsetSSF2Bank = 7;
     } else if (currBuffer == 0x580000) {
-      writeSSF2Map(0x50987E, 22);  // 0xA130FD
-      writeSSF2Map(0x50987F, 23);  // 0xA130FF
+      writeSSF2PairR60_MD(22);
       offsetSSF2Bank = 8;
     } else if (currBuffer == 0x600000) {
-      writeSSF2Map(0x50987E, 24);  // 0xA130FD
-      writeSSF2Map(0x50987F, 25);  // 0xA130FF
+      writeSSF2PairR60_MD(24);
       offsetSSF2Bank = 9;
     } else if (currBuffer == 0x680000) {
-      writeSSF2Map(0x50987E, 26);  // 0xA130FD
-      writeSSF2Map(0x50987F, 27);  // 0xA130FF
+      writeSSF2PairR60_MD(26);
       offsetSSF2Bank = 10;
     } else if (currBuffer == 0x700000) {
-      writeSSF2Map(0x50987E, 28);  // 0xA130FD
-      writeSSF2Map(0x50987F, 29);  // 0xA130FF
+      writeSSF2PairR60_MD(28);
       offsetSSF2Bank = 11;
     }
 
@@ -1668,8 +1661,7 @@ void readROM_MD() {
   closeCurrentFile();
   // Reset SSF2 Banks
   if (cartSize > 0x400000) {
-    writeSSF2Map(0x50987E, 6);  // 0xA130FD
-    writeSSF2Map(0x50987F, 7);  // 0xA130FF
+    writeSSF2PairR60_MD(6);
   }
 
   // Calculate internal checksum
