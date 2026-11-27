@@ -515,6 +515,18 @@ static uint32_t sramBankGeometry_WS(uint16_t& end_bank) {
   return bank_size;
 }
 
+static void __attribute__((noinline)) processSramReadR58_WS(uint32_t addr, uint32_t* errors) {
+  for (uint32_t w = 0; w < 512; w++) {
+    uint8_t value = readByte_WS(0x10000 + addr + w);
+    if (errors) {
+      if (value != sdBuffer[w])
+        ++*errors;
+    } else {
+      sdBuffer[w] = value;
+    }
+  }
+}
+
 static void readSRAM_WS() {
   // generate fullname of rom file
   createFolderAndOpenFile("WS", "SAVE", romName, "save");
@@ -535,8 +547,7 @@ static void readSRAM_WS() {
         blinkLED();
 
       // SRAM data on D0-D7, with A-1 to select high/low byte
-      for (uint32_t w = 0; w < 512; w++)
-        sdBuffer[w] = readByte_WS(0x10000 + addr + w);
+      processSramReadR58_WS(addr, nullptr);
 
       writeSdBufferBlock();
     }
@@ -572,10 +583,7 @@ static void verifySRAM_WS() {
         readSdBufferBlock();
 
         // SRAM data on D0-D7, with A-1 to select high/low byte
-        for (uint32_t w = 0; w < 512; w++) {
-          if (readByte_WS(0x10000 + addr + w) != sdBuffer[w])
-            write_errors++;
-        }
+        processSramReadR58_WS(addr, &write_errors);
       }
     } while (++bank < end_bank);
 

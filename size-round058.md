@@ -21,4 +21,4 @@ Preserve original address ranges, read/write order and file handling. Shared hel
 
 ## Cumulative measurement
 
-Stage 1: 37a3cf8635dace245b020f3ee513f3e5ddd8753d, 205200 B / 6059 B (independent measurement). Stage 2: 44d2c26b6ce0a71a0c854dcdc7114ca9462e6a2d, predicted 205192 B; [run 46021106551](https://github.com/fakkuyuu/cartreaderPC/actions/runs/46021106551) pending. Firmware not yet adopted into the working branch; master unchanged; no hardware test.
+Stage 1: 37a3cf8635dace245b020f3ee513f3e5ddd8753d, 205200 B / 6059 B (independent measurement). Stage 2: 44d2c26b6ce0a71a0c854dcdc7114ca9462e6a2d, measured 205188 B / 6059 B; [run 46021106551](https://github.com/fakkuyuu/cartreaderPC/actions/runs/46021106551) passed the build and baseline checks. Stage 2 additional reduction -12 B, total -66 B (4 B more than the independent sum). Both candidates adopted into the working branch, firmware blobs equal the measured endpoint. Master unchanged; no hardware test.
