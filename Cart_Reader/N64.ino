@@ -130,6 +130,11 @@ static void prepareCartP21_N64(bool special) {
   setup_N64_Cart();
 }
 
+static void __attribute__((noinline)) showProgressR62_N64(uint32_t processedProgressBar, uint32_t totalProgressBar) {
+  draw_progressbar(processedProgressBar, totalProgressBar);
+  blinkLED();
+}
+
 void n64Menu() {
   // create menu with title and 6 options to choose from
   unsigned char n64Dev;
@@ -4169,8 +4174,7 @@ void writeGameshark_N64() {
         writeWord_N64(currWord);
       }
       processedProgressBar += 256;
-      draw_progressbar(processedProgressBar, totalProgressBar);
-      blinkLED();
+      showProgressR62_N64(processedProgressBar, totalProgressBar);
       delay(30);
     }
   }
@@ -4202,8 +4206,7 @@ void writeGameshark_N64() {
           delayMicroseconds(60);
         }
         processedProgressBar += 256;
-        draw_progressbar(processedProgressBar, totalProgressBar);
-        blinkLED();
+        showProgressR62_N64(processedProgressBar, totalProgressBar);
       }
     }
 
@@ -4230,8 +4233,7 @@ static void verifyAccessoryRange_N64(unsigned long start, unsigned long totalPro
         }
       }
       processedProgressBar += 512;
-      draw_progressbar(processedProgressBar, totalProgressBar);
-      blinkLED();
+      showProgressR62_N64(processedProgressBar, totalProgressBar);
     }
   }
 }
@@ -4461,8 +4463,7 @@ void writeXplorer_N64() {
       }
     }
     processedProgressBar += 256;
-    draw_progressbar(processedProgressBar, totalProgressBar);
-    blinkLED();
+    showProgressR62_N64(processedProgressBar, totalProgressBar);
   }
 }
 
