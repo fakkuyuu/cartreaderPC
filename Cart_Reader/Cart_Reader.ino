@@ -1680,317 +1680,193 @@ uint8_t pageMenu(const __FlashStringHelper* question, const char* const* menuStr
 }
 
 // All included slots
-void mainMenu() {
-  // wait for user choice to come back from the question box menu
-  switch (pageMenu(F("OPEN SOURCE CART READER"), modeOptions, SYSTEM_MENU_TOTAL)) {
+typedef void (*SystemMenuActionR51)();
+struct SystemMenuEntryR51 {
+  SystemMenuActionR51 setup;
+  SystemMenuActionR51 menu;
+};
 
+static void enterNesSystemMenuR51() {
+  mode = CORE_NES;
+  clearAndUpdateDisplay();
+  setup_NES();
+  for (size_t c = 0; c < 512; c++) {
+    read_prg_byte(0x8000 + c);
+    read_prg_byte(0xE000 + c);
+  }
+  getMapping();
+  checkStatus_NES();
+  nesMenu();
+}
+
+static void enterSnesSystemMenuR51() {
+  PcConsole.println(F("[Menu] entering SNES"));
+  snsMenu();
+}
+
+static void enterWsSystemMenuR51() {
+  clearAndUpdateDisplay();
+  if (!setup_WS()) return;
+  mode = CORE_WS;
+  wsMenu();
+}
+
+static void enterNgpSystemMenuR51() {
+  clearAndUpdateDisplay();
+  setup_NGP();
+  mode = CORE_NGP;
+}
+
+static const SystemMenuEntryR51 systemMenuActionsR51[] PROGMEM = {
 #ifdef ENABLE_GBX
-    case SYSTEM_MENU_GBX:
-      return gbxMenu();
+  { nullptr, gbxMenu },
 #endif
-
 #ifdef ENABLE_NES
-    case SYSTEM_MENU_NES:
-      mode = CORE_NES;
-      clearAndUpdateDisplay();
-      setup_NES();
-      // Wait for MMC3
-      for (size_t c = 0; c < 512; c++) {
-        read_prg_byte(0x8000 + c);
-        read_prg_byte(0xE000 + c);
-      }
-      getMapping();
-      checkStatus_NES();
-      return nesMenu();
+  { nullptr, enterNesSystemMenuR51 },
 #endif
-
 #ifdef ENABLE_SNES
-    case SYSTEM_MENU_SNES:
-      PcConsole.println(F("[Menu] entering SNES"));
-      return snsMenu();
+  { nullptr, enterSnesSystemMenuR51 },
 #endif
-
 #ifdef ENABLE_N64
-    case SYSTEM_MENU_N64:
-      return n64Menu();
+  { nullptr, n64Menu },
 #endif
-
 #ifdef ENABLE_MD
-    case SYSTEM_MENU_MD:
-      return mdMenu();
+  { nullptr, mdMenu },
 #endif
-
 #ifdef ENABLE_SMS
-    case SYSTEM_MENU_SMS:
-      return smsMenu();
+  { nullptr, smsMenu },
 #endif
-
 #ifdef ENABLE_PCE
-    case SYSTEM_MENU_PCE:
-      return pcsMenu();
+  { nullptr, pcsMenu },
 #endif
-
 #ifdef ENABLE_WS
-    case SYSTEM_MENU_WS:
-      clearAndUpdateDisplay();
-      if (!setup_WS()) return;
-      mode = CORE_WS;
-      return wsMenu();
+  { nullptr, enterWsSystemMenuR51 },
 #endif
-
 #ifdef ENABLE_NGP
-    case SYSTEM_MENU_NGP:
-      clearAndUpdateDisplay();
-      setup_NGP();
-      mode = CORE_NGP;
-      break;
+  { nullptr, enterNgpSystemMenuR51 },
 #endif
-
 #ifdef ENABLE_INTV
-    case SYSTEM_MENU_INTV:
-      setup_INTV();
-      return intvMenu();
+  { setup_INTV, intvMenu },
 #endif
-
 #ifdef ENABLE_COLV
-    case SYSTEM_MENU_COLV:
-      setup_COL();
-      return colMenu();
-      break;
+  { setup_COL, colMenu },
 #endif
-
 #ifdef ENABLE_VBOY
-    case SYSTEM_MENU_VBOY:
-      setup_VBOY();
-      vboyMenu();
-      break;
+  { setup_VBOY, vboyMenu },
 #endif
-
 #ifdef ENABLE_WSV
-    case SYSTEM_MENU_WSV:
-      setup_WSV();
-      return wsvMenu();
-      break;
+  { setup_WSV, wsvMenu },
 #endif
-
 #ifdef ENABLE_PCW
-    case SYSTEM_MENU_PCW:
-      setup_PCW();
-      return pcwMenu();
-      break;
+  { setup_PCW, pcwMenu },
 #endif
-
 #ifdef ENABLE_2600
-    case SYSTEM_MENU_2600:
-      setup_2600();
-      return a2600Menu();
-      break;
+  { setup_2600, a2600Menu },
 #endif
-
 #ifdef ENABLE_ODY2
-    case SYSTEM_MENU_ODY2:
-      setup_ODY2();
-      return ody2Menu();
-      break;
+  { setup_ODY2, ody2Menu },
 #endif
-
 #ifdef ENABLE_ARC
-    case SYSTEM_MENU_ARC:
-      setup_ARC();
-      return arcMenu();
-      break;
+  { setup_ARC, arcMenu },
 #endif
-
 #ifdef ENABLE_FAIRCHILD
-    case SYSTEM_MENU_FAIRCHILD:
-      setup_FAIRCHILD();
-      return fairchildMenu();
-      break;
+  { setup_FAIRCHILD, fairchildMenu },
 #endif
-
 #ifdef ENABLE_SUPRACAN
-    case SYSTEM_MENU_SUPRACAN:
-      return setup_SuprAcan();
-      break;
+  { nullptr, setup_SuprAcan },
 #endif
-
 #ifdef ENABLE_MSX
-    case SYSTEM_MENU_MSX:
-      setup_MSX();
-      return msxMenu();
-      break;
+  { setup_MSX, msxMenu },
 #endif
-
 #ifdef ENABLE_POKE
-    case SYSTEM_MENU_POKE:
-      setup_POKE();
-      return pokeMenu();
-      break;
+  { setup_POKE, pokeMenu },
 #endif
-
 #ifdef ENABLE_LOOPY
-    case SYSTEM_MENU_LOOPY:
-      setup_LOOPY();
-      return loopyMenu();
-      break;
+  { setup_LOOPY, loopyMenu },
 #endif
-
 #ifdef ENABLE_C64
-    case SYSTEM_MENU_C64:
-      setup_C64();
-      return c64Menu();
-      break;
+  { setup_C64, c64Menu },
 #endif
-
 #ifdef ENABLE_5200
-    case SYSTEM_MENU_5200:
-      setup_5200();
-      return a5200Menu();
-      break;
+  { setup_5200, a5200Menu },
 #endif
-
 #ifdef ENABLE_7800
-    case SYSTEM_MENU_7800:
-      setup_7800();
-      return a7800Menu();
-      break;
+  { setup_7800, a7800Menu },
 #endif
 #ifdef ENABLE_JAGUAR
-    case SYSTEM_MENU_JAGUAR:
-      setup_Jag();
-      return jagMenu();
-      break;
+  { setup_Jag, jagMenu },
 #endif
-
 #ifdef ENABLE_LYNX
-    case SYSTEM_MENU_LYNX:
-      setup_LYNX();
-      return lynxMenu();
-      break;
+  { setup_LYNX, lynxMenu },
 #endif
-
 #ifdef ENABLE_VECTREX
-    case SYSTEM_MENU_VECTREX:
-      setup_VECTREX();
-      return vectrexMenu();
-      break;
+  { setup_VECTREX, vectrexMenu },
 #endif
-
 #ifdef ENABLE_ATARI8
-    case SYSTEM_MENU_ATARI8:
-      setup_ATARI8();
-      return atari8Menu();
-      break;
+  { setup_ATARI8, atari8Menu },
 #endif
-
 #ifdef ENABLE_BALLY
-    case SYSTEM_MENU_BALLY:
-      setup_BALLY();
-      return ballyMenu();
-      break;
+  { setup_BALLY, ballyMenu },
 #endif
-
 #ifdef ENABLE_LJ
-    case SYSTEM_MENU_LJ:
-      setup_LJ();
-      return ljMenu();
-      break;
+  { setup_LJ, ljMenu },
 #endif
-
 #ifdef ENABLE_LJPRO
-    case SYSTEM_MENU_LJPRO:
-      setup_LJPRO();
-      return ljproMenu();
-      break;
+  { setup_LJPRO, ljproMenu },
 #endif
-
 #ifdef ENABLE_PV1000
-    case SYSTEM_MENU_PV1000:
-      setup_PV1000();
-      return pv1000Menu();
-      break;
+  { setup_PV1000, pv1000Menu },
 #endif
-
 #ifdef ENABLE_VIC20
-    case SYSTEM_MENU_VIC20:
-      setup_VIC20();
-      return vic20Menu();
-      break;
+  { setup_VIC20, vic20Menu },
 #endif
-
 #ifdef ENABLE_LEAP
-    case SYSTEM_MENU_LEAP:
-      setup_LEAP();
-      return leapMenu();
-      break;
+  { setup_LEAP, leapMenu },
 #endif
-
 #ifdef ENABLE_RCA
-    case SYSTEM_MENU_RCA:
-      setup_RCA();
-      return rcaMenu();
-      break;
+  { setup_RCA, rcaMenu },
 #endif
-
 #ifdef ENABLE_TI99
-    case SYSTEM_MENU_TI99:
-      setup_TI99();
-      return ti99Menu();
-      break;
+  { setup_TI99, ti99Menu },
 #endif
-
 #ifdef ENABLE_PYUUTA
-    case SYSTEM_MENU_PYUUTA:
-      setup_PYUUTA();
-      return pyuutaMenu();
-      break;
+  { setup_PYUUTA, pyuutaMenu },
 #endif
-
 #ifdef ENABLE_TRS80
-    case SYSTEM_MENU_TRS80:
-      setup_TRS80();
-      return trs80Menu();
-      break;
+  { setup_TRS80, trs80Menu },
 #endif
-
 #ifdef ENABLE_VSMILE
-    case SYSTEM_MENU_VSMILE:
-      setup_VSMILE();
-      return vsmileMenu();
-      break;
+  { setup_VSMILE, vsmileMenu },
 #endif
-
 #ifdef ENABLE_FLASH8
-    case SYSTEM_MENU_FLASH:
 #ifdef ENABLE_VSELECT
-      setup_FlashVoltage();
+  { setup_FlashVoltage, flashMenu },
+#else
+  { nullptr, flashMenu },
 #endif
-      return flashMenu();
-      break;
 #endif
-
 #if (defined(ENABLE_CPS3) && defined(ENABLE_FLASH8) && defined(ENABLE_FLASH16))
-    case SYSTEM_MENU_CPS3:
-      return cpsMenu();
+  { nullptr, cpsMenu },
 #endif
-
 #ifdef ENABLE_SELFTEST
-    case SYSTEM_MENU_SELFTEST:
-      return selfTest();
-      break;
+  { nullptr, selfTest },
 #endif
+  { nullptr, aboutScreen },
+  { nullptr, resetArduino }
+};
+static_assert((sizeof(systemMenuActionsR51) / sizeof(systemMenuActionsR51[0])) == SYSTEM_MENU_TOTAL,
+              "systemMenuActionsR51 must follow SYSTEM_MENU");
 
-    case SYSTEM_MENU_ABOUT:
-      return aboutScreen();
-      break;
-
-    case SYSTEM_MENU_RESET:
-      return resetArduino();
-      break;
-
-    default:
-      return print_MissingModule();  // does not return
+void mainMenu() {
+  const uint8_t selected = pageMenu(F("OPEN SOURCE CART READER"), modeOptions, SYSTEM_MENU_TOTAL);
+  if (selected >= SYSTEM_MENU_TOTAL) {
+    print_MissingModule();
+    return;
   }
+  SystemMenuEntryR51 action;
+  memcpy_P(&action, &systemMenuActionsR51[selected], sizeof(action));
+  if (action.setup) action.setup();
+  if (action.menu) action.menu();
 }
 
 
