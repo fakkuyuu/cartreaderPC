@@ -1841,24 +1841,12 @@ void readEeprom_GBA(word eepSize) {
 
 // Send address as bits to eeprom
 void send_GBA(word currAddr, word numBits) {
-  for (word addrBit = numBits; addrBit > 0; addrBit--) {
-    // If you want the k-th bit of n, then do
-    // (n & ( 1 << k )) >> k
-    if (((currAddr & (1 << (addrBit - 1))) >> (addrBit - 1))) {
-      // Set A0(PF0) to High
-      PORTF |= (1 << 0);
-      // Set WR(PH5) to LOW
-      PORTH &= ~(1 << 5);
-      // Set WR(PH5) to High
-      PORTH |= (1 << 5);
-    } else {
-      // Set A0(PF0) to Low
-      PORTF &= ~(1 << 0);
-      // Set WR(PH5) to LOW
-      PORTH &= ~(1 << 5);
-      // Set WR(PH5) to High
-      PORTH |= (1 << 5);
-    }
+  if (!numBits) return;
+  for (word mask = 1U << (numBits - 1); mask; mask >>= 1) {
+    if (currAddr & mask) PORTF |= (1 << 0);
+    else PORTF &= ~(1 << 0);
+    PORTH &= ~(1 << 5);
+    PORTH |= (1 << 5);
   }
 }
 
