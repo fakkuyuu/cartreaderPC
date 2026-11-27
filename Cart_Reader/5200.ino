@@ -222,6 +222,17 @@ void readBankBountyBob_5200(uint16_t startaddr) {
 // READ ROM
 //******************************************
 
+static void readUpper8KR41_5200() __attribute__((noinline));
+static void readUpper8KR41_5200() {
+  DISABLE_4000;
+  cycleDelay(15);
+  ENABLE_8000;
+  cycleDelay(15);
+  readSegment_5200(0x8000, 0xA000);  // +8K = 16K
+  DISABLE_8000;
+  cycleDelay(15);
+}
+
 void readROM_5200() {
   createFolderAndOpenFile("5200", "ROM", romName, "a52");
 
@@ -253,13 +264,7 @@ void readROM_5200() {
       ENABLE_4000;
       cycleDelay(15);
       readSegment_5200(0x4000, 0x6000);  // 8K
-      DISABLE_4000;
-      cycleDelay(15);
-      ENABLE_8000;
-      cycleDelay(15);
-      readSegment_5200(0x8000, 0xA000);  // +8K = 16K
-      DISABLE_8000;
-      cycleDelay(15);
+      readUpper8KR41_5200();
       break;
 
     case 2:  // Bounty Bob Strikes Back 40KB [UNTESTED]
@@ -269,13 +274,7 @@ void readROM_5200() {
       readBankBountyBob_5200(0x4000);
       // Second 16KB (4KB x 4)
       readBankBountyBob_5200(0x5000);
-      DISABLE_4000;
-      cycleDelay(15);
-      ENABLE_8000;
-      cycleDelay(15);
-      readSegment_5200(0x8000, 0xA000);  // +8K = 40K
-      DISABLE_8000;
-      cycleDelay(15);
+      readUpper8KR41_5200();
       break;
   }
   closeCurrentFile();
