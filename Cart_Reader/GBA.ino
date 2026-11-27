@@ -1564,7 +1564,7 @@ boolean blankcheckFLASH_GBA(uint32_t flashSize) {
       sdBuffer[c] = readByteFlash_GBA(currAddress + c);
     }
     // Check buffer
-    for (uint32_t currByte = 0; currByte < 512 && (currByte + currAddress) < flashSize; currByte++) {
+    for (uint16_t currByte = 0; currByte < 512 && (currByte + currAddress) < flashSize; currByte++) {
       if (sdBuffer[currByte] != 0xFF) {
         print_Error(FS(SharedFlashText::textEraseFailed));
         currByte = 512;
