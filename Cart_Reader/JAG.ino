@@ -505,6 +505,21 @@ void shiftOutFAST(byte addr) {    //
 //******************************************
 // READ DATA
 //******************************************
+static void finishJagOutputR41() __attribute__((noinline));
+static void finishJagOutputR41() {
+  // write new folder number back to eeprom
+  foldern = foldern + 1;
+  EEPROM_writeAnything(0, foldern);
+
+  // Open file on sd card
+  if (!openNamedOutputFile()) {
+    println_Msg(FS(SharedFlashText::textSDERROR));
+    println_Msg(FS(SharedFlashText::textPressButtonToReset));
+    updateDisplayAndWait();
+    resetArduino();
+  }
+}
+
 void readJagData(unsigned long myAddress) {
   SRCLR_CLEAR;
   SRCLR_SET;
@@ -598,17 +613,7 @@ void readJagROM() {
   println_Msg(FS(SharedFlashText::pathEllipsis));
   display_Update();
 
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  // Open file on sd card
-  if (!openNamedOutputFile()) {
-    println_Msg(FS(SharedFlashText::textSDERROR));
-    println_Msg(FS(SharedFlashText::textPressButtonToReset));
-    updateDisplayAndWait();
-    resetArduino();
-  }
+  finishJagOutputR41();
 
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -922,18 +927,7 @@ void readJagEEP() {
   sd.mkdir(folder, true);
   sd.chdir(folder);
 
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  // Open file on sd card
-  if (!openNamedOutputFile()) {
-    println_Msg(FS(SharedFlashText::textSDERROR));
-
-    println_Msg(FS(SharedFlashText::textPressButtonToReset));
-    updateDisplayAndWait();
-    resetArduino();
-  }
+  finishJagOutputR41();
   word eepEnd = int_pow(2, jagEepSize) * 64;  // WORDS
   if (jagEepSize > 1) {                       // 93C66/93C76/93C86 - 256/512/1024 WORDS
     for (word currWord = 0; currWord < eepEnd; currWord += 256) {
@@ -1320,17 +1314,7 @@ void readJagMEMORY() {
   println_Msg(FS(SharedFlashText::pathEllipsis));
   display_Update();
 
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  // Open file on sd card
-  if (!openNamedOutputFile()) {
-    println_Msg(FS(SharedFlashText::textSDERROR));
-    println_Msg(FS(SharedFlashText::textPressButtonToReset));
-    updateDisplayAndWait();
-    resetArduino();
-  }
+  finishJagOutputR41();
   // Memory Track ROM Size 0x20000
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
@@ -1381,17 +1365,7 @@ void readJagFLASH() {
   println_Msg(FS(SharedFlashText::pathEllipsis));
   display_Update();
 
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  // Open file on sd card
-  if (!openNamedOutputFile()) {
-    println_Msg(FS(SharedFlashText::textSDERROR));
-    println_Msg(FS(SharedFlashText::textPressButtonToReset));
-    updateDisplayAndWait();
-    resetArduino();
-  }
+  finishJagOutputR41();
   //Initialize progress bar
   uint32_t processedProgressBar = 0;
   uint32_t totalProgressBar = (uint32_t)(jagflaSize);
