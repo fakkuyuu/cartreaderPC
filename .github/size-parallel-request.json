@@ -1,40 +1,12 @@
 {
-  "id": "round58-independent",
+  "id": "round58-nes-fixed",
   "base": "8f467f53082b4366ac2f590304b7fcba37452198",
   "expected_base_flash": 205254,
   "expected_base_ram": 6059,
   "candidates": [
     {
-      "id": "ws-verify-result",
-      "head": "1968ad16a22a8c74074e15f9801fd9a41c92d74b"
-    },
-    {
-      "id": "ws-sram-read-verify",
-      "head": "18d1f24600ccfdd2a5fba26eb76b6da36bca5557"
-    },
-    {
-      "id": "msx-sram-write-range",
-      "head": "d799640c8ceaedb8559d9be3af2f6ff10b4bb577"
-    },
-    {
-      "id": "nes-bank-write",
-      "head": "d9e699afa15716d38266245dfdfa40adc329aab6"
-    },
-    {
-      "id": "gba-save-read",
-      "head": "aa4dea2ac23e6cf96a4d87f245086c9a110cb42a"
-    },
-    {
-      "id": "gba-save-verify",
-      "head": "c11ce779eebfd978dc48fea4e9ea2410cd937059"
-    },
-    {
-      "id": "n64-accessory-blank",
-      "head": "9579f56bff49646ef53529252f0d75c3fe08538f"
-    },
-    {
-      "id": "ws-eeprom-pair",
-      "head": "b0a3965cf75d3437061157417d37850ea7bcb27e"
+      "id": "nes-bank-write-fixed",
+      "head": "37a3cf8635dace245b020f3ee513f3e5ddd8753d"
     }
   ]
 }
