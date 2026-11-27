@@ -2478,11 +2478,12 @@ void EepromWriteMode() {
 }
 
 void EepromReadData() {
-  if (eepType == 1) {  // Acclaim Type 1
+  if (eepType == 1 || eepType == 3) {
+    const byte bitShift = eepType == 1 ? 1 : 0;
     for (int i = 0; i < 8; i++) {
       writeWord_MD(0x100000, 0x03);  // sda high, scl high
       dataIn_MD();
-      eepbit[i] = ((readWord_MD(0x100000) >> 1) & 0x1);  // Read 0x100000 with Mask 0x1 (bit 1)
+      eepbit[i] = (readWord_MD(0x100000) >> bitShift) & 0x1;
       dataOut_MD();
       writeWord_MD(0x100000, 0x01);  // sda high, scl low
     }
@@ -2495,14 +2496,6 @@ void EepromReadData() {
       dataOut_MD();
       writeWord_SDA(0x100000, 0x01);  // sda high
       writeWord_SCL(0x100000, 0x00);  // scl low
-    }
-  } else if (eepType == 3) {  // Capcom/Sega
-    for (int i = 0; i < 8; i++) {
-      writeWord_MD(0x100000, 0x03);  // sda high, scl high
-      dataIn_MD();
-      eepbit[i] = (readWord_MD(0x100000) & 0x1);  // Read 0x100000 with Mask 0x1 (bit 0)
-      dataOut_MD();
-      writeWord_MD(0x100000, 0x01);  // sda high, scl low
     }
   } else if (eepType == 4) {  // EA
     for (int i = 0; i < 8; i++) {
