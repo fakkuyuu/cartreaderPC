@@ -1748,37 +1748,24 @@ void writeSram_MD() {
 
   // Open file on sd card
   if (openSelectedFileForRead()) {
-    // Write to the lower byte
-    if (saveType == 1) {
+    if (saveType == 1 || saveType == 2 || saveType == 3) {
       for (unsigned long currByte = sramBase; currByte < sramBase + sramSize; currByte++) {
-        if (segaSram16bit > 0) {
-          // skip high byte
-          myFile.read();
+        word data;
+        if (saveType == 1) {
+          if (segaSram16bit > 0) myFile.read();  // skip high byte
+          data = myFile.read() & 0xFF;
+        } else if (saveType == 2) {
+          data = (myFile.read() << 8) & 0xFF00;
+          if (segaSram16bit > 0) myFile.read();  // skip low byte
+        } else {
+          data = (myFile.read() << 8) & 0xFF00;
+          data |= (myFile.read() & 0xFF);
         }
-        word data = myFile.read() & 0xFF;
         writeWord_MD(currByte, data);
       }
-    }
-    // Write to the upper byte
-    else if (saveType == 2) {
-      for (unsigned long currByte = sramBase; currByte < sramBase + sramSize; currByte++) {
-        word data = (myFile.read() << 8) & 0xFF00;
-        writeWord_MD(currByte, data);
-        if (segaSram16bit > 0) {
-          // skip low byte
-          myFile.read();
-        }
-      }
-    }
-    // Write to both bytes
-    else if (saveType == 3) {
-      for (unsigned long currByte = sramBase; currByte < sramBase + sramSize; currByte++) {
-        word data = (myFile.read() << 8) & 0xFF00;
-        data |= (myFile.read() & 0xFF);
-        writeWord_MD(currByte, data);
-      }
-    } else
+    } else {
       print_Error(FS(SharedFlashText::textUnknownSaveType));
+    }
 
     // Close the file:
     closeAndShowDone();
