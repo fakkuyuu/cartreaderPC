@@ -1,40 +1,40 @@
 {
-  "id": "round53-independent",
-  "base": "b431a3b8156ca07566ffdeca0cf6e2b65e1177b8",
+  "id": "parallel-054-astra",
+  "base": "9d53a6f48dcedde4063c6c1110ab9c63994afa5e",
   "expected_base_flash": 205790,
   "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "r53-gb-mbc-map",
-      "head": "28daf39bc6a37cbb52d85222617d128b68aa0882"
+      "id": "pack",
+      "head": "4f0436a67782647918047957f11af65ea34021c5"
     },
     {
-      "id": "r53-gb-we-select",
-      "head": "4168a2f3fc09e39b916c73b2474d70994adada17"
+      "id": "send-mask",
+      "head": "277f31a2ff30016dc3e292a39d3f2cd78f617430"
     },
     {
-      "id": "r53-gb-erase-select",
-      "head": "e9ec11520a0399cd26ec6982aafc110a94ef0b96"
+      "id": "pin-setup",
+      "head": "5f8057203ddc783d9c07b420769a0c18fb1ef119"
     },
     {
-      "id": "r53-gb-command-select",
-      "head": "e486622bd53bdf132a60a4c25b827dbaa3a97e45"
+      "id": "addr-width",
+      "head": "bd3691101152e03189528bcbbb496f1c9172cc78"
     },
     {
-      "id": "r53-md-eeprom-check",
-      "head": "11e71fc19e49cd81b77703dc64d2b8ec20e926a1"
+      "id": "read-critical",
+      "head": "18470a4eb12be68d3e05a6990bca42f72ffb316d"
     },
     {
-      "id": "r53-md-cart-size",
-      "head": "3e1713bafa0619590b638fca7ad2139d2754d114"
+      "id": "verify-result",
+      "head": "7c0008cb3903c33ae49315ee3b8b63cb6b87f8b1"
     },
     {
-      "id": "r53-n64-flash-setup",
-      "head": "b27358662812d377dc162f575fc7cc09847117c6"
+      "id": "write-index",
+      "head": "c17d6ed28f0d097c0bde91b3f48024ba6092c8fd"
     },
     {
-      "id": "r53-snes-sram-write",
-      "head": "bc1b58640580c20eba9ed75eda265582b07a846f"
+      "id": "hucard-reverse",
+      "head": "d58bc248f4e494696e5a13aaf0add58aa1e37086"
     }
   ]
 }
