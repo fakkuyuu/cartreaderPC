@@ -104,7 +104,7 @@ bool getHeader(unsigned int bank) {
   PORTL = bank;
 
   // Read first bytes
-  for (uint16_t c = 0, currByte = 0; c < 16; c++, currByte++) {
+  for (uint8_t c = 0, currByte = 0; c < 16; c++, currByte++) {
     PORTF = (currByte & 0xFF);
     PORTK = ((currByte >> 8) & 0xFF);
     NOP;
