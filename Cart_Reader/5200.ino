@@ -365,8 +365,7 @@ setrom:
     PcConsole.println(sizeROM);
     new5200size = sizeROM.toInt() + a5200lo;
     if (new5200size > a5200hi) {
-      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
-      PcConsole.println(FS(FSTRING_EMPTY));
+      showPcUnsupportedRomSizeR50();
       goto setrom;
     }
   }

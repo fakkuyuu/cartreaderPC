@@ -4879,3 +4879,9 @@ void loop() {
 // End of File
 //******************************************
 
+
+void showPcUnsupportedRomSizeR50() __attribute__((noinline));
+void showPcUnsupportedRomSizeR50() {
+  PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
+  PcConsole.println(FS(FSTRING_EMPTY));
+}

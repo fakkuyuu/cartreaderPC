@@ -562,8 +562,7 @@ setrom:
     PcConsole.println(sizeROM);
     newintvsize = sizeROM.toInt() + intvlo;
     if (newintvsize > intvhi) {
-      PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
-      PcConsole.println(FS(FSTRING_EMPTY));
+      showPcUnsupportedRomSizeR50();
       goto setrom;
     }
   }
