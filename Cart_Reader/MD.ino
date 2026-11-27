@@ -1791,19 +1791,20 @@ void writeSram_MD() {
 // Read sram and save to the SD card
 static void readSramBuffer_MD(unsigned long currBuffer, bool verifying) __attribute__((noinline));
 static void readSramBuffer_MD(unsigned long currBuffer, bool verifying) {
+  byte* output = sdBuffer;
   for (int currWord = 0; currWord < 256; currWord++) {
     word myWord = readWord_MD(currBuffer + currWord);
     if (saveType == 3) {
-      sdBuffer[currWord * 2] = (myWord >> 8) & 0xFF;
-      sdBuffer[currWord * 2 + 1] = myWord & 0xFF;
+      *output++ = (myWord >> 8) & 0xFF;
+      *output++ = myWord & 0xFF;
     } else if (saveType == 1 || saveType == 2) {
       byte value = saveType == 2 ? (myWord >> 8) & 0xFF : myWord & 0xFF;
       if (verifying || segaSram16bit > 0) {
-        sdBuffer[currWord * 2] = value;
-        if (!verifying)
-          sdBuffer[currWord * 2 + 1] = value;
+        *output++ = value;
+        if (!verifying) *output = value;
+        ++output;
       } else {
-        sdBuffer[currWord] = value;
+        *output++ = value;
       }
     }
   }
