@@ -455,6 +455,12 @@ static void configureMapperP16_NES() {
   setRAMSize();
 }
 
+static void __attribute__((noinline)) finishResetR62_NES() {
+  resetROM();
+  printBlankLine();
+  promptAndWaitForButton();
+}
+
 void nesMenu() {
   unsigned char answer;
 
@@ -484,9 +490,7 @@ void nesMenu() {
         readRAM();
       else
         writeRAM();
-      resetROM();
-      printBlankLine();
-      promptAndWaitForButton();
+      finishResetR62_NES();
       break;
 
     // Change Mapper
@@ -535,9 +539,7 @@ void nesChipMenu() {
         readPRG(false);
       else
         readCHR(false);
-      resetROM();
-      printBlankLine();
-      promptAndWaitForButton();
+      finishResetR62_NES();
       break;
 
     // Return to Main Menu
