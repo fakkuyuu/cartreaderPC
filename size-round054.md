@@ -10,3 +10,4 @@ Base 9d53a6f48dcedde4063c6c1110ab9c63994afa5e HW3 205790/6095. All eight parents
 - verify-result 7c0008cb3903c33ae49315ee3b8b63cb6b87f8b1
 - write-index c17d6ed28f0d097c0bde91b3f48024ba6092c8fd
 - hucard-reverse d58bc248f4e494696e5a13aaf0add58aa1e37086
+Independent run 46002736383: all eight builds and baselines passed. Static RAM 6095 throughout. Flash deltas: hucard-reverse -80, pack -42, pin-setup -28, send-mask -24, write-index -6, read-critical 0, verify-result 0, addr-width +2. Measuring cumulative stages in descending savings order.

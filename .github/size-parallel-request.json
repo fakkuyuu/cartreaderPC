@@ -1,40 +1,29 @@
 {
-  "id": "parallel-054-astra",
+  "id": "parallel-054-astra-integration",
   "base": "9d53a6f48dcedde4063c6c1110ab9c63994afa5e",
   "expected_base_flash": 205790,
   "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "pack",
-      "head": "4f0436a67782647918047957f11af65ea34021c5"
+      "id": "hucard-reverse",
+      "head": "a44fabdb5f94103c3b5727ba472d5fc679ac14fb"
     },
     {
-      "id": "send-mask",
-      "head": "277f31a2ff30016dc3e292a39d3f2cd78f617430"
+      "id": "pack",
+      "head": "c1714dc7a9947bd8e4d5f87f5664ffe5a8b524a4"
     },
     {
       "id": "pin-setup",
-      "head": "5f8057203ddc783d9c07b420769a0c18fb1ef119"
+      "head": "3627ffddf238ba2e8d2d3bafaa2f12da39d92660"
     },
     {
-      "id": "addr-width",
-      "head": "bd3691101152e03189528bcbbb496f1c9172cc78"
-    },
-    {
-      "id": "read-critical",
-      "head": "18470a4eb12be68d3e05a6990bca42f72ffb316d"
-    },
-    {
-      "id": "verify-result",
-      "head": "7c0008cb3903c33ae49315ee3b8b63cb6b87f8b1"
+      "id": "send-mask",
+      "head": "dc85293164a6b48018a56e6deb61a0f3843222e6"
     },
     {
       "id": "write-index",
-      "head": "c17d6ed28f0d097c0bde91b3f48024ba6092c8fd"
-    },
-    {
-      "id": "hucard-reverse",
-      "head": "d58bc248f4e494696e5a13aaf0add58aa1e37086"
+      "head": "4081c1fa984836512c41acc5868159e87d6f132b"
     }
-  ]
+  ],
+  "endpoints_only": true
 }
