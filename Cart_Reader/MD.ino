@@ -834,6 +834,7 @@ static void showUnknownSramBase_MD(word sramType) {
   print_FatalError(FS(SharedFlashText::textUnknownSramBase));
 }
 
+void getCartInfo_MD() __attribute__((noinline));
 void getCartInfo_MD() {
   // Set control
   dataIn_MD();
