@@ -1527,6 +1527,12 @@ void eraseFLASH_GBA() {
   delay(500);
 }
 
+static void fillFlashReadBuffer_GBA(uint32_t blockAddress) {
+  for (int c = 0; c < 512; c++) {
+    sdBuffer[c] = readByteFlash_GBA(blockAddress + c);
+  }
+}
+
 boolean blankcheckFLASH_GBA(uint32_t flashSize) {
   // Output a HIGH signal on CS_ROM(PH3) WE_FLASH(PH5)
   PORTH |= (1 << 3) | (1 << 5);
@@ -1553,10 +1559,7 @@ boolean blankcheckFLASH_GBA(uint32_t flashSize) {
 
   for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 512) {
     // Fill buffer
-    for (int c = 0; c < 512; c++) {
-      // Read byte
-      sdBuffer[c] = readByteFlash_GBA(currAddress + c);
-    }
+    fillFlashReadBuffer_GBA(currAddress);
     // Check buffer
     for (uint32_t currByte = 0; currByte < 512 && (currByte + currAddress) < flashSize; currByte++) {
       if (sdBuffer[currByte] != 0xFF) {
@@ -1625,10 +1628,7 @@ void readFLASH_GBA(boolean browseFile, uint32_t flashSize, uint32_t pos, bool cl
   PORTH &= ~(1 << 6);
 
   for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 512) {
-    for (int c = 0; c < 512; c++) {
-      // Read byte
-      sdBuffer[c] = readByteFlash_GBA(currAddress + c);
-    }
+    fillFlashReadBuffer_GBA(currAddress);
     // Write sdBuffer to file
     writeSdBufferBlock();
   }
