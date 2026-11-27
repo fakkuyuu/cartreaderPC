@@ -399,6 +399,13 @@ bool flashSwitchLastBits;
 // Variable to count errors
 unsigned long writeErrors;
 
+void __attribute__((noinline)) setupSnesTailR49() {
+  DDRC = 0x00;
+  DDRE |= (1 << 4);
+  DDRJ |= (1 << 1);
+  DDRJ |= (1 << 0);
+}
+
 bool __attribute__((noinline)) accessoryWriteOkR48() {
   return writeErrors == 0;
 }

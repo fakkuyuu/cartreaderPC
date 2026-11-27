@@ -76,14 +76,7 @@ void setup_ST() {
   // Set expand(PG5) to Input
   DDRG &= ~(1 << 5);
   // Set Data Pins (D0-D7) to Input
-  DDRC = 0x00;
-  // Unused pins
-  // Set wram(PE4) to Output
-  DDRE |= (1 << 4);
-  // Set pawr(PJ1) to Output
-  DDRJ |= (1 << 1);
-  // Set pard(PJ0) to Output
-  DDRJ |= (1 << 0);
+  setupSnesTailR49();
 
   //Check if Sufami Turbo adapter is inserted
   if (!getHeader(0)) {
