@@ -1,13 +1,13 @@
 {
-  "id": "round56-step01",
+  "id": "round56-step02",
   "endpoints_only": true,
   "base": "6997327e39477d3762e82536ce93e34e562a7f74",
   "expected_base_flash": 205608,
   "expected_base_ram": 6059,
   "candidates": [
     {
-      "id": "round56-step01-gb-sram",
-      "head": "8585a19ceb1167b34eef4e54e15c000dc9cf2100"
+      "id": "round56-step02-gb-sram-eep-ptr",
+      "head": "8f511bcfb0f4009b50e9d131e510b2bb7a7a6fbf"
     }
   ]
 }
