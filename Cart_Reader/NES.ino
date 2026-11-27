@@ -2469,14 +2469,8 @@ void readPRG(bool readrom) {
       case 31:
         banks = prgBanks16K * 4;
         for (size_t i = 0; i < banks; i += 8) {
-          write_prg_byte(0x5FF8, i);
-          write_prg_byte(0x5FF9, i + 1);
-          write_prg_byte(0x5FFA, i + 2);
-          write_prg_byte(0x5FFB, i + 3);
-          write_prg_byte(0x5FFC, i + 4);
-          write_prg_byte(0x5FFD, i + 5);
-          write_prg_byte(0x5FFE, i + 6);
-          write_prg_byte(0x5FFF, i + 7);
+          for (byte bank = 0; bank < 8; ++bank)
+            write_prg_byte(0x5FF8U + bank, i + bank);
           dumpPRG32KiB(base);
         }
         break;
