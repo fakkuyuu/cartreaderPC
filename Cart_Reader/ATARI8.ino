@@ -300,6 +300,13 @@ void bankSwitch_ATARI8(uint8_t bank)
 // READ ROM
 //******************************************
 
+static void readUpper8KR41_ATARI8() __attribute__((noinline));
+static void readUpper8KR41_ATARI8() {
+  ENABLE_S5;
+  readSegment_ATARI8(0xA000, 0xC000);
+  DISABLE_S5;
+}
+
 void readROM_ATARI8()
 {
   createFolderAndOpenFile("ATARI8", "ROM", romName, "bin");
@@ -330,9 +337,7 @@ void readROM_ATARI8()
     // Second 16KB (4KB x 4)
     readBountyBobBank_ATARI8(0x9000);
     DISABLE_S4;
-    ENABLE_S5;
-    readSegment_ATARI8(0xA000, 0xC000); // +8K = 40K
-    DISABLE_S5;
+    readUpper8KR41_ATARI8();
   }
   else if (atari8size > 1) { // XE Carts 32K/64K/128K
     // Bug Hunt and Lode Runner dump as 128K.  Trim beginning 64K as both carts start from Bank 8.
@@ -344,9 +349,7 @@ void readROM_ATARI8()
       DISABLE_S4;
     }
     // Last Bank
-    ENABLE_S5;
-    readSegment_ATARI8(0xA000, 0xC000); // +8K
-    DISABLE_S5;
+    readUpper8KR41_ATARI8();
   }
   else { // Standard LEFT Cart 8K/16K
     if (atari8size == 1) {
@@ -357,9 +360,7 @@ void readROM_ATARI8()
       readSegment_ATARI8(0x8000, 0xA000); // +8K = 16K
       DISABLE_S4;
     }
-    ENABLE_S5;
-    readSegment_ATARI8(0xA000, 0xC000); // 8K
-    DISABLE_S5;
+    readUpper8KR41_ATARI8();
   }
   closeCurrentFile();
 
