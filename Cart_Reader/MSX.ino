@@ -377,7 +377,7 @@ void writeData_MSX(uint16_t addr, uint8_t data) {
 void setCS()  // Set CS Line
 {
   chipselect = 0;
-  for (int x = 0; x < 4; x++) {
+  for (uint8_t x = 0; x < 4; x++) {
     uint8_t check0 = readData_MSX(0x4000);
     uint8_t check1 = readData_MSX(0x4001);
     if ((check0 == 0x41) && (check1 == 0x42))
@@ -491,7 +491,7 @@ void readROM_MSX() {
         readSegment_MSX(0x4000, 0x8000);  // 16K Fixed Bank 0
         CS1_DISABLE;
         CS2_ENABLE;
-        for (int x = 1; x < 4; x++) {
+        for (uint8_t x = 1; x < 4; x++) {
           writeData_MSX(0x4045, x);
           readSegment_MSX(0x8000, 0xC000);  // 16K Init Bank 1
         }
@@ -508,13 +508,13 @@ void readROM_MSX() {
       case 5:  // HAL Note (1024K)
         MERQ_ENABLE;
         // Dummy Read - Needed to prevent random bytes
-        for (int y = 0; y < 32; y++) {
+        for (uint8_t y = 0; y < 32; y++) {
           writeData_MSX(0x4FFF, y);
           for (uint32_t addr = 0x4000; addr < 0x6000; addr++)
             readData_MSX(addr);  // Dummy Read
         }
         // READ
-        for (int x = 0; x < 128; x++) {
+        for (uint8_t x = 0; x < 128; x++) {
           writeData_MSX(0x4FFF, x);
           readSegment_MSX(0x4000, 0x6000);  // 8K Init Bank 0
         }
@@ -564,7 +564,7 @@ void readROM_MSX() {
       case 10:  // MSX-DOS2 (64K)
         MERQ_ENABLE;
         CS1_ENABLE;
-        for (int x = 0; x < 4; x++) {
+        for (uint8_t x = 0; x < 4; x++) {
           writeData_MSX(0x7FFE, x);         // Official v2.20
           readSegment_MSX(0x4000, 0x8000);  // 16K Init Bank 0
         }
@@ -574,7 +574,7 @@ void readROM_MSX() {
 
       case 11:  // FM-PAC (64K)
         CS1_ENABLE;
-        for (int x = 0; x < 4; x++) {
+        for (uint8_t x = 0; x < 4; x++) {
           writeData_MSX(0x7FF7, x);
           readSegment_MSX(0x4000, 0x8000);  // 16K
         }
