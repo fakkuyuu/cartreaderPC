@@ -1,0 +1,175 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45940110540",
+  "run_attempt": "1",
+  "workflow_commit": "4a331fb0f586beb3d1a938c1416d6a3780733ab1",
+  "request": {
+    "id": "parallel-043-integration",
+    "base": "c269d9613a53c22b8e54e6832d34a7f22aabd70f",
+    "expected_base_flash": 207114,
+    "expected_base_ram": 6095,
+    "endpoints_only": true,
+    "candidates": [
+      {
+        "id": "integration-1-msx-scc",
+        "head": "fdc42387246f59f9b663d2830669db3f75493388"
+      },
+      {
+        "id": "integration-2-ngp-hex",
+        "head": "8f8cf780d0b84e53bc65aa9f55d8ff62d02cfa7b"
+      },
+      {
+        "id": "integration-3-ws-rom-index",
+        "head": "e138f8d3dc99efc32b5bf2ea3148d0e5e7b6ef64"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45940110540",
+      "run_attempt": "1",
+      "workflow_commit": "4a331fb0f586beb3d1a938c1416d6a3780733ab1",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-1-msx-scc",
+        "head": "fdc42387246f59f9b663d2830669db3f75493388",
+        "base": "c269d9613a53c22b8e54e6832d34a7f22aabd70f",
+        "expected_base_flash": 207114,
+        "expected_base_ram": 6095,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "c269d9613a53c22b8e54e6832d34a7f22aabd70f",
+          "subject": "Record round 42 combined measurements and adopt five reductions",
+          "status": "ok",
+          "flash": 207114,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "fdc42387246f59f9b663d2830669db3f75493388",
+          "subject": "Round 43 integrate msx-scc candidate d786744",
+          "status": "ok",
+          "flash": 207048,
+          "ram": 6095,
+          "delta_previous": -66,
+          "delta_base": -66,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-1-msx-scc",
+        "head": "fdc42387246f59f9b663d2830669db3f75493388"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45940110540",
+      "run_attempt": "1",
+      "workflow_commit": "4a331fb0f586beb3d1a938c1416d6a3780733ab1",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-2-ngp-hex",
+        "head": "8f8cf780d0b84e53bc65aa9f55d8ff62d02cfa7b",
+        "base": "c269d9613a53c22b8e54e6832d34a7f22aabd70f",
+        "expected_base_flash": 207114,
+        "expected_base_ram": 6095,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "c269d9613a53c22b8e54e6832d34a7f22aabd70f",
+          "subject": "Record round 42 combined measurements and adopt five reductions",
+          "status": "ok",
+          "flash": 207114,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "8f8cf780d0b84e53bc65aa9f55d8ff62d02cfa7b",
+          "subject": "Round 43 integrate ngp-hex candidate 3a9954a",
+          "status": "ok",
+          "flash": 207020,
+          "ram": 6095,
+          "delta_previous": -94,
+          "delta_base": -94,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-2-ngp-hex",
+        "head": "8f8cf780d0b84e53bc65aa9f55d8ff62d02cfa7b"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45940110540",
+      "run_attempt": "1",
+      "workflow_commit": "4a331fb0f586beb3d1a938c1416d6a3780733ab1",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "integration-3-ws-rom-index",
+        "head": "e138f8d3dc99efc32b5bf2ea3148d0e5e7b6ef64",
+        "base": "c269d9613a53c22b8e54e6832d34a7f22aabd70f",
+        "expected_base_flash": 207114,
+        "expected_base_ram": 6095,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "c269d9613a53c22b8e54e6832d34a7f22aabd70f",
+          "subject": "Record round 42 combined measurements and adopt five reductions",
+          "status": "ok",
+          "flash": 207114,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "e138f8d3dc99efc32b5bf2ea3148d0e5e7b6ef64",
+          "subject": "Round 43 integrate ws-rom-index candidate 13eccb4",
+          "status": "ok",
+          "flash": 207002,
+          "ram": 6095,
+          "delta_previous": -112,
+          "delta_base": -112,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "integration-3-ws-rom-index",
+        "head": "e138f8d3dc99efc32b5bf2ea3148d0e5e7b6ef64"
+      }
+    }
+  ]
+}
