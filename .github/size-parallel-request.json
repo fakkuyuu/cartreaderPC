@@ -1,17 +1,40 @@
 {
-  "id": "parallel-055-paths",
-  "endpoints_only": true,
+  "id": "round56-independent",
+  "base": "6997327e39477d3762e82536ce93e34e562a7f74",
   "expected_base_flash": 205608,
-  "base": "03f374dc83e40530c89fe340c71a0cee476abba3",
-  "expected_base_ram": 6087,
+  "expected_base_ram": 6059,
   "candidates": [
     {
-      "id": "gb-path",
-      "head": "9474789eddd5d78ce927cd8429ceb933dd15d7fe"
+      "id": "r56-gba-buffer",
+      "head": "f4a13a87a6a0c7c5b9a343e7ae1d34103afc85f8"
     },
     {
-      "id": "both-paths",
-      "head": "9d7615d371e506b830e1c1a435c4a2971364de93"
+      "id": "r56-gb-sram",
+      "head": "8585a19ceb1167b34eef4e54e15c000dc9cf2100"
+    },
+    {
+      "id": "r56-gba-eep-int",
+      "head": "d1f0cc6a3481ea9209ee19b9635cd73a81b056df"
+    },
+    {
+      "id": "r56-gba-blank-break",
+      "head": "70be4cb3ba7442554520b7030b3d99b1586ddfbf"
+    },
+    {
+      "id": "r56-gba-verify-bound",
+      "head": "2c91856f13a977a3b58759f6d1f27abe84a400b3"
+    },
+    {
+      "id": "r56-gba-eep-ptr",
+      "head": "37c68fc4101c4c25a2dc834e07485893af3917e5"
+    },
+    {
+      "id": "r56-n64-word",
+      "head": "cb14e816b4587d571e9d6f0ff0ad5c995104aef7"
+    },
+    {
+      "id": "r56-n64-xplorer",
+      "head": "796edb2d2ffdedd4fa45d58a60c6e99682136e1e"
     }
   ]
 }
