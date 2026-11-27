@@ -1415,7 +1415,7 @@ unsigned long verifySRAM_GB() {
         for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
           //fill sdBuffer
           myFile.read(sdBuffer, 64);
-          for (int c = 0; c < 64; c++) {
+          for (uint8_t c = 0; c < 64; c++) {
             if (readByteSRAM_GB(sramAddress + c) != sdBuffer[c]) {
               writeErrors++;
             }
