@@ -1,29 +1,40 @@
 {
-  "id": "parallel-054-astra-integration",
-  "base": "9d53a6f48dcedde4063c6c1110ab9c63994afa5e",
-  "expected_base_flash": 205790,
+  "id": "parallel-055-astra",
+  "base": "2d013d2b41352bd469fb562fdf73d679c24d9ebc",
+  "expected_base_flash": 205616,
   "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "hucard-reverse",
-      "head": "a44fabdb5f94103c3b5727ba472d5fc679ac14fb"
+      "id": "mpk-names",
+      "head": "1f47d804b91ad74b4675a0f5ff9aeba86c4b580c"
     },
     {
-      "id": "pack",
-      "head": "c1714dc7a9947bd8e4d5f87f5664ffe5a8b524a4"
+      "id": "n64-char",
+      "head": "d464d3913bf48a9d403b5106158ae75eab1c5373"
     },
     {
-      "id": "pin-setup",
-      "head": "3627ffddf238ba2e8d2d3bafaa2f12da39d92660"
+      "id": "md-sonic",
+      "head": "aed4ed27dbe0c299a3f9bfe6aa6c6584474ebdda"
     },
     {
-      "id": "send-mask",
-      "head": "dc85293164a6b48018a56e6deb61a0f3843222e6"
+      "id": "gb-save-name",
+      "head": "70552c6ba5b59a1ec4519961b70fe56bd825b9f8"
     },
     {
-      "id": "write-index",
-      "head": "4081c1fa984836512c41acc5868159e87d6f132b"
+      "id": "gba-rom-name",
+      "head": "9770f74eecef002dab51c3cca13f2c7f7104ef51"
+    },
+    {
+      "id": "nes-decimal",
+      "head": "375c9f1a0a860239db8ec80faae956c42023b8d4"
+    },
+    {
+      "id": "gb-rom-path",
+      "head": "d8a879e8f4e8a8ce1a762abc7c256b27c28d7329"
+    },
+    {
+      "id": "gba-rom-path",
+      "head": "b73e0a1b478ea0aa967f9a640b17f01813a0e310"
     }
-  ],
-  "endpoints_only": true
+  ]
 }
