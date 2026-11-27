@@ -1,40 +1,40 @@
 {
-  "id": "parallel-041",
-  "base": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+  "id": "parallel-042",
+  "base": "b763f3f0c2386e5b2be27b016ee16f9fdc91167d",
   "expected_base_flash": 207274,
   "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "n64-stick-results",
-      "head": "45fb7c397ca581d70749dee4d92bd041e7d4017a"
+      "id": "gba-save-input",
+      "head": "2996e98a885a5c00401ff72d07b1cda774c2f06b"
     },
     {
-      "id": "jag-output-tail",
-      "head": "ca4e60999a379dbd1a34388dca585899411407f8"
+      "id": "gba-fram-read",
+      "head": "30ad3cb1a6adc230a1cee425017bc427fa5ce851"
     },
     {
-      "id": "pcw-address-latch",
-      "head": "ccde9b799d970900e3a0ddc5c3efe88d964e5e6d"
+      "id": "snes-hi-sa-retry",
+      "head": "3106e4462575d7afabfa8d299a01d284b8d8c181"
     },
     {
-      "id": "5200-upper-rom",
-      "head": "20d2b925325c3fd405b7aa3caa197fa1c4cf7e6a"
+      "id": "snes-exhi-retry",
+      "head": "0babfad54c401ced35b59c559a07d9c5f0d871cd"
     },
     {
-      "id": "atari8-upper-rom",
-      "head": "54738f19712ea1b1660a68c69b29c54f29356718"
+      "id": "n64-sram-geometry",
+      "head": "ab9dd518918edbf218341da2b504b2b6760dad4d"
     },
     {
-      "id": "jag-address-latch",
-      "head": "1e79c5b27351f81fea8827e19e5f956ec779904b"
+      "id": "sfm-rom-block",
+      "head": "f8a61f82b2b3894130c70aee76c8062cc8c27365"
     },
     {
-      "id": "nes-helper-case-merge",
-      "head": "f7266396defe687fa71068065d27824f41c914df"
+      "id": "vb-rom-block",
+      "head": "cea2d6e237ee8bccc80ba57e4b2fa52895f75e58"
     },
     {
-      "id": "vsmile-rom-address",
-      "head": "cb2dccb4afcd4b3e6d329825e8963d5d13354510"
+      "id": "selftest-pin-label",
+      "head": "3e66228834b40fd160d2239d00b2bee3f6a3d098"
     }
   ]
 }
