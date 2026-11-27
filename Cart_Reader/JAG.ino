@@ -505,7 +505,8 @@ void shiftOutFAST(byte addr) {    //
 //******************************************
 // READ DATA
 //******************************************
-void readJagData(unsigned long myAddress) {
+static void latchJagAddressR41(unsigned long myAddress) __attribute__((noinline));
+static void latchJagAddressR41(unsigned long myAddress) {
   SRCLR_CLEAR;
   SRCLR_SET;
   LATCH_CLEAR;
@@ -514,6 +515,10 @@ void readJagData(unsigned long myAddress) {
   shiftOutFAST((myAddress >> 8) & 0xFF);
   shiftOutFAST(myAddress);
   LATCH_SET;
+}
+
+void readJagData(unsigned long myAddress) {
+  latchJagAddressR41(myAddress);
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
   __asm__("nop\n\t");
@@ -1107,13 +1112,7 @@ void busyCheck() {
 }
 
 byte readBYTE_FLASH(unsigned long myAddress) {
-  SRCLR_CLEAR;
-  SRCLR_SET;
-  LATCH_CLEAR;
-  shiftOutFAST((myAddress >> 16) & 0xFF);
-  shiftOutFAST((myAddress >> 8) & 0xFF);
-  shiftOutFAST(myAddress);
-  LATCH_SET;
+  latchJagAddressR41(myAddress);
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
   __asm__("nop\n\t"
@@ -1162,13 +1161,7 @@ byte readBYTE_FLASH(unsigned long myAddress) {
 }
 
 byte readBYTE_MEMROM(unsigned long myAddress) {
-  SRCLR_CLEAR;
-  SRCLR_SET;
-  LATCH_CLEAR;
-  shiftOutFAST((myAddress >> 16) & 0xFF);
-  shiftOutFAST((myAddress >> 8) & 0xFF);
-  shiftOutFAST(myAddress);
-  LATCH_SET;
+  latchJagAddressR41(myAddress);
 
   // Arduino running at 16Mhz -> one nop = 62.5ns
   __asm__("nop\n\t"
@@ -1215,13 +1208,7 @@ byte readBYTE_MEMROM(unsigned long myAddress) {
 }
 
 void writeBYTE_FLASH(unsigned long myAddress, byte myData) {
-  SRCLR_CLEAR;
-  SRCLR_SET;
-  LATCH_CLEAR;
-  shiftOutFAST((myAddress >> 16) & 0xFF);
-  shiftOutFAST((myAddress >> 8) & 0xFF);
-  shiftOutFAST(myAddress);
-  LATCH_SET;
+  latchJagAddressR41(myAddress);
 
   PORTL = myData;
 
