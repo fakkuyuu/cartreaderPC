@@ -3207,10 +3207,8 @@ void readPRG(bool readrom) {
       case 246:
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i += 4) {
-          write_prg_byte(0x6000, (i | 0));
-          write_prg_byte(0x6001, (i | 1));
-          write_prg_byte(0x6002, (i | 2));
-          write_prg_byte(0x6003, (i | 3));
+          for (byte bank = 0; bank < 4; ++bank)
+            write_prg_byte(0x6000U + bank, i | bank);
           dumpPRG32KiB(base);
         }
         break;
@@ -4169,10 +4167,8 @@ void readCHR(bool readrom) {
         case 246:
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i += 4) {
-            write_prg_byte(0x6004, (i | 0));
-            write_prg_byte(0x6005, (i | 1));
-            write_prg_byte(0x6006, (i | 2));
-            write_prg_byte(0x6007, (i | 3));
+            for (byte bank = 0; bank < 4; ++bank)
+              write_prg_byte(0x6004U + bank, i | bank);
             dumpCHR8KiB();
           }
           break;
