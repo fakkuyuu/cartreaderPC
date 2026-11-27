@@ -1,25 +1,40 @@
 {
-  "id": "parallel-049-integration",
-  "base": "f72a5d0da65f72eea915e1ba89a6dda607fe6d51",
-  "expected_base_flash": 206382,
+  "id": "parallel-050",
+  "base": "aa8a60f21fa2a13fd7505edd0fe6d0537d37c692",
+  "expected_base_flash": 206116,
   "expected_base_ram": 6095,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "integration-1-snes-setup",
-      "head": "b91f603c3e6feeb716ad0abe421556818826bab4"
+      "id": "r50-snes-writebank",
+      "head": "3d7fcf4fb38381b17aabbc2c2c6934361a3c6f9e"
     },
     {
-      "id": "integration-2-snes-tail",
-      "head": "743563878f99b81b82f0bb7a6ff6205d75fa16c8"
+      "id": "r50-cfi-mode",
+      "head": "b355def5fd47360bd308ecf642538c3a41ec36a7"
     },
     {
-      "id": "integration-3-8bit-setup",
-      "head": "14bafb1d689773b610ed3be794272e85c522014b"
+      "id": "r50-flash-read-loop",
+      "head": "6df44ab3627788397706b5e340d2575049caa92f"
     },
     {
-      "id": "integration-4-unknown-prefix",
-      "head": "55d4f4394bae5a5a8cf9ef49cfe7f08bc73f6e4d"
+      "id": "r50-verify-report",
+      "head": "74e0bb7b655352fe8689efb2322603446bf7b41c"
+    },
+    {
+      "id": "r50-legacy-bus-setup",
+      "head": "3315ff02a1e34577269987a5dac5e6543c263d0f"
+    },
+    {
+      "id": "r50-pc-rom-input",
+      "head": "d47dd3fccb1d6485470bcc695724b2a08d0db4b5"
+    },
+    {
+      "id": "r50-pc-size-error",
+      "head": "4fba64af244976ccf19224542dc8d8f313d4a905"
+    },
+    {
+      "id": "r50-pc-size-options",
+      "head": "5cd611a8da7efb0ca1740543370d3c3f91de5f88"
     }
   ]
 }
