@@ -1265,9 +1265,8 @@ void controllerTest_Display() {
           switch (test) {
             case 0:  // Display results
               {
-                switch (results) {
-                  case 0:
-                    {
+                if (results == 0 || results == 1) {
+                  if (results == 0) {
                       anastick = "Your Stick";
                       upx = bupx;
                       upy = bupy;
@@ -1285,42 +1284,7 @@ void controllerTest_Display() {
                       lefty = blefty;
                       upleftx = bupleftx;
                       uplefty = buplefty;
-
-                      if (button == "Press a button" && lastbutton == "A") {
-                        // reset button
-                        lastbutton = "N/A";
-                        results = 1;
-                        display.clearDisplay();
-                        break;
-                      }
-                      printSTR(anastick, 22 + 50, 15);
-
-                      display.drawStr(22 + 50, 25, "U:");
-                      printSTR(String(upy), 100, 25);
-                      display.drawStr(22 + 50, 35, "D:");
-                      printSTR(String(downy), 100, 35);
-                      display.drawStr(22 + 50, 45, "L:");
-                      printSTR(String(leftx), 100, 45);
-                      display.drawStr(22 + 50, 55, "R:");
-                      printSTR(String(rightx), 100, 55);
-
-                      display.drawLine(xax + upx / 4, yax - upy / 4, xax + uprightx / 4, yax - uprighty / 4);
-                      display.drawLine(xax + uprightx / 4, yax - uprighty / 4, xax + rightx / 4, yax - righty / 4);
-                      display.drawLine(xax + rightx / 4, yax - righty / 4, xax + downrightx / 4, yax - downrighty / 4);
-                      display.drawLine(xax + downrightx / 4, yax - downrighty / 4, xax + downx / 4, yax - downy / 4);
-                      display.drawLine(xax + downx / 4, yax - downy / 4, xax + downleftx / 4, yax - downlefty / 4);
-                      display.drawLine(xax + downleftx / 4, yax - downlefty / 4, xax + leftx / 4, yax - lefty / 4);
-                      display.drawLine(xax + leftx / 4, yax - lefty / 4, xax + upleftx / 4, yax - uplefty / 4);
-                      display.drawLine(xax + upleftx / 4, yax - uplefty / 4, xax + upx / 4, yax - upy / 4);
-
-                      display.drawPixel(xax, yax);
-
-                      //Update LCD
-                      display.updateDisplay();
-                      break;
-                    }
-                  case 1:
-                    {
+                  } else {
                       anastick = "Original";
                       upx = 1;
                       upy = 84;
@@ -1338,14 +1302,12 @@ void controllerTest_Display() {
                       lefty = 0;
                       upleftx = -68;
                       uplefty = 68;
-
-                      if (button == "Press a button" && lastbutton == "A") {
-                        // reset button
-                        lastbutton = "N/A";
-                        results = 0;
-                        display.clearDisplay();
-                        break;
-                      }
+                  }
+                  if (button == "Press a button" && lastbutton == "A") {
+                    lastbutton = "N/A";
+                    results = (results == 0) ? 1 : 0;
+                    display.clearDisplay();
+                  } else {
                       printSTR(anastick, 22 + 50, 15);
 
                       display.drawStr(22 + 50, 25, "U:");
@@ -1370,9 +1332,7 @@ void controllerTest_Display() {
 
                       //Update LCD
                       display.updateDisplay();
-                      break;
-                    }
-
+                  }
                 }  //results
                 break;
               }  //display results
