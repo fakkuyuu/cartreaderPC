@@ -1617,16 +1617,14 @@ void readMPK() {
 
   // Get name, add extension and convert to char array for sd lib
   EEPROM_readAnything(0, foldern);
-  sprintf(fileName, "%d", foldern);
-  strcat(fileName, ".mpk");
+  sprintf(fileName, "%d.mpk", foldern);
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);
 
   //open crc file on sd card
-  sprintf(filePath, "%d", foldern - 1);
-  strcat(filePath, ".crc");
+  sprintf(filePath, "%d.crc", foldern - 1);
   FsFile crcFile;
   if (!crcFile.open(filePath, O_RDWR | O_CREAT)) {
     fatalOpenFileError();
