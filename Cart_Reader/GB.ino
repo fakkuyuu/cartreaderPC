@@ -191,30 +191,11 @@ void gbxMenu() {
             gbFlashMBC = chooseFlashMenuOption(F("Select MBC"), menuOptionsGBFlashMBC, 6);
 
             // wait for user choice to come back from the question box menu
-            switch (gbFlashMBC) {
-              case 0:
-                selectedMBC = 5;
-                break;
-
-              case 1:
-                selectedMBC = 3;
-                break;
-
-              case 2:
-                selectedMBC = 1;
-                break;
-
-              case 3:
-                selectedMBC = 0;
-                break;
-
-              case 4:
-                selectedMBC = 30;
-                break;
-
-              case 5:
-                resetArduino();
-                break;
+            static const byte gbFlashMBCSelection[] PROGMEM = {5, 3, 1, 0, 30};
+            if (gbFlashMBC < sizeof(gbFlashMBCSelection)) {
+              selectedMBC = pgm_read_byte(&gbFlashMBCSelection[gbFlashMBC]);
+            } else if (gbFlashMBC == sizeof(gbFlashMBCSelection)) {
+              resetArduino();
             }
 
             // create submenu with title and 3 options to choose from
