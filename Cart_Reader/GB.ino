@@ -1285,6 +1285,13 @@ static void openGbSaveOutput() {
   }
 }
 
+static void readAndWriteSramBlock_GB(word sramAddress) {
+  for (byte i = 0; i < 64; i++) {
+    sdBuffer[i] = readByteSRAM_GB(sramAddress + i);
+  }
+  myFile.write(sdBuffer, 64);
+}
+
 void readSRAM_GB() {
   // Does cartridge have RAM
   if (lastByte > 0) {
@@ -1308,10 +1315,7 @@ void readSRAM_GB() {
 
       // Read SRAM
       for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
-        for (byte i = 0; i < 64; i++) {
-          sdBuffer[i] = readByteSRAM_GB(sramAddress + i);
-        }
-        myFile.write(sdBuffer, 64);
+        readAndWriteSramBlock_GB(sramAddress);
       }
     }
 
@@ -1452,10 +1456,7 @@ void readSRAMFLASH_MBC6_GB() {
 
     // Read SRAM
     for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
-      for (byte i = 0; i < 64; i++) {
-        sdBuffer[i] = readByteSRAM_GB(sramAddress + i);
-      }
-      myFile.write(sdBuffer, 64);
+      readAndWriteSramBlock_GB(sramAddress);
       processedProgressBar += 64;
       draw_progressbar(processedProgressBar, totalProgressBar);
     }

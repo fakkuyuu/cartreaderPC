@@ -1551,7 +1551,7 @@ boolean blankcheckFLASH_GBA(uint32_t flashSize) {
   // Output a LOW signal on OE_FLASH(PH6)
   PORTH &= ~(1 << 6);
 
-  for (uint32_t currAddress = 0; currAddress < flashSize; currAddress += 512) {
+  for (uint32_t currAddress = 0; currAddress < flashSize && blank; currAddress += 512) {
     // Fill buffer
     for (int c = 0; c < 512; c++) {
       // Read byte
@@ -1561,9 +1561,8 @@ boolean blankcheckFLASH_GBA(uint32_t flashSize) {
     for (uint32_t currByte = 0; currByte < 512 && (currByte + currAddress) < flashSize; currByte++) {
       if (sdBuffer[currByte] != 0xFF) {
         print_Error(FS(SharedFlashText::textEraseFailed));
-        currByte = 512;
-        currAddress = flashSize;
         blank = 0;
+        break;
       }
     }
   }
@@ -1947,6 +1946,7 @@ void readBlock_EEP(word startAddress, word eepSize) {
   setupEepromPins_GBA();
 
   // Read 64*8=512 bytes
+  byte* output = sdBuffer;
   for (word currAddr = startAddress; currAddr < startAddress + 64; currAddr++) {
     // Set CS_ROM(PH3) to LOW
     PORTH &= ~(1 << 3);
@@ -2029,7 +2029,7 @@ void readBlock_EEP(word startAddress, word eepSize) {
     for (byte j = 0; j < 64; j += 8) {
       byte packed = 0;
       for (byte bit = 0; bit < 8; ++bit) packed = (packed << 1) | tempBits[j + bit];
-      sdBuffer[((currAddr - startAddress) * 8) + (j / 8)] = packed;
+      *output++ = packed;
     }
   }
 }
