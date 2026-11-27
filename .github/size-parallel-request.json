@@ -1,5 +1,5 @@
 {
-  "id": "parallel-051c",
+  "id": "parallel-051d",
   "base": "aa8a60f21fa2a13fd7505edd0fe6d0537d37c692",
   "expected_base_flash": 206116,
   "expected_base_ram": 6095,
@@ -21,16 +21,16 @@
       "head": "c67882fa9b08aafbe1f10add96b5b14d329f6d54"
     },
     {
-      "id": "r51-combined-menu-tables-fixed2",
-      "head": "11fe691b3ff4b07399bc0787c4563b496d2e50fc"
+      "id": "r51-combined-menu-tables-fixed3",
+      "head": "6a9c6a6beffd64d70dd3be1b43894238e4fea282"
     },
     {
       "id": "r51-nes-prg-mapper-snapshot",
       "head": "410c7b32e4dcb440edfc729522ce9366bf6866bf"
     },
     {
-      "id": "r51-nes-chr-mapper-snapshot",
-      "head": "fa817952426c973bd8e602fa5dcac452c284e8fd"
+      "id": "r51-nes-chr-mapper-snapshot-fixed",
+      "head": "88d9e6d9f26c55da7fa28b0650041b348f0fb422"
     },
     {
       "id": "r51-nes-sequential-loops",
