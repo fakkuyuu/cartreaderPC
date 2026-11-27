@@ -2443,10 +2443,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x9002, 0);
           write_prg_byte(0x9004, 0);
         }
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8000, i);
-          dumpPRG8KiB(base);
-        }
+        dumpSequentialPRGBanks(banks, 0x8000, 0, 0x2000, base);
         break;
 
       case 24:
@@ -3699,10 +3696,7 @@ void readCHR(bool readrom) {
         case 24:  // 128K
           banks = chrBanks4K * 4;
           write_prg_byte(0xB003, 0);  // PPU Banking Mode 0
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xD000, i);  // CHR Bank 0
-            dumpCHR1KiB();    // 1K Banks
-          }
+          dumpSequentialCHRBanks(banks, 0xD000, 0, 0x400);
           break;
 
         case 25:  // 128K/256K
