@@ -2103,6 +2103,18 @@ static void finishRead_NES() {
   rgbLed(black_color);
 }
 
+static void __attribute__((noinline)) selectConflictBankR59_NES(word base, size_t i, bool& busConflict) {
+  for (size_t x = 0; x < 0x8000; x++) {
+    if (read_prg_byte(base + x) == i) {
+      write_prg_byte(base + x, i);
+      busConflict = false;
+      break;
+    }
+  }
+  if (busConflict)
+    write_prg_byte(base + i, i);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2165,16 +2177,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         busConflict = true;
         for (size_t i = 0; i < banks; i++) {
-          for (size_t x = 0; x < 0x8000; x++) {
-            if (read_prg_byte(0xC000 + x) == i) {
-              write_prg_byte(0xC000 + x, i);
-              busConflict = false;
-              break;
-            }
-          }
-          if (busConflict) {
-            write_prg_byte(0xC000 + i, i);
-          }
+          selectConflictBankR59_NES(0xC000, i, busConflict);
           dumpPRG16KiB(base);
         }
         break;
@@ -3459,16 +3462,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           busConflict = true;
           for (size_t i = 0; i < banks; i++) {
-            for (size_t x = 0; x < 0x8000; x++) {
-              if (read_prg_byte(0x8000 + x) == i) {
-                write_prg_byte(0x8000 + x, i);
-                busConflict = false;
-                break;
-              }
-            }
-            if (busConflict) {
-              write_prg_byte(0x8000 + i, i);
-            }
+            selectConflictBankR59_NES(0x8000, i, busConflict);
             dumpCHR8KiB();
           }
           break;
