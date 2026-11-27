@@ -2397,12 +2397,8 @@ void writeSram(unsigned long sramSize) {
 
 // Read sram and save to the SD card
 void readSram(unsigned long sramSize, byte flashramType) {
-  int offset = 512;
-  int bufferSize = 512;
-  if (flashramType == 2) {
-    offset = 64;
-    bufferSize = 128;
-  }
+  const int offset = flashramType == 2 ? 64 : 512;
+  const int bufferSize = flashramType == 2 ? 128 : 512;
 
   // Get name, add extension and convert to char array for sd lib
   const char* suffix;
@@ -2418,7 +2414,8 @@ void readSram(unsigned long sramSize, byte flashramType) {
   }
   createFolderAndOpenFile("N64", "SAVE", romName, suffix);
 
-  for (unsigned long currByte = sramBase; currByte < (sramBase + (sramSize / flashramType)); currByte += offset) {
+  const unsigned long endAddress = sramBase + (sramSize / flashramType);
+  for (unsigned long currByte = sramBase; currByte < endAddress; currByte += offset) {
     // Set the address
     setAddress_N64(currByte);
 
@@ -2433,13 +2430,10 @@ void readSram(unsigned long sramSize, byte flashramType) {
 
 static void compareSram_N64(unsigned long sramSize, byte flashramType, bool blank) __attribute__((noinline));
 static void compareSram_N64(unsigned long sramSize, byte flashramType, bool blank) {
-  int offset = 512;
-  int bufferSize = 512;
-  if (flashramType == 2) {
-    offset = 64;
-    bufferSize = 128;
-  }
-  for (unsigned long currByte = sramBase; currByte < (sramBase + (sramSize / flashramType)); currByte += offset) {
+  const int offset = flashramType == 2 ? 64 : 512;
+  const int bufferSize = flashramType == 2 ? 128 : 512;
+  const unsigned long endAddress = sramBase + (sramSize / flashramType);
+  for (unsigned long currByte = sramBase; currByte < endAddress; currByte += offset) {
     setAddress_N64(currByte);
     readN64WordsToBuffer(bufferSize);
     if (blank) {
