@@ -1222,6 +1222,32 @@ unsigned long verifySRAM_GBA(unsigned long sramSize, uint32_t pos) {
   GBA FRAM SAVE Functions
 *****************************************/
 // MB85R256 FRAM (Ferroelectric Random Access Memory) 32,768 words x 8 bits
+static byte readFramByteR42_GBA(uint16_t address) __attribute__((noinline));
+static byte readFramByteR42_GBA(uint16_t address) {
+  // Pull OE_SRAM(PH6) HIGH
+  PORTH |= (1 << 6);
+
+  // Set address
+  PORTF = address & 0xFF;
+  PORTK = (address >> 8) & 0xFF;
+
+  // Arduino running at 16Mhz -> one nop = 62.5ns
+  // Leave CS_SRAM HIGH for at least 85ns
+  __asm__("nop\n\t"
+          "nop\n\t");
+
+  // Pull OE_SRAM(PH6) LOW
+  PORTH &= ~(1 << 6);
+
+  // Hold address for at least 25ns and wait 150ns before access
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
+
+  // Read byte
+  return PINC;
+}
+
 void readFRAM_GBA(unsigned long framSize) {
   // Output a HIGH signal on CS_ROM(PH3) WE_SRAM(PH5)
   PORTH |= (1 << 3) | (1 << 5);
@@ -1245,28 +1271,7 @@ void readFRAM_GBA(unsigned long framSize) {
 
   for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
     for (int c = 0; c < 512; c++) {
-      // Pull OE_SRAM(PH6) HIGH
-      PORTH |= (1 << 6);
-
-      // Set address
-      PORTF = (currAddress + c) & 0xFF;
-      PORTK = ((currAddress + c) >> 8) & 0xFF;
-
-      // Arduino running at 16Mhz -> one nop = 62.5ns
-      // Leave CS_SRAM HIGH for at least 85ns
-      __asm__("nop\n\t"
-              "nop\n\t");
-
-      // Pull OE_SRAM(PH6) LOW
-      PORTH &= ~(1 << 6);
-
-      // Hold address for at least 25ns and wait 150ns before access
-      __asm__("nop\n\t"
-              "nop\n\t"
-              "nop\n\t");
-
-      // Read byte
-      sdBuffer[c] = PINC;
+      sdBuffer[c] = readFramByteR42_GBA(currAddress + c);
     }
     // Write sdBuffer to file
     writeSdBufferBlock();
@@ -1366,28 +1371,7 @@ unsigned long verifyFRAM_GBA(unsigned long framSize) {
       readSdBufferBlock();
 
       for (int c = 0; c < 512; c++) {
-        // Pull OE_SRAM(PH6) HIGH
-        PORTH |= (1 << 6);
-
-        // Set address
-        PORTF = (currAddress + c) & 0xFF;
-        PORTK = ((currAddress + c) >> 8) & 0xFF;
-
-        // Arduino running at 16Mhz -> one nop = 62.5ns
-        // Leave CS_SRAM HIGH for at least 85ns
-        __asm__("nop\n\t"
-                "nop\n\t");
-
-        // Pull OE_SRAM(PH6) LOW
-        PORTH &= ~(1 << 6);
-
-        // Hold address for at least 25ns and wait 150ns before access
-        __asm__("nop\n\t"
-                "nop\n\t"
-                "nop\n\t");
-
-        // Read byte
-        if (PINC != sdBuffer[c]) {
+        if (readFramByteR42_GBA(currAddress + c) != sdBuffer[c]) {
           writeErrors++;
         }
       }
