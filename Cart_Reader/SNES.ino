@@ -1750,10 +1750,15 @@ void readROM_SNES() {
   SNES SRAM Functions
 *****************************************/
 // Write file to SRAM
-void writeSramFileRange_SNES(byte bank, long start, long end, byte) {
+static void writeSramRange_SNES(byte bank, long start, long end, bool fromFile, byte value) __attribute__((noinline));
+static void writeSramRange_SNES(byte bank, long start, long end, bool fromFile, byte value) {
   for (long address = start; address < end; ++address) {
-    writeBank_SNES(bank, address, myFile.read());
+    writeBank_SNES(bank, address, fromFile ? myFile.read() : value);
   }
+}
+
+void writeSramFileRange_SNES(byte bank, long start, long end, byte) {
+  writeSramRange_SNES(bank, start, end, true, 0);
 }
 
 void readSramFileRange_SNES(byte bank, long start, long end, byte) {
@@ -1938,27 +1943,27 @@ void readSRAM() {
 }
 
 // Check if the SRAM was written without any error
-void verifySramFileRange_SNES(byte bank, long start, long end, byte) {
+static void verifySramRange_SNES(byte bank, long start, long end, bool fromFile, byte value) __attribute__((noinline));
+static void verifySramRange_SNES(byte bank, long start, long end, bool fromFile, byte value) {
   for (long address = start; address < end; address += 512) {
-    readSdBufferBlock();
+    if (fromFile) readSdBufferBlock();
     for (int c = 0; c < 512; ++c) {
-      if (readBank_SNES(bank, address + c) != sdBuffer[c]) ++writeErrors;
+      byte expected = fromFile ? sdBuffer[c] : value;
+      if (readBank_SNES(bank, address + c) != expected) ++writeErrors;
     }
   }
+}
+
+void verifySramFileRange_SNES(byte bank, long start, long end, byte) {
+  verifySramRange_SNES(bank, start, end, true, 0);
 }
 
 void verifySramFillRange_SNES(byte bank, long start, long end, byte value) {
-  for (long address = start; address < end; address += 512) {
-    for (int c = 0; c < 512; ++c) {
-      if (readBank_SNES(bank, address + c) != value) ++writeErrors;
-    }
-  }
+  verifySramRange_SNES(bank, start, end, false, value);
 }
 
 void fillSramRange_SNES(byte bank, long start, long end, byte value) {
-  for (long address = start; address < end; ++address) {
-    writeBank_SNES(bank, address, value);
-  }
+  writeSramRange_SNES(bank, start, end, false, value);
 }
 
 unsigned long verifySRAM() {

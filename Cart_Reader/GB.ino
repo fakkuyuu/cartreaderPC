@@ -1285,11 +1285,18 @@ static void openGbSaveOutput() {
   }
 }
 
-static void readAndWriteSramBlock_GB(word sramAddress) {
+static void processSramBlock_GB(word sramAddress, bool verifying) __attribute__((noinline));
+static void processSramBlock_GB(word sramAddress, bool verifying) {
+  if (verifying) myFile.read(sdBuffer, 64);
   for (byte i = 0; i < 64; i++) {
-    sdBuffer[i] = readByteSRAM_GB(sramAddress + i);
+    byte value = readByteSRAM_GB(sramAddress + i);
+    if (verifying) {
+      if (value != sdBuffer[i]) ++writeErrors;
+    } else {
+      sdBuffer[i] = value;
+    }
   }
-  myFile.write(sdBuffer, 64);
+  if (!verifying) myFile.write(sdBuffer, 64);
 }
 
 void readSRAM_GB() {
@@ -1315,7 +1322,7 @@ void readSRAM_GB() {
 
       // Read SRAM
       for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
-        readAndWriteSramBlock_GB(sramAddress);
+        processSramBlock_GB(sramAddress, false);
       }
     }
 
@@ -1335,6 +1342,13 @@ void readSRAM_GB() {
 }
 
 // Write RAM
+static void writeSramFileBank_GB() __attribute__((noinline));
+static void writeSramFileBank_GB() {
+  for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress++) {
+    writeByteSRAM_GB(sramAddress, myFile.read());
+  }
+}
+
 void writeSRAM_GB() {
   // Does cartridge have SRAM
   if (lastByte > 0) {
@@ -1359,9 +1373,7 @@ void writeSRAM_GB() {
         writeByte_GB(0x4000, currBank);
 
         // Write RAM
-        for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress++) {
-          writeByteSRAM_GB(sramAddress, myFile.read());
-        }
+        writeSramFileBank_GB();
       }
       // Disable SRAM
       writeByte_GB(0x0000, 0x00);
@@ -1406,13 +1418,7 @@ unsigned long verifySRAM_GB() {
 
         // Read SRAM
         for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
-          //fill sdBuffer
-          myFile.read(sdBuffer, 64);
-          for (int c = 0; c < 64; c++) {
-            if (readByteSRAM_GB(sramAddress + c) != sdBuffer[c]) {
-              writeErrors++;
-            }
-          }
+          processSramBlock_GB(sramAddress, true);
         }
       }
       // Disable RAM
@@ -1456,7 +1462,7 @@ void readSRAMFLASH_MBC6_GB() {
 
     // Read SRAM
     for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress += 64) {
-      readAndWriteSramBlock_GB(sramAddress);
+      processSramBlock_GB(sramAddress, false);
       processedProgressBar += 64;
       draw_progressbar(processedProgressBar, totalProgressBar);
     }
@@ -1533,9 +1539,7 @@ void writeSRAMFLASH_MBC6_GB() {
       writeByte_GB(0x0800, currBank);
 
       // Write SRAM
-      for (word sramAddress = 0xA000; sramAddress <= lastByte; sramAddress++) {
-        writeByteSRAM_GB(sramAddress, myFile.read());
-      }
+      writeSramFileBank_GB();
 
       processedProgressBar += (lastByte + 1) - 0xA000;
       draw_progressbar(processedProgressBar, totalProgressBar);
