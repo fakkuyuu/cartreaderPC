@@ -1,5 +1,5 @@
 {
-  "id": "parallel-051b",
+  "id": "parallel-051c",
   "base": "aa8a60f21fa2a13fd7505edd0fe6d0537d37c692",
   "expected_base_flash": 206116,
   "expected_base_ram": 6095,
@@ -17,12 +17,12 @@
       "head": "c8318d4a3d10b7c82cd8572a74991ad39c31ffaf"
     },
     {
-      "id": "r51-system-menu-table-fixed",
-      "head": "96ec310482b13f1fe07e0309fa292137d3bea5f3"
+      "id": "r51-system-menu-table-fixed2",
+      "head": "c67882fa9b08aafbe1f10add96b5b14d329f6d54"
     },
     {
-      "id": "r51-combined-menu-tables-fixed",
-      "head": "77a407250784ce52b446510e39927e8da94b1d35"
+      "id": "r51-combined-menu-tables-fixed2",
+      "head": "11fe691b3ff4b07399bc0787c4563b496d2e50fc"
     },
     {
       "id": "r51-nes-prg-mapper-snapshot",
