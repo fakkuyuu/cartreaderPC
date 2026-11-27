@@ -1,16 +1,29 @@
 {
-  "id": "round59-fix",
+  "id": "round59-cumulative",
   "base": "693a59591263034657e096d81d81d0f9dcf52d3c",
   "expected_base_flash": 205188,
   "expected_base_ram": 6059,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "nes-mmc3-pair-fixed",
-      "head": "6916df7d1e67b0ddea5eea7ff68ef334cc221b82"
+      "id": "stage2",
+      "head": "34114b08848afecb88fd4b46cde2fe6c9e865aba"
     },
     {
-      "id": "nes-mirrored-regs-fixed",
-      "head": "e8cb0d8134e3d9becd516e1484426f064b7a7456"
+      "id": "stage3",
+      "head": "fc86b02fcd4aab3c383993906b0d7a960f8dac8c"
+    },
+    {
+      "id": "stage4a",
+      "head": "46d48864c7f2fc176af1ae28fcc6cd3da08d22c9"
+    },
+    {
+      "id": "stage4b",
+      "head": "b1ac3165d4ddac96fc224daf81de8e26660943b8"
+    },
+    {
+      "id": "stage5",
+      "head": "5a6a17458cd1fa08b51a6a48a8d69cfb8030f40f"
     }
   ]
 }
