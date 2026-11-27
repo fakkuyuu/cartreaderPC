@@ -130,6 +130,11 @@ static void prepareCartP21_N64(bool special) {
   setup_N64_Cart();
 }
 
+static void __attribute__((noinline)) finishPromptR62_N64() {
+  promptAndWaitForButton();
+  clearAndUpdateDisplay();
+}
+
 void n64Menu() {
   // create menu with title and 6 options to choose from
   unsigned char n64Dev;
@@ -3225,8 +3230,7 @@ void flashRepro_N64() {
   }
 
   // Prints string out of the common strings array either with or without newline
-  promptAndWaitForButton();
-  clearAndUpdateDisplay();
+  finishPromptR62_N64();
 }
 
 // Reset to read mode
@@ -4000,8 +4004,7 @@ void flashGameshark_N64() {
   }
 
   // Prints string out of the common strings array either with or without newline
-  promptAndWaitForButton();
-  clearAndUpdateDisplay();
+  finishPromptR62_N64();
 }
 
 void unlockGSAddressRanges() {
@@ -4312,8 +4315,7 @@ void flashXplorer_N64() {
   }
 
   // Prints string out of the common strings array either with or without newline
-  promptAndWaitForButton();
-  clearAndUpdateDisplay();
+  finishPromptR62_N64();
 }
 
 //Test for SST 29LE010
