@@ -3926,14 +3926,8 @@ void readCHR(bool readrom) {
         case 85:  // 128K
           banks = chrBanks4K * 4;
           for (size_t i = 0; i < banks; i += 8) {
-            write_prg_byte(0xA000, i);      // CHR Bank 0
-            write_prg_byte(0xA008, i + 1);  // CHR Bank 1
-            write_prg_byte(0xB000, i + 2);  // CHR Bank 2
-            write_prg_byte(0xB008, i + 3);  // CHR Bank 3
-            write_prg_byte(0xC000, i + 4);  // CHR Bank 4
-            write_prg_byte(0xC008, i + 5);  // CHR Bank 5
-            write_prg_byte(0xD000, i + 6);  // CHR Bank 6
-            write_prg_byte(0xD008, i + 7);  // CHR Bank 7
+            for (byte bank = 0; bank < 8; ++bank)
+              write_prg_byte(0xA000U + (word(bank >> 1) << 12) + (word(bank & 1) << 3), i + bank);
             dumpCHR8KiB();
           }
           break;
