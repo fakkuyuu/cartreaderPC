@@ -827,13 +827,7 @@ boolean checkcart_SFM() {
     }
     if (myLength == 0) {
       // Rom code unknown
-      romName[0] = 'U';
-      romName[1] = 'N';
-      romName[2] = 'K';
-      romName[3] = 'N';
-      romName[4] = 'O';
-      romName[5] = 'W';
-      romName[6] = 'N';
+      setUnknownPrefixR49(romName);
     }
   }
 

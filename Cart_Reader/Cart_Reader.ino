@@ -429,6 +429,10 @@ void __attribute__((noinline)) setupSharedBusR49() {
   DDRC = 0x00;
 }
 
+void __attribute__((noinline)) setUnknownPrefixR49(char* dest) {
+  memcpy_P(dest, PSTR("UNKNOWN"), 7);
+}
+
 bool __attribute__((noinline)) accessoryWriteOkR48() {
   return writeErrors == 0;
 }
