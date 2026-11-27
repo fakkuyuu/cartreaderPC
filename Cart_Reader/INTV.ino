@@ -557,9 +557,7 @@ setrom:
       PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
-    while (PcConsole.available() == 0) {}
-    sizeROM = PcConsole.readStringUntil('\n');
-    PcConsole.println(sizeROM);
+    sizeROM = readPcRomSizeLineR50();
     newintvsize = sizeROM.toInt() + intvlo;
     if (newintvsize > intvhi) {
       PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));

@@ -4879,3 +4879,11 @@ void loop() {
 // End of File
 //******************************************
 
+
+String readPcRomSizeLineR50() __attribute__((noinline));
+String readPcRomSizeLineR50() {
+  while (PcConsole.available() == 0) {}
+  String value = PcConsole.readStringUntil('\n');
+  PcConsole.println(value);
+  return value;
+}

@@ -360,9 +360,7 @@ setrom:
       PcConsole.println(FS(SharedFlashText::unitK));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
-    while (PcConsole.available() == 0) {}
-    sizeROM = PcConsole.readStringUntil('\n');
-    PcConsole.println(sizeROM);
+    sizeROM = readPcRomSizeLineR50();
     new5200size = sizeROM.toInt() + a5200lo;
     if (new5200size > a5200hi) {
       PcConsole.println(FS(SharedFlashText::textSIZENOTSUPPORTED));
