@@ -399,6 +399,20 @@ bool flashSwitchLastBits;
 // Variable to count errors
 unsigned long writeErrors;
 
+void __attribute__((noinline)) setupSnesBusR49() {
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+  DDRL = 0xFF;
+  DDRA = 0xFF;
+  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
+  PORTH |= (1 << 0) | (1 << 5);
+  PORTH &= ~((1 << 3) | (1 << 6));
+  DDRE |= (1 << 5);
+  PORTE &= ~(1 << 5);
+  DDRH |= (1 << 1);
+  DDRH &= ~(1 << 4);
+}
+
 bool __attribute__((noinline)) accessoryWriteOkR48() {
   return writeErrors == 0;
 }

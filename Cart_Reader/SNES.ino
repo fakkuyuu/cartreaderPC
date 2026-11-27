@@ -542,32 +542,7 @@ void setup_Snes() {
 
   // Set Address Pins to Output
   //A0-A7
-  DDRF = 0xFF;
-  //A8-A15
-  DDRK = 0xFF;
-  //BA0-BA7
-  DDRL = 0xFF;
-  //PA0-PA7
-  DDRA = 0xFF;
-
-  // Set Control Pins to Output RST(PH0) CS(PH3) WR(PH5) RD(PH6)
-  DDRH |= (1 << 0) | (1 << 3) | (1 << 5) | (1 << 6);
-  // Switch RST(PH0) and WR(PH5) to HIGH
-  PORTH |= (1 << 0) | (1 << 5);
-  // Switch CS(PH3) and RD(PH6) to LOW
-  PORTH &= ~((1 << 3) | (1 << 6));
-
-  // Set Refresh(PE5) to Output
-  DDRE |= (1 << 5);
-  // Switch Refresh(PE5) to LOW (needed for SA-1)
-  PORTE &= ~(1 << 5);
-
-  // Set CPU Clock(PH1) to Output
-  DDRH |= (1 << 1);
-  //PORTH &= ~(1 << 1);
-
-  // Set IRQ(PH4) to Input
-  DDRH &= ~(1 << 4);
+  setupSnesBusR49();
   // Activate Internal Pullup Resistors
   //PORTH |= (1 << 4);
 
