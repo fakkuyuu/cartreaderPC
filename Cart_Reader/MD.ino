@@ -950,27 +950,12 @@ void getCartInfo_MD() {
     }
   }
 
-  // Greatest Heavyweights of the Ring (J) has blank chksum 0x0000
-  // Other non-save carts might have the same blank chksum
-  // Check header for PcConsole EEPROM Data
-  if (chksum == 0x0000) {
-    if (readWord_MD(0xD9) != 0xE840) {  // NOT SERIAL EEPROM
-      eepType = 0;
-      eepSize = 0;
-      saveType = 0;
-    }
-  }
-
-  // Codemasters EEPROM Check
-  // Codemasters used the same incorrect header across multiple carts
-  // Carts with checksum 0x165E or 0x168B could be EEPROM or non-EEPROM
-  // Check the first DWORD in ROM (0x444E4C44) to identify the EEPROM carts
-  if ((chksum == 0x165E) || (chksum == 0x168B)) {
-    if (readWord_MD(0x00) != 0x444E) {  // NOT SERIAL EEPROM
-      eepType = 0;
-      eepSize = 0;
-      saveType = 0;
-    }
+  // Reject non-EEPROM carts with known ambiguous checksums.
+  if (((chksum == 0x0000) && (readWord_MD(0xD9) != 0xE840)) ||
+      (((chksum == 0x165E) || (chksum == 0x168B)) && (readWord_MD(0x00) != 0x444E))) {
+    eepType = 0;
+    eepSize = 0;
+    saveType = 0;
   }
 
   // CD Backup RAM Cart Check
