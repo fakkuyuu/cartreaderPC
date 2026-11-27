@@ -3407,6 +3407,13 @@ void readPRG(bool readrom) {
   finishRead_NES();
 }
 
+static void setOuterChr45_NES(size_t i) {
+  write_prg_byte(0x6000, 0);                          // CHR-OR
+  write_prg_byte(0x6000, 0);                          // PRG-OR
+  write_prg_byte(0x6000, (((i / 256) << 4) | 0x0F));  // CHR-AND,CHR-OR/PRG-OR
+  write_prg_byte(0x6000, 0x80);                       // PRG-AND
+}
+
 void readCHR(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3780,10 +3787,7 @@ void readCHR(bool readrom) {
           write_prg_byte(0xA001, 0x80);  // Unlock Write Protection - not used by some carts
           for (size_t i = 0; i < banks; i++) {
             // set outer bank registers
-            write_prg_byte(0x6000, 0);                          // CHR-OR
-            write_prg_byte(0x6000, 0);                          // PRG-OR
-            write_prg_byte(0x6000, (((i / 256) << 4) | 0x0F));  // CHR-AND,CHR-OR/PRG-OR
-            write_prg_byte(0x6000, 0x80);                       // PRG-AND
+            setOuterChr45_NES(i);
             // set inner bank registers
             write_prg_byte(0x8000, 0x2);  // CHR Bank 2 ($1000-$13FF)
             write_prg_byte(0x8001, i);
@@ -3791,10 +3795,7 @@ void readCHR(bool readrom) {
               dumpCHR_M2(address);  // Read CHR with M2 Pulse
             }
             // set outer bank registers
-            write_prg_byte(0x6000, 0);                          // CHR-OR
-            write_prg_byte(0x6000, 0);                          // PRG-OR
-            write_prg_byte(0x6000, (((i / 256) << 4) | 0x0F));  // CHR-AND,CHR-OR/PRG-OR
-            write_prg_byte(0x6000, 0x80);                       // PRG-AND
+            setOuterChr45_NES(i);
             // set inner bank registers
             write_prg_byte(0x8000, 0x2);  // CHR Bank 2 ($1000-$13FF)
             write_prg_byte(0x8001, i);
