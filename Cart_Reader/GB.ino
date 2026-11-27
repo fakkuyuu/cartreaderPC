@@ -1075,6 +1075,11 @@ static void dumpRomBlock_GB(word romAddress) {
   writeSdBufferBlock();
 }
 
+static void __attribute__((noinline)) writeMbc6ModeR61_GB(byte a) {
+  writeByte_GB(0x2800, a);
+  writeByte_GB(0x3800, a);
+}
+
 void readROM_GB() {
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("GB", "ROM", romName, "gb");
@@ -1128,8 +1133,7 @@ void readROM_GB() {
 
     // Set ROM bank for MBC6
     else if (romType == 32) {
-      writeByte_GB(0x2800, 0);
-      writeByte_GB(0x3800, 0);
+      writeMbc6ModeR61_GB(0);
       writeByte_GB(0x2000, currBank);
       writeByte_GB(0x3000, currBank);
     }
@@ -1266,8 +1270,7 @@ void disableFlashSaveMemory() {
   writeByte_GB(0x1000, 0x01);
   writeByte_GB(0x0C00, 0x00);
   writeByte_GB(0x1000, 0x00);
-  writeByte_GB(0x2800, 0x00);
-  writeByte_GB(0x3800, 0x00);
+  writeMbc6ModeR61_GB(0x00);
 }
 
 // Read RAM
@@ -1439,8 +1442,7 @@ static void enableMbc6FlashSave_GB(byte writeMode) {
   writeByte_GB(0x1000, 0x01);
   writeByte_GB(0x0C00, 0x01);
   writeByte_GB(0x1000, writeMode);
-  writeByte_GB(0x2800, 0x08);
-  writeByte_GB(0x3800, 0x08);
+  writeMbc6ModeR61_GB(0x08);
 }
 
 void readSRAMFLASH_MBC6_GB() {
@@ -1501,8 +1503,7 @@ void readSRAMFLASH_MBC6_GB() {
 // Write RAM
 static void selectMbc6FlashBank_GB(byte bank) __attribute__((noinline));
 static void selectMbc6FlashBank_GB(byte bank) {
-  writeByte_GB(0x2800, 0x08);
-  writeByte_GB(0x3800, 0x08);
+  writeMbc6ModeR61_GB(0x08);
   writeByte_GB(0x2000, bank);
   writeByte_GB(0x3000, bank);
 }
@@ -1555,8 +1556,7 @@ void writeSRAMFLASH_MBC6_GB() {
 
       // Erase FLASH sector
       if (((processedProgressBar - 0x8000) % 0x20000) == 0) {
-        writeByte_GB(0x2800, 0x08);
-        writeByte_GB(0x3800, 0x08);
+        writeMbc6ModeR61_GB(0x08);
         mbc6UnlockSequenceP16_GB();
         writeByte_GB(0x7555, 0x80);
         writeByte_GB(0x7555, 0xAA);
