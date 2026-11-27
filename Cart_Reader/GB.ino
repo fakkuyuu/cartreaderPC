@@ -2932,8 +2932,7 @@ void readMegaMem_GB() {
   closeCurrentFile();
 
   // Dump the Save Data SST28LF040
-  strcpy(fileName, "SaveData");
-  strcat(fileName, ".bin");
+  strcpy_P(fileName, PSTR("SaveData.bin"));
 
   clearAndShowSavingFolder();
   println_Msg(F("SaveData.bin"));
