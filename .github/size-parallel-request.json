@@ -1,12 +1,13 @@
 {
-  "id": "round58-nes-fixed",
+  "id": "round58-integrated",
   "base": "8f467f53082b4366ac2f590304b7fcba37452198",
   "expected_base_flash": 205254,
   "expected_base_ram": 6059,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "nes-bank-write-fixed",
-      "head": "37a3cf8635dace245b020f3ee513f3e5ddd8753d"
+      "id": "nes-and-ws",
+      "head": "44d2c26b6ce0a71a0c854dcdc7114ca9462e6a2d"
     }
   ]
 }
