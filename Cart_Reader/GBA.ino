@@ -1756,7 +1756,10 @@ unsigned long verifyFLASH_GBA(uint32_t flashSize, uint32_t pos) {
   for (unsigned long currAddress = 0; currAddress < flashSize; currAddress += 512) {
     readSdBufferBlock();
 
-    for (int c = 0; c < 512 && (currAddress + c) < flashSize; c++) {
+    const uint16_t bytesToCheck = (flashSize - currAddress < 512UL)
+                                  ? (uint16_t)(flashSize - currAddress)
+                                  : 512;
+    for (uint16_t c = 0; c < bytesToCheck; c++) {
       // Read byte
       if (sdBuffer[c] != readByteFlash_GBA(currAddress + c)) {
         wrError++;
