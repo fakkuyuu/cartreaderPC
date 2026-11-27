@@ -4879,3 +4879,27 @@ void loop() {
 // End of File
 //******************************************
 
+
+static bool applyFlashCfiQueryModeR50(const char* cfiQRYx8, const char* cfiQRYx16) __attribute__((noinline));
+static bool applyFlashCfiQueryModeR50(const char* cfiQRYx8, const char* cfiQRYx16) {
+  if (strcmp(cfiQRYx8, "515259") == 0) {
+    println_Msg(FS(SharedFlashText::textNormalCFIX8Mode));
+    flashX16Mode = false;
+    flashSwitchLastBits = false;
+  } else if (strcmp(cfiQRYx8, "52515A") == 0) {
+    println_Msg(FS(SharedFlashText::textSwitchedCFIX8Mode));
+    flashX16Mode = false;
+    flashSwitchLastBits = true;
+  } else if (strcmp(cfiQRYx16, "515259") == 0) {
+    println_Msg(FS(SharedFlashText::textNormalCFIX16Mode));
+    flashX16Mode = true;
+    flashSwitchLastBits = false;
+  } else if (strcmp(cfiQRYx16, "52515A") == 0) {
+    println_Msg(FS(SharedFlashText::textSwitchedCFIX16Mode));
+    flashX16Mode = true;
+    flashSwitchLastBits = true;
+  } else {
+    return false;
+  }
+  return true;
+}

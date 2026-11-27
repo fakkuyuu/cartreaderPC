@@ -2330,34 +2330,10 @@ void identifyCFI_GB() {
   char cfiQRYx16[7];
   sprintf(cfiQRYx8, "%02X%02X%02X", readByte_GB(0x20), readByte_GB(0x22), readByte_GB(0x24));
   sprintf(cfiQRYx16, "%02X%02X%02X", readByte_GB(0x10), readByte_GB(0x11), readByte_GB(0x12));  // some devices use x8-style CFI Query command even though they are in x16 command mode
-  if (strcmp(cfiQRYx8, "515259") == 0) {                                                        // QRY in x8 mode
-    println_Msg(FS(SharedFlashText::textNormalCFIX8Mode));
-    flashX16Mode = false;
-    flashSwitchLastBits = false;
-  } else if (strcmp(cfiQRYx8, "52515A") == 0) {  // QRY in x8 mode with switched last bit
-    println_Msg(FS(SharedFlashText::textSwitchedCFIX8Mode));
-    flashX16Mode = false;
-    flashSwitchLastBits = true;
-  } else if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
-    println_Msg(FS(SharedFlashText::textNormalCFIX16Mode));
-    flashX16Mode = true;
-    flashSwitchLastBits = false;
-  } else if (strcmp(cfiQRYx16, "52515A") == 0) {  // QRY in x16 mode with switched last bit
-    println_Msg(FS(SharedFlashText::textSwitchedCFIX16Mode));
-    flashX16Mode = true;
-    flashSwitchLastBits = true;
-  } else {
+  if (!applyFlashCfiQueryModeR50(cfiQRYx8, cfiQRYx16)) {
     startCFIMode(true);  // Try x16 mode next
     sprintf(cfiQRYx16, "%02X%02X%02X", readByte_GB(0x10), readByte_GB(0x11), readByte_GB(0x12));
-    if (strcmp(cfiQRYx16, "515259") == 0) {  // QRY in x16 mode
-      println_Msg(FS(SharedFlashText::textNormalCFIX16Mode));
-      flashX16Mode = true;
-      flashSwitchLastBits = false;
-    } else if (strcmp(cfiQRYx16, "52515A") == 0) {  // QRY in x16 mode with switched last bit
-      println_Msg(FS(SharedFlashText::textSwitchedCFIX16Mode));
-      flashX16Mode = true;
-      flashSwitchLastBits = true;
-    } else {
+    if (!applyFlashCfiQueryModeR50("", cfiQRYx16)) {
       println_Msg(FS(SharedFlashText::textCFIQueryFailed));
       updateDisplayAndWait();
       return;
