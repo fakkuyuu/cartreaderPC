@@ -2230,14 +2230,15 @@ void EepromInit(byte eepmode) {    // Acclaim Type 2
           "nop\n\t");
 }
 
-void writeWord_SDA(unsigned long myAddress, word myData) { /* D0 goes to /SDA when only /LWR is asserted */
+static void writeWord_Acclaim_MD(unsigned long myAddress, word myData, byte activeSwitch, byte inactiveSwitch) __attribute__((noinline));
+static void writeWord_Acclaim_MD(unsigned long myAddress, word myData, byte activeSwitch, byte inactiveSwitch) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
   PORTL = (myAddress >> 16) & 0xFF;
   PORTC = myData;
   PORTH &= ~(1 << 3);  // CE LOW
-  PORTH &= ~(1 << 5);  // /LDSW LOW
-  PORTH |= (1 << 4);   // /UDSW HIGH
+  PORTH &= ~activeSwitch;
+  PORTH |= inactiveSwitch;
   PORTH |= (1 << 6);   // OE HIGH
   if (eepSize > 0x100)
     __asm__("nop\n\t"
@@ -2254,7 +2255,7 @@ void writeWord_SDA(unsigned long myAddress, word myData) { /* D0 goes to /SDA wh
             "nop\n\t");
   else
     delayMicroseconds(100);
-  PORTH |= (1 << 5);  // /LDSW HIGH
+  PORTH |= activeSwitch;
   if (eepSize > 0x100)
     __asm__("nop\n\t"
             "nop\n\t"
@@ -2272,46 +2273,12 @@ void writeWord_SDA(unsigned long myAddress, word myData) { /* D0 goes to /SDA wh
     delayMicroseconds(100);
 }
 
-void writeWord_SCL(unsigned long myAddress, word myData) { /* D0 goes to /SCL when only /UWR is asserted */
-  PORTF = myAddress & 0xFF;
-  PORTK = (myAddress >> 8) & 0xFF;
-  PORTL = (myAddress >> 16) & 0xFF;
-  PORTC = myData;
-  PORTH &= ~(1 << 3);  // CE LOW
-  PORTH &= ~(1 << 4);  // /UDSW LOW
-  PORTH |= (1 << 5);   // /LDSW HIGH
-  PORTH |= (1 << 6);   // OE HIGH
-  if (eepSize > 0x100)
-    __asm__("nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t");
-  else
-    delayMicroseconds(100);
-  PORTH |= (1 << 4);  // /UDSW HIGH
-  if (eepSize > 0x100)
-    __asm__("nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t"
-            "nop\n\t");
-  else
-    delayMicroseconds(100);
+void writeWord_SDA(unsigned long myAddress, word myData) {
+  writeWord_Acclaim_MD(myAddress, myData, (1 << 5), (1 << 4));
+}
+
+void writeWord_SCL(unsigned long myAddress, word myData) {
+  writeWord_Acclaim_MD(myAddress, myData, (1 << 4), (1 << 5));
 }
 
 void writeWord_CM(unsigned long myAddress, word myData) {  // Codemasters
