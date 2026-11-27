@@ -1,40 +1,17 @@
 {
-  "id": "round61-independent",
+  "id": "round61-cumulative",
   "base": "42a283e1eaadddcbd722524c8217ed9389c77d95",
   "expected_base_flash": 204178,
   "expected_base_ram": 6059,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "nes-pair-8000-a000",
-      "head": "d8b2775dcffc39ff26dd3572fbd3776ddc0c8a32"
+      "id": "stage2",
+      "head": "21d71903f9a361c9389c378edc5b13e88f7f041a"
     },
     {
-      "id": "nes-pair-6000-8000",
-      "head": "b2fbcec60ed17f979351a92420e6ce8ad342b76e"
-    },
-    {
-      "id": "nes-pair-a000-8000",
-      "head": "3317598d5d45fb3c641b1528beb35ce41a46efc3"
-    },
-    {
-      "id": "nes-pair-a000-c000",
-      "head": "559b2454a0acbeeed2da9b93d2492c4fa162e01d"
-    },
-    {
-      "id": "nes-pair-5000-8000",
-      "head": "85a2f8030b097ad0ccfcc3f05208f4f54024eb34"
-    },
-    {
-      "id": "gb-mbc6-mode",
-      "head": "52386ad27fdf05cb36681744afcda1bcf68a5e6d"
-    },
-    {
-      "id": "gb-mbc6-bank",
-      "head": "d91ada297c94080f8392de2a87ecb768d6d45a51"
-    },
-    {
-      "id": "gb-mbc1-pair",
-      "head": "32c0b00a9973f7d1874475324885dddc870362dc"
+      "id": "stage3",
+      "head": "b3fef9b389b72d4d5cdf32c4c6eb60afea2f93e1"
     }
   ]
 }
