@@ -625,7 +625,7 @@ void getCartInfo_GBA() {
 
   // Compare Nintendo logo against known checksum, 156 bytes starting at 0x04
   word logoChecksum = 0;
-  for (int currByte = 0x4; currByte < 0xA0; currByte++) {
+  for (uint8_t currByte = 0x4; currByte < 0xA0; currByte++) {
     logoChecksum += sdBuffer[currByte];
   }
 
