@@ -620,63 +620,7 @@ void controlIn_SFM() {
  *****************************************/
 // Write one byte of data to a location specified by bank and address, 00:0000
 void writeBank_SFM(byte myBank, word myAddress, byte myData) {
-  PORTL = myBank;
-  PORTF = myAddress & 0xFF;
-  PORTK = (myAddress >> 8) & 0xFF;
-  PORTC = myData;
-
-  // Arduino running at 16Mhz -> one nop = 62.5ns
-  // Wait till output is stable
-  __asm__("nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t");
-
-  // Switch WR(PH5) to LOW
-  PORTH &= ~(1 << 5);
-
-  // Leave WR low for at least 60ns
-  __asm__("nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t");
-
-  // Switch WR(PH5) to HIGH
-  PORTH |= (1 << 5);
-
-  // Leave WR high for at least 50ns
-  __asm__("nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t"
-          "nop\n\t");
+  writeBank_SNES(myBank, myAddress, myData);
 }
 
 // Read one byte of data from a location specified by bank and address, 00:0000

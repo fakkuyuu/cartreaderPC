@@ -656,6 +656,7 @@ void controlIn_SNES() {
    Low level functions
  *****************************************/
 // Write one byte of data to a location specified by bank and address, 00:0000
+void writeBank_SNES(byte myBank, word myAddress, byte myData) __attribute__((noinline));
 void writeBank_SNES(byte myBank, word myAddress, byte myData) {
   PORTL = myBank;
   PORTF = myAddress & 0xFF;
