@@ -1,31 +1,46 @@
 {
   "schema": 2,
   "mode": "parallel-independent",
-  "run_id": "45915446930",
+  "run_id": "45916571222",
   "run_attempt": "1",
-  "workflow_commit": "76525fd75f58f0e410b99355c2fcefade9681a2a",
+  "workflow_commit": "a2230382f9888c281e1b6efb43740f7919b4020c",
   "request": {
-    "id": "parallel-040-integration",
-    "base": "205e9984529510ca94d7e3c681cbf186fc082733",
-    "expected_base_flash": 207716,
-    "expected_base_ram": 6105,
-    "endpoints_only": true,
+    "id": "parallel-041",
+    "base": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+    "expected_base_flash": 207274,
+    "expected_base_ram": 6095,
     "candidates": [
       {
-        "id": "integration-1-snes-retry",
-        "head": "e29fa85f9a9a2d027cdda7402d8fa5c56801805d"
+        "id": "n64-stick-results",
+        "head": "45fb7c397ca581d70749dee4d92bd041e7d4017a"
       },
       {
-        "id": "integration-2-nes-tail",
-        "head": "0c8fa9edd8a68e100674c14a8fe892a503a84076"
+        "id": "jag-output-tail",
+        "head": "ca4e60999a379dbd1a34388dca585899411407f8"
       },
       {
-        "id": "integration-3-msx-pair",
-        "head": "324ed0284a94932ffd74a1ba0428e59306312fda"
+        "id": "pcw-address-latch",
+        "head": "ccde9b799d970900e3a0ddc5c3efe88d964e5e6d"
       },
       {
-        "id": "integration-4-md-buffer",
-        "head": "e68fc03a2079a9ef6907727203e713d856890f95"
+        "id": "5200-upper-rom",
+        "head": "20d2b925325c3fd405b7aa3caa197fa1c4cf7e6a"
+      },
+      {
+        "id": "atari8-upper-rom",
+        "head": "54738f19712ea1b1660a68c69b29c54f29356718"
+      },
+      {
+        "id": "jag-address-latch",
+        "head": "1e79c5b27351f81fea8827e19e5f956ec779904b"
+      },
+      {
+        "id": "nes-helper-case-merge",
+        "head": "f7266396defe687fa71068065d27824f41c914df"
+      },
+      {
+        "id": "vsmile-rom-address",
+        "head": "cb2dccb4afcd4b3e6d329825e8963d5d13354510"
       }
     ]
   },
@@ -33,194 +48,386 @@
   "candidates": [
     {
       "schema": 1,
-      "run_id": "45915446930",
+      "run_id": "45916571222",
       "run_attempt": "1",
-      "workflow_commit": "76525fd75f58f0e410b99355c2fcefade9681a2a",
+      "workflow_commit": "a2230382f9888c281e1b6efb43740f7919b4020c",
       "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
       "status": "ok",
       "request": {
-        "id": "integration-1-snes-retry",
-        "head": "e29fa85f9a9a2d027cdda7402d8fa5c56801805d",
-        "base": "205e9984529510ca94d7e3c681cbf186fc082733",
-        "expected_base_flash": 207716,
-        "expected_base_ram": 6105,
-        "endpoints_only": true
+        "id": "n64-stick-results",
+        "head": "45fb7c397ca581d70749dee4d92bd041e7d4017a",
+        "base": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+        "expected_base_flash": 207274,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
       },
       "baseline_matches_local": true,
       "head_matches_local": null,
       "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
       "results": [
         {
-          "commit": "205e9984529510ca94d7e3c681cbf186fc082733",
-          "subject": "Adopt round 39 measured minimum and remove WS read candidate",
-          "status": "ok",
-          "flash": 207716,
-          "ram": 6105,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "e29fa85f9a9a2d027cdda7402d8fa5c56801805d",
-          "subject": "Round 40 integrate snes-retry candidate 8b6c070",
-          "status": "ok",
-          "flash": 207392,
-          "ram": 6095,
-          "delta_previous": -324,
-          "delta_base": -324,
-          "classification": "reduced",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "integration-1-snes-retry",
-        "head": "e29fa85f9a9a2d027cdda7402d8fa5c56801805d"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45915446930",
-      "run_attempt": "1",
-      "workflow_commit": "76525fd75f58f0e410b99355c2fcefade9681a2a",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "ok",
-      "request": {
-        "id": "integration-2-nes-tail",
-        "head": "0c8fa9edd8a68e100674c14a8fe892a503a84076",
-        "base": "205e9984529510ca94d7e3c681cbf186fc082733",
-        "expected_base_flash": 207716,
-        "expected_base_ram": 6105,
-        "endpoints_only": true
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "205e9984529510ca94d7e3c681cbf186fc082733",
-          "subject": "Adopt round 39 measured minimum and remove WS read candidate",
-          "status": "ok",
-          "flash": 207716,
-          "ram": 6105,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "0c8fa9edd8a68e100674c14a8fe892a503a84076",
-          "subject": "Round 40 integrate nes-tail candidate 983fc12",
-          "status": "ok",
-          "flash": 207318,
-          "ram": 6095,
-          "delta_previous": -398,
-          "delta_base": -398,
-          "classification": "reduced",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "integration-2-nes-tail",
-        "head": "0c8fa9edd8a68e100674c14a8fe892a503a84076"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45915446930",
-      "run_attempt": "1",
-      "workflow_commit": "76525fd75f58f0e410b99355c2fcefade9681a2a",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "ok",
-      "request": {
-        "id": "integration-3-msx-pair",
-        "head": "324ed0284a94932ffd74a1ba0428e59306312fda",
-        "base": "205e9984529510ca94d7e3c681cbf186fc082733",
-        "expected_base_flash": 207716,
-        "expected_base_ram": 6105,
-        "endpoints_only": true
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "205e9984529510ca94d7e3c681cbf186fc082733",
-          "subject": "Adopt round 39 measured minimum and remove WS read candidate",
-          "status": "ok",
-          "flash": 207716,
-          "ram": 6105,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "324ed0284a94932ffd74a1ba0428e59306312fda",
-          "subject": "Round 40 integrate msx-pair candidate e5150ce",
-          "status": "ok",
-          "flash": 207294,
-          "ram": 6095,
-          "delta_previous": -422,
-          "delta_base": -422,
-          "classification": "reduced",
-          "error": null
-        }
-      ],
-      "fatal_error": null,
-      "candidate": {
-        "id": "integration-3-msx-pair",
-        "head": "324ed0284a94932ffd74a1ba0428e59306312fda"
-      }
-    },
-    {
-      "schema": 1,
-      "run_id": "45915446930",
-      "run_attempt": "1",
-      "workflow_commit": "76525fd75f58f0e410b99355c2fcefade9681a2a",
-      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
-      "status": "ok",
-      "request": {
-        "id": "integration-4-md-buffer",
-        "head": "e68fc03a2079a9ef6907727203e713d856890f95",
-        "base": "205e9984529510ca94d7e3c681cbf186fc082733",
-        "expected_base_flash": 207716,
-        "expected_base_ram": 6105,
-        "endpoints_only": true
-      },
-      "baseline_matches_local": true,
-      "head_matches_local": null,
-      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
-      "results": [
-        {
-          "commit": "205e9984529510ca94d7e3c681cbf186fc082733",
-          "subject": "Adopt round 39 measured minimum and remove WS read candidate",
-          "status": "ok",
-          "flash": 207716,
-          "ram": 6105,
-          "delta_previous": null,
-          "delta_base": 0,
-          "classification": "baseline",
-          "error": null
-        },
-        {
-          "commit": "e68fc03a2079a9ef6907727203e713d856890f95",
-          "subject": "Round 40 integrate md-buffer candidate b48002d",
+          "commit": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+          "subject": "Record round 40 combined measurements and adopt four reductions",
           "status": "ok",
           "flash": 207274,
           "ram": 6095,
-          "delta_previous": -442,
-          "delta_base": -442,
-          "classification": "reduced",
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "45fb7c397ca581d70749dee4d92bd041e7d4017a",
+          "subject": "Round 41: n64-stick-results",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
           "error": null
         }
       ],
       "fatal_error": null,
       "candidate": {
-        "id": "integration-4-md-buffer",
-        "head": "e68fc03a2079a9ef6907727203e713d856890f95"
+        "id": "n64-stick-results",
+        "head": "45fb7c397ca581d70749dee4d92bd041e7d4017a"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45916571222",
+      "run_attempt": "1",
+      "workflow_commit": "a2230382f9888c281e1b6efb43740f7919b4020c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "jag-output-tail",
+        "head": "ca4e60999a379dbd1a34388dca585899411407f8",
+        "base": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+        "expected_base_flash": 207274,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+          "subject": "Record round 40 combined measurements and adopt four reductions",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "ca4e60999a379dbd1a34388dca585899411407f8",
+          "subject": "Round 41: jag-output-tail",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "jag-output-tail",
+        "head": "ca4e60999a379dbd1a34388dca585899411407f8"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45916571222",
+      "run_attempt": "1",
+      "workflow_commit": "a2230382f9888c281e1b6efb43740f7919b4020c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "pcw-address-latch",
+        "head": "ccde9b799d970900e3a0ddc5c3efe88d964e5e6d",
+        "base": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+        "expected_base_flash": 207274,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+          "subject": "Record round 40 combined measurements and adopt four reductions",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "ccde9b799d970900e3a0ddc5c3efe88d964e5e6d",
+          "subject": "Round 41: pcw-address-latch",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "pcw-address-latch",
+        "head": "ccde9b799d970900e3a0ddc5c3efe88d964e5e6d"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45916571222",
+      "run_attempt": "1",
+      "workflow_commit": "a2230382f9888c281e1b6efb43740f7919b4020c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "5200-upper-rom",
+        "head": "20d2b925325c3fd405b7aa3caa197fa1c4cf7e6a",
+        "base": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+        "expected_base_flash": 207274,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+          "subject": "Record round 40 combined measurements and adopt four reductions",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "20d2b925325c3fd405b7aa3caa197fa1c4cf7e6a",
+          "subject": "Round 41: 5200-upper-rom",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "5200-upper-rom",
+        "head": "20d2b925325c3fd405b7aa3caa197fa1c4cf7e6a"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45916571222",
+      "run_attempt": "1",
+      "workflow_commit": "a2230382f9888c281e1b6efb43740f7919b4020c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "atari8-upper-rom",
+        "head": "54738f19712ea1b1660a68c69b29c54f29356718",
+        "base": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+        "expected_base_flash": 207274,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+          "subject": "Record round 40 combined measurements and adopt four reductions",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "54738f19712ea1b1660a68c69b29c54f29356718",
+          "subject": "Round 41: atari8-upper-rom",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "atari8-upper-rom",
+        "head": "54738f19712ea1b1660a68c69b29c54f29356718"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45916571222",
+      "run_attempt": "1",
+      "workflow_commit": "a2230382f9888c281e1b6efb43740f7919b4020c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "jag-address-latch",
+        "head": "1e79c5b27351f81fea8827e19e5f956ec779904b",
+        "base": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+        "expected_base_flash": 207274,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+          "subject": "Record round 40 combined measurements and adopt four reductions",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "1e79c5b27351f81fea8827e19e5f956ec779904b",
+          "subject": "Round 41: jag-address-latch",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "jag-address-latch",
+        "head": "1e79c5b27351f81fea8827e19e5f956ec779904b"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45916571222",
+      "run_attempt": "1",
+      "workflow_commit": "a2230382f9888c281e1b6efb43740f7919b4020c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "nes-helper-case-merge",
+        "head": "f7266396defe687fa71068065d27824f41c914df",
+        "base": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+        "expected_base_flash": 207274,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+          "subject": "Record round 40 combined measurements and adopt four reductions",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "f7266396defe687fa71068065d27824f41c914df",
+          "subject": "Round 41: nes-helper-case-merge",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "nes-helper-case-merge",
+        "head": "f7266396defe687fa71068065d27824f41c914df"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45916571222",
+      "run_attempt": "1",
+      "workflow_commit": "a2230382f9888c281e1b6efb43740f7919b4020c",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "vsmile-rom-address",
+        "head": "cb2dccb4afcd4b3e6d329825e8963d5d13354510",
+        "base": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+        "expected_base_flash": 207274,
+        "expected_base_ram": 6095,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "ac9b01b2f93df5c904f64ba2efee386432e58a32",
+          "subject": "Record round 40 combined measurements and adopt four reductions",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "cb2dccb4afcd4b3e6d329825e8963d5d13354510",
+          "subject": "Round 41: vsmile-rom-address",
+          "status": "ok",
+          "flash": 207274,
+          "ram": 6095,
+          "delta_previous": 0,
+          "delta_base": 0,
+          "classification": "unchanged",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "vsmile-rom-address",
+        "head": "cb2dccb4afcd4b3e6d329825e8963d5d13354510"
       }
     }
   ]
