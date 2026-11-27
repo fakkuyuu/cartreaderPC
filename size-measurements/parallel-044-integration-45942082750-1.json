@@ -1,0 +1,123 @@
+{
+  "schema": 2,
+  "mode": "parallel-independent",
+  "run_id": "45942082750",
+  "run_attempt": "1",
+  "workflow_commit": "8508447d18ad6995f8c89d6692ecdd744cad7f25",
+  "request": {
+    "id": "parallel-044-integration",
+    "base": "c86f54450543072d535bd50f29da13df69cdf25c",
+    "expected_base_flash": 207002,
+    "expected_base_ram": 6095,
+    "endpoints_only": true,
+    "candidates": [
+      {
+        "id": "snes-only-endpoint",
+        "head": "ec4714c2462834284e9c36a3dbb9b10f8f8e7683"
+      },
+      {
+        "id": "snes-msx-endpoint",
+        "head": "c4ec6235eddc0f6e0429f57b00758870daa5fcee"
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "45942082750",
+      "run_attempt": "1",
+      "workflow_commit": "8508447d18ad6995f8c89d6692ecdd744cad7f25",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "snes-only-endpoint",
+        "head": "ec4714c2462834284e9c36a3dbb9b10f8f8e7683",
+        "base": "c86f54450543072d535bd50f29da13df69cdf25c",
+        "expected_base_flash": 207002,
+        "expected_base_ram": 6095,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "c86f54450543072d535bd50f29da13df69cdf25c",
+          "subject": "Record round 43 combined measurements and adopt three reductions",
+          "status": "ok",
+          "flash": 207002,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "ec4714c2462834284e9c36a3dbb9b10f8f8e7683",
+          "subject": "Round 44 integrate SNES bank index reduction",
+          "status": "ok",
+          "flash": 206998,
+          "ram": 6095,
+          "delta_previous": -4,
+          "delta_base": -4,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "snes-only-endpoint",
+        "head": "ec4714c2462834284e9c36a3dbb9b10f8f8e7683"
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "45942082750",
+      "run_attempt": "1",
+      "workflow_commit": "8508447d18ad6995f8c89d6692ecdd744cad7f25",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "snes-msx-endpoint",
+        "head": "c4ec6235eddc0f6e0429f57b00758870daa5fcee",
+        "base": "c86f54450543072d535bd50f29da13df69cdf25c",
+        "expected_base_flash": 207002,
+        "expected_base_ram": 6095,
+        "endpoints_only": true
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "c86f54450543072d535bd50f29da13df69cdf25c",
+          "subject": "Record round 43 combined measurements and adopt three reductions",
+          "status": "ok",
+          "flash": 207002,
+          "ram": 6095,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null
+        },
+        {
+          "commit": "c4ec6235eddc0f6e0429f57b00758870daa5fcee",
+          "subject": "Round 44 integrate MSX mapper index reductions",
+          "status": "ok",
+          "flash": 206994,
+          "ram": 6095,
+          "delta_previous": -8,
+          "delta_base": -8,
+          "classification": "reduced",
+          "error": null
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "snes-msx-endpoint",
+        "head": "c4ec6235eddc0f6e0429f57b00758870daa5fcee"
+      }
+    }
+  ]
+}
