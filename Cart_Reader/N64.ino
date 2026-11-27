@@ -3415,6 +3415,16 @@ void idFlashrom_N64() {
 
 // Erase Intel flashrom
 // Keep the identical unlock, erase and ready-poll sequence for each block.
+static void waitFlashReady_N64(unsigned long address) __attribute__((noinline));
+static void waitFlashReady_N64(unsigned long address) {
+  setAddress_N64(address);
+  word statusReg = readWord_N64();
+  while ((statusReg | 0xFF7F) != 0xFFFF) {
+    setAddress_N64(address);
+    statusReg = readWord_N64();
+  }
+}
+
 static void eraseIntel4400Block_N64(unsigned long blockAddress) __attribute__((noinline));
 static void eraseIntel4400Block_N64(unsigned long blockAddress) {
   // Unlock block command
@@ -3429,12 +3439,7 @@ static void eraseIntel4400Block_N64(unsigned long blockAddress) {
   writeWord_N64(0xD0);
 
   // Read the status register
-  setAddress_N64(blockAddress);
-  word statusReg = readWord_N64();
-  while ((statusReg | 0xFF7F) != 0xFFFF) {
-    setAddress_N64(blockAddress);
-    statusReg = readWord_N64();
-  }
+  waitFlashReady_N64(blockAddress);
 }
 
 void eraseIntel4400_N64() {
@@ -3506,14 +3511,10 @@ void eraseMSP55LV100_N64() {
     writeWord_N64(0x3030);
 
     // Read the status register
-    setAddress_N64(romBase + currSector);
-    word statusReg = readWord_N64();
-    while ((statusReg | 0xFF7F) != 0xFFFF) {
-      setAddress_N64(romBase + currSector);
-      statusReg = readWord_N64();
-    }
+    waitFlashReady_N64(romBase + currSector);
 
     // Read the status register
+    word statusReg;
     setAddress_N64(romBase + currSector);
     statusReg = readWord_N64();
     while ((statusReg | 0x7FFF) != 0xFFFF) {
@@ -3576,12 +3577,7 @@ void eraseSector_N64(unsigned long sectorSize) {
 
 
     // Read the status register
-    setAddress_N64(romBase + currSector);
-    word statusReg = readWord_N64();
-    while ((statusReg | 0xFF7F) != 0xFFFF) {
-      setAddress_N64(romBase + currSector);
-      statusReg = readWord_N64();
-    }
+    waitFlashReady_N64(romBase + currSector);
   }
 }
 
@@ -3626,12 +3622,7 @@ void writeIntel4400_N64() {
         writeWord_N64(0xE8);
 
         // Check Status register
-        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
-        word statusReg = readWord_N64();
-        while ((statusReg | 0xFF7F) != 0xFFFF) {
-          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
-          statusReg = readWord_N64();
-        }
+        waitFlashReady_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
 
         // Write word count (minus 1)
         setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer);
@@ -3650,12 +3641,7 @@ void writeIntel4400_N64() {
         writeWord_N64(0xD0);
 
         // Read the status register at last written address
-        setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 62);
-        statusReg = readWord_N64();
-        while ((statusReg | 0xFF7F) != 0xFFFF) {
-          setAddress_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 62);
-          statusReg = readWord_N64();
-        }
+        waitFlashReady_N64(romBase + currSector + currSdBuffer + currWriteBuffer + 62);
       }
       processedProgressBar += 512;
       draw_progressbar(processedProgressBar, totalProgressBar);
