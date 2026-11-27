@@ -4879,3 +4879,12 @@ void loop() {
 // End of File
 //******************************************
 
+
+void printPcRomSizeOptionR50(int index, int size) __attribute__((noinline));
+void printPcRomSizeOptionR50(int index, int size) {
+  PcConsole.print(FS(SharedFlashText::textSelectROMSize));
+  PcConsole.print(index);
+  PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
+  PcConsole.print(size);
+  PcConsole.println(FS(SharedFlashText::unitK));
+}

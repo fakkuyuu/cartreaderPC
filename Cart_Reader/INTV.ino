@@ -550,11 +550,7 @@ void setROMSize_INTV() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (intvhi - intvlo + 1); i++) {
-      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
-      PcConsole.print(i);
-      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
-      PcConsole.print(pgm_read_byte(&(INTV[i + intvlo])));
-      PcConsole.println(FS(SharedFlashText::unitK));
+      printPcRomSizeOptionR50(i, pgm_read_byte(&(INTV[i + intvlo])));
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}

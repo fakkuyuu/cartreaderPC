@@ -353,11 +353,7 @@ void setROMSize_5200() {
 setrom:
     String sizeROM;
     for (int i = 0; i < (a5200hi - a5200lo + 1); i++) {
-      PcConsole.print(FS(SharedFlashText::textSelectROMSize));
-      PcConsole.print(i);
-      PcConsole.print(FS(SharedFlashText::equalsWithSpaces));
-      PcConsole.print(a5200[i + a5200lo]);
-      PcConsole.println(FS(SharedFlashText::unitK));
+      printPcRomSizeOptionR50(i, a5200[i + a5200lo]);
     }
     PcConsole.print(FS(SharedFlashText::textEnterROMSize));
     while (PcConsole.available() == 0) {}
