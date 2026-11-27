@@ -1042,6 +1042,11 @@ static void write_prg_byte(unsigned int address, uint8_t data) {
   //  _delay_us(1);
 }
 
+static void __attribute__((noinline)) writeMmc3PairR59_NES(byte reg, byte value) {
+  write_prg_byte(0x8000, reg);
+  write_prg_byte(0x8001, value);
+}
+
 #if defined(ENABLE_FLASH)
 static void write_chr_byte(unsigned int address, uint8_t data) {
   PHI2_LOW;
@@ -1899,8 +1904,7 @@ setram:
 // Mapper 4 includes both MMC3 AND MMC6
 // RAM is mapped differently between MMC3 and MMC6
 void checkMMC6() {               // Detect MMC6 Carts - read PRG 0x3E00A ("STARTROPICS")
-  write_prg_byte(0x8000, 6);     // PRG Bank 0 ($8000-$9FFF)
-  write_prg_byte(0x8001, 0x1F);  // 0x3E000
+  writeMmc3PairR59_NES(6, 0x1F);
   uint8_t prgchk0 = read_prg_byte(0x800A);
   uint8_t prgchk1 = read_prg_byte(0x800B);
   uint8_t prgchk2 = read_prg_byte(0x800C);
@@ -2226,10 +2230,8 @@ void readPRG(bool readrom) {
       case 998:
       case 999:
         if ((mapper == 206) && (prgsize == 1)) {
-          write_prg_byte(0x8000, 6);
-          write_prg_byte(0x8001, 0);
-          write_prg_byte(0x8000, 7);
-          write_prg_byte(0x8001, 1);
+          writeMmc3PairR59_NES(6, 0);
+          writeMmc3PairR59_NES(7, 1);
           dumpPRG32KiB(base);
         } else {
           banks = prgBanks16K * 2;
@@ -2275,12 +2277,10 @@ void readPRG(bool readrom) {
             }
             if (mapper == 245) {  // uses CHR A11 as PRG A19
               if (i == 0) {
-                write_prg_byte(0x8000, 0);
-                write_prg_byte(0x8001, 0);
+                writeMmc3PairR59_NES(0, 0);
               }
               if (i == 64) {
-                write_prg_byte(0x8000, 0);
-                write_prg_byte(0x8001, 0xFF);
+                writeMmc3PairR59_NES(0, 0xFF);
               }
             }
             if ((mapper == 224) || (mapper == 268)) {
@@ -2322,8 +2322,7 @@ void readPRG(bool readrom) {
               write_prg_byte(0x6002, 0x00);
               write_prg_byte(0x6003, 0x00);
             }
-            write_prg_byte(0x8000, 0x06);  // PRG Bank 0 ($8000-$9FFF)
-            write_prg_byte(0x8001, i);
+            writeMmc3PairR59_NES(0x06, i);
             dumpPRG8KiB(base);
           }
         }
@@ -2395,8 +2394,7 @@ void readPRG(bool readrom) {
       case 18:  // 128K/256K
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x8000, i & 0xF);
-          write_prg_byte(0x8001, (i >> 4) & 0xF);
+          writeMmc3PairR59_NES(i & 0xF, (i >> 4) & 0xF);
           write_prg_byte(0x8002, (i + 1) & 0xF);
           write_prg_byte(0x8003, ((i + 1) >> 4) & 0xF);
           dumpPRG16KiB(base);
@@ -2496,8 +2494,7 @@ void readPRG(bool readrom) {
       case 48:  // 128K/256K
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x8000, i);       // PRG Bank 0 ($8000-$9FFF)
-          write_prg_byte(0x8001, i + 1);   // PRG Bank 1 ($A000-$BFFF)
+          writeMmc3PairR59_NES(i, i + 1);
           dumpPRG16KiB(base);  // 8K Banks ($A000-$BFFF)
         }
         break;
@@ -2591,8 +2588,7 @@ void readPRG(bool readrom) {
             write_prg_byte(0x6000, ((i >> 2) & 0xC0));  // CHR-AND,CHR-OR/PRG-OR
             write_prg_byte(0x6000, 0x80);               // PRG-AND
             // set inner bank registers
-            write_prg_byte(0x8000, 6);  // PRG Bank 0 ($8000-$9FFF)
-            write_prg_byte(0x8001, i);
+            writeMmc3PairR59_NES(6, i);
             dumpPRG(base, address);
           }
           for (word address = 0x2000; address < 0x4000; address += 512) {
@@ -2602,8 +2598,7 @@ void readPRG(bool readrom) {
             write_prg_byte(0x6000, (((i + 1) >> 2) & 0xC0));  // CHR-AND,CHR-OR/PRG-OR
             write_prg_byte(0x6000, 0x80);                     // PRG-AND
             // set inner bank registers
-            write_prg_byte(0x8000, 7);  // PRG Bank 1 ($A000-$BFFF)
-            write_prg_byte(0x8001, i + 1);
+            writeMmc3PairR59_NES(7, i + 1);
             dumpPRG(base, address);
           }
         }
@@ -2934,8 +2929,7 @@ void readPRG(bool readrom) {
       case 153:  // 512K
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {  // 512K
-          write_prg_byte(0x8000, i >> 4);     // PRG Outer Bank (Documentation says duplicate over $8000-$8003 registers)
-          write_prg_byte(0x8001, i >> 4);     // PRG Outer Bank
+          writeMmc3PairR59_NES(i >> 4, i >> 4);
           write_prg_byte(0x8002, i >> 4);     // PRG Outer Bank
           write_prg_byte(0x8003, i >> 4);     // PRG Outer Bank
           write_prg_byte(0x8008, i & 0xF);    // PRG Inner Bank
@@ -3562,8 +3556,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0x5000, (i & 0x80) >> 4);
               write_prg_byte(0x6000, (i & 0x80) >> 4);
             }
-            write_prg_byte(0x8000, 0x02);
-            write_prg_byte(0x8001, i);
+            writeMmc3PairR59_NES(0x02, i);
             dumpBankCHR(0x1000, 0x1400);
           }
           break;
@@ -3773,16 +3766,14 @@ void readCHR(bool readrom) {
             // set outer bank registers
             setOuterChr45_NES(i);
             // set inner bank registers
-            write_prg_byte(0x8000, 0x2);  // CHR Bank 2 ($1000-$13FF)
-            write_prg_byte(0x8001, i);
+            writeMmc3PairR59_NES(0x2, i);
             for (size_t address = 0x1000; address < 0x1200; address += 512) {
               dumpCHR_M2(address);  // Read CHR with M2 Pulse
             }
             // set outer bank registers
             setOuterChr45_NES(i);
             // set inner bank registers
-            write_prg_byte(0x8000, 0x2);  // CHR Bank 2 ($1000-$13FF)
-            write_prg_byte(0x8001, i);
+            writeMmc3PairR59_NES(0x2, i);
             for (size_t address = 0x1200; address < 0x1400; address += 512) {
               dumpCHR_M2(address);  // Read CHR with M2 Pulse
             }
@@ -3901,8 +3892,7 @@ void readCHR(bool readrom) {
         case 76:
           banks = chrBanks4K * 2;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, 2);
-            write_prg_byte(0x8001, i);
+            writeMmc3PairR59_NES(2, i);
             dumpCHR2KiB();
           }
           break;
@@ -3972,14 +3962,11 @@ void readCHR(bool readrom) {
           write_prg_byte(0xA001, 0x80);
           for (size_t i = 0; i < banks; i += 2) {
             if (i < 64) {
-              write_prg_byte(0x8000, 0);
-              write_prg_byte(0x8001, i);
+              writeMmc3PairR59_NES(0, i);
               dumpCHR2KiB();
             } else {
-              write_prg_byte(0x8000, 2);
-              write_prg_byte(0x8001, i);
-              write_prg_byte(0x8000, 3);
-              write_prg_byte(0x8001, i + 1);
+              writeMmc3PairR59_NES(2, i);
+              writeMmc3PairR59_NES(3, i + 1);
               dumpBankCHR(0x1000, 0x1800);
             }
           }
@@ -4054,13 +4041,11 @@ void readCHR(bool readrom) {
 
         case 154:  // 128K
           for (size_t i = 0; i < 64; i += 2) {
-            write_prg_byte(0x8000, 0);
-            write_prg_byte(0x8001, i);
+            writeMmc3PairR59_NES(0, i);
             dumpCHR2KiB();
           }
           for (size_t i = 0; i < 64; i++) {
-            write_prg_byte(0x8000, 2);
-            write_prg_byte(0x8001, i);
+            writeMmc3PairR59_NES(2, i);
             dumpBankCHR(0x1000, 0x1400);
           }
           break;
@@ -4068,8 +4053,7 @@ void readCHR(bool readrom) {
         case 165:  // 128K
           banks = chrBanks4K;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, 0x02);
-            write_prg_byte(0x8001, i);
+            writeMmc3PairR59_NES(0x02, i);
             dumpBankCHR(0x1000, 0x2000);
           }
           break;
