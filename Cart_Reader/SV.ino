@@ -407,7 +407,7 @@ void readROM_SV() {
   createFolderAndOpenFile("SNES", "ROM", "MEMPACK", "bs");
 
   // Read Banks
-  for (int currBank = 0x40; currBank < 0x50; currBank++) {
+  for (uint8_t currBank = 0x40; currBank < 0x50; currBank++) {
     // Dump the bytes to SD 512B at a time
     for (long currByte = 0; currByte < 65536; currByte += 512) {
       draw_progressbar((currBank - 0x40) * 0x10000 + currByte, 0x100000);
@@ -474,7 +474,7 @@ void writeROM_SV(void) {
     controlIn_SNES();
     println_Msg(F("Blank check..."));
     display_Update();
-    for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
+    for (uint8_t currBank = 0xC0; currBank < 0xD0; currBank++) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
         if (0xFF != readBank_SV(currBank, currByte)) {
@@ -494,7 +494,7 @@ void writeROM_SV(void) {
     controlOut_SNES();
     println_Msg(F("Writing pack..."));
     display_Update();
-    for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
+    for (uint8_t currBank = 0xC0; currBank < 0xD0; currBank++) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
 
@@ -517,7 +517,7 @@ void writeROM_SV(void) {
     rewindCurrentFile();  // Go back to file beginning
     print_STR(verifying_STR, 1);
     display_Update();
-    for (int currBank = 0xC0; currBank < 0xD0; currBank++) {
+    for (uint8_t currBank = 0xC0; currBank < 0xD0; currBank++) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
         if (myFile.read() != readBank_SV(currBank, currByte)) {
