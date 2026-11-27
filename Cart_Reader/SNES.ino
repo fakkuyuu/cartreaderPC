@@ -1533,19 +1533,9 @@ void readROM_SNES() {
   // SA-1 ROM is read linearly from banks C0-FF (64 KiB per bank).
   // The retry callback restores the exact bank/address for each 512-byte
   // chunk, including chunks requested again after a CRC16 failure.
-  if (romType == SA && (romChips == 52 || romChips == 53) &&
-      numBanks > 0 && numBanks <= 64 &&
-      myFile.romRetry2M((uint32_t)numBanks * 65536UL,
-                       beginC0BankRetry_SNES, readLoRomRetryWord_SNES, true)) {
-    closeCurrentFile();
-    return;
-  }
-
-  // Standard HiROM only: retain the original C0-FF bank order and byte
-  // layout. Dedicated mappings (S-DD1, SPC7110 and S-RTC) stay on their
-  // existing register-aware paths; ExHiROM is excluded by romType == HI.
-  if (romType == HI && romChips != 67 && romChips != 69 &&
-      romChips != 85 && romChips != 245 && romChips != 249 &&
+  if (((romType == SA && (romChips == 52 || romChips == 53)) ||
+       (romType == HI && romChips != 67 && romChips != 69 &&
+        romChips != 85 && romChips != 245 && romChips != 249)) &&
       numBanks > 0 && numBanks <= 64 &&
       myFile.romRetry2M((uint32_t)numBanks * 65536UL,
                        beginC0BankRetry_SNES, readLoRomRetryWord_SNES, true)) {
