@@ -2114,6 +2114,16 @@ static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {
   write_prg_byte(0x6001, b);
 }
 
+static void __attribute__((noinline)) writePair8AR61_NES(byte a, byte b) {
+  write_prg_byte(0x8000, a);
+  write_prg_byte(0xA000, b);
+}
+
+static void __attribute__((noinline)) writePair68R61_NES(byte a, byte b) {
+  write_prg_byte(0x6000, a);
+  write_prg_byte(0x8000, b);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2606,8 +2616,7 @@ void readPRG(bool readrom) {
       case 46:
         banks = prgBanks16K / 2;  // 32k banks
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x6000, (i & 0x1E) >> 1);  // high bits
-          write_prg_byte(0x8000, i & 0x01);         // low bit
+          writePair68R61_NES((i & 0x1E) >> 1, i & 0x01);
           dumpPRG32KiB(base);
         }
         break;
@@ -2717,11 +2726,9 @@ void readPRG(bool readrom) {
 
       case 69:  // 128K/256K
         banks = prgBanks16K * 2;
-        write_prg_byte(0x8000, 8);            // Command Register - PRG Bank 0
-        write_prg_byte(0xA000, 0);            // Parameter Register - PRG RAM Disabled, PRG ROM, Bank 0 to $6000-$7FFF
+        writePair8AR61_NES(8, 0);
         for (size_t i = 0; i < banks; i++) {  // 128K/256K
-          write_prg_byte(0x8000, 9);          // Command Register - PRG Bank 1
-          write_prg_byte(0xA000, i);          // Parameter Register - ($8000-$9FFF)
+          writePair8AR61_NES(9, i);
           dumpPRG8KiB(base);     // 8K Banks ($8000-$9FFF)
         }
         break;
@@ -2786,8 +2793,7 @@ void readPRG(bool readrom) {
       case 93:
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x6000, i);
-          write_prg_byte(0x8000, i << 4 | 0x01);
+          writePair68R61_NES(i, i << 4 | 0x01);
           dumpPRG16KiB(base);
         }
         break;
@@ -2854,8 +2860,7 @@ void readPRG(bool readrom) {
       case 112:
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8000, 0);
-          write_prg_byte(0xA000, i);
+          writePair8AR61_NES(0, i);
           dumpPRG8KiB(base);
         }
         break;
@@ -3586,8 +3591,7 @@ void readCHR(bool readrom) {
         case 159:  // 128K/256K
           banks = chrBanks4K * 4;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x6000, i);  // Submapper 4
-            write_prg_byte(0x8000, i);  // Submapper 5
+            writePair68R61_NES(i, i);
             dumpCHR1KiB();
           }
           break;
@@ -3768,8 +3772,7 @@ void readCHR(bool readrom) {
         case 46:
           banks = chrBanks4K;  // 8k banks
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x6000, (i & 0x78) << 1);  // high bits
-            write_prg_byte(0x8000, (i & 0x07) << 4);  // low bits
+            writePair68R61_NES((i & 0x78) << 1, (i & 0x07) << 4);
             dumpCHR8KiB();
           }
           break;
@@ -3846,8 +3849,7 @@ void readCHR(bool readrom) {
         case 69:  // 128K/256K
           banks = chrBanks4K * 4;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, 0);  // Command Register - CHR Bank 0
-            write_prg_byte(0xA000, i);  // Parameter Register - ($0000-$03FF)
+            writePair8AR61_NES(0, i);
             dumpCHR1KiB();    // 1K Banks
           }
           break;
@@ -3978,8 +3980,7 @@ void readCHR(bool readrom) {
         case 112:
           banks = chrBanks4K * 4;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, 6);
-            write_prg_byte(0xA000, i);
+            writePair8AR61_NES(6, i);
             dumpBankCHR(0x1000, 0x1400);
           }
           break;
@@ -4362,8 +4363,7 @@ static void enableDefaultSram_NES(bool writing) {
   else if (!writing && mapper == 68)           // 8K
     write_reg_byte(0xF000, 0x10);  // PRG RAM ENABLE [WRITE RAM SAFE]
   else if (mapper == 69) {         // 8K
-    write_prg_byte(0x8000, 8);     // Command Register - PRG Bank 0
-    write_prg_byte(0xA000, 0xC0);  // Parameter Register - PRG RAM Enabled, PRG RAM, Bank 0 to $6000-$7FFF
+    writePair8AR61_NES(8, 0xC0);
   } else if (mapper == 85)         // 8K
     write_ram_byte(0xE000, 0x80);  // PRG RAM ENABLE
   else if (mapper == 153)          // 8K
@@ -4631,8 +4631,7 @@ void writeRAM() {
           //            else if (mapper == 68) // 8K
           //              write_reg_byte(0xF000, 0x00); // PRG RAM DISABLE [WRITE RAM SAFE]
           else if (mapper == 69) {      // 8K
-            write_prg_byte(0x8000, 8);  // Command Register - PRG Bank 0
-            write_prg_byte(0xA000, 0);  // Parameter Register - PRG RAM Disabled, PRG ROM, Bank 0 to $6000-$7FFF
+            writePair8AR61_NES(8, 0);
           } else if (mapper == 85)      // 8K
             write_reg_byte(0xE000, 0);  // PRG RAM DISABLE [WRITE RAM SAFE]
           break;
