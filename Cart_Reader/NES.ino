@@ -2901,14 +2901,10 @@ void readPRG(bool readrom) {
         banks = prgBanks16K * 2;
         base = 0x6000;  // 4x 8k switchable PRG ROM banks at $6000-$DFFF
         for (size_t i = 0; i < banks; i += 4) {
-          write_prg_byte(0xE000, 4);  // Select 8 KB PRG bank at CPU $6000-$7FFF
-          write_prg_byte(0xF000, i);
-          write_prg_byte(0xE000, 1);  // Select 8 KB PRG bank at CPU $8000-$9FFF
-          write_prg_byte(0xF000, i + 1);
-          write_prg_byte(0xE000, 2);  // Select 8 KB PRG bank at CPU $A000-$BFFF
-          write_prg_byte(0xF000, i + 2);
-          write_prg_byte(0xE000, 3);  // Select 8 KB PRG bank at CPU $C000-$DFFF
-          write_prg_byte(0xF000, i + 3);
+          for (byte bank = 0; bank < 4; ++bank) {
+            write_prg_byte(0xE000, bank == 0 ? 4 : bank);
+            write_prg_byte(0xF000, i + bank);
+          }
           dumpPRG32KiB(base);
         }
         break;
