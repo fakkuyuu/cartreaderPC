@@ -1014,13 +1014,7 @@ void getCartInfo_GB() {
 
   if (myLength == 0) {
     // rom name unknown
-    romName[0] = 'U';
-    romName[1] = 'N';
-    romName[2] = 'K';
-    romName[3] = 'N';
-    romName[4] = 'O';
-    romName[5] = 'W';
-    romName[6] = 'N';
+    setUnknownPrefixR49(romName);
   }
 
   // M161 (Mani 4 in 1)

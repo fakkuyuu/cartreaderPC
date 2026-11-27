@@ -793,13 +793,7 @@ void getCartInfo_GBA() {
     buildRomName(romName, &sdBuffer[0xA0], 12);
 
     if (strcmp("", romName) == 0) {
-      romName[0] = 'U';
-      romName[1] = 'N';
-      romName[2] = 'K';
-      romName[3] = 'N';
-      romName[4] = 'O';
-      romName[5] = 'W';
-      romName[6] = 'N';
+      setUnknownPrefixR49(romName);
     }
 
     // Get ROM version
