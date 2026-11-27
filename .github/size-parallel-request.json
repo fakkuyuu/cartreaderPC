@@ -1,5 +1,5 @@
 {
-  "id": "parallel-045",
+  "id": "parallel-045-retry",
   "base": "b448c41f20e22b08c9afd08934827cdfd6a552b0",
   "expected_base_flash": 206994,
   "expected_base_ram": 6095,
@@ -22,11 +22,11 @@
     },
     {
       "id": "md-eep-status45",
-      "head": "323063649da32f980c6c1eac17c20f80a0e18ef7"
+      "head": "e4451fc710650c950e6bad74b4ae9bfdcf2a79c0"
     },
     {
       "id": "md-eep-read45",
-      "head": "e1fdea2d99d1154dc806e8804d871a48f00196dc"
+      "head": "3a1841b721fceb49c26df32d75c3defb95d8d860"
     },
     {
       "id": "md-eep-address",
