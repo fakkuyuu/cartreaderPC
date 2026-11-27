@@ -821,10 +821,7 @@ void writeRAM_MSX() {
         case 7:  // Koei (8K/32K)
           checkRAM();
           for (int y = 0; y < (msxramsize > 2 ? 4 : 1); y++) {
-            if (srambit6)
-              writeData_MSX(0x7000, 0xC0 + y);
-            else
-              writeData_MSX(0x7000, 0xA0 + y);
+            writeData_MSX(0x7000, (srambit6 ? 0xC0 : 0xA0) + y);
             for (word address = 0x0; address < 0x2000; address += 512) {
               writeSramBlock_MSX(0x8000 + address);
             }
