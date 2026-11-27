@@ -1232,6 +1232,22 @@ static void setupSaveReadR42_GBA() {
   PORTH &= ~((1 << 0) | (1 << 6));
 }
 
+static byte readFramByte_GBA(uint32_t address) __attribute__((noinline));
+static byte readFramByte_GBA(uint32_t address) {
+  // Pull OE_SRAM(PH6) HIGH
+  PORTH |= (1 << 6);
+  PORTF = address & 0xFF;
+  PORTK = (address >> 8) & 0xFF;
+  __asm__("nop\n\t"
+          "nop\n\t");
+  // Pull OE_SRAM(PH6) LOW
+  PORTH &= ~(1 << 6);
+  __asm__("nop\n\t"
+          "nop\n\t"
+          "nop\n\t");
+  return PINC;
+}
+
 void readFRAM_GBA(unsigned long framSize) {
   setupSaveReadR42_GBA();
 
@@ -1244,28 +1260,7 @@ void readFRAM_GBA(unsigned long framSize) {
 
   for (unsigned long currAddress = 0; currAddress < framSize; currAddress += 512) {
     for (int c = 0; c < 512; c++) {
-      // Pull OE_SRAM(PH6) HIGH
-      PORTH |= (1 << 6);
-
-      // Set address
-      PORTF = (currAddress + c) & 0xFF;
-      PORTK = ((currAddress + c) >> 8) & 0xFF;
-
-      // Arduino running at 16Mhz -> one nop = 62.5ns
-      // Leave CS_SRAM HIGH for at least 85ns
-      __asm__("nop\n\t"
-              "nop\n\t");
-
-      // Pull OE_SRAM(PH6) LOW
-      PORTH &= ~(1 << 6);
-
-      // Hold address for at least 25ns and wait 150ns before access
-      __asm__("nop\n\t"
-              "nop\n\t"
-              "nop\n\t");
-
-      // Read byte
-      sdBuffer[c] = PINC;
+      sdBuffer[c] = readFramByte_GBA(currAddress + c);
     }
     // Write sdBuffer to file
     writeSdBufferBlock();
@@ -1354,28 +1349,7 @@ unsigned long verifyFRAM_GBA(unsigned long framSize) {
       readSdBufferBlock();
 
       for (int c = 0; c < 512; c++) {
-        // Pull OE_SRAM(PH6) HIGH
-        PORTH |= (1 << 6);
-
-        // Set address
-        PORTF = (currAddress + c) & 0xFF;
-        PORTK = ((currAddress + c) >> 8) & 0xFF;
-
-        // Arduino running at 16Mhz -> one nop = 62.5ns
-        // Leave CS_SRAM HIGH for at least 85ns
-        __asm__("nop\n\t"
-                "nop\n\t");
-
-        // Pull OE_SRAM(PH6) LOW
-        PORTH &= ~(1 << 6);
-
-        // Hold address for at least 25ns and wait 150ns before access
-        __asm__("nop\n\t"
-                "nop\n\t"
-                "nop\n\t");
-
-        // Read byte
-        if (PINC != sdBuffer[c]) {
+        if (readFramByte_GBA(currAddress + c) != sdBuffer[c]) {
           writeErrors++;
         }
       }
