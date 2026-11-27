@@ -868,6 +868,14 @@ boolean checkcart_SFM() {
 }
 
 // Read rom to SD card
+static void readRomBlockR42_SFM(word currBank, unsigned long currByte) __attribute__((noinline));
+static void readRomBlockR42_SFM(word currBank, unsigned long currByte) {
+  for (int c = 0; c < 512; c++) {
+    sdBuffer[c] = readBank_SFM(currBank, currByte + c);
+  }
+  writeSdBufferBlock();
+}
+
 void readROM_SFM() {
   // Set control
   dataIn();
@@ -900,10 +908,7 @@ void readROM_SFM() {
     for (word currBank = 0; currBank < numBanks; currBank++) {
       // Dump the bytes to SD 512B at a time
       for (long currByte = 32768; currByte < 65536; currByte += 512) {
-        for (int c = 0; c < 512; c++) {
-          sdBuffer[c] = readBank_SFM(currBank, currByte + c);
-        }
-        writeSdBufferBlock();
+        readRomBlockR42_SFM(currBank, currByte);
       }
     }
   }
@@ -914,10 +919,7 @@ void readROM_SFM() {
 
     for (word currBank = 192; currBank < (numBanks + 192); currBank++) {
       for (long currByte = 0; currByte < 65536; currByte += 512) {
-        for (int c = 0; c < 512; c++) {
-          sdBuffer[c] = readBank_SFM(currBank, currByte + c);
-        }
-        writeSdBufferBlock();
+        readRomBlockR42_SFM(currBank, currByte);
       }
     }
   }
@@ -1246,19 +1248,13 @@ void readFlash_SFM() {
   if (romType) {
     for (word currBank = 0xC0; currBank < 0xC0 + numBanks; currBank++) {
       for (unsigned long currByte = 0; currByte < 0x10000; currByte += 512) {
-        for (int c = 0; c < 512; c++) {
-          sdBuffer[c] = readBank_SFM(currBank, currByte + c);
-        }
-        writeSdBufferBlock();
+        readRomBlockR42_SFM(currBank, currByte);
       }
     }
   } else {
     for (word currBank = 0; currBank < numBanks; currBank++) {
       for (unsigned long currByte = 0x8000; currByte < 0x10000; currByte += 512) {
-        for (int c = 0; c < 512; c++) {
-          sdBuffer[c] = readBank_SFM(currBank, currByte + c);
-        }
-        writeSdBufferBlock();
+        readRomBlockR42_SFM(currBank, currByte);
       }
     }
   }
