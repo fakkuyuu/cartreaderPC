@@ -3001,6 +3001,13 @@ static void setMegaMemFlashProtection_GB(word finalAddress) {
   delay(100);
 }
 
+static void programRomBankByte_GB(word currBank, word address, byte value) {
+  writeByte_GB(0x2000, 0x1);
+  writeByte_GB(0x5555, 0x10);
+  writeByte_GB(0x2000, currBank);
+  writeByte_GB(address, value);
+}
+
 void writeMegaMem_GB() {
   // Write Datel Mega Memory Card Save Storage Chip SST28LF040
   browseRootFileAndClear();
@@ -3092,10 +3099,7 @@ void writeMegaMem_GB() {
 
           toggle = true;
           // Write current byte
-          writeByte_GB(0x2000, 0x1);
-          writeByte_GB(0x5555, 0x10);
-          writeByte_GB(0x2000, currBank);
-          writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
+          programRomBankByte_GB(currBank, currAddr + currByte, sdBuffer[currByte]);
           while (toggle) {
             byte1 = readByte_GB(currAddr + currByte);
             byte2 = readByte_GB(currAddr + currByte);
@@ -3103,10 +3107,7 @@ void writeMegaMem_GB() {
           }
           byte1 = readByte_GB(currAddr + currByte);
           if (byte1 != sdBuffer[currByte]) {
-            writeByte_GB(0x2000, 0x1);
-            writeByte_GB(0x5555, 0x10);
-            writeByte_GB(0x2000, currBank);
-            writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
+            programRomBankByte_GB(currBank, currAddr + currByte, sdBuffer[currByte]);
             while (toggle) {
               byte1 = readByte_GB(currAddr + currByte);
               byte2 = readByte_GB(currAddr + currByte);
