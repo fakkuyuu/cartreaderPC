@@ -1964,6 +1964,17 @@ bool isPin_2t9_14t17_22t37_42t49_54t69(byte pinNumber) {
   return ((2 <= pinNumber) && (pinNumber <= 9)) || ((14 <= pinNumber) && (pinNumber <= 17)) || ((22 <= pinNumber) && (pinNumber <= 37)) || ((42 <= pinNumber) && (pinNumber <= 49)) || ((54 <= pinNumber) && (pinNumber <= 69));
 }
 
+static void showPinLabelR42(byte pin, bool newline) __attribute__((noinline));
+static void showPinLabelR42(byte pin, bool newline) {
+  if (54 <= pin && pin <= 69) {
+    print_Msg(F("A"));
+    if (newline) println_Msg(pin - 54); else print_Msg(pin - 54);
+  } else {
+    print_Msg(F("D"));
+    if (newline) println_Msg(pin); else print_Msg(pin);
+  }
+}
+
 void selfTest() {
 #ifdef ENABLE_VSELECT
   // Set Automatic Voltage Selection to 3V
@@ -2013,13 +2024,7 @@ void selfTest() {
         rgbLed(red_color);
         errorLvl = 1;
         print_Msg(FS(SharedFlashText::textErrorPin));
-        if ((54 <= pinNumber) && (pinNumber <= 69)) {
-          print_Msg(F("A"));
-          println_Msg(pinNumber - 54);
-        } else {
-          print_Msg(F("D"));
-          println_Msg(pinNumber);
-        }
+        showPinLabelR42(pinNumber, true);
         promptAndResetArduino();
       }
     }
@@ -2040,21 +2045,9 @@ void selfTest() {
             rgbLed(red_color);
             errorLvl = 1;
             print_Msg(FS(SharedFlashText::textErrorPin));
-            if ((54 <= pinNumber) && (pinNumber <= 69)) {
-              print_Msg(F("A"));
-              print_Msg(pinNumber - 54);
-            } else {
-              print_Msg(F("D"));
-              print_Msg(pinNumber);
-            }
+            showPinLabelR42(pinNumber, false);
             print_Msg(F(" + "));
-            if ((54 <= pinNumber2) && (pinNumber2 <= 69)) {
-              print_Msg(F("A"));
-              println_Msg(pinNumber2 - 54);
-            } else {
-              print_Msg(F("D"));
-              println_Msg(pinNumber2);
-            }
+            showPinLabelR42(pinNumber2, true);
             promptAndResetArduino();
           }
         }
