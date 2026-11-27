@@ -4879,3 +4879,16 @@ void loop() {
 // End of File
 //******************************************
 
+
+static void showWriteVerifyResultR50(unsigned long errors) __attribute__((noinline));
+static void showWriteVerifyResultR50(unsigned long errors) {
+  if (errors == 0) {
+    println_Msg(FS(SharedFlashText::textVerifiedOK));
+    display_Update();
+  } else {
+    print_STR(error_STR, 0);
+    print_Msg(errors);
+    printBytesLine();
+    reportVerificationError();
+  }
+}

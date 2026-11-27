@@ -69,15 +69,7 @@ void svMenu() {
       writeSRAM_SV();
       unsigned long wrErrors;
       wrErrors = verifySRAM_SV();
-      if (wrErrors == 0) {
-        println_Msg(FS(SharedFlashText::textVerifiedOK));
-        display_Update();
-      } else {
-        print_STR(error_STR, 0);
-        print_Msg(wrErrors);
-        printBytesLine();
-        reportVerificationError();
-      }
+      showWriteVerifyResultR50(wrErrors);
       wait();
       break;
 

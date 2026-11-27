@@ -54,15 +54,7 @@ void gpcMenu() {
       writeRAM_GPC();
       unsigned long wrErrors;
       wrErrors = verifyRAM_GPC();
-      if (wrErrors == 0) {
-        println_Msg(FS(SharedFlashText::textVerifiedOK));
-        display_Update();
-      } else {
-        print_STR(error_STR, 0);
-        print_Msg(wrErrors);
-        printBytesLine();
-        reportVerificationError();
-      }
+      showWriteVerifyResultR50(wrErrors);
       wait();
       break;
 
