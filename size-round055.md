@@ -10,3 +10,15 @@ Base 2d013d2b41352bd469fb562fdf73d679c24d9ebc HW3 205616/6095. Inspect string fo
 - nes-decimal 375c9f1a0a860239db8ec80faae956c42023b8d4
 - gb-rom-path d8a879e8f4e8a8ce1a762abc7c256b27c28d7329
 - gba-rom-path b73e0a1b478ea0aa967f9a640b17f01813a0e310
+
+Final independent run 46006317690. Baseline 205616 / 6095. Flash/RAM byte deltas:
+- mpk-names -16/+4 rejected
+- n64-char 0/0 rejected
+- md-sonic +2/-14 rejected
+- gb-save-name -8/-8 accepted
+- gba-rom-name build failed, rejected
+- nes-decimal 0/0 rejected
+- gb-rom-path 0/-12 rejected
+- gba-rom-path 0/-14 rejected
+
+Only one accepted endpoint, 70552c6ba5b59a1ec4519961b70fe56bd825b9f8. Integrated firmware source tree verified identical to measured endpoint. 205608 B Flash / 6087 B static RAM. GB standalone save filename creation not hardware tested.
