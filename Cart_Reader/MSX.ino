@@ -427,6 +427,16 @@ static void finishReadP28_MSX() {
   updateDisplayAndWait();
 }
 
+static void readPairedRomR40_MSX(int banks) __attribute__((noinline));
+static void readPairedRomR40_MSX(int banks) {
+  for (int x = 2; x < banks; x += 2) {
+    writeData_MSX(0x8000, x);
+    readSegment_MSX(0x8000, 0xA000);  // 8K
+    writeData_MSX(0xA000, x + 1);
+    readSegment_MSX(0xA000, 0xC000);  // 8K
+  }
+}
+
 void readROM_MSX() {
   if (msxsize == 0) {
     display_Clear();
@@ -492,12 +502,7 @@ void readROM_MSX() {
         readSegment_MSX(0x4000, 0x6000);  // 8K Fixed Bank 0
         writeData_MSX(0x6000, 1);         // Set Bank 1 for subsequent reads
         readSegment_MSX(0x6000, 0x8000);  // 8K Init Bank 1
-        for (int x = 2; x < 16; x += 2) {
-          writeData_MSX(0x8000, x);
-          readSegment_MSX(0x8000, 0xA000);  // 8K
-          writeData_MSX(0xA000, x + 1);
-          readSegment_MSX(0xA000, 0xC000);  // 8K
-        }
+        readPairedRomR40_MSX(16);
         break;
 
       case 5:  // HAL Note (1024K)
@@ -542,12 +547,7 @@ void readROM_MSX() {
         readSegment_MSX(0x4000, 0x6000);  // 8K Fixed Bank 0
         readSegment_MSX(0x6000, 0x8000);  // 8K Init Bank 1
         msxbanks = int_pow(2, msxsize - 1);
-        for (int x = 2; x < msxbanks; x += 2) {
-          writeData_MSX(0x8000, x);
-          readSegment_MSX(0x8000, 0xA000);  // 8K
-          writeData_MSX(0xA000, x + 1);
-          readSegment_MSX(0xA000, 0xC000);  // 8K
-        }
+        readPairedRomR40_MSX(msxbanks);
         break;
 
       case 9:  // Konami MegaROM with SCC
