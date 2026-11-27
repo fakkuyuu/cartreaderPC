@@ -1237,7 +1237,7 @@ void compare_checksums_GB() {
 
   // last used rom folder
   EEPROM_readAnything(0, foldern);
-  sprintf(folder, "GB/ROM/%s/%d", romName, foldern - 1);
+  sprintf_P(folder, PSTR("GB/ROM/%s/%d"), romName, foldern - 1);
 
   if (strcmp(folder, "root") != 0)
     sd.chdir(folder);
