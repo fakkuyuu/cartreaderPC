@@ -11,6 +11,67 @@ def run(tool, *args):
 def write_json(path, data):
     path.write_text(json.dumps(data, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
 
+def duplicate_sequences(asm):
+    """Rank exact straight-line opcode windows within C++ functions."""
+    import re
+    allowed = set("adc add adiw and andi asr bld bst cbi cbr clc clr com cp cpc cpi dec elpm eor in inc ld ldd ldi lds lpm lsl lsr mov movw mul neg or ori out rol ror sbc sbci sbi sbiw ser st std sts sub subi swap tst".split())
+    header = re.compile(r"^([0-9a-fA-F]+) <(.+)>:$")
+    insn = re.compile(r"^\s*([0-9a-fA-F]+):\s+((?:[0-9a-fA-F]{2}\s+)+)(\w+)\b")
+    location = re.compile(r"^(.+?:\d+)(?: \(discriminator \d+\))?$")
+    groups = defaultdict(list)
+    fn = source = None
+    tail = []
+    for line in asm.splitlines():
+        line = line.rstrip()
+        h = header.match(line)
+        if h:
+            fn = h[2] if "(" in h[2] else None
+            source = None
+            tail.clear()
+            continue
+        loc = location.match(line)
+        if loc and not insn.match(line):
+            source = loc[1]
+            continue
+        m = insn.match(line)
+        if not m:
+            continue
+        if not fn or m[3] not in allowed:
+            tail.clear()
+            continue
+        addr = int(m[1], 16)
+        code = bytes.fromhex(m[2])
+        if tail and tail[-1][0] + len(tail[-1][1]) != addr:
+            tail.clear()
+        tail.append((addr, code, source))
+        tail = tail[-24:]
+        for n in (6, 10, 16, 24):
+            if len(tail) >= n:
+                start, _, src = tail[-n]
+                key = b"".join(t[1] for t in tail[-n:])
+                hits = groups[key]
+                if not hits or start >= hits[-1][0] + len(key):
+                    hits.append((start, fn, src))
+    ranked = []
+    for key, hits in groups.items():
+        # Approximate one 4-byte CALL per site plus one 2-byte RET.
+        gain = (len(hits)-1)*len(key) - 4*len(hits) - 2
+        if gain > 0:
+            ranked.append((gain, key, hits))
+    result = []
+    covered = []
+    for gain, key, hits in sorted(ranked, key=lambda row: -row[0]):
+        spans = [(h[0], h[0]+len(key)) for h in hits]
+        if all(any(a <= start and end <= b for a,b in covered) for start,end in spans):
+            continue
+        result.append(dict(bytes_per_site=len(key), estimated_bytes_saved=gain,
+                           opcode_hex=key.hex(), sites=[dict(address=hex(a), function=f, source=s) for a,f,s in hits]))
+        covered.extend(spans)
+        if len(result) == 30:
+            break
+    return result
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--elf", required=True, type=Path)
@@ -56,8 +117,9 @@ def main():
     write_json(a.out / f"{a.short}-elf-analysis.json", report)
     # Disassembly is supplemental; do not discard valid symbol reports if it fails.
     try:
-        asm = run(a.bin_dir / "avr-objdump.exe", "-d", "-C", a.elf)
+        asm = run(a.bin_dir / "avr-objdump.exe", "-d", "-C", "-l", a.elf)
         (a.out / f"{a.short}-disassembly.txt").write_text(asm, encoding="utf-8")
+        write_json(a.out / f"{a.short}-duplicates.json", duplicate_sequences(asm))
     except (OSError, subprocess.CalledProcessError) as e:
         print(f"Disassembly unavailable: {e}")
     print(f"ELF analysis: {a.short}, {len(symbols)} sized symbols")
