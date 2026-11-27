@@ -429,6 +429,21 @@ void __attribute__((noinline)) setupSharedBusR49() {
   DDRC = 0x00;
 }
 
+void setupCommonBusPinsR50() __attribute__((noinline));
+void setupCommonBusPinsR50() {
+  DDRF = 0xFF;
+  DDRK = 0xFF;
+  DDRL = 0xFF;
+  DDRH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  DDRJ |= (1 << 0);
+  DDRC = 0x00;
+  PORTH |= (1 << 0) | (1 << 1) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
+  DDRA = 0xFF;
+  PORTA = 0xFF;
+}
+
+
+
 void __attribute__((noinline)) setUnknownPrefixR49(char* dest) {
   memcpy_P(dest, PSTR("UNKNOWN"), 7);
 }
