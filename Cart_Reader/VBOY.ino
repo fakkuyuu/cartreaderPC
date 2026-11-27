@@ -433,12 +433,24 @@ void getCartInfo_VB() {
 // READ CODE
 //******************************************
 
+static void readRomBlockR42_VB(unsigned long currBuffer) __attribute__((noinline));
+static void readRomBlockR42_VB(unsigned long currBuffer) {
+  word d = 0;
+  for (int currWord = 0; currWord < 256; currWord++) {
+    word myWord = readWord_VB(currBuffer + currWord);
+    // Split word into two bytes
+    sdBuffer[d] = ((myWord >> 8) & 0xFF);
+    sdBuffer[d + 1] = (myWord & 0xFF);
+    d += 2;
+  }
+  writeSdBufferBlock();
+}
+
 void readROM_VB() {
   dataIn_VB();
 
   createFolderAndOpenFile("VBOY", "ROM", romName, "vb");
 
-  word d = 0;
   uint32_t progress = 0;
   startProgressBar(cartSize);
   // HYPER FIGHTING FIX
@@ -448,29 +460,13 @@ void readROM_VB() {
   if (cartSize == 0x400000) {
     unsigned long romData = 0x1000000 - (cartSize / 2);
     for (unsigned long currBuffer = romData; currBuffer < 0x1000000; currBuffer += 256) {
-      for (int currWord = 0; currWord < 256; currWord++) {
-        word myWord = readWord_VB(currBuffer + currWord);
-        // Split word into two bytes
-        sdBuffer[d] = ((myWord >> 8) & 0xFF);
-        sdBuffer[d + 1] = (myWord & 0xFF);
-        d += 2;
-      }
-      writeSdBufferBlock();
-      d = 0;
+      readRomBlockR42_VB(currBuffer);
       progress += 512;
       draw_progressbar(progress, cartSize);
     }
   } else {
     for (unsigned long currBuffer = 0; currBuffer < cartSize / 2; currBuffer += 256) {
-      for (int currWord = 0; currWord < 256; currWord++) {
-        word myWord = readWord_VB(currBuffer + currWord);
-        // Split word into two bytes
-        sdBuffer[d] = ((myWord >> 8) & 0xFF);
-        sdBuffer[d + 1] = (myWord & 0xFF);
-        d += 2;
-      }
-      writeSdBufferBlock();
-      d = 0;
+      readRomBlockR42_VB(currBuffer);
       progress += 512;
       draw_progressbar(progress, cartSize);
     }
