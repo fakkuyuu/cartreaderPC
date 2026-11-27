@@ -1,40 +1,16 @@
 {
-  "id": "round59-independent",
+  "id": "round59-fix",
   "base": "693a59591263034657e096d81d81d0f9dcf52d3c",
   "expected_base_flash": 205188,
   "expected_base_ram": 6059,
   "candidates": [
     {
-      "id": "nes-mmc3-pair",
-      "head": "be7b2ca37457f563d7b101c5c1eb0f7171bf093d"
+      "id": "nes-mmc3-pair-fixed",
+      "head": "6916df7d1e67b0ddea5eea7ff68ef334cc221b82"
     },
     {
-      "id": "nes-mirrored-regs",
-      "head": "bd512d6b5d302dd12f43bc98c7d2faee5b198a15"
-    },
-    {
-      "id": "nes-bus-conflict",
-      "head": "40ae6fa363567145d477b3768d4429c6765913e7"
-    },
-    {
-      "id": "nes-outer-regs",
-      "head": "41130295180329aaca99e5280c6ed8e894ee28c6"
-    },
-    {
-      "id": "nes-chr-sequential",
-      "head": "22a90be45925f7a15629f6db3744d3c77ee6dd95"
-    },
-    {
-      "id": "md-header-long",
-      "head": "f9fd1755311f9babc902efcdd9802d27535f0bd0"
-    },
-    {
-      "id": "md-checksum-display",
-      "head": "9a436342804213bb29a29592bcfb321b9fc842ea"
-    },
-    {
-      "id": "md-lockon-name",
-      "head": "97b53ddb024ad53c4ab4f7c4307e76bd953db48b"
+      "id": "nes-mirrored-regs-fixed",
+      "head": "e8cb0d8134e3d9becd516e1484426f064b7a7456"
     }
   ]
 }
