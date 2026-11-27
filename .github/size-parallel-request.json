@@ -1,13 +1,41 @@
 {
-  "id": "round51-integrated-final",
-  "base": "aa8a60f21fa2a13fd7505edd0fe6d0537d37c692",
-  "expected_base_flash": 206116,
+  "id": "round52-independent",
+  "base": "10562f056651b82dd7a3dc30ec69517ca7a1f279",
+  "expected_base_flash": 205814,
   "expected_base_ram": 6095,
   "candidates": [
     {
-      "id": "round51-all-distinct-reductions",
-      "head": "10562f056651b82dd7a3dc30ec69517ca7a1f279"
+      "id": "md-id-prefix-pointers",
+      "head": "b99983d675a483797128528978e96f02a7740a43"
+    },
+    {
+      "id": "gb-mbc1m-bank-select",
+      "head": "04524bcb0a7c3e27a51b6aaab6a5782b3b2a2ee6"
+    },
+    {
+      "id": "nes-ram-size-format",
+      "head": "962cea6ce885ce71732d18de6c30db6f9cb9d7a8"
+    },
+    {
+      "id": "nes-prg-chr-size-display",
+      "head": "1f266366e9710ef80c337343115ac8e3fc23c5a2"
+    },
+    {
+      "id": "msx-readsegment-direct",
+      "head": "d8938bf5ac16c0941eb6f6a17575786d6d5eecee"
+    },
+    {
+      "id": "md-romname-early-exit",
+      "head": "05eb77272c9f2a274400f3ecd373aff661cd013b"
+    },
+    {
+      "id": "nes-prg-bank-wrapper-removal",
+      "head": "17f598b837cedd7657cbec1c696c0c502df0d846"
+    },
+    {
+      "id": "nes-chr-bank-wrapper-removal",
+      "head": "e531f51d094d1794492f5914d70c8e2e733128a1"
     }
   ],
-  "endpoints_only": true
+  "endpoints_only": false
 }
