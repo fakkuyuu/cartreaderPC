@@ -256,6 +256,7 @@ void msxMenu() {
 //******************************************
 //  SETUP
 //******************************************
+void setup_MSX() __attribute__((noinline));
 void setup_MSX() {
   // Request 5V
   setVoltage(VOLTS_SET_5V);
