@@ -2126,6 +2126,11 @@ static void writeAndDump235R64_NES(word address, word base) {
 
 static void initMapper19Ram_NES();
 
+static void __attribute__((noinline)) writePair23R75_NES(byte a, byte b) {
+  write_prg_byte(0x8002, a);
+  write_prg_byte(0x8003, b);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2405,8 +2410,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i += 2) {
           writeMmc3PairR59_NES(i & 0xF, (i >> 4) & 0xF);
-          write_prg_byte(0x8002, (i + 1) & 0xF);
-          write_prg_byte(0x8003, ((i + 1) >> 4) & 0xF);
+          writePair23R75_NES((i + 1) & 0xF, ((i + 1) >> 4) & 0xF);
           dumpPRG16KiB(base);
         }
         break;
@@ -2897,8 +2901,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {  // 512K
           writeMmc3PairR59_NES(i >> 4, i >> 4);
-          write_prg_byte(0x8002, i >> 4);     // PRG Outer Bank
-          write_prg_byte(0x8003, i >> 4);     // PRG Outer Bank
+          writePair23R75_NES(i >> 4, i >> 4);  // PRG Outer Bank
           write_prg_byte(0x8008, i & 0xF);    // PRG Inner Bank
           dumpPRG16KiB(base);     // 16K Banks ($8000-$BFFF)
         }
