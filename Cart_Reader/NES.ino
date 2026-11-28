@@ -1303,6 +1303,10 @@ void CreateCHRFileInSD() {
   myFile = createNewFile("CHR", "bin");
 }
 
+static void __attribute__((noinline)) incrementSaveFolderR70_NES() {
+  foldern = (foldern == 32767) ? 0 : foldern + 1;
+}
+
 void CreateRAMFileInSD() {
   // Keep the full DB title for saves without changing the ROM naming rules.
   const char* title = dbSaveTitle;
@@ -1333,13 +1337,13 @@ void CreateRAMFileInSD() {
         print_Msg(filePath);
         println_Msg(FS(SharedFlashText::pathEllipsis));
         display_Update();
-        foldern = (foldern == 32767) ? 0 : foldern + 1;
+        incrementSaveFolderR70_NES();
         EEPROM_writeAnything(0, foldern);
         return;
       }
       changeToStorageRoot();
     }
-    foldern = (foldern == 32767) ? 0 : foldern + 1;
+    incrementSaveFolderR70_NES();
   }
 
   rgbLed(red_color);
