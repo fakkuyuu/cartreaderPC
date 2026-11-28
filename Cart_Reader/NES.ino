@@ -4069,12 +4069,8 @@ void readCHR(bool readrom) {
           break;
 
         case 210:  // 128K/256K
-          banks = chrBanks4K * 4;
           write_prg_byte(0xE800, 0xC0);  // CHR RAM DISABLE (Bit 6 and 7) [WRITE NO RAM]
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, i);  // CHR Bank 0
-            dumpCHR1KiB();
-          }
+          dumpSequentialCHRBanks(chrBanks4K * 4, 0x8000, 0, 0x400);
           break;
 
         case 214:
