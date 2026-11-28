@@ -337,6 +337,11 @@ static void writeMSXRegister7000(uint8_t data) {
   writeData_MSX(0x7000, data);
 }
 
+static void writeMSXRegisterA000(uint8_t data) __attribute__((noinline));
+static void writeMSXRegisterA000(uint8_t data) {
+  writeData_MSX(0xA000, data);
+}
+
 static void writeMSXRegister4FFF(uint8_t data) __attribute__((noinline));
 static void writeMSXRegister4FFF(uint8_t data) {
   writeData_MSX(0x4FFF, data);
@@ -429,7 +434,7 @@ static void readPairedRomR40_MSX(int banks) {
   for (int x = 2; x < banks; x += 2) {
     writeData_MSX(0x8000, x);
     readSegment_MSX(0x8000, 0xA000);  // 8K
-    writeData_MSX(0xA000, x + 1);
+    writeMSXRegisterA000( x + 1);
     readSegment_MSX(0xA000, 0xC000);  // 8K
   }
 }
@@ -710,10 +715,10 @@ void readRAM_MSX() {
 
       case 4:  // Game Master 2 (8K)
         for (uint8_t bank = 0x10; bank <= 0x30; bank += 0x20) {
-          writeData_MSX(0xA000, bank);
+          writeMSXRegisterA000( bank);
           readSegment_MSX(0xB000, 0xC000);
         }
-        writeData_MSX(0xA000, 0);         // SRAM Disable
+        writeMSXRegisterA000( 0);         // SRAM Disable
         break;
 
       case 5:  // HAL Note (16K)
@@ -794,12 +799,12 @@ void writeRAM_MSX() {
 
         case 4:  // Game Master 2 (8K)
           for (int y = 0; y < 2; y++) {
-            writeData_MSX(0xA000, 0x10 + (y * 0x20));  // Bit 4 Enable, Bit 5 SRAM Segment 0/1
+            writeMSXRegisterA000( 0x10 + (y * 0x20));  // Bit 4 Enable, Bit 5 SRAM Segment 0/1
             for (word address = 0x0; address < 0x1000; address += 512) {  // 4K
               writeSramBlock_MSX(0xB000 + address);
             }
           }
-          writeData_MSX(0xA000, 0);  // SRAM Disable
+          writeMSXRegisterA000( 0);  // SRAM Disable
           break;
 
         case 5:  // HAL Note (16K)
