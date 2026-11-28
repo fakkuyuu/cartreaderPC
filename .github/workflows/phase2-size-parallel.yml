@@ -302,7 +302,7 @@ jobs:
 
   auto-integrate:
     needs: [prepare, aggregate]
-    if: needs.prepare.outputs.auto_integrate == 'true' && github.ref == 'refs/heads/experiment/size-reduction-phase2'
+    if: ${{ !cancelled() && needs.prepare.result == 'success' && needs.aggregate.result == 'success' && needs.prepare.outputs.auto_integrate == 'true' && github.ref == 'refs/heads/experiment/size-reduction-phase2' }}
     runs-on: windows-latest
     timeout-minutes: 45
     permissions:
@@ -329,7 +329,7 @@ jobs:
 
   auto-stage:
     needs: auto-integrate
-    if: github.ref == 'refs/heads/experiment/size-reduction-phase2'
+    if: ${{ !cancelled() && needs.auto-integrate.result == 'success' && github.ref == 'refs/heads/experiment/size-reduction-phase2' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -384,6 +384,7 @@ jobs:
 
   auto-ci:
     needs: auto-stage
+    if: ${{ !cancelled() && needs.auto-stage.result == 'success' }}
     permissions:
       contents: read
     uses: ./.github/workflows/ci.yml
@@ -393,7 +394,7 @@ jobs:
 
   auto-publish:
     needs: [auto-stage, auto-ci]
-    if: github.ref == 'refs/heads/experiment/size-reduction-phase2' && needs.auto-stage.outputs.dry_run == 'false'
+    if: ${{ !cancelled() && needs.auto-stage.result == 'success' && needs.auto-ci.result == 'success' && github.ref == 'refs/heads/experiment/size-reduction-phase2' && needs.auto-stage.outputs.dry_run == 'false' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
