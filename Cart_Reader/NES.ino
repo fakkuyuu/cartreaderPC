@@ -4643,24 +4643,25 @@ void EepromFinish_NES() {
   EepromSet1_NES();
 }
 
-void EepromSetAddress01(uint8_t address) {  // 24C01 [Little Endian]
-  for (uint8_t i = 0; i < 7; i++) {
-    if (address & 0x1)  // Bit is HIGH
+static void __attribute__((noinline)) sendEepromAddressR69_NES(byte address, bool little) {
+  byte mask = little ? 1 : 0x80;
+  byte count = little ? 7 : 8;
+  while (count--) {
+    if (address & mask)
       EepromSet1_NES();
-    else  // Bit is LOW
+    else
       EepromSet0_NES();
-    address >>= 1;  // rotate to the next bit
+    if (little) mask <<= 1;
+    else mask >>= 1;
   }
 }
 
+void EepromSetAddress01(uint8_t address) {  // 24C01 [Little Endian]
+  sendEepromAddressR69_NES(address, true);
+}
+
 void EepromSetAddress02(uint8_t address) {  // 24C02
-  for (uint8_t i = 0; i < 8; i++) {
-    if ((address >> 7) & 0x1)  // Bit is HIGH
-      EepromSet1_NES();
-    else  // Bit is LOW
-      EepromSet0_NES();
-    address <<= 1;  // rotate to the next bit
-  }
+  sendEepromAddressR69_NES(address, false);
   EepromStatus_NES();  // ACK
 }
 
