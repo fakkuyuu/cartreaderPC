@@ -122,6 +122,7 @@ void showPressButtonAndUpdate() __attribute__((noinline));
 void showVerifiedAndUpdate() __attribute__((noinline));
 void showBlankCheckAndUpdate() __attribute__((noinline));
 void promptAndResetArduino() __attribute__((noinline, noreturn));
+void readROM_GB() __attribute__((noinline));
 void resetFileBrowserToRoot() __attribute__((noinline));
 void showFilePathAndUpdate() __attribute__((noinline));
 
