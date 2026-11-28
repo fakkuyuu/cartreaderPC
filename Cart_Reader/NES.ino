@@ -455,6 +455,12 @@ static void configureMapperP16_NES() {
   setRAMSize();
 }
 
+static void write_prg_byte(unsigned int, uint8_t);
+static void writeNESRegisterA000(uint8_t data) __attribute__((noinline));
+static void writeNESRegisterA000(uint8_t data) {
+  write_prg_byte(0xA000, data);
+}
+
 void nesMenu() {
   unsigned char answer;
 
@@ -2131,7 +2137,7 @@ static void __attribute__((noinline)) writeTwiceR65_NES(word address, byte value
 
 static void __attribute__((noinline)) writePair8AR61_NES(byte a, byte b) {
   writeNESRegister8000(a);
-  write_prg_byte(0xA000, b);
+  writeNESRegisterA000(b);
 }
 
 static void __attribute__((noinline)) writePair68R61_NES(byte a, byte b) {
@@ -2499,7 +2505,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i++) {  // 128K/256K
           write_prg_byte(0x9000, 1);          // PRG Mode 0 - Read $A000-$BFFF to avoid difference between Modes 0 and 1
-          write_prg_byte(0xA000, i);          // PRG Bank
+          writeNESRegisterA000(i);          // PRG Bank
           dumpBankPRG(0x2000, 0x4000, base);  // 8K Banks ($A000-$BFFF)
         }
         break;
@@ -2873,7 +2879,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K * 2;
         writeNESRegister6000(0);
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xA000, 4);
+          writeNESRegisterA000(4);
           write_prg_byte(0xC000, i);
           dumpPRG8KiB(base);
         }
@@ -2953,7 +2959,7 @@ void readPRG(bool readrom) {
       case 175:  // 256K
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xA000, i << 2);
+          writeNESRegisterA000(i << 2);
           writeNESRegister8000(i);
           dumpPRG16KiB(base);
         }
@@ -3262,7 +3268,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xE000, i >> 3);
-          write_prg_byte(0xA000, i);
+          writeNESRegisterA000(i);
           write_prg_byte(0xC000, i);
           dumpPRG32KiB(base);
         }
@@ -3291,7 +3297,7 @@ void readPRG(bool readrom) {
       case 396:
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xA000, (i >> 3) & 0x07);
+          writeNESRegisterA000((i >> 3) & 0x07);
           writeNESRegister8000(i & 0x07);
           dumpPRG16KiB(base);
         }
@@ -3595,7 +3601,7 @@ void readCHR(bool readrom) {
         case 18:  // 128K/256K
           banks = chrBanks4K * 4;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xA000, i & 0xF);         // CHR Bank Lower 4 bits
+            writeNESRegisterA000(i & 0xF);         // CHR Bank Lower 4 bits
             write_prg_byte(0xA001, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits
             dumpCHR1KiB();
           }
@@ -3945,7 +3951,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K * 4;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x6001, (i & 0x80) >> 7);
-            write_prg_byte(0xA000, 6);
+            writeNESRegisterA000(6);
             write_prg_byte(0xC000, i);
             dumpBankCHR(0x1000, 0x1400);
           }
@@ -3993,7 +3999,7 @@ void readCHR(bool readrom) {
         case 175:  // 128K
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xA000, i << 2);
+            writeNESRegisterA000(i << 2);
             writeNESRegister8000(i);
             dumpCHR8KiB();
           }
@@ -4121,7 +4127,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xE000, i >> 3);
-            write_prg_byte(0xA000, i << 3);
+            writeNESRegisterA000(i << 3);
             dumpCHR4KiB();
           }
           break;
