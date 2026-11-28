@@ -1,0 +1,461 @@
+{
+  "schema": 3,
+  "mode": "parallel-independent",
+  "run_id": "46129276387",
+  "run_attempt": "1",
+  "workflow_commit": "c97f1c682de9b709534f353c92f34fea37dc59f3",
+  "request": {
+    "id": "candidate-ledger-smoke-78b-replay2",
+    "base": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+    "expected_base_flash": 202334,
+    "expected_base_ram": 6059,
+    "auto_integrate": false,
+    "candidates": [
+      {
+        "id": "nes-0x6000",
+        "head": "530ba582ebad9d5c907e02d9bc3e5397b8d0639b",
+        "target": "NES register write at 0x6000",
+        "functions": [
+          "write_prg_byte"
+        ],
+        "description": "Round 78b previously measured NES mapper writes"
+      },
+      {
+        "id": "nes-0x800d",
+        "head": "f7254e38527b25bd09bd9935e08140412509fdb3",
+        "target": "NES register write at 0x800D",
+        "functions": [
+          "write_prg_byte"
+        ],
+        "description": "Round 78b previously measured NES mapper writes"
+      },
+      {
+        "id": "gb-0x4000",
+        "head": "dc5dc63ba62605ffbb152271716d70921cd42976",
+        "target": "GB register write at 0x4000",
+        "functions": [
+          "gb_write_register"
+        ],
+        "description": "Round 78b previously measured GB mapper writes"
+      },
+      {
+        "id": "gb-0x6000",
+        "head": "f5ccba782f18345794bee1a2f8f0752d0f64bbe9",
+        "target": "GB register write at 0x6000",
+        "functions": [
+          "gb_write_register"
+        ],
+        "description": "Round 78b previously measured GB mapper writes"
+      }
+    ]
+  },
+  "ledger_precheck": {
+    "schema": 1,
+    "applicable": true,
+    "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+    "request_id": "candidate-ledger-smoke-78b-replay2",
+    "ledger_entries_seen": 653,
+    "candidate_count": 4,
+    "eligible_count": 0,
+    "candidates": [
+      {
+        "id": "nes-0x6000",
+        "head": "530ba582ebad9d5c907e02d9bc3e5397b8d0639b",
+        "candidate": {
+          "id": "nes-0x6000",
+          "head": "530ba582ebad9d5c907e02d9bc3e5397b8d0639b",
+          "target": "NES register write at 0x6000",
+          "functions": [
+            "write_prg_byte"
+          ],
+          "description": "Round 78b previously measured NES mapper writes",
+          "skip": true,
+          "precheck_status": "duplicate",
+          "ledger_identity": {
+            "patch_id": "21e0569ceefaf7ded7c35481528bede4664b2394",
+            "diff_sha256": "fd83bba7bf8f787a24b6e15f3b37ca90fbd386f027de6b4ac3799d44e4ebfd09",
+            "files": [
+              "Cart_Reader/NES.ino"
+            ],
+            "functions": [
+              "write_prg_byte"
+            ],
+            "function_contexts": [
+              "static void writeNESRegister8000(uint8_t data) {",
+              "static void initMmc3OuterBanks_NES() {",
+              "static void finishRead_NES() {",
+              "static void __attribute__((noinline)) writePair8AR61_NES(byte a, byte b) {",
+              "void readPRG(bool readrom) {",
+              "void readCHR(bool readrom) {"
+            ],
+            "target": "NES register write at 0x6000",
+            "description": "Round 78b previously measured NES mapper writes",
+            "subject": "Share fixed register write nes-0x6000"
+          },
+          "retest_of": []
+        },
+        "identity": {
+          "patch_id": "21e0569ceefaf7ded7c35481528bede4664b2394",
+          "diff_sha256": "fd83bba7bf8f787a24b6e15f3b37ca90fbd386f027de6b4ac3799d44e4ebfd09",
+          "files": [
+            "Cart_Reader/NES.ino"
+          ],
+          "functions": [
+            "write_prg_byte"
+          ],
+          "function_contexts": [
+            "static void writeNESRegister8000(uint8_t data) {",
+            "static void initMmc3OuterBanks_NES() {",
+            "static void finishRead_NES() {",
+            "static void __attribute__((noinline)) writePair8AR61_NES(byte a, byte b) {",
+            "void readPRG(bool readrom) {",
+            "void readCHR(bool readrom) {"
+          ],
+          "target": "NES register write at 0x6000",
+          "description": "Round 78b previously measured NES mapper writes",
+          "subject": "Share fixed register write nes-0x6000"
+        },
+        "status": "duplicate",
+        "reason": "Identical candidate already exists on this base.",
+        "matches": [
+          {
+            "candidate_id": "nes-0x6000",
+            "round_id": "round78b-auto",
+            "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+            "head_sha": "530ba582ebad9d5c907e02d9bc3e5397b8d0639b",
+            "decision": "adopted",
+            "patch_id": "21e0569ceefaf7ded7c35481528bede4664b2394"
+          }
+        ],
+        "related_candidates": [],
+        "skip": true
+      },
+      {
+        "id": "nes-0x800d",
+        "head": "f7254e38527b25bd09bd9935e08140412509fdb3",
+        "candidate": {
+          "id": "nes-0x800d",
+          "head": "f7254e38527b25bd09bd9935e08140412509fdb3",
+          "target": "NES register write at 0x800D",
+          "functions": [
+            "write_prg_byte"
+          ],
+          "description": "Round 78b previously measured NES mapper writes",
+          "skip": true,
+          "precheck_status": "duplicate",
+          "ledger_identity": {
+            "patch_id": "fe42623cd0c5e861c460601d23b8210d92e6f29b",
+            "diff_sha256": "10b2acd3baf4dbfa450a30dfa86fe8ae5fb25bbefc47e540e9c3eaac0cb13ac0",
+            "files": [
+              "Cart_Reader/NES.ino"
+            ],
+            "functions": [
+              "write_prg_byte"
+            ],
+            "function_contexts": [
+              "static void write_prg_byte(unsigned int address, uint8_t data) {",
+              "static void enableDefaultSram_NES(bool writing) {",
+              "void resetEEPROM() {",
+              "void EepromWriteMode_NES() {"
+            ],
+            "target": "NES register write at 0x800D",
+            "description": "Round 78b previously measured NES mapper writes",
+            "subject": "Share fixed register write nes-0x800d"
+          },
+          "retest_of": []
+        },
+        "identity": {
+          "patch_id": "fe42623cd0c5e861c460601d23b8210d92e6f29b",
+          "diff_sha256": "10b2acd3baf4dbfa450a30dfa86fe8ae5fb25bbefc47e540e9c3eaac0cb13ac0",
+          "files": [
+            "Cart_Reader/NES.ino"
+          ],
+          "functions": [
+            "write_prg_byte"
+          ],
+          "function_contexts": [
+            "static void write_prg_byte(unsigned int address, uint8_t data) {",
+            "static void enableDefaultSram_NES(bool writing) {",
+            "void resetEEPROM() {",
+            "void EepromWriteMode_NES() {"
+          ],
+          "target": "NES register write at 0x800D",
+          "description": "Round 78b previously measured NES mapper writes",
+          "subject": "Share fixed register write nes-0x800d"
+        },
+        "status": "duplicate",
+        "reason": "Identical candidate already exists on this base.",
+        "matches": [
+          {
+            "candidate_id": "nes-0x800d",
+            "round_id": "round78b-auto",
+            "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+            "head_sha": "f7254e38527b25bd09bd9935e08140412509fdb3",
+            "decision": "adopted",
+            "patch_id": "fe42623cd0c5e861c460601d23b8210d92e6f29b"
+          }
+        ],
+        "related_candidates": [],
+        "skip": true
+      },
+      {
+        "id": "gb-0x4000",
+        "head": "dc5dc63ba62605ffbb152271716d70921cd42976",
+        "candidate": {
+          "id": "gb-0x4000",
+          "head": "dc5dc63ba62605ffbb152271716d70921cd42976",
+          "target": "GB register write at 0x4000",
+          "functions": [
+            "gb_write_register"
+          ],
+          "description": "Round 78b previously measured GB mapper writes",
+          "skip": true,
+          "precheck_status": "duplicate",
+          "ledger_identity": {
+            "patch_id": "d2cce8a5e40d838bdb50e7f40173c686c2191536",
+            "diff_sha256": "93abe1e3d608bc10d69adddf58e0b6e09e25bc73ca0cb130094397f82cee2c23",
+            "files": [
+              "Cart_Reader/GB.ino"
+            ],
+            "functions": [
+              "gb_write_register"
+            ],
+            "function_contexts": [
+              "static void writeGBRegister2000(byte data) {",
+              "void readROM_GB() {",
+              "void readSRAM_GB() {",
+              "void writeSRAM_GB() {",
+              "unsigned long verifySRAM_GB() {",
+              "void writeSRAMFLASH_MBC6_GB() {",
+              "static void enableMbc7Eeprom_GB() __attribute__((noinline));",
+              "void readEEPROM_MBC7_GB() {",
+              "void writeEEPROM_MBC7_GB() {",
+              "void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {",
+              "bool writeCFI_GB() {"
+            ],
+            "target": "GB register write at 0x4000",
+            "description": "Round 78b previously measured GB mapper writes",
+            "subject": "Share fixed register write gb-0x4000"
+          },
+          "retest_of": []
+        },
+        "identity": {
+          "patch_id": "d2cce8a5e40d838bdb50e7f40173c686c2191536",
+          "diff_sha256": "93abe1e3d608bc10d69adddf58e0b6e09e25bc73ca0cb130094397f82cee2c23",
+          "files": [
+            "Cart_Reader/GB.ino"
+          ],
+          "functions": [
+            "gb_write_register"
+          ],
+          "function_contexts": [
+            "static void writeGBRegister2000(byte data) {",
+            "void readROM_GB() {",
+            "void readSRAM_GB() {",
+            "void writeSRAM_GB() {",
+            "unsigned long verifySRAM_GB() {",
+            "void writeSRAMFLASH_MBC6_GB() {",
+            "static void enableMbc7Eeprom_GB() __attribute__((noinline));",
+            "void readEEPROM_MBC7_GB() {",
+            "void writeEEPROM_MBC7_GB() {",
+            "void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {",
+            "bool writeCFI_GB() {"
+          ],
+          "target": "GB register write at 0x4000",
+          "description": "Round 78b previously measured GB mapper writes",
+          "subject": "Share fixed register write gb-0x4000"
+        },
+        "status": "duplicate",
+        "reason": "Identical candidate already exists on this base.",
+        "matches": [
+          {
+            "candidate_id": "gb-0x4000",
+            "round_id": "round78b-auto",
+            "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+            "head_sha": "dc5dc63ba62605ffbb152271716d70921cd42976",
+            "decision": "adopted",
+            "patch_id": "d2cce8a5e40d838bdb50e7f40173c686c2191536"
+          }
+        ],
+        "related_candidates": [],
+        "skip": true
+      },
+      {
+        "id": "gb-0x6000",
+        "head": "f5ccba782f18345794bee1a2f8f0752d0f64bbe9",
+        "candidate": {
+          "id": "gb-0x6000",
+          "head": "f5ccba782f18345794bee1a2f8f0752d0f64bbe9",
+          "target": "GB register write at 0x6000",
+          "functions": [
+            "gb_write_register"
+          ],
+          "description": "Round 78b previously measured GB mapper writes",
+          "skip": true,
+          "precheck_status": "duplicate",
+          "ledger_identity": {
+            "patch_id": "3e0456ff656ce077b197a470687ee80631df990f",
+            "diff_sha256": "9a302d8ec107716e4df6f7d29082293850e1e0a74cb6ebdddda77ca0673c0ef6",
+            "files": [
+              "Cart_Reader/GB.ino"
+            ],
+            "functions": [
+              "gb_write_register"
+            ],
+            "function_contexts": [
+              "void writeByte_GB(int myAddress, byte myData) {",
+              "void readROM_GB() {",
+              "void readSRAM_GB() {",
+              "void writeSRAM_GB() {",
+              "unsigned long verifySRAM_GB() {",
+              "void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {",
+              "void startCFIMode(boolean x16Mode) {",
+              "bool writeCFI_GB() {"
+            ],
+            "target": "GB register write at 0x6000",
+            "description": "Round 78b previously measured GB mapper writes",
+            "subject": "Share fixed register write gb-0x6000"
+          },
+          "retest_of": []
+        },
+        "identity": {
+          "patch_id": "3e0456ff656ce077b197a470687ee80631df990f",
+          "diff_sha256": "9a302d8ec107716e4df6f7d29082293850e1e0a74cb6ebdddda77ca0673c0ef6",
+          "files": [
+            "Cart_Reader/GB.ino"
+          ],
+          "functions": [
+            "gb_write_register"
+          ],
+          "function_contexts": [
+            "void writeByte_GB(int myAddress, byte myData) {",
+            "void readROM_GB() {",
+            "void readSRAM_GB() {",
+            "void writeSRAM_GB() {",
+            "unsigned long verifySRAM_GB() {",
+            "void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {",
+            "void startCFIMode(boolean x16Mode) {",
+            "bool writeCFI_GB() {"
+          ],
+          "target": "GB register write at 0x6000",
+          "description": "Round 78b previously measured GB mapper writes",
+          "subject": "Share fixed register write gb-0x6000"
+        },
+        "status": "duplicate",
+        "reason": "Identical candidate already exists on this base.",
+        "matches": [
+          {
+            "candidate_id": "gb-0x6000",
+            "round_id": "round78b-auto",
+            "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+            "head_sha": "f5ccba782f18345794bee1a2f8f0752d0f64bbe9",
+            "decision": "pending_conflict",
+            "patch_id": "3e0456ff656ce077b197a470687ee80631df990f"
+          }
+        ],
+        "related_candidates": [],
+        "skip": true
+      }
+    ],
+    "eligible": []
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "candidate": {
+        "id": "nes-0x6000",
+        "head": "530ba582ebad9d5c907e02d9bc3e5397b8d0639b",
+        "target": "NES register write at 0x6000",
+        "functions": [
+          "write_prg_byte"
+        ],
+        "description": "Round 78b previously measured NES mapper writes"
+      },
+      "status": "duplicate_skipped",
+      "error": "Identical candidate already exists on this base.",
+      "duplicate_matches": [
+        {
+          "candidate_id": "nes-0x6000",
+          "round_id": "round78b-auto",
+          "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+          "head_sha": "530ba582ebad9d5c907e02d9bc3e5397b8d0639b",
+          "decision": "adopted",
+          "patch_id": "21e0569ceefaf7ded7c35481528bede4664b2394"
+        }
+      ],
+      "results": []
+    },
+    {
+      "candidate": {
+        "id": "nes-0x800d",
+        "head": "f7254e38527b25bd09bd9935e08140412509fdb3",
+        "target": "NES register write at 0x800D",
+        "functions": [
+          "write_prg_byte"
+        ],
+        "description": "Round 78b previously measured NES mapper writes"
+      },
+      "status": "duplicate_skipped",
+      "error": "Identical candidate already exists on this base.",
+      "duplicate_matches": [
+        {
+          "candidate_id": "nes-0x800d",
+          "round_id": "round78b-auto",
+          "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+          "head_sha": "f7254e38527b25bd09bd9935e08140412509fdb3",
+          "decision": "adopted",
+          "patch_id": "fe42623cd0c5e861c460601d23b8210d92e6f29b"
+        }
+      ],
+      "results": []
+    },
+    {
+      "candidate": {
+        "id": "gb-0x4000",
+        "head": "dc5dc63ba62605ffbb152271716d70921cd42976",
+        "target": "GB register write at 0x4000",
+        "functions": [
+          "gb_write_register"
+        ],
+        "description": "Round 78b previously measured GB mapper writes"
+      },
+      "status": "duplicate_skipped",
+      "error": "Identical candidate already exists on this base.",
+      "duplicate_matches": [
+        {
+          "candidate_id": "gb-0x4000",
+          "round_id": "round78b-auto",
+          "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+          "head_sha": "dc5dc63ba62605ffbb152271716d70921cd42976",
+          "decision": "adopted",
+          "patch_id": "d2cce8a5e40d838bdb50e7f40173c686c2191536"
+        }
+      ],
+      "results": []
+    },
+    {
+      "candidate": {
+        "id": "gb-0x6000",
+        "head": "f5ccba782f18345794bee1a2f8f0752d0f64bbe9",
+        "target": "GB register write at 0x6000",
+        "functions": [
+          "gb_write_register"
+        ],
+        "description": "Round 78b previously measured GB mapper writes"
+      },
+      "status": "duplicate_skipped",
+      "error": "Identical candidate already exists on this base.",
+      "duplicate_matches": [
+        {
+          "candidate_id": "gb-0x6000",
+          "round_id": "round78b-auto",
+          "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+          "head_sha": "f5ccba782f18345794bee1a2f8f0752d0f64bbe9",
+          "decision": "pending_conflict",
+          "patch_id": "3e0456ff656ce077b197a470687ee80631df990f"
+        }
+      ],
+      "results": []
+    }
+  ]
+}

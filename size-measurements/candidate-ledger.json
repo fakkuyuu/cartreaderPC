@@ -23610,6 +23610,86 @@
       ],
       "reason": "Identical candidate already exists on this base.",
       "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46128902939"
+    },
+    {
+      "run_id": "46129276387",
+      "run_attempt": "1",
+      "candidate_id": "nes-0x6000",
+      "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+      "head_sha": "530ba582ebad9d5c907e02d9bc3e5397b8d0639b",
+      "status": "duplicate_skipped",
+      "duplicate_matches": [
+        {
+          "candidate_id": "nes-0x6000",
+          "round_id": "round78b-auto",
+          "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+          "head_sha": "530ba582ebad9d5c907e02d9bc3e5397b8d0639b",
+          "decision": "adopted",
+          "patch_id": "21e0569ceefaf7ded7c35481528bede4664b2394"
+        }
+      ],
+      "reason": "Identical candidate already exists on this base.",
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46129276387"
+    },
+    {
+      "run_id": "46129276387",
+      "run_attempt": "1",
+      "candidate_id": "nes-0x800d",
+      "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+      "head_sha": "f7254e38527b25bd09bd9935e08140412509fdb3",
+      "status": "duplicate_skipped",
+      "duplicate_matches": [
+        {
+          "candidate_id": "nes-0x800d",
+          "round_id": "round78b-auto",
+          "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+          "head_sha": "f7254e38527b25bd09bd9935e08140412509fdb3",
+          "decision": "adopted",
+          "patch_id": "fe42623cd0c5e861c460601d23b8210d92e6f29b"
+        }
+      ],
+      "reason": "Identical candidate already exists on this base.",
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46129276387"
+    },
+    {
+      "run_id": "46129276387",
+      "run_attempt": "1",
+      "candidate_id": "gb-0x4000",
+      "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+      "head_sha": "dc5dc63ba62605ffbb152271716d70921cd42976",
+      "status": "duplicate_skipped",
+      "duplicate_matches": [
+        {
+          "candidate_id": "gb-0x4000",
+          "round_id": "round78b-auto",
+          "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+          "head_sha": "dc5dc63ba62605ffbb152271716d70921cd42976",
+          "decision": "adopted",
+          "patch_id": "d2cce8a5e40d838bdb50e7f40173c686c2191536"
+        }
+      ],
+      "reason": "Identical candidate already exists on this base.",
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46129276387"
+    },
+    {
+      "run_id": "46129276387",
+      "run_attempt": "1",
+      "candidate_id": "gb-0x6000",
+      "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+      "head_sha": "f5ccba782f18345794bee1a2f8f0752d0f64bbe9",
+      "status": "duplicate_skipped",
+      "duplicate_matches": [
+        {
+          "candidate_id": "gb-0x6000",
+          "round_id": "round78b-auto",
+          "base_sha": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+          "head_sha": "f5ccba782f18345794bee1a2f8f0752d0f64bbe9",
+          "decision": "pending_conflict",
+          "patch_id": "3e0456ff656ce077b197a470687ee80631df990f"
+        }
+      ],
+      "reason": "Identical candidate already exists on this base.",
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46129276387"
     }
   ]
 }
