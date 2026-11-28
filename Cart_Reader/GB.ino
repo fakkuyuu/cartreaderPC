@@ -2615,12 +2615,18 @@ void sendW29C020Command_GB(byte cmd) {
   sendW29C020CommandSufix_GB(cmd);
 }
 
+void writeByte_GB(int, byte);
+static void writeGBRegister3555(uint8_t data) __attribute__((noinline));
+static void writeGBRegister3555(uint8_t data) {
+  writeByte_GB(0x3555, data);
+}
+
 void sendW29C020CommandSufix_GB(byte cmd) {
-  writeByte_GB(0x3555, 0xAA);
+  writeGBRegister3555(0xAA);
   writeGBSramRegisterA000(0x1);
   writeByte_GB(0x2AAA, 0x55);
   writeGBSramRegisterA000(0x2);
-  writeByte_GB(0x3555, cmd);
+  writeGBRegister3555(cmd);
 }
 
 // Read Pelican GBC Device - All Brainboys, MonsterBrains, Codebreakers
@@ -2641,15 +2647,15 @@ static void dumpAccessoryRange_GB(word& startAddress, word finalAddress, uint32_
 static void identifyPelicanSstFlash_GB() __attribute__((noinline));
 static void identifyPelicanSstFlash_GB() {
   writeGBSramRegisterA000(0x2);
-  writeByte_GB(0x3555, 0xFF);
+  writeGBRegister3555(0xFF);
   delay(100);
   writeGBSramRegisterA000(0x2);
-  writeByte_GB(0x3555, 0x90);
+  writeGBRegister3555(0x90);
   delay(100);
   flashid = readByte_GB(0) << 8;
   flashid |= readByte_GB(1);
   writeGBSramRegisterA000(0x2);
-  writeByte_GB(0x3555, 0xFF);
+  writeGBRegister3555(0xFF);
   delay(100);
   if (flashid != 0xBF04) {
     showUnknownFlashIdAndWait();
@@ -2801,12 +2807,12 @@ void writePelican_GB() {
 
       //Erase flash
       writeGBSramRegisterA000(0x2);
-      writeByte_GB(0x3555, 0x30);
-      writeByte_GB(0x3555, 0x30);
+      writeGBRegister3555(0x30);
+      writeGBRegister3555(0x30);
       delay(100);
 
       writeGBSramRegisterA000(0x2);
-      writeByte_GB(0x3555, 0xFF);
+      writeGBRegister3555(0xFF);
       delay(100);
     }
 
@@ -2879,7 +2885,7 @@ void writePelican_GB() {
           toggle = true;
           // Write current byte
           writeGBSramRegisterA000(0x2);
-          writeByte_GB(0x3555, 0x10);
+          writeGBRegister3555(0x10);
           writeGBSramRegisterA000(currBank);
           writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
           while (toggle) {
@@ -2890,7 +2896,7 @@ void writePelican_GB() {
           byte1 = readByte_GB(currAddr + currByte);
           if (byte1 != sdBuffer[currByte]) {
             writeGBSramRegisterA000(0x2);
-            writeByte_GB(0x3555, 0x10);
+            writeGBRegister3555(0x10);
             writeGBSramRegisterA000(currBank);
             writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
             while (toggle) {
