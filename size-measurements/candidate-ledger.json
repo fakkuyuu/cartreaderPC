@@ -25023,6 +25023,76 @@
       "accepted_commit": null,
       "conflict_paths": [],
       "integration_base_sha": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64"
+    },
+    {
+      "patch_id": "a87098e54d8ebcf7d3f6736619c431f7fd90f21b",
+      "diff_sha256": "f477eb593d370bb091ce8ac687f8c8ecdc2e89090cf2578b0c5e0b99ede45777",
+      "files": [
+        "Cart_Reader/GB.ino"
+      ],
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegister7555"
+      ],
+      "function_contexts": [
+        "static void writeGBRegister4AAA(byte data) {",
+        "static void mbc6UnlockSequenceP16_GB() __attribute__((noinline));",
+        "void writeSRAMFLASH_MBC6_GB() {"
+      ],
+      "target": "GB",
+      "description": "Resubmitted fixed 0x7555 wrapper against Round81 accepted firmware; 4 exact calls.",
+      "subject": "Round 81 resubmission: r81-gb-7555",
+      "candidate_id": "r81b-gb-7555",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "9ec4bfc6e05c6c2f4b45b3d817c652372c765f34",
+      "run_id": "46138617909",
+      "run_attempt": "1",
+      "round_id": "round81b-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46138617909",
+      "independent_flash_delta": -8,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_improvement",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "40f8285fdc62fd9040c84d26aec05f23dfa92963",
+      "diff_sha256": "75e07c00e924332b915500654061257998339d84bed14346d69dfe00aac3fd56",
+      "files": [
+        "Cart_Reader/GB.ino"
+      ],
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegister1000"
+      ],
+      "function_contexts": [
+        "static void writeGBRegister4AAA(byte data) {",
+        "void compare_checksums_GB() {",
+        "unsigned long verifySRAM_GB() {"
+      ],
+      "target": "GB",
+      "description": "Resubmitted fixed 0x1000 wrapper against Round81 accepted firmware; 4 exact calls.",
+      "subject": "Round 81 resubmission: r81-gb-1000",
+      "candidate_id": "r81b-gb-1000",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "e458d9e0f81d5682ae3f067f5865cd63be001952",
+      "run_id": "46138617909",
+      "run_attempt": "1",
+      "round_id": "round81b-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46138617909",
+      "independent_flash_delta": -6,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_improvement",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
     }
   ],
   "duplicate_attempts": [
