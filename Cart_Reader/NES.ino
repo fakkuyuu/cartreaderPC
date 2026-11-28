@@ -2033,6 +2033,14 @@ void dumpBankCHR(const size_t from, const size_t to) {
   }
 }
 
+static void __attribute__((noinline)) dumpPairedPrgR67_NES(word banks, word reg1, word reg2, byte first, word size, word base) {
+  for (word i = 0; i < banks; ++i) {
+    write_prg_byte(reg1, first);
+    write_prg_byte(reg2, i);
+    dumpBankPRG(0, size, base);
+  }
+}
+
 static void dumpPRG8KiB(uint16_t base) {
   dumpBankPRG(0x0, 0x2000, base);
 }
@@ -2471,11 +2479,7 @@ void readPRG(bool readrom) {
           write_prg_byte(0x5000, ((k & 2) << 6) | (k & 1));
           write_prg_byte(0x8000, 0);
         }
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x5000, 0x81);
-          write_prg_byte(0x8000, i);
-          dumpPRG32KiB(base);
-        }
+        dumpPairedPrgR67_NES(banks, 0x5000, 0x8000, 0x81, 0x8000, base);
         break;
 
       case 31:
@@ -2644,11 +2648,7 @@ void readPRG(bool readrom) {
 
       case 56:
         banks = prgBanks16K * 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xE000, 1);
-          write_prg_byte(0xF000, i);
-          dumpPRG8KiB(base);
-        }
+        dumpPairedPrgR67_NES(banks, 0xE000, 0xF000, 1, 0x2000, base);
         break;
 
       case 57:
@@ -2882,11 +2882,7 @@ void readPRG(bool readrom) {
       case 182:
         banks = prgBanks16K * 2;
         write_prg_byte(0x6000, 0);
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xA000, 4);
-          write_prg_byte(0xC000, i);
-          dumpPRG8KiB(base);
-        }
+        dumpPairedPrgR67_NES(banks, 0xA000, 0xC000, 4, 0x2000, base);
         break;
 
       case 120:
