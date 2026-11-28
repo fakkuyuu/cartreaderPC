@@ -1619,18 +1619,16 @@ void checkMapperSize() {
 }
 
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
-void printPrgSize_NES(int index) {
+static void __attribute__((noinline)) printRomSizeR70_NES(int index, bool chr) {
   display_Clear();
-  print_Msg(F("PRG Size: "));
-  println_Msg(pgm_read_word(&(PRG[index])));
+  print_Msg(chr ? F("CHR Size: ") : F("PRG Size: "));
+  println_Msg(pgm_read_word((chr ? CHR : PRG) + index));
 }
-#endif
-
-#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
+void printPrgSize_NES(int index) {
+  printRomSizeR70_NES(index, false);
+}
 void printChrSize_NES(int index) {
-  display_Clear();
-  print_Msg(F("CHR Size: "));
-  println_Msg(pgm_read_word(&(CHR[index])));
+  printRomSizeR70_NES(index, true);
 }
 #endif
 
