@@ -112,7 +112,7 @@ try {
   $index = 0
   foreach ($candidate in $request.candidates) {
     $index++
-    $item = [ordered]@{id=$candidate.id; head=$candidate.head; order=$index; independent_flash=$null; independent_ram=$null; independent_delta=$null; independent_ram_delta=$null; decision='rejected'; reason=''; before_flash=$null; before_ram=$null; trial_flash=$null; trial_ram=$null; incremental_delta=$null; incremental_ram_delta=$null; accepted_commit=$null; conflict_paths=@(); conflict_onto=$null}
+    $item = [ordered]@{id=$candidate.id; head=$candidate.head; order=$index; resubmission=$candidate.resubmission; independent_flash=$null; independent_ram=$null; independent_delta=$null; independent_ram_delta=$null; decision='rejected'; reason=''; before_flash=$null; before_ram=$null; trial_flash=$null; trial_ram=$null; incremental_delta=$null; incremental_ram_delta=$null; accepted_commit=$null; conflict_paths=@(); conflict_onto=$null}
     $report.candidates += $item
     try {
       if ($candidate.reviewed -ne $true) { throw 'Candidate not reviewed' }
@@ -178,7 +178,7 @@ try {
   $report.firmware_commit = $accepted
   $report.pending_count = @($report.candidates | Where-Object decision -eq 'pending_conflict').Count
   $report.pending = @($report.candidates | Where-Object decision -eq 'pending_conflict' | ForEach-Object {
-    @{id=$_.id; original_base=$base; original_head=$_.head; conflict_onto=$_.conflict_onto; paths=$_.conflict_paths; independent_flash_delta=$_.independent_delta; independent_ram_delta=$_.independent_ram_delta; rebase_onto_firmware=$accepted; expected_base_flash=$final.flash; expected_base_ram=$final.ram}
+    @{id=$_.id; original_base=$base; original_head=$_.head; conflict_onto=$_.conflict_onto; paths=$_.conflict_paths; independent_flash_delta=$_.independent_delta; independent_ram_delta=$_.independent_ram_delta; rebase_onto_firmware=$accepted; expected_base_flash=$final.flash; expected_base_ram=$final.ram; resubmission=$_.resubmission}
   })
   $report.status = 'measured'
   Save-Report
