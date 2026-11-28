@@ -3385,6 +3385,14 @@ static void __attribute__((noinline)) dumpPulseChrR65_NES(word banks, word reg1,
   }
 }
 
+static void __attribute__((noinline)) dumpGroupedChrR68_NES(word banks, word reg, byte step, byte shift) {
+  for (word i = 0; i < banks; i += step) {
+    for (byte bank = 0; bank < step; ++bank)
+      write_prg_byte(reg + (word(bank) << shift), i + bank);
+    dumpCHR8KiB();
+  }
+}
+
 static void __attribute__((noinline)) dumpMaskedChrR65_NES(word banks, word reg, byte mask, word bankSize) {
   for (word i = 0; i < banks; ++i) {
     write_prg_byte(reg, i & mask);
@@ -3616,11 +3624,7 @@ void readCHR(bool readrom) {
           }
           banks = chrBanks4K * 4;
           write_ram_byte(0xE800, 0xC0);  // CHR RAM High/Low Disable (ROM Enable)
-          for (size_t i = 0; i < banks; i += 8) {
-            for (byte bank = 0; bank < 8; ++bank)
-              write_prg_byte(0x8000U + (word(bank) << 11), i + bank);
-            dumpCHR8KiB();
-          }
+          dumpGroupedChrR68_NES(banks, 0x8000, 8, 11);
           break;
 
         case 21:  // 128K/256K
@@ -3794,11 +3798,7 @@ void readCHR(bool readrom) {
 
         case 68:  // 128K/256K
           banks = chrBanks4K * 2;
-          for (size_t i = 0; i < banks; i += 4) {  // 2K Banks
-            for (byte bank = 0; bank < 4; ++bank)
-              write_prg_byte(0x8000U + (word(bank) << 12), i + bank);
-            dumpCHR8KiB();
-          }
+          dumpGroupedChrR68_NES(banks, 0x8000, 4, 12);
           break;
 
         case 69:  // 128K/256K
@@ -4082,11 +4082,7 @@ void readCHR(bool readrom) {
 
         case 246:
           banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i += 4) {
-            for (byte bank = 0; bank < 4; ++bank)
-              write_prg_byte(0x6004U + bank, i | bank);
-            dumpCHR8KiB();
-          }
+          dumpGroupedChrR68_NES(banks, 0x6004, 4, 0);
           break;
 
         case 252:
