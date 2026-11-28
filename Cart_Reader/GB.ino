@@ -803,6 +803,11 @@ static void writeGBRegister7FE1(byte data) {
 
 
 
+static void writeGBRegister1000(byte data) __attribute__((noinline));
+static void writeGBRegister1000(byte data) {
+  writeByte_GB(0x1000, data);
+}
+
 void writeByte_GB(int myAddress, byte myData, boolean audio_as_WE) {
   // Set address
   PORTF = myAddress & 0xFF;
@@ -1315,9 +1320,9 @@ void compare_checksums_GB() {
   SRAM functions
 *****************************************/
 void disableFlashSaveMemory() {
-  writeByte_GB(0x1000, 0x01);
+  writeGBRegister1000( 0x01);
   writeByte_GB(0x0C00, 0x00);
-  writeByte_GB(0x1000, 0x00);
+  writeGBRegister1000( 0x00);
   writeMbc6ModeR61_GB(0x00);
 }
 
@@ -1493,9 +1498,9 @@ unsigned long verifySRAM_GB() {
 // Read SRAM + FLASH save data of MBC6
 static void enableMbc6FlashSave_GB(byte writeMode) __attribute__((noinline));
 static void enableMbc6FlashSave_GB(byte writeMode) {
-  writeByte_GB(0x1000, 0x01);
+  writeGBRegister1000( 0x01);
   writeByte_GB(0x0C00, 0x01);
-  writeByte_GB(0x1000, writeMode);
+  writeGBRegister1000( writeMode);
   writeMbc6ModeR61_GB(0x08);
 }
 
