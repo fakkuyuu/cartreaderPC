@@ -3375,6 +3375,14 @@ static void __attribute__((noinline)) dumpVrcChrR64_NES(word banks, word upperRe
   }
 }
 
+static void __attribute__((noinline)) dumpPairChrR68_NES(word banks, word reg1, word reg2, word size, byte shift1, byte shift2) {
+  for (word i = 0; i < banks; ++i) {
+    write_prg_byte(reg1, i << shift1);
+    write_prg_byte(reg2, i << shift2);
+    dumpBankCHR(0, size);
+  }
+}
+
 static void __attribute__((noinline)) dumpPulseChrR65_NES(word banks, word reg1, word reg2, byte value1Or, byte value2Or) {
   for (word i = 0; i < banks; ++i) {
     for (word address = 0; address < 0x2000; address += 512) {
@@ -3574,12 +3582,7 @@ void readCHR(bool readrom) {
 
         case 9:
         case 10:
-          banks = chrBanks4K;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xB000, i);
-            write_prg_byte(0xC000, i);
-            dumpCHR4KiB();
-          }
+          dumpPairChrR68_NES(chrBanks4K, 0xB000, 0xC000, 0x1000, 0, 0);
           break;
 
         case 11:
@@ -3999,12 +4002,7 @@ void readCHR(bool readrom) {
           break;
 
         case 175:  // 128K
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xA000, i << 2);
-            write_prg_byte(0x8000, i);
-            dumpCHR8KiB();
-          }
+          dumpPairChrR68_NES(chrBanks4K / 2, 0xA000, 0x8000, 0x2000, 2, 0);
           break;
 
         case 185:                           // 8K [READ 32K TO OVERRIDE LOCKOUT]
