@@ -2595,6 +2595,11 @@ static void openMdBackupOutput() {
   }
 }
 
+static void __attribute__((noinline)) finishWriteR63_MD() {
+  closeBlankAndClear();
+  showDoneAndUpdate();
+}
+
 void readEEP_MD() {
   dataIn_MD();
 
@@ -2657,8 +2662,7 @@ void writeEEP_MD() {
       }
     }
     // Close the file:
-    closeBlankAndClear();
-    showDoneAndUpdate();
+    finishWriteR63_MD();
   } else {
     fatalSdError();
   }
@@ -2710,8 +2714,7 @@ void writeBram_MD() {
     }
     writeWord_MD(0x380000, 0);  // Disable BRAM Writes
     // Close the file:
-    closeBlankAndClear();
-    showDoneAndUpdate();
+    finishWriteR63_MD();
   } else {
     fatalSdError();
   }
