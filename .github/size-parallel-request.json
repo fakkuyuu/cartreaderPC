@@ -1,40 +1,40 @@
 {
-  "id": "round63-independent",
-  "base": "a2fb50d4f878d7650ce22e9a7df637aaa0bfd876",
-  "expected_base_flash": 203930,
+  "id": "round64-independent",
+  "base": "4b49f56e475a146b14d8d6920bc0c7e0452cb11c",
+  "expected_base_flash": 203914,
   "expected_base_ram": 6059,
   "candidates": [
     {
-      "id": "nes-a29040-title",
-      "head": "6f1e1f2395f9ea93b85e83e7af3d5d4f36cf22af"
+      "id": "nes-m235-loop",
+      "head": "304ad4538518fbbd5e90e292a13ab969090e2b2a"
     },
     {
-      "id": "ws-verify-report",
-      "head": "16fac9b98e128fef6b3c51daffff8d473cd3bbed"
+      "id": "nes-m5-chr-upper",
+      "head": "b25e90b1dfa56e591d76428f5f9e8fae238f5854"
     },
     {
-      "id": "snes-spc7110-map",
-      "head": "1c30f06703bffa8be090cae28d046df2bb5a1769"
+      "id": "nes-m45-chr-loop",
+      "head": "540a083a7167991fd8c9acc028af4e56afc27cab"
     },
     {
-      "id": "nes-chr-unlock",
-      "head": "944f7e599aec7015051b49a6b8527829975093ca"
+      "id": "nes-conflict-scan",
+      "head": "71d8c2c95ba02c82a0b3daae052e025f2c132410"
     },
     {
-      "id": "gb-mbc6-error-cleanup",
-      "head": "8934f2c6281f92b1f852c949bab941afbda4f4a2"
+      "id": "nes-vrc-chr-loop",
+      "head": "135676625240434af04bd47c12602347960c8602"
     },
     {
-      "id": "md-read-finish",
-      "head": "cb42affde52d1a96fc17fca805d5cee8f778b1c4"
+      "id": "gb-flash-noinline",
+      "head": "ba750cb228b0e41897192542def7c2ed2a9abc99"
     },
     {
-      "id": "md-write-finish",
-      "head": "13f10246e84e3fed3c41af387b3115e5ae91e346"
+      "id": "gba-flash-noinline",
+      "head": "fdacf9664fca3e5afe1bf22c6083796a28066e43"
     },
     {
-      "id": "n64-repro-warning",
-      "head": "77cc4253cf6e6e53f4dc7b744c0ec80c180cc621"
+      "id": "n64-flash-buffer-noinline",
+      "head": "f374bc211232c52e5f7bef4108823c36ba8d0455"
     }
   ]
 }
