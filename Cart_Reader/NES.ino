@@ -5042,16 +5042,19 @@ void A29040B_PRG_ChipErase() {
 
 // CHR ================================================
 
+static void __attribute__((noinline)) unlockChrR63_NES() {
+  write_chr_byte(0x0555, 0xAA);
+  write_chr_byte(0x02AA, 0x55);
+}
+
 void A29040B_CHR_ResetFlash() {  // Reset Flash
-  write_chr_byte(0x0555, 0xAA);  // Original address for CHR
-  write_chr_byte(0x02AA, 0x55);  // Original address for CHR
+  unlockChrR63_NES();
   write_chr_byte(0x0555, 0xF0);  // Reset command with original address
   delayMicroseconds(14);         // Typical 14us
 }
 
 void A29040B_CHR_Write(uint16_t address, uint8_t data) {
-  write_chr_byte(0x0555, 0xAA);   // Original address for CHR
-  write_chr_byte(0x02AA, 0x55);   // Original address for CHR
+  unlockChrR63_NES();
   write_chr_byte(0x0555, 0xA0);   // Program command with original address
   write_chr_byte(address, data);  // CHR address range (0x0000 - 0x1FFF)
   delayMicroseconds(20);          // Typical 14us
@@ -5060,11 +5063,9 @@ void A29040B_CHR_Write(uint16_t address, uint8_t data) {
 
 void A29040B_CHR_SectorErase(uint16_t sec) {
   if (flashfound) {
-    write_chr_byte(0x0555, 0xAA);  // Original address for CHR
-    write_chr_byte(0x02AA, 0x55);  // Original address for CHR
+    unlockChrR63_NES();
     write_chr_byte(0x0555, 0x80);  // Erase Setup with original address
-    write_chr_byte(0x0555, 0xAA);  // Original address for CHR
-    write_chr_byte(0x02AA, 0x55);  // Original address for CHR
+    unlockChrR63_NES();
     write_chr_byte(sec, 0x30);     // Sector Erase Command with sector address
     delay(1000);                   // WAIT MORE
   } else {
@@ -5074,11 +5075,9 @@ void A29040B_CHR_SectorErase(uint16_t sec) {
 
 void A29040B_CHR_ChipErase() {
   if (flashfound) {
-    write_chr_byte(0x0555, 0xAA);  // Original address for CHR
-    write_chr_byte(0x02AA, 0x55);  // Original address for CHR
+    unlockChrR63_NES();
     write_chr_byte(0x0555, 0x80);  // Erase Setup with original address
-    write_chr_byte(0x0555, 0xAA);  // Original address for CHR
-    write_chr_byte(0x02AA, 0x55);  // Original address for CHR
+    unlockChrR63_NES();
     write_chr_byte(0x0555, 0x10);  // Chip Erase Command with original address
     delay(8000);                   // WAIT MORE
   } else {
