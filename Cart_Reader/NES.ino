@@ -3624,9 +3624,22 @@ void readCHR(bool readrom) {
           break;
 
         case 21:  // 128K/256K
-          banks = chrBanks4K * 4;
-          dumpVrcChrR64_NES(banks, chrsize == 5 ? 0xB002 : 0xB040, 0xF);
+        case 25:  // 128K/256K
+        case 27:
+        case 252:
+        case 253: {
+          word reg;
+          byte mask;
+          if (mapper == 21 || mapper == 25) {
+            reg = mapper == 25 ? 0xB00A : (chrsize == 5 ? 0xB002 : 0xB040);
+            mask = 0xF;
+          } else {
+            reg = mapper == 27 ? 0xB001 : 0xB004;
+            mask = 0xFF;
+          }
+          dumpVrcChrR64_NES(chrBanks4K * 4, reg, mask);
           break;
+        }
 
 
         case 22:  // 128K
@@ -3662,17 +3675,9 @@ void readCHR(bool readrom) {
           dumpSequentialCHRBanks(banks, 0xD000, 0, 0x400);
           break;
 
-        case 25:  // 128K/256K
-          banks = chrBanks4K * 4;
-          dumpVrcChrR64_NES(banks, 0xB00A, 0xF);
-          break;
 
 
 
-        case 27:
-          banks = chrBanks4K * 4;
-          dumpVrcChrR64_NES(banks, 0xB001, 0xFF);
-          break;
 
         case 32:  // 128K
         case 65:  // 128K/256K
@@ -4089,11 +4094,6 @@ void readCHR(bool readrom) {
           }
           break;
 
-        case 252:
-        case 253:
-          banks = chrBanks4K * 4;
-          dumpVrcChrR64_NES(banks, 0xB004, 0xFF);
-          break;
 
         case 261:
           banks = chrBanks4K / 2;
