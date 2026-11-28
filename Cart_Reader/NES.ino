@@ -4343,20 +4343,16 @@ static void enableDefaultSram_NES(bool writing) {
 void writeBankWRAM(const size_t from, const size_t to, const size_t base);
 static void visitMmc6Sram_NES(word base, bool writing) __attribute__((noinline));
 static void visitMmc6Sram_NES(word base, bool writing) {
-  write_prg_byte(0x8000, 0x20);
-  write_prg_byte(0xA001, writing ? 0x30 : 0x20);
-  if (writing)
-    writeBankWRAM(0x1000, 0x1200, base);
-  else
-    dumpMMC5RAM(base, 0x1000);
-
-  write_prg_byte(0x8000, 0x20);
-  write_prg_byte(0xA001, writing ? 0xC0 : 0x80);
-  if (writing)
-    writeBankWRAM(0x1200, 0x1400, base);
-  else
-    dumpMMC5RAM(base, 0x1200);
-
+  byte access = writing ? 0x30 : 0x20;
+  for (word address = 0x1000; address < 0x1400; address += 512) {
+    write_prg_byte(0x8000, 0x20);
+    write_prg_byte(0xA001, access);
+    if (writing)
+      writeBankWRAM(address, address + 512, base);
+    else
+      dumpMMC5RAM(base, address);
+    access <<= 2;
+  }
   write_prg_byte(0x8000, 6);
 }
 
