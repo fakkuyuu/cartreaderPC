@@ -1052,6 +1052,14 @@ static void write_prg_byte(unsigned int address, uint8_t data) {
   //  _delay_us(1);
 }
 
+static void write_prg_byte(unsigned int, uint8_t);
+static void writeNESRegister800D(uint8_t data) __attribute__((noinline));
+static void writeNESRegister800D(uint8_t data) {
+  write_prg_byte(0x800D, data);
+}
+
+
+
 static void __attribute__((noinline)) writeMmc3PairR59_NES(byte reg, byte value) {
   writeNESRegister8000(reg);
   write_prg_byte(0x8001, value);
@@ -4239,7 +4247,7 @@ static void enableDefaultSram_NES(bool writing) {
   } else if (mapper == 85)         // 8K
     write_ram_byte(0xE000, 0x80);  // PRG RAM ENABLE
   else if (mapper == 153)          // 8K
-    write_prg_byte(0x800D, 0x20);  // PRG RAM Chip Enable
+    writeNESRegister800D(0x20);  // PRG RAM Chip Enable
 }
 
 void writeBankWRAM(const size_t from, const size_t to, const size_t base);
@@ -4546,52 +4554,52 @@ void resetEEPROM() {
 }
 
 void EepromStart_NES() {
-  write_prg_byte(0x800D, 0x00);  // sda low, scl low
-  write_prg_byte(0x800D, 0x60);  // sda, scl high
-  write_prg_byte(0x800D, 0x20);  // sda low, scl high
-  write_prg_byte(0x800D, 0x00);  // START
+  writeNESRegister800D(0x00);  // sda low, scl low
+  writeNESRegister800D(0x60);  // sda, scl high
+  writeNESRegister800D(0x20);  // sda low, scl high
+  writeNESRegister800D(0x00);  // START
 }
 
 void EepromStop_NES() {
-  write_prg_byte(0x800D, 0x00);  // sda, scl low
-  write_prg_byte(0x800D, 0x20);  // sda low, scl high
-  write_prg_byte(0x800D, 0x60);  // sda, scl high
-  write_prg_byte(0x800D, 0x40);  // sda high, scl low
-  write_prg_byte(0x800D, 0x00);  // STOP
+  writeNESRegister800D(0x00);  // sda, scl low
+  writeNESRegister800D(0x20);  // sda low, scl high
+  writeNESRegister800D(0x60);  // sda, scl high
+  writeNESRegister800D(0x40);  // sda high, scl low
+  writeNESRegister800D(0x00);  // STOP
 }
 
 void EepromSet0_NES() {
-  write_prg_byte(0x800D, 0x00);  // sda low, scl low
-  write_prg_byte(0x800D, 0x20);  // sda low, scl high // 0
-  write_prg_byte(0x800D, 0x00);  // sda low, scl low
+  writeNESRegister800D(0x00);  // sda low, scl low
+  writeNESRegister800D(0x20);  // sda low, scl high // 0
+  writeNESRegister800D(0x00);  // sda low, scl low
 }
 
 void EepromSet1_NES() {
-  write_prg_byte(0x800D, 0x40);  // sda high, scl low
-  write_prg_byte(0x800D, 0x60);  // sda high, scl high // 1
-  write_prg_byte(0x800D, 0x40);  // sda high, scl low
-  write_prg_byte(0x800D, 0x00);  // sda low, scl low
+  writeNESRegister800D(0x40);  // sda high, scl low
+  writeNESRegister800D(0x60);  // sda high, scl high // 1
+  writeNESRegister800D(0x40);  // sda high, scl low
+  writeNESRegister800D(0x00);  // sda low, scl low
 }
 
 void EepromStatus_NES() {        // ACK
-  write_prg_byte(0x800D, 0x40);  // sda high, scl low
-  write_prg_byte(0x800D, 0x60);  // sda high, scl high
-  write_prg_byte(0x800D, 0xE0);  // sda high, scl high, read high
+  writeNESRegister800D(0x40);  // sda high, scl low
+  writeNESRegister800D(0x60);  // sda high, scl high
+  writeNESRegister800D(0xE0);  // sda high, scl high, read high
   uint8_t eepStatus = 1;
   do {
     eepStatus = (read_prg_byte(0x6000) & 0x10) >> 4;
     delayMicroseconds(4);
   } while (eepStatus == 1);
-  write_prg_byte(0x800D, 0x40);  // sda high, scl low
+  writeNESRegister800D(0x40);  // sda high, scl low
 }
 
 void EepromReadData_NES() {
   // read serial data into buffer
   for (uint8_t i = 0; i < 8; i++) {
-    write_prg_byte(0x800D, 0x60);                     // sda high, scl high, read low
-    write_prg_byte(0x800D, 0xE0);                     // sda high, scl high, read high
+    writeNESRegister800D(0x60);                     // sda high, scl high, read low
+    writeNESRegister800D(0xE0);                     // sda high, scl high, read high
     eepbit[i] = (read_prg_byte(0x6000) & 0x10) >> 4;  // Read 0x6000 with Mask 0x10 (bit 4)
-    write_prg_byte(0x800D, 0x40);                     // sda high, scl low
+    writeNESRegister800D(0x40);                     // sda high, scl low
   }
 }
 
@@ -4615,7 +4623,7 @@ void EepromWriteMode_NES() {
 }
 
 void EepromFinish_NES() {
-  write_prg_byte(0x800D, 0x00);  // sda low, scl low
+  writeNESRegister800D(0x00);  // sda low, scl low
   EepromSet1_NES();
 }
 
