@@ -2535,10 +2535,8 @@ void readPRG(bool readrom) {
       case 40:
         dumpSequentialPRGBanks(prgBanks16K * 2, 0xFFFF, 0, 0x6000, base, 0x4000);
         if (prgsize > 2) {
-          write_prg_byte(0xC018, 0);
-          dumpPRG32KiB(base);
-          write_prg_byte(0xC058, 0);
-          dumpPRG32KiB(base);
+          writeAndDump235R64_NES(0xC018, base);
+          writeAndDump235R64_NES(0xC058, base);
         }
         break;
 
