@@ -1523,10 +1523,12 @@ chooseMapper:
     newmapper = hundreds * 100 + tens * 10 + units;
 
   // Check if valid
-  bool validMapper = 0;
+  bool validMapper = false;
   for (uint8_t currMaplist = 0; currMaplist < mapcount; currMaplist++) {
-    if (pgm_read_word(mapsize + currMaplist) == newmapper)
-      validMapper = 1;
+    if (pgm_read_word(mapsize + currMaplist) == newmapper) {
+      validMapper = true;
+      break;
+    }
   }
 
   if (!validMapper) {
