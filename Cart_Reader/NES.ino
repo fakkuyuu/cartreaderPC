@@ -2114,6 +2114,11 @@ static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {
   write_prg_byte(0x6001, b);
 }
 
+static void __attribute__((noinline)) writeTwiceR65_NES(word address, byte value) {
+  write_prg_byte(address, value);
+  write_prg_byte(address, value);
+}
+
 static void __attribute__((noinline)) writePair8AR61_NES(byte a, byte b) {
   write_prg_byte(0x8000, a);
   write_prg_byte(0xA000, b);
@@ -2553,8 +2558,7 @@ void readPRG(bool readrom) {
       case 41:
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x6000 + i, 0);
-          write_prg_byte(0x6000 + i, 0);
+          writeTwiceR65_NES(0x6000 + i, 0);
           dumpPRG32KiB(base);
         }
         break;
@@ -3404,11 +3408,6 @@ static void __attribute__((noinline)) dumpMaskedChrR65_NES(word banks, word reg,
     write_prg_byte(reg, i & mask);
     dumpBankCHR(0, bankSize);
   }
-}
-
-static void __attribute__((noinline)) writeTwiceR65_NES(word address, byte value) {
-  write_prg_byte(address, value);
-  write_prg_byte(address, value);
 }
 
 static void __attribute__((noinline)) dumpAddrChrR66_NES(word banks, word mask, byte shift) {
