@@ -1080,7 +1080,7 @@ static void __attribute__((noinline)) writeMbc6ModeR61_GB(byte a) {
   writeByte_GB(0x3800, a);
 }
 
-void readROM_GB() {
+void __attribute__((noinline)) readROM_GB() {
   // Get name, add extension and convert to char array for sd lib
   createFolderAndOpenFile("GB", "ROM", romName, "gb");
 
