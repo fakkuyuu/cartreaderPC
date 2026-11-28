@@ -803,6 +803,11 @@ static void writeGBRegister7FE1(byte data) {
 
 
 
+static void writeGBRegister2100(byte data) __attribute__((noinline));
+static void writeGBRegister2100(byte data) {
+  writeByte_GB(0x2100, data);
+}
+
 void writeByte_GB(int myAddress, byte myData, boolean audio_as_WE) {
   // Set address
   PORTF = myAddress & 0xFF;
@@ -1217,7 +1222,7 @@ void readROM_GB() {
         if ((romType >= 0x19 && romType <= 0x1E) && (currBank == 0 || currBank == 256)) {
           writeGBRegister3000( (currBank >> 8) & 0xFF);
         }
-        writeByte_GB(0x2100, currBank & 0xFF);
+        writeGBRegister2100( currBank & 0xFF);
       }
     }
     // Set ROM bank for MBC1
@@ -2108,7 +2113,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
         blinkLED();
 
         // Set ROM bank
-        writeByte_GB(0x2100, currBank);
+        writeGBRegister2100( currBank);
         if (romBanks > 128)
           // Map SRAM Bank to prevent getting stuck at 0x2A8000
           writeGBRegister4000(0x0);
@@ -2280,7 +2285,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
       for (word bank = 1; bank < romBanks; bank++) {
         if (MBC > 0) {
           if (romType >= 5) {                   // MBC2 and above
-            writeByte_GB(0x2100, bank);         // Set ROM bank
+            writeGBRegister2100( bank);         // Set ROM bank
           } else {                              // MBC1
             writeGBRegister6000(0);            // Set ROM Mode
             writeGBRegister4000(bank >> 5);    // Set bits 5 & 6 (01100000) of ROM bank
@@ -2525,7 +2530,7 @@ bool writeCFI_GB() {
       blinkLED();
 
       // Set ROM bank
-      writeByte_GB(0x2100, currBank);
+      writeGBRegister2100( currBank);
       // 0x2A8000 fix
       writeGBRegister4000(0x0);
 
@@ -2586,7 +2591,7 @@ bool writeCFI_GB() {
     // Read number of banks and switch banks
     for (word bank = 1; bank < romBanks; bank++) {
       if (romType >= 5) {                   // MBC2 and above
-        writeByte_GB(0x2100, bank);         // Set ROM bank
+        writeGBRegister2100( bank);         // Set ROM bank
       } else {                              // MBC1
         writeGBRegister6000(0);            // Set ROM Mode
         writeGBRegister4000(bank >> 5);    // Set bits 5 & 6 (01100000) of ROM bank
