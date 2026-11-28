@@ -2380,13 +2380,15 @@ void readPRG(bool readrom) {
       case 177:  // up to 1024K
       case 241:
         banks = prgBanks16K / 2;
-        for (size_t i = 0; i < banks; i++) {  // 32K Banks
-          if (mapper == 34) {
+        if (mapper == 34) {
+          for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x7FFD, i);  // NINA Bank select
             delay(200);                 // NINA seems slow to switch banks
+            write_prg_byte(0x8000, i);
+            dumpPRG32KiB(base);
           }
-          write_prg_byte(0x8000, i);
-          dumpPRG32KiB(base);  // 32K Banks ($8000-$FFFF)
+        } else {
+          dumpSequentialPRGBanks(banks, 0x8000, 0, 0x8000, base);
         }
         break;
 
