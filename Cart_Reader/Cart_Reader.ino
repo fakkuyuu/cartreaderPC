@@ -88,6 +88,7 @@ void showClockGeneratorMissing() __attribute__((noinline, noreturn));
 void setup_GBA() __attribute__((noinline));
 void showNoSramError() __attribute__((noinline));
 void blankLineAndUpdate() __attribute__((noinline));
+void getCartInfo_N64() __attribute__((noinline));
 void showWritingFlashAndUpdate() __attribute__((noinline));
 void showFileNameAndUpdate() __attribute__((noinline));
 void closeAndClearDisplay() __attribute__((noinline));
