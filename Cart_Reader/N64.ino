@@ -2979,6 +2979,11 @@ void savesummary_N64(boolean checkfound, char crcStr[9], unsigned long timeElaps
 /******************************************
    N64 Repro Flashrom Functions
  *****************************************/
+static void __attribute__((noinline)) showReproWarningR63_N64() {
+  showEraseReproWarning();
+  println_Msg(FS(SharedFlashText::textAttentionUse33V));
+}
+
 void flashRepro_N64() {
   unsigned long sectorSize = 0;
   byte bufferSize = 0;
@@ -3020,8 +3025,7 @@ void flashRepro_N64() {
     print_Msg(cartSize);
     println_Msg(FS(SharedFlashText::unitMB));
     println_Msg("");
-    showEraseReproWarning();
-    println_Msg(FS(SharedFlashText::textAttentionUse33V));
+    showReproWarningR63_N64();
     println_Msg("");
     // Prints string out of the common strings array either with or without newline
     promptAndWaitForButton();
@@ -3036,8 +3040,7 @@ void flashRepro_N64() {
     println_Msg(FS(FSTRING_SPACE));
     println_Msg(FS(SharedFlashText::textPressButtonFor));
     println_Msg(F("manual config"));
-    showEraseReproWarning();
-    println_Msg(FS(SharedFlashText::textAttentionUse33V));
+    showReproWarningR63_N64();
     updateDisplayAndWait();
 
     // clear IDs
