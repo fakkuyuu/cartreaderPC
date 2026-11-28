@@ -488,6 +488,12 @@ void gbxMenu() {
   }
 }
 
+void writeByte_GB(int, byte);
+static void writeGBRegister0000(uint8_t data) __attribute__((noinline));
+static void writeGBRegister0000(uint8_t data) {
+  writeByte_GB(0x0000, data);
+}
+
 void gbMenu() {
   // create menu with title and 4 options to choose from
   unsigned char mainMenu;
@@ -1337,7 +1343,7 @@ void readSRAM_GB() {
     }
 
     // Initialise MBC
-    writeByte_GB(0x0000, 0x0A);
+    writeGBRegister0000(0x0A);
 
     // Switch SRAM banks
     for (byte currBank = 0; currBank < sramBanks; currBank++) {
@@ -1350,7 +1356,7 @@ void readSRAM_GB() {
     }
 
     // Disable SRAM
-    writeByte_GB(0x0000, 0x00);
+    writeGBRegister0000(0x00);
 
     // Close the file:
     closeCurrentFile();
@@ -1389,7 +1395,7 @@ void writeSRAM_GB() {
       }
 
       // Initialise MBC
-      writeByte_GB(0x0000, 0x0A);
+      writeGBRegister0000(0x0A);
 
       // Switch RAM banks
       for (byte currBank = 0; currBank < sramBanks; currBank++) {
@@ -1399,7 +1405,7 @@ void writeSRAM_GB() {
         writeSramFileBank_GB();
       }
       // Disable SRAM
-      writeByte_GB(0x0000, 0x00);
+      writeGBRegister0000(0x00);
 
       // Close the file:
       closeAndClearDisplay();
@@ -1433,7 +1439,7 @@ unsigned long verifySRAM_GB() {
       }
 
       // Initialise MBC
-      writeByte_GB(0x0000, 0x0A);
+      writeGBRegister0000(0x0A);
 
       // Switch SRAM banks
       for (byte currBank = 0; currBank < sramBanks; currBank++) {
@@ -1445,7 +1451,7 @@ unsigned long verifySRAM_GB() {
         }
       }
       // Disable RAM
-      writeByte_GB(0x0000, 0x00);
+      writeGBRegister0000(0x00);
     }
     // Close the file:
     closeCurrentFile();
@@ -1475,7 +1481,7 @@ void readSRAMFLASH_MBC6_GB() {
   startProgressBar(totalProgressBar);
 
   // Enable Mapper and SRAM
-  writeByte_GB(0x0000, 0x0A);
+  writeGBRegister0000(0x0A);
 
   // Switch SRAM banks
   for (byte currBank = 0; currBank < sramBanks; currBank++) {
@@ -1491,7 +1497,7 @@ void readSRAMFLASH_MBC6_GB() {
   }
 
   // Disable SRAM
-  writeByte_GB(0x0000, 0x00);
+  writeGBRegister0000(0x00);
 
   enableMbc6FlashSave_GB(0x00);
 
@@ -1552,7 +1558,7 @@ void writeSRAMFLASH_MBC6_GB() {
     startProgressBar(totalProgressBar);
 
     // Enable Mapper and SRAM
-    writeByte_GB(0x0000, 0x0A);
+    writeGBRegister0000(0x0A);
 
     // Switch SRAM banks
     for (byte currBank = 0; currBank < sramBanks; currBank++) {
@@ -1567,7 +1573,7 @@ void writeSRAMFLASH_MBC6_GB() {
     }
 
     // Disable SRAM
-    writeByte_GB(0x0000, 0x00);
+    writeGBRegister0000(0x00);
 
     enableMbc6FlashSave_GB(0x01);
 
@@ -1638,7 +1644,7 @@ void writeSRAMFLASH_MBC6_GB() {
 static void enableMbc7Eeprom_GB() __attribute__((noinline));
 static void enableMbc7Eeprom_GB() {
   // enable 0xa000 - 0xbfff access
-  writeByte_GB(0x0000, 0x0a);
+  writeGBRegister0000(0x0a);
   writeGBRegister4000(0x40);
 
   // set CS high
@@ -1675,7 +1681,7 @@ void readEEPROM_MBC7_GB() {
 
   // deselect chip and ram access
   writeByte_GB(0xa080, 0x00);
-  writeByte_GB(0x0000, 0x00);
+  writeGBRegister0000(0x00);
   writeGBRegister4000(0x00);
 
   myFile.write(sdBuffer, lastByte);
@@ -1745,7 +1751,7 @@ void writeEEPROM_MBC7_GB() {
   writeByte_GB(0xa080, 0x00);
 
   // disable ram access
-  writeByte_GB(0x0000, 0x00);
+  writeGBRegister0000(0x00);
   writeGBRegister4000(0x00);
 
   // done
