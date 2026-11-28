@@ -423,7 +423,7 @@ static void readPairedRomR40_MSX(int banks) {
   }
 }
 
-void readROM_MSX() {
+void __attribute__((noinline)) readROM_MSX() {
   if (msxsize == 0) {
     display_Clear();
     println_Msg(FS(SharedFlashText::textROMSIZE0K));
