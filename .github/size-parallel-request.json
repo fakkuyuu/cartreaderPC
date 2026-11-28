@@ -1,98 +1,54 @@
 {
-  "id": "round81-auto",
-  "base": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
-  "expected_base_flash": 201738,
+  "id": "round81b-auto",
+  "base": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+  "expected_base_flash": 201730,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "r81-gb-2100",
-      "head": "a5232164f4280447ace832c9e50a9ed371b1fe7f",
-      "reviewed": true,
-      "target": "GB",
-      "functions": [
-        "writeByte_GB",
-        "writeGBRegister2100"
-      ],
-      "description": "Share fixed 0x2100 writes; 5 exact-address call sites."
-    },
-    {
-      "id": "r81-gb-7555",
-      "head": "5cb8c796e5b7796fe8ae8ea152a5607b23ddf596",
+      "id": "r81b-gb-7555",
+      "head": "9ec4bfc6e05c6c2f4b45b3d817c652372c765f34",
       "reviewed": true,
       "target": "GB",
       "functions": [
         "writeByte_GB",
         "writeGBRegister7555"
       ],
-      "description": "Share fixed 0x7555 writes; 4 exact-address call sites."
+      "description": "Resubmitted fixed 0x7555 wrapper against Round81 accepted firmware; 4 exact calls.",
+      "resubmission": {
+        "original_run_id": "46137434350",
+        "original_candidate_id": "r81-gb-7555",
+        "original_candidate_sha": "5cb8c796e5b7796fe8ae8ea152a5607b23ddf596",
+        "original_independent_flash_delta": -6,
+        "conflict_files": [
+          "Cart_Reader/GB.ino"
+        ],
+        "conflict_onto": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+        "target_base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
+      }
     },
     {
-      "id": "r81-gb-1000",
-      "head": "fe45505fcb0873bf7e87e6580e19e3b67ec23b30",
+      "id": "r81b-gb-1000",
+      "head": "e458d9e0f81d5682ae3f067f5865cd63be001952",
       "reviewed": true,
       "target": "GB",
       "functions": [
         "writeByte_GB",
         "writeGBRegister1000"
       ],
-      "description": "Share fixed 0x1000 writes; 4 exact-address call sites."
-    },
-    {
-      "id": "r81-gb-4aaa",
-      "head": "c95d8975ef33790492f07eff67dd69474a0bd981",
-      "reviewed": true,
-      "target": "GB",
-      "functions": [
-        "writeByte_GB",
-        "writeGBRegister4AAA"
-      ],
-      "description": "Share fixed 0x4AAA writes; 3 exact-address call sites."
-    },
-    {
-      "id": "r81-nes-9555",
-      "head": "dab6a70c67bf7d374afdbf342a35f117549899ba",
-      "reviewed": true,
-      "target": "NES",
-      "functions": [
-        "write_prg_byte",
-        "writeNESRegister9555"
-      ],
-      "description": "Share fixed 0x9555 writes; 16 exact-address call sites."
-    },
-    {
-      "id": "r81-nes-aaaa",
-      "head": "4ec6f931b0e73042ac678bc11ac93cad7b187a61",
-      "reviewed": true,
-      "target": "NES",
-      "functions": [
-        "write_prg_byte",
-        "writeNESRegisterAAAA"
-      ],
-      "description": "Share fixed 0xAAAA writes; 9 exact-address call sites."
-    },
-    {
-      "id": "r81-nes-6800",
-      "head": "3163c281f47194b630ea749704a797cfad9fd096",
-      "reviewed": true,
-      "target": "NES",
-      "functions": [
-        "write_prg_byte",
-        "writeNESRegister6800"
-      ],
-      "description": "Share fixed 0x6800 writes; 6 active exact-address call sites; commented call excluded."
-    },
-    {
-      "id": "r81-nes-5001",
-      "head": "3267bdfb04aeee0918287413368eaca95a068841",
-      "reviewed": true,
-      "target": "NES",
-      "functions": [
-        "write_prg_byte",
-        "writeNESRegister5001"
-      ],
-      "description": "Share fixed 0x5001 writes; 4 exact-address call sites."
+      "description": "Resubmitted fixed 0x1000 wrapper against Round81 accepted firmware; 4 exact calls.",
+      "resubmission": {
+        "original_run_id": "46137434350",
+        "original_candidate_id": "r81-gb-1000",
+        "original_candidate_sha": "fe45505fcb0873bf7e87e6580e19e3b67ec23b30",
+        "original_independent_flash_delta": -6,
+        "conflict_files": [
+          "Cart_Reader/GB.ino"
+        ],
+        "conflict_onto": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+        "target_base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
+      }
     }
   ]
 }
