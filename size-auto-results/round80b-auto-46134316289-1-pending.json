@@ -1,0 +1,54 @@
+[
+  {
+    "expected_base_ram": 6059,
+    "original_base": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "independent_flash_delta": -10,
+    "id": "r80b-nes-6001",
+    "expected_base_flash": 201750,
+    "conflict_onto": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
+    "original_head": "685d639cae05b9e4e987a5870297359843e93e27",
+    "independent_ram_delta": 0,
+    "paths": [
+      "Cart_Reader/NES.ino"
+    ],
+    "resubmission": {
+      "original_run_id": "46133264369",
+      "original_candidate_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+      "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+      "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+      "conflict_files": [
+        "Cart_Reader/NES.ino"
+      ],
+      "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27"
+    },
+    "rebase_onto_firmware": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3"
+  },
+  {
+    "expected_base_ram": 6059,
+    "original_base": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "independent_flash_delta": -2,
+    "id": "r80b-msx-6000",
+    "expected_base_flash": 201750,
+    "conflict_onto": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+    "original_head": "947f388154f0e923ea2f682118c3e95300dad5c6",
+    "independent_ram_delta": 0,
+    "paths": [
+      "Cart_Reader/MSX.ino"
+    ],
+    "resubmission": {
+      "original_run_id": "46133264369",
+      "original_candidate_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+      "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+      "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+      "conflict_files": [
+        "Cart_Reader/MSX.ino"
+      ],
+      "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6"
+    },
+    "rebase_onto_firmware": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3"
+  }
+]

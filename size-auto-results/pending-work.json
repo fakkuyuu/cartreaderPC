@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "description": "Canonical queue for unresolved automatic size-reduction work. New chats should process only items whose status is pending or needs_human.",
-  "updated_by_run_id": "46133264369",
+  "updated_by_run_id": "46134316289",
   "items": [
     {
       "key": "46129657989/gb-0x0000",
@@ -125,7 +125,7 @@
     },
     {
       "created_by_run_id": "46133264369",
-      "status": "pending",
+      "status": "resolved",
       "key": "46133264369/nes-0xe000",
       "original": {
         "run_id": "46133264369",
@@ -140,11 +140,35 @@
         "pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
         "candidate_id": "nes-0xe000"
       },
-      "candidate_id": "nes-0xe000"
+      "candidate_id": "nes-0xe000",
+      "latest_resubmission": {
+        "run_id": "46134316289",
+        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "measurement_record": "size-measurements/round80b-auto-46134316289-1.json",
+        "integration_record": "size-auto-results/round80b-auto-46134316289-1.json",
+        "accepted_commit": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
+        "decision": "adopted",
+        "request_id": "round80b-auto",
+        "candidate_sha": "943ad5596bc335a9fcd3afd6d1f5a1cbe8a6fd2a"
+      },
+      "result": {
+        "final_ram": 6059,
+        "hardware_validation": "pending",
+        "independent_flash_delta": -14,
+        "final_firmware_commit": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "incremental_flash_delta": -14,
+        "incremental_ram_delta": 0,
+        "decision": "adopted",
+        "independent_ram_delta": 0,
+        "accepted_commit": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
+        "reason": "Neither resource increased and at least one decreased",
+        "final_flash": 201750
+      },
+      "updated_by_run_id": "46134316289"
     },
     {
       "created_by_run_id": "46133264369",
-      "status": "pending",
+      "status": "resolved",
       "key": "46133264369/msx-0xa000",
       "original": {
         "run_id": "46133264369",
@@ -159,11 +183,35 @@
         "pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
         "candidate_id": "msx-0xa000"
       },
-      "candidate_id": "msx-0xa000"
+      "candidate_id": "msx-0xa000",
+      "latest_resubmission": {
+        "run_id": "46134316289",
+        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "measurement_record": "size-measurements/round80b-auto-46134316289-1.json",
+        "integration_record": "size-auto-results/round80b-auto-46134316289-1.json",
+        "accepted_commit": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "decision": "adopted",
+        "request_id": "round80b-auto",
+        "candidate_sha": "292511b7ffa5f62373e45c3bfa270747ea124877"
+      },
+      "result": {
+        "final_ram": 6059,
+        "hardware_validation": "pending",
+        "independent_flash_delta": -2,
+        "final_firmware_commit": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "incremental_flash_delta": -2,
+        "incremental_ram_delta": 0,
+        "decision": "adopted",
+        "independent_ram_delta": 0,
+        "accepted_commit": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "reason": "Neither resource increased and at least one decreased",
+        "final_flash": 201750
+      },
+      "updated_by_run_id": "46134316289"
     },
     {
       "created_by_run_id": "46133264369",
-      "status": "pending",
+      "status": "resolved",
       "key": "46133264369/gb-0x3000",
       "original": {
         "run_id": "46133264369",
@@ -178,7 +226,31 @@
         "pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
         "candidate_id": "gb-0x3000"
       },
-      "candidate_id": "gb-0x3000"
+      "candidate_id": "gb-0x3000",
+      "latest_resubmission": {
+        "run_id": "46134316289",
+        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "measurement_record": "size-measurements/round80b-auto-46134316289-1.json",
+        "integration_record": "size-auto-results/round80b-auto-46134316289-1.json",
+        "accepted_commit": "2dd9aa865b3757868944144206a643d68b99fb9a",
+        "decision": "adopted",
+        "request_id": "round80b-auto",
+        "candidate_sha": "877c39f431ff0e25dcd2789a0e923c0caf377601"
+      },
+      "result": {
+        "final_ram": 6059,
+        "hardware_validation": "pending",
+        "independent_flash_delta": -6,
+        "final_firmware_commit": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "incremental_flash_delta": -6,
+        "incremental_ram_delta": 0,
+        "decision": "adopted",
+        "independent_ram_delta": 0,
+        "accepted_commit": "2dd9aa865b3757868944144206a643d68b99fb9a",
+        "reason": "Neither resource increased and at least one decreased",
+        "final_flash": 201750
+      },
+      "updated_by_run_id": "46134316289"
     },
     {
       "created_by_run_id": "46133264369",
@@ -197,7 +269,26 @@
         "pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
         "candidate_id": "nes-0x6001"
       },
-      "candidate_id": "nes-0x6001"
+      "candidate_id": "nes-0x6001",
+      "latest_resubmission": {
+        "run_id": "46134316289",
+        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "measurement_record": "size-measurements/round80b-auto-46134316289-1.json",
+        "integration_record": "size-auto-results/round80b-auto-46134316289-1.json",
+        "accepted_commit": null,
+        "decision": "pending_conflict",
+        "request_id": "round80b-auto",
+        "candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27"
+      },
+      "latest_conflict": {
+        "conflict_onto_sha": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
+        "files": [
+          "Cart_Reader/NES.ino"
+        ],
+        "rebase_onto_firmware": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27"
+      },
+      "updated_by_run_id": "46134316289"
     },
     {
       "created_by_run_id": "46133264369",
@@ -216,7 +307,26 @@
         "pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
         "candidate_id": "msx-0x6000"
       },
-      "candidate_id": "msx-0x6000"
+      "candidate_id": "msx-0x6000",
+      "latest_resubmission": {
+        "run_id": "46134316289",
+        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "measurement_record": "size-measurements/round80b-auto-46134316289-1.json",
+        "integration_record": "size-auto-results/round80b-auto-46134316289-1.json",
+        "accepted_commit": null,
+        "decision": "pending_conflict",
+        "request_id": "round80b-auto",
+        "candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6"
+      },
+      "latest_conflict": {
+        "conflict_onto_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "files": [
+          "Cart_Reader/MSX.ino"
+        ],
+        "rebase_onto_firmware": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6"
+      },
+      "updated_by_run_id": "46134316289"
     }
   ]
 }
