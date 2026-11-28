@@ -149,6 +149,12 @@ static void setupGbAccessoryMenu() {
   clearAndUpdateDisplay();
 }
 
+void writeByte_GB(int, byte);
+static void writeGBRegisterA080(uint8_t data) __attribute__((noinline));
+static void writeGBRegisterA080(uint8_t data) {
+  writeByte_GB(0xa080, data);
+}
+
 void gbxMenu() {
   // create menu with title and 5 options to choose from
   unsigned char gbType;
@@ -1642,8 +1648,8 @@ static void enableMbc7Eeprom_GB() {
   writeGBRegister4000(0x40);
 
   // set CS high
-  writeByte_GB(0xa080, 0x00);
-  writeByte_GB(0xa080, 0x80);
+  writeGBRegisterA080(0x00);
+  writeGBRegisterA080(0x80);
 }
 
 void readEEPROM_MBC7_GB() {
@@ -1665,8 +1671,8 @@ void readEEPROM_MBC7_GB() {
     *data = 0;
 
     for (uint8_t j = 0; j < 16; j++) {
-      writeByte_GB(0xa080, 0x80);
-      writeByte_GB(0xa080, 0xc0);
+      writeGBRegisterA080(0x80);
+      writeGBRegisterA080(0xc0);
 
       *data <<= 1;
       *data |= (readByte_GB(0xa080) & 0x01);
@@ -1674,7 +1680,7 @@ void readEEPROM_MBC7_GB() {
   }
 
   // deselect chip and ram access
-  writeByte_GB(0xa080, 0x00);
+  writeGBRegisterA080(0x00);
   writeByte_GB(0x0000, 0x00);
   writeGBRegister4000(0x00);
 
@@ -1686,11 +1692,11 @@ void readEEPROM_MBC7_GB() {
 
 static void waitMbc7EepromReady_GB() __attribute__((noinline));
 static void waitMbc7EepromReady_GB() {
-  writeByte_GB(0xa080, 0x00);
-  writeByte_GB(0xa080, 0x80);
+  writeGBRegisterA080(0x00);
+  writeGBRegisterA080(0x80);
   do {
-    writeByte_GB(0xa080, 0x80);
-    writeByte_GB(0xa080, 0xc0);
+    writeGBRegisterA080(0x80);
+    writeGBRegisterA080(0xc0);
   } while ((readByte_GB(0xa080) & 0x01) == 0);
 }
 
@@ -1717,7 +1723,7 @@ void writeEEPROM_MBC7_GB() {
   // unlock EEPROM by sending EWEN instruction
   sendMBC7EEPROM_Inst_GB(0, 0xc0, 0);
   // set CS low
-  writeByte_GB(0xa080, 0x00);
+  writeGBRegisterA080(0x00);
 
   println_Msg(F("Erasing EEPROM..."));
   display_Update();
@@ -1742,7 +1748,7 @@ void writeEEPROM_MBC7_GB() {
 
   // re-lock EEPROM
   sendMBC7EEPROM_Inst_GB(0, 0, 0);
-  writeByte_GB(0xa080, 0x00);
+  writeGBRegisterA080(0x00);
 
   // disable ram access
   writeByte_GB(0x0000, 0x00);
@@ -1756,8 +1762,8 @@ static void sendMbc7Bit_GB() __attribute__((noinline));
 static void sendMbc7Bit_GB() {
   eepbit[0] = (eepbit[1] | 0x80);
   eepbit[1] |= 0xc0;
-  writeByte_GB(0xa080, eepbit[0]);
-  writeByte_GB(0xa080, eepbit[1]);
+  writeGBRegisterA080(eepbit[0]);
+  writeGBRegisterA080(eepbit[1]);
 }
 
 void sendMBC7EEPROM_Inst_GB(uint8_t op, uint8_t addr, uint16_t data) {
@@ -1775,8 +1781,8 @@ void sendMBC7EEPROM_Inst_GB(uint8_t op, uint8_t addr, uint16_t data) {
   }
 
   // send start bit
-  writeByte_GB(0xa080, 0x82);
-  writeByte_GB(0xa080, 0xc2);
+  writeGBRegisterA080(0x82);
+  writeGBRegisterA080(0xc2);
 
   // send op
   for (i = 0; i < 2; i++, op <<= 1) {
