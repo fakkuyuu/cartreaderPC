@@ -1,0 +1,95 @@
+{
+  "schema": 3,
+  "acceptance_policy": "flash_and_ram_nonincreasing_at_least_one_decreases",
+  "id": "round80c-auto",
+  "run_id": "46135155027",
+  "run_attempt": "1",
+  "base": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+  "start": "6e847eadd584ac3042721c3600595435509487de",
+  "dry_run": false,
+  "status": "measured",
+  "candidates": [
+    {
+      "id": "r80c-nes-6001",
+      "head": "536f443394379900ea6d50e9c46f94678e809ac2",
+      "order": 1,
+      "resubmission": {
+        "original_run_id": "46133264369",
+        "original_candidate_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "prior_resubmission_run_id": "46134316289",
+        "prior_resubmission_candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27",
+        "conflict_files": [
+          "Cart_Reader/NES.ino"
+        ],
+        "conflict_onto_sha": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
+        "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "candidate_sha": "536f443394379900ea6d50e9c46f94678e809ac2"
+      },
+      "independent_flash": 201740,
+      "independent_ram": 6059,
+      "independent_delta": -10,
+      "independent_ram_delta": 0,
+      "decision": "adopted",
+      "reason": "Neither resource increased and at least one decreased",
+      "before_flash": 201750,
+      "before_ram": 6059,
+      "trial_flash": 201740,
+      "trial_ram": 6059,
+      "incremental_delta": -10,
+      "incremental_ram_delta": 0,
+      "accepted_commit": "56410c080d2346995d31ea89396f0e563cd31611",
+      "conflict_paths": [],
+      "conflict_onto": null
+    },
+    {
+      "id": "r80c-msx-6000",
+      "head": "b27ce72e15943c7f2a306385f10b817855924ad1",
+      "order": 2,
+      "resubmission": {
+        "original_run_id": "46133264369",
+        "original_candidate_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "prior_resubmission_run_id": "46134316289",
+        "prior_resubmission_candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6",
+        "conflict_files": [
+          "Cart_Reader/MSX.ino"
+        ],
+        "conflict_onto_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "candidate_sha": "b27ce72e15943c7f2a306385f10b817855924ad1"
+      },
+      "independent_flash": 201748,
+      "independent_ram": 6059,
+      "independent_delta": -2,
+      "independent_ram_delta": 0,
+      "decision": "adopted",
+      "reason": "Neither resource increased and at least one decreased",
+      "before_flash": 201740,
+      "before_ram": 6059,
+      "trial_flash": 201738,
+      "trial_ram": 6059,
+      "incremental_delta": -2,
+      "incremental_ram_delta": 0,
+      "accepted_commit": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
+      "conflict_paths": [],
+      "conflict_onto": null
+    }
+  ],
+  "hardware_validation": "pending",
+  "baseline": {
+    "flash": 201750,
+    "ram": 6059
+  },
+  "final": {
+    "flash": 201738,
+    "ram": 6059
+  },
+  "delta": -12,
+  "ram_delta": 0,
+  "firmware_commit": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
+  "pending_count": 0,
+  "pending": []
+}

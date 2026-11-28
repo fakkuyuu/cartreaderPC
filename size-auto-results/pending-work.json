@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "description": "Canonical queue for unresolved automatic size-reduction work. New chats should process only items whose status is pending or needs_human.",
-  "updated_by_run_id": "46134316289",
+  "updated_by_run_id": "46135155027",
   "items": [
     {
       "key": "46129657989/gb-0x0000",
@@ -254,7 +254,7 @@
     },
     {
       "created_by_run_id": "46133264369",
-      "status": "pending",
+      "status": "resolved",
       "key": "46133264369/nes-0x6001",
       "original": {
         "run_id": "46133264369",
@@ -271,14 +271,14 @@
       },
       "candidate_id": "nes-0x6001",
       "latest_resubmission": {
-        "run_id": "46134316289",
-        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "measurement_record": "size-measurements/round80b-auto-46134316289-1.json",
-        "integration_record": "size-auto-results/round80b-auto-46134316289-1.json",
-        "accepted_commit": null,
-        "decision": "pending_conflict",
-        "request_id": "round80b-auto",
-        "candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27"
+        "decision": "adopted",
+        "candidate_sha": "536f443394379900ea6d50e9c46f94678e809ac2",
+        "measurement_record": "size-measurements/round80c-auto-46135155027-1.json",
+        "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "integration_record": "size-auto-results/round80c-auto-46135155027-1.json",
+        "run_id": "46135155027",
+        "accepted_commit": "56410c080d2346995d31ea89396f0e563cd31611",
+        "request_id": "round80c-auto"
       },
       "latest_conflict": {
         "conflict_onto_sha": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
@@ -288,11 +288,24 @@
         "rebase_onto_firmware": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
         "candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27"
       },
-      "updated_by_run_id": "46134316289"
+      "updated_by_run_id": "46135155027",
+      "result": {
+        "final_flash": 201738,
+        "incremental_ram_delta": 0,
+        "hardware_validation": "pending",
+        "independent_ram_delta": 0,
+        "incremental_flash_delta": -10,
+        "final_firmware_commit": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
+        "decision": "adopted",
+        "reason": "Neither resource increased and at least one decreased",
+        "accepted_commit": "56410c080d2346995d31ea89396f0e563cd31611",
+        "independent_flash_delta": -10,
+        "final_ram": 6059
+      }
     },
     {
       "created_by_run_id": "46133264369",
-      "status": "pending",
+      "status": "resolved",
       "key": "46133264369/msx-0x6000",
       "original": {
         "run_id": "46133264369",
@@ -309,14 +322,14 @@
       },
       "candidate_id": "msx-0x6000",
       "latest_resubmission": {
-        "run_id": "46134316289",
-        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "measurement_record": "size-measurements/round80b-auto-46134316289-1.json",
-        "integration_record": "size-auto-results/round80b-auto-46134316289-1.json",
-        "accepted_commit": null,
-        "decision": "pending_conflict",
-        "request_id": "round80b-auto",
-        "candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6"
+        "decision": "adopted",
+        "candidate_sha": "b27ce72e15943c7f2a306385f10b817855924ad1",
+        "measurement_record": "size-measurements/round80c-auto-46135155027-1.json",
+        "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "integration_record": "size-auto-results/round80c-auto-46135155027-1.json",
+        "run_id": "46135155027",
+        "accepted_commit": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
+        "request_id": "round80c-auto"
       },
       "latest_conflict": {
         "conflict_onto_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
@@ -326,7 +339,20 @@
         "rebase_onto_firmware": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
         "candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6"
       },
-      "updated_by_run_id": "46134316289"
+      "updated_by_run_id": "46135155027",
+      "result": {
+        "final_flash": 201738,
+        "incremental_ram_delta": 0,
+        "hardware_validation": "pending",
+        "independent_ram_delta": 0,
+        "incremental_flash_delta": -2,
+        "final_firmware_commit": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
+        "decision": "adopted",
+        "reason": "Neither resource increased and at least one decreased",
+        "accepted_commit": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
+        "independent_flash_delta": -2,
+        "final_ram": 6059
+      }
     }
   ]
 }
