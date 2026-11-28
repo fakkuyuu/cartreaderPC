@@ -344,7 +344,8 @@ def precheck(repo: Path, request_path: Path, ledger_path: Path, out_path: Path) 
             for e in entries:
                 overlap = bool(files.intersection(e.get("files") or []))
                 fn_overlap = bool(functions.intersection(e.get("functions") or []))
-                if overlap and fn_overlap and not candidate_matches(e, identity, head):
+                target_overlap = bool(identity.get("target")) and identity.get("target") == e.get("target")
+                if ((overlap and fn_overlap) or target_overlap) and not candidate_matches(e, identity, head):
                     related.append({"candidate_id": e.get("candidate_id"), "round_id": e.get("round_id"),
                                     "head_sha": e.get("head_sha"), "functions": e.get("functions")})
             row["related_candidates"] = related[:10]
