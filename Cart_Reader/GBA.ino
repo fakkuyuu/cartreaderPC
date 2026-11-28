@@ -986,7 +986,7 @@ static void showRomPadding_GBA(byte value) {
 }
 
 // Dump ROM
-void readROM_GBA() {
+void __attribute__((noinline)) readROM_GBA() {
   createRomFile_GBA();
   const bool needsPadding = cartSize == 0x2000000 && (saveType == 1 || saveType == 2);
   if (needsPadding && myFile.isPc()) {
