@@ -2,7 +2,7 @@ name: Phase 2 parallel independent size candidates
 
 on:
   push:
-    branches: [experiment/size-reduction-phase2]
+    branches: [experiment/size-reduction-phase2, experiment/size-ledger-validation]
     paths:
       - '.github/size-parallel-request.json'
   workflow_dispatch:
@@ -13,6 +13,7 @@ permissions:
 concurrency:
   group: phase2-size-measurement
   cancel-in-progress: false
+  queue: max
 
 jobs:
   prepare:
@@ -20,12 +21,17 @@ jobs:
     outputs:
       candidates: ${{ steps.prepare.outputs.candidates }}
       auto_integrate: ${{ steps.prepare.outputs.auto_integrate }}
+      eligible_count: ${{ steps.prepare.outputs.eligible_count }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - id: prepare
-        shell: python
+        shell: bash
         run: |
-          import json, os, re
+          set -euo pipefail
+          python - <<'PY'
+          import json, re
           from pathlib import Path
           request = json.loads(Path('.github/size-parallel-request.json').read_text())
           assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}', request['id'])
@@ -36,18 +42,66 @@ jobs:
           auto = request.get('auto_integrate', False)
           assert type(auto) is bool and type(request.get('dry_run', False)) is bool
           if auto:
-              assert os.environ['GITHUB_REF'] == 'refs/heads/experiment/size-reduction-phase2'
+              assert __import__('os').environ['GITHUB_REF'] == 'refs/heads/experiment/size-reduction-phase2'
               assert not request.get('endpoints_only', False)
               assert all(x.get('reviewed') is True for x in request['candidates'])
               assert type(request['expected_base_flash']) is int and type(request['expected_base_ram']) is int
-          matrix = []
           for candidate in request['candidates']:
               assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}', candidate['id'])
               assert re.fullmatch(r'[0-9a-f]{40}', candidate['head'])
-              matrix.append(dict(candidate, base=request['base'], expected_base_flash=request['expected_base_flash'], expected_base_ram=request['expected_base_ram'], endpoints_only=request.get('endpoints_only', False)))
+          PY
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' --no-tags
+          git fetch origin refs/heads/experiment/size-measurement-results:refs/remotes/origin/experiment/size-measurement-results
+          RESULTS_WT="$RUNNER_TEMP/size-ledger-results"
+          git worktree add --detach "$RESULTS_WT" refs/remotes/origin/experiment/size-measurement-results
+          mkdir -p "$RUNNER_TEMP/size-ledger-precheck"
+          LEDGER="$RESULTS_WT/size-measurements/candidate-ledger.json"
+          if [[ ! -f "$LEDGER" ]]; then
+            python .github/scripts/size-candidate-ledger.py backfill \
+              --repo "$GITHUB_WORKSPACE" \
+              --measurements-dir "$RESULTS_WT/size-measurements" \
+              --auto-results-dir "$GITHUB_WORKSPACE/size-auto-results" \
+              --out "$LEDGER"
+          fi
+          python .github/scripts/size-candidate-ledger.py precheck \
+            --repo "$GITHUB_WORKSPACE" \
+            --request .github/size-parallel-request.json \
+            --ledger "$LEDGER" \
+            --out "$RUNNER_TEMP/size-ledger-precheck/precheck.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          request = json.loads(Path('.github/size-parallel-request.json').read_text())
+          precheck = json.loads(Path(os.environ['RUNNER_TEMP']) .joinpath('size-ledger-precheck/precheck.json').read_text())
+          matrix = []
+          for candidate in precheck['eligible']:
+              matrix.append(dict(
+                  candidate,
+                  base=request['base'],
+                  expected_base_flash=request.get('expected_base_flash'),
+                  expected_base_ram=request.get('expected_base_ram'),
+                  endpoints_only=request.get('endpoints_only', False),
+              ))
+          eligible_request = dict(request)
+          eligible_request['candidates'] = precheck['eligible']
+          eligible_request['ledger_precheck'] = {
+              'candidate_count': precheck['candidate_count'],
+              'eligible_count': precheck['eligible_count'],
+              'duplicate_count': sum(1 for c in precheck['candidates'] if c['status'] == 'duplicate'),
+          }
+          out = Path(os.environ['RUNNER_TEMP']) / 'size-ledger-precheck'
+          (out / 'eligible-request.json').write_text(json.dumps(eligible_request, indent=2) + '\n')
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               print('candidates=' + json.dumps(matrix, separators=(',', ':')), file=f)
-              print('auto_integrate=' + str(auto).lower(), file=f)
+              print('eligible_count=' + str(len(matrix)), file=f)
+              print('auto_integrate=' + str(bool(request.get('auto_integrate', False))).lower(), file=f)
+          print(f"Ledger precheck: {len(request['candidates'])} submitted, {len(matrix)} eligible, {eligible_request['ledger_precheck']['duplicate_count']} duplicates.")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: size-ledger-precheck
+          path: ${{ runner.temp }}/size-ledger-precheck/
+          if-no-files-found: error
   measure:
     needs: prepare
     strategy:
@@ -231,40 +285,76 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/download-artifact@v4
+        with:
+          name: size-ledger-precheck
+          path: precheck-data
+      - uses: actions/download-artifact@v4
+        if: needs.prepare.outputs.eligible_count != '0'
         with:
           pattern: size-candidate-*
           path: candidate-reports
-      - name: Collect candidate reports
+      - name: Collect candidate reports and duplicate skips
         if: always()
         shell: python
         run: |
           import json, os
           from pathlib import Path
           request = json.loads(Path('.github/size-parallel-request.json').read_text())
-          report = dict(schema=2, mode='parallel-independent', run_id=os.environ['GITHUB_RUN_ID'], run_attempt=os.environ['GITHUB_RUN_ATTEMPT'], workflow_commit=os.environ['GITHUB_SHA'], request=request, status='ok', candidates=[])
+          precheck = json.loads(Path('precheck-data/precheck.json').read_text())
+          pre_by_id = {x['id']: x for x in precheck['candidates']}
+          report = dict(
+              schema=3, mode='parallel-independent',
+              run_id=os.environ['GITHUB_RUN_ID'],
+              run_attempt=os.environ['GITHUB_RUN_ATTEMPT'],
+              workflow_commit=os.environ['GITHUB_SHA'],
+              request=request, ledger_precheck=precheck,
+              status='ok', candidates=[]
+          )
           for candidate in request['candidates']:
-              p = Path('candidate-reports') / ('size-candidate-' + candidate['id']) / 'results.json'
-              try:
-                  r = json.loads(p.read_text(encoding='utf-8-sig'))
-                  assert r['request']['base'] == request['base'] and r['request']['head'] == candidate['head']
-                  assert r['request']['id'] == candidate['id'] and r['run_id'] == report['run_id']
-                  assert len(r['results']) == 2 and r['results'][0]['commit'] == request['base'] and r['results'][1]['commit'] == candidate['head']
-                  r['candidate'] = candidate
-              except Exception as e:
-                  r = dict(candidate=candidate, status='missing_or_invalid', error=str(e), results=[])
-              if r['status'] != 'ok' or r.get('baseline_matches_local') is not True:
+              check = pre_by_id.get(candidate['id'])
+              if check is None:
+                  row = dict(candidate=candidate, status='missing_precheck', error='Candidate absent from ledger precheck', results=[])
                   report['status'] = 'partial_or_failed'
-              report['candidates'].append(r)
+              elif check['status'] == 'duplicate':
+                  row = dict(
+                      candidate=candidate, status='duplicate_skipped',
+                      error=check.get('reason', 'Previously measured identical patch'),
+                      duplicate_matches=check.get('matches', []), results=[]
+                  )
+              elif check['status'] == 'identity_unavailable':
+                  row = dict(candidate=candidate, status='identity_unavailable',
+                             error=check.get('reason', 'Candidate identity unavailable'), results=[])
+                  report['status'] = 'partial_or_failed'
+              else:
+                  p = Path('candidate-reports') / ('size-candidate-' + candidate['id']) / 'results.json'
+                  try:
+                      r = json.loads(p.read_text(encoding='utf-8-sig'))
+                      assert r['request']['base'] == request['base'] and r['request']['head'] == candidate['head']
+                      assert r['request']['id'] == candidate['id'] and r['run_id'] == report['run_id']
+                      assert len(r['results']) == 2
+                      assert r['results'][0]['commit'] == request['base'] and r['results'][1]['commit'] == candidate['head']
+                      r['candidate'] = candidate
+                      row = r
+                  except Exception as e:
+                      row = dict(candidate=candidate, status='missing_or_invalid', error=str(e), results=[])
+                  if row['status'] != 'ok' or row.get('baseline_matches_local') is not True:
+                      report['status'] = 'partial_or_failed'
+              report['candidates'].append(row)
           out = Path('size-measurement-output')
           out.mkdir(exist_ok=True)
           (out / 'results.json').write_text(json.dumps(report, indent=2) + '\n')
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
-              print('| Candidate | Status | Flash B | Delta B |', '| --- | --- | ---: | ---: |', sep='\n', file=f)
+              print('| Candidate | Precheck | Measurement | Flash B | Delta B |', '| --- | --- | --- | ---: | ---: |', sep='\n', file=f)
               for r in report['candidates']:
-                  row = r['results'][-1] if r['results'] else {}
-                  print(f"| {r['candidate']['id']} | {r['status']} | {row.get('flash', '')} | {row.get('delta_base', '')} |", file=f)
-      - name: Publish machine-readable report to dedicated results branch
+                  cid = (r.get('candidate') or {}).get('id', '')
+                  pre = pre_by_id.get(cid, {}).get('status', '')
+                  row = r['results'][-1] if r.get('results') else {}
+                  print(f"| {cid} | {pre} | {r['status']} | {row.get('flash', '')} | {row.get('delta_base', '')} |", file=f)
+          print(f"Ledger precheck skipped {sum(1 for x in report['candidates'] if x['status'] == 'duplicate_skipped')} duplicate candidates.")
+      - name: Publish measurements and update shared candidate ledger
         if: always()
         shell: pwsh
         run: |
@@ -272,13 +362,24 @@ jobs:
           $PSNativeCommandUseErrorActionPreference = $true
           $repo = $env:GITHUB_WORKSPACE
           $file = Join-Path $repo 'size-measurement-output/results.json'
+          $precheck = Join-Path $repo 'precheck-data/precheck.json'
           if (!(Test-Path -LiteralPath $file)) { throw 'No measurement report was generated' }
+          if (!(Test-Path -LiteralPath $precheck)) { throw 'No ledger precheck report was downloaded' }
           $resultBranch = 'experiment/size-measurement-results'
           git -C $repo fetch origin "refs/heads/$($resultBranch):refs/remotes/origin/$resultBranch"
           $worktree = Join-Path $env:RUNNER_TEMP 'phase2-size-results'
           git -C $repo worktree add --detach $worktree "origin/$resultBranch"
           $dest = Join-Path $worktree 'size-measurements'
           New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          $ledger = Join-Path $dest 'candidate-ledger.json'
+          if (!(Test-Path -LiteralPath $ledger)) {
+            python (Join-Path $repo '.github/scripts/size-candidate-ledger.py') backfill --repo $repo --measurements-dir $dest --auto-results-dir (Join-Path $repo 'size-auto-results') --out $ledger
+            if ($LASTEXITCODE -ne 0) { throw 'Candidate ledger backfill failed' }
+          }
+          $updatedLedger = Join-Path $env:RUNNER_TEMP 'candidate-ledger.updated.json'
+          python (Join-Path $repo '.github/scripts/size-candidate-ledger.py') record-independent --ledger $ledger --precheck $precheck --report $file --out $updatedLedger --run-url "$env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID"
+          if ($LASTEXITCODE -ne 0) { throw 'Candidate ledger update failed' }
+          Copy-Item -LiteralPath $updatedLedger -Destination $ledger -Force
           $report = Get-Content -LiteralPath $file -Raw | ConvertFrom-Json
           $id = [string]$report.request.id
           if ($id -notmatch '^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$') { $id = 'invalid-request' }
@@ -287,7 +388,7 @@ jobs:
           git -C $worktree config user.name 'github-actions[bot]'
           git -C $worktree config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git -C $worktree add -- size-measurements
-          git -C $worktree commit -m "Size measurement $id run $env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT"
+          git -C $worktree commit -m "Record candidates and measurements $id run $env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT"
           git -C $worktree push origin "HEAD:refs/heads/$resultBranch"
       - name: Fail if any measurement is invalid
         if: always()
@@ -299,10 +400,9 @@ jobs:
           # Auto mode rejects invalid individual results and independently recalibrates its baseline.
           if not r['request'].get('auto_integrate', False):
               assert r['status'] == 'ok'
-
   auto-integrate:
     needs: [prepare, aggregate]
-    if: ${{ !cancelled() && needs.prepare.result == 'success' && needs.aggregate.result == 'success' && needs.prepare.outputs.auto_integrate == 'true' && github.ref == 'refs/heads/experiment/size-reduction-phase2' }}
+    if: ${{ !cancelled() && needs.prepare.result == 'success' && needs.aggregate.result == 'success' && needs.prepare.outputs.auto_integrate == 'true' && needs.prepare.outputs.eligible_count != '0' && github.ref == 'refs/heads/experiment/size-reduction-phase2' }}
     runs-on: windows-latest
     timeout-minutes: 45
     permissions:
@@ -312,6 +412,15 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: size-ledger-precheck
+          path: precheck-data
+      - name: Restrict cumulative integration to ledger-approved candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp precheck-data/eligible-request.json .github/size-parallel-request.json
       - uses: actions/download-artifact@v4
         with:
           pattern: size-candidate-*
@@ -352,6 +461,27 @@ jobs:
         with:
           name: auto-integration-${{ github.run_attempt }}
           path: integration-output
+      - name: Update candidate ledger with cumulative decisions
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin refs/heads/experiment/size-measurement-results:refs/remotes/origin/experiment/size-measurement-results
+          ledger_wt="$RUNNER_TEMP/size-ledger-results"
+          git worktree add --detach "$ledger_wt" refs/remotes/origin/experiment/size-measurement-results
+          ledger="$ledger_wt/size-measurements/candidate-ledger.json"
+          test -f "$ledger"
+          python .github/scripts/size-candidate-ledger.py record-integration \
+            --ledger "$ledger" \
+            --integration integration-output/integration.json \
+            --out "$RUNNER_TEMP/candidate-ledger.updated.json"
+          cp "$RUNNER_TEMP/candidate-ledger.updated.json" "$ledger"
+          git -C "$ledger_wt" config user.name 'github-actions[bot]'
+          git -C "$ledger_wt" config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C "$ledger_wt" add -- size-measurements/candidate-ledger.json
+          if ! git -C "$ledger_wt" diff --cached --quiet; then
+            git -C "$ledger_wt" commit -m "Record cumulative decisions for run $GITHUB_RUN_ID/$GITHUB_RUN_ATTEMPT"
+            git -C "$ledger_wt" push origin HEAD:refs/heads/experiment/size-measurement-results
+          fi
       - id: stage
         shell: bash
         run: |

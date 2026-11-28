@@ -1,15 +1,45 @@
 {
-  "id": "round78c-auto",
-  "base": "8917a27f35658a01477169d7c4981097b582b2f3",
-  "expected_base_flash": 202120,
+  "id": "candidate-ledger-smoke-78b-replay",
+  "base": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+  "expected_base_flash": 202334,
   "expected_base_ram": 6059,
-  "auto_integrate": true,
-  "dry_run": false,
+  "auto_integrate": false,
   "candidates": [
     {
+      "id": "nes-0x6000",
+      "head": "530ba582ebad9d5c907e02d9bc3e5397b8d0639b",
+      "target": "NES register write at 0x6000",
+      "functions": [
+        "write_prg_byte"
+      ],
+      "description": "Round 78b previously measured NES mapper writes"
+    },
+    {
+      "id": "nes-0x800d",
+      "head": "f7254e38527b25bd09bd9935e08140412509fdb3",
+      "target": "NES register write at 0x800D",
+      "functions": [
+        "write_prg_byte"
+      ],
+      "description": "Round 78b previously measured NES mapper writes"
+    },
+    {
+      "id": "gb-0x4000",
+      "head": "dc5dc63ba62605ffbb152271716d70921cd42976",
+      "target": "GB register write at 0x4000",
+      "functions": [
+        "gb_write_register"
+      ],
+      "description": "Round 78b previously measured GB mapper writes"
+    },
+    {
       "id": "gb-0x6000",
-      "head": "f9bf861f9a5d3bdf4941f33bf503bc22f941d0c8",
-      "reviewed": true
+      "head": "f5ccba782f18345794bee1a2f8f0752d0f64bbe9",
+      "target": "GB register write at 0x6000",
+      "functions": [
+        "gb_write_register"
+      ],
+      "description": "Round 78b previously measured GB mapper writes"
     }
   ]
 }
