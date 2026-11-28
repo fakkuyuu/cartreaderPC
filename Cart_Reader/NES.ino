@@ -737,8 +737,8 @@ void printDataLine_NES(void* entry) {
   mapper = (iNES[6] >> 4) | (iNES[7] & 0xF0) | ((iNES[8] & 0x0F) << 8);
 
   if ((iNES[9] & 0x0F) != 0x0F) {
-    // simple notation
-    prgsize = (iNES[4] | ((iNES[9] & 0x0F) << 8));  //*16
+    // simple notation; the destination is uint8_t
+    prgsize = iNES[4];
   } else {
     // exponent-multiplier notation
     prgsize = (((1 << (iNES[4] >> 2)) * ((iNES[4] & 0b11) * 2 + 1)) >> 14);  //*16
