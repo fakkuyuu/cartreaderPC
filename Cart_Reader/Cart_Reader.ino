@@ -81,6 +81,7 @@ void showRomRevision() __attribute__((noinline));
 void showSavedToFolder() __attribute__((noinline));
 void showSearchingDatabase() __attribute__((noinline));
 void showRomNameLine() __attribute__((noinline));
+void setup_N64_Cart() __attribute__((noinline));
 void showVerifyingLineAndUpdate() __attribute__((noinline));
 void showChecksumAndUpdate() __attribute__((noinline));
 void showEraseLabelAndUpdate() __attribute__((noinline));
