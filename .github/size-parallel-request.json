@@ -1,49 +1,49 @@
 {
-  "id": "round65-auto-conflict-dry-run",
-  "base": "6c98f5b223cd21f803f02bce5490a518bd11cc36",
-  "expected_base_flash": 203786,
+  "id": "round66-auto",
+  "base": "b5b4d402feae29a543a2c5cff319782a124ccc18",
+  "expected_base_flash": 203538,
   "expected_base_ram": 6059,
   "auto_integrate": true,
-  "dry_run": true,
+  "dry_run": false,
   "candidates": [
     {
-      "id": "nes-vrc-extra",
-      "head": "02c77cd2432087209538232274bfa62794f8c424",
+      "id": "nes-bus-conflict-select",
+      "head": "672212c2ddd5bc9b7e5c57741758bae78d460271",
       "reviewed": true
     },
     {
-      "id": "nes-m86-m89-mask",
-      "head": "bbb498cf61f70666a78096ba316f6dc0d53a06ce",
+      "id": "nes-m19-register-repeat",
+      "head": "a507639b35cfdcd6a2209df3b4cd02460c6dc3eb",
       "reviewed": true
     },
     {
-      "id": "nes-m41-double-write",
-      "head": "cc3c99b479fe8cb05cfa408e5943843d564ee5ac",
+      "id": "nes-eeprom-bit-pulse",
+      "head": "99e659bbdde30c0e0978fabdfb685b21e97bc4fb",
       "reviewed": true
     },
     {
-      "id": "nes-m210-sequential",
-      "head": "0b91649aba21645278a42aef49128ebb3dbac697",
+      "id": "nes-m997-outer-register",
+      "head": "ed2d883fe9b35c15a836c4295d623902d5bdea34",
       "reviewed": true
     },
     {
-      "id": "nes-pulsem2-chr",
-      "head": "947ea7cb439be3688a4e173fd4a7505867aa6c82",
+      "id": "nes-chr-address-bank",
+      "head": "8f6fe9a80871dfc5f3b5a0790f77c4a46b813856",
       "reviewed": true
     },
     {
-      "id": "nes-mmc6-sram-loop",
-      "head": "3d183bf3084051d0753cbb85ad067180bae0fae1",
+      "id": "nes-chr-mmc3-bank-loop",
+      "head": "dd11ebff54ce58c1b02c3987af213d8e5a2dd251",
       "reviewed": true
     },
     {
-      "id": "nes-mmc3-chr-switch",
-      "head": "8d206072e2890ebf4d866013691e7eaa4187e2f2",
+      "id": "nes-m82-sram-block",
+      "head": "9f6126402ef6db095525dd43b4d312094d58ea9b",
       "reviewed": true
     },
     {
-      "id": "nes-chr-masked",
-      "head": "c8f8329d1d42e015329a7df6d8dca60648e1916a",
+      "id": "nes-eeprom-read-common",
+      "head": "04c7d3e8f8e603e30948660c4022ee9d1d107360",
       "reviewed": true
     }
   ]
