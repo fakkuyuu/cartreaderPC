@@ -3411,6 +3411,13 @@ static void __attribute__((noinline)) writeTwiceR65_NES(word address, byte value
   write_prg_byte(address, value);
 }
 
+static void __attribute__((noinline)) dumpAddrChrR66_NES(word banks, word mask, byte shift) {
+  for (word i = 0; i < banks; ++i) {
+    write_prg_byte(0x8000 | ((i & mask) << shift), 0);
+    dumpCHR8KiB();
+  }
+}
+
 void readCHR(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3769,11 +3776,7 @@ void readCHR(bool readrom) {
 
         case 58:
         case 213:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 + ((i & 0x07) << 3), 0);
-            dumpCHR8KiB();
-          }
+          dumpAddrChrR66_NES(chrBanks4K / 2, 0x07, 3);
           break;
 
         case 59:
@@ -3793,11 +3796,7 @@ void readCHR(bool readrom) {
           break;
 
         case 61:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 | (i << 8), 0);
-            dumpCHR8KiB();
-          }
+          dumpAddrChrR66_NES(chrBanks4K / 2, 0xFFFF, 8);
           break;
 
         case 62:
@@ -4043,27 +4042,15 @@ void readCHR(bool readrom) {
 
         case 200:
         case 212:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 + (i & 0x07), 0);
-            dumpCHR8KiB();
-          }
+          dumpAddrChrR66_NES(chrBanks4K / 2, 0x07, 0);
           break;
 
         case 201:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 + (i & 0xFF), 0);
-            dumpCHR8KiB();
-          }
+          dumpAddrChrR66_NES(chrBanks4K / 2, 0xFF, 0);
           break;
 
         case 202:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 | (i << 1), 0);
-            dumpCHR8KiB();
-          }
+          dumpAddrChrR66_NES(chrBanks4K / 2, 0xFFFF, 1);
           break;
 
         case 203:
@@ -4076,11 +4063,7 @@ void readCHR(bool readrom) {
           break;
 
         case 214:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 | (i << 2), 0);
-            dumpCHR8KiB();
-          }
+          dumpAddrChrR66_NES(chrBanks4K / 2, 0xFFFF, 2);
           break;
 
         case 225:
@@ -4109,11 +4092,7 @@ void readCHR(bool readrom) {
           break;
 
         case 236:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 | (i & 0x0F), 0);  // A16-A13
-            dumpCHR8KiB();
-          }
+          dumpAddrChrR66_NES(chrBanks4K / 2, 0x0F, 0);
           break;
 
         case 240:
