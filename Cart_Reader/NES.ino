@@ -3498,53 +3498,62 @@ void readCHR(bool readrom) {
                 write_prg_byte(0x6000, 4);
               }
             }
-            if (mapperForMmc3 == 44) {
-              write_prg_byte(0xA001, 0x80 | ((i >> 7) & 0x07));
-            }
-            if (mapperForMmc3 == 47) {
-              write_prg_byte(0x6800 + ((i & 0x180) >> 7), 0);
-            }
-            if (mapperForMmc3 == 49) {
-              write_prg_byte(0x6800, ((i & 0x180) >> 1) | 1);
-            }
-            if (mapperForMmc3 == 52) {
-              write_prg_byte(0x6000, (i & 0x180) >> 3 | (i & 0x200) >> 7);
-            }
-            if ((mapperForMmc3 == 115) || (mapperForMmc3 == 248)) {
-              write_prg_byte(0x6001, (i & 0x100) >> 8);  // A18
-            }
-            if (mapperForMmc3 == 116) {
-              write_prg_byte(0x4100, 0x01 | ((i & 0x100) >> 6));  // A18
-            }
-            if (mapperForMmc3 == 126) {
-              write_prg_byte(0x6800, (i & 0x200) >> 5 | (i & 0x100) >> 3);  // select outer bank
-            }
-            if (mapperForMmc3 == 134) {
-              write_prg_byte(0x6000, (i & 0x200) >> 4);  // A19
-              write_prg_byte(0x6001, (i & 0x180) >> 3);  // A18-17
-            }
-            if (mapperForMmc3 == 176) {
-              write_prg_byte(0x5FF2, (i & 0x700) >> 3);  // outer 256k bank
-            }
-            if ((mapperForMmc3 == 224) || (mapperForMmc3 == 268) || (mapperForMmc3 == 995) || (mapperForMmc3 == 996) || (mapperForMmc3 == 997)) {
-              write_prg_byte(0x5000, ((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
-              write_prg_byte(0x6000, ((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
-            }
-            if (mapperForMmc3 == 315) {
-              write_prg_byte(0x6800, ((i & 0x100) >> 8) | ((i & 0x80) >> 6) | ((i & 0x40) >> 3));
-            }
-            if (mapperForMmc3 == 351) {
-              write_prg_byte(0x5000, (i >> 1) & 0xFC);
-            }
-            if (mapperForMmc3 == 366) {
-              write_prg_byte(0x6800 + ((i & 0x380) >> 3), i);
-            }
-            if ((mapperForMmc3 == 422) || (mapperForMmc3 == 534)) {
-              write_prg_byte(0x6800, (i & 0x380) >> 4);
-            }
-            if ((mapperForMmc3 == 998) || (mapperForMmc3 == 999)) {
-              write_prg_byte(0x5000, (i & 0x80) >> 4);
-              write_prg_byte(0x6000, (i & 0x80) >> 4);
+            switch (mapperForMmc3) {
+              case 44:
+                write_prg_byte(0xA001, 0x80 | ((i >> 7) & 0x07));
+                break;
+              case 47:
+                write_prg_byte(0x6800 + ((i & 0x180) >> 7), 0);
+                break;
+              case 49:
+                write_prg_byte(0x6800, ((i & 0x180) >> 1) | 1);
+                break;
+              case 52:
+                write_prg_byte(0x6000, (i & 0x180) >> 3 | (i & 0x200) >> 7);
+                break;
+              case 115:
+              case 248:
+                write_prg_byte(0x6001, (i & 0x100) >> 8);  // A18
+                break;
+              case 116:
+                write_prg_byte(0x4100, 0x01 | ((i & 0x100) >> 6));  // A18
+                break;
+              case 126:
+                write_prg_byte(0x6800, (i & 0x200) >> 5 | (i & 0x100) >> 3);  // select outer bank
+                break;
+              case 134:
+                write_prg_byte(0x6000, (i & 0x200) >> 4);  // A19
+                write_prg_byte(0x6001, (i & 0x180) >> 3);  // A18-17
+                break;
+              case 176:
+                write_prg_byte(0x5FF2, (i & 0x700) >> 3);  // outer 256k bank
+                break;
+              case 224:
+              case 268:
+              case 995:
+              case 996:
+              case 997:
+                write_prg_byte(0x5000, ((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
+                write_prg_byte(0x6000, ((i & 0x380) >> 4) | ((i & 0xC00) >> 9));
+                break;
+              case 315:
+                write_prg_byte(0x6800, ((i & 0x100) >> 8) | ((i & 0x80) >> 6) | ((i & 0x40) >> 3));
+                break;
+              case 351:
+                write_prg_byte(0x5000, (i >> 1) & 0xFC);
+                break;
+              case 366:
+                write_prg_byte(0x6800 + ((i & 0x380) >> 3), i);
+                break;
+              case 422:
+              case 534:
+                write_prg_byte(0x6800, (i & 0x380) >> 4);
+                break;
+              case 998:
+              case 999:
+                write_prg_byte(0x5000, (i & 0x80) >> 4);
+                write_prg_byte(0x6000, (i & 0x80) >> 4);
+                break;
             }
             writeMmc3PairR59_NES(0x02, i);
             dumpBankCHR(0x1000, 0x1400);
