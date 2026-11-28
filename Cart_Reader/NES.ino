@@ -3109,11 +3109,10 @@ void readPRG(bool readrom) {
         eeptemp = read_prg_byte(0x8001);  // Use eeptemp to hold byte
         if (eeptemp == 0x00) {            // PRG CHIP 1
           println_Msg(F("READING LOWER CHIP"));
-          display_Update();
         } else {  // PRG CHIP 2 - Should be 0xEF
           println_Msg(F("READING UPPER CHIP"));
-          display_Update();
         }
+        display_Update();
         for (size_t i = 0; i < banks; i += 2) {
           write_prg_byte(0x8000, i & 0x1F);
           dumpPRG32KiB(base);
