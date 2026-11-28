@@ -1933,15 +1933,17 @@ void checkStatus_NES() {
   promptAndWaitForButton();
 }
 
+static void __attribute__((noinline)) printSizeLineR71_NES(const __FlashStringHelper* label, uint16_t size) {
+  print_Msg(label);
+  print_Msg(size);
+  println_Msg(FS(SharedFlashText::unitK));
+}
+
 static void printNESSettings(void) {
   print_Msg(F("MAPPER:   "));
   println_Msg(mapper);
-  print_Msg(F("PRG SIZE: "));
-  print_Msg(prg);
-  println_Msg(FS(SharedFlashText::unitK));
-  print_Msg(F("CHR SIZE: "));
-  print_Msg(chr);
-  println_Msg(FS(SharedFlashText::unitK));
+  printSizeLineR71_NES(F("PRG SIZE: "), prg);
+  printSizeLineR71_NES(F("CHR SIZE: "), chr);
   print_Msg(F("RAM SIZE: "));
   if (mapper == 0) {
     print_Msg(ram / 4);
