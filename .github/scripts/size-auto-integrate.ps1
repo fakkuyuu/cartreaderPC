@@ -2,6 +2,7 @@
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
 $repo = $env:GITHUB_WORKSPACE
+. (Join-Path $PSScriptRoot 'size-policy.ps1')
 if ($env:GITHUB_REF -ne 'refs/heads/experiment/size-reduction-phase2') { throw 'Wrong target branch' }
 $request = Get-Content (Join-Path $repo '.github/size-parallel-request.json') -Raw | ConvertFrom-Json -AsHashtable
 if ($request.auto_integrate -ne $true -or $request.endpoints_only -eq $true) { throw 'Not an independent auto request' }
@@ -18,7 +19,7 @@ $temp = Join-Path $env:RUNNER_TEMP 'phase2-auto-build'
 $out = Join-Path $env:RUNNER_TEMP 'phase2-auto-output'
 $wt = Join-Path $env:RUNNER_TEMP 'phase2-auto-worktree'
 New-Item -ItemType Directory -Force -Path $temp,$out | Out-Null
-$report = [ordered]@{schema=1; id=$request.id; run_id=$env:GITHUB_RUN_ID; run_attempt=$env:GITHUB_RUN_ATTEMPT; base=$base; start=$start; dry_run=$dry; status='running'; candidates=@(); hardware_validation='pending'}
+$report = [ordered]@{schema=2; acceptance_policy='flash_and_ram_nonincreasing_at_least_one_decreases'; id=$request.id; run_id=$env:GITHUB_RUN_ID; run_attempt=$env:GITHUB_RUN_ATTEMPT; base=$base; start=$start; dry_run=$dry; status='running'; candidates=@(); hardware_validation='pending'}
 function Save-Report {
   $report | ConvertTo-Json -Depth 20 | Set-Content -Encoding utf8 (Join-Path $out 'integration.json')
 }
@@ -110,7 +111,7 @@ try {
   $index = 0
   foreach ($candidate in $request.candidates) {
     $index++
-    $item = [ordered]@{id=$candidate.id; head=$candidate.head; order=$index; independent_flash=$null; independent_delta=$null; decision='rejected'; reason=''; before_flash=$null; trial_flash=$null; trial_ram=$null; incremental_delta=$null; accepted_commit=$null}
+    $item = [ordered]@{id=$candidate.id; head=$candidate.head; order=$index; independent_flash=$null; independent_ram=$null; independent_delta=$null; independent_ram_delta=$null; decision='rejected'; reason=''; before_flash=$null; before_ram=$null; trial_flash=$null; trial_ram=$null; incremental_delta=$null; incremental_ram_delta=$null; accepted_commit=$null}
     $report.candidates += $item
     try {
       if ($candidate.reviewed -ne $true) { throw 'Candidate not reviewed' }
@@ -119,16 +120,21 @@ try {
       $r = Get-Content -LiteralPath $p -Raw | ConvertFrom-Json -AsHashtable
       if ($r.run_id -ne $env:GITHUB_RUN_ID -or $r.run_attempt -ne $env:GITHUB_RUN_ATTEMPT -or $r.workflow_commit -ne $env:GITHUB_SHA -or $r.request.id -ne $candidate.id -or $r.request.base -ne $base -or $r.request.head -ne $candidate.head -or $r.results.Count -ne 2 -or $r.results[0].commit -ne $base -or $r.results[1].commit -ne $candidate.head) { throw 'Invalid or stale independent result' }
       if ($r.status -ne 'ok' -or $r.baseline_matches_local -ne $true -or $r.results[0].status -ne 'ok' -or $r.results[1].status -ne 'ok' -or $r.results[0].flash -ne $initial.flash -or $r.results[0].ram -ne $initial.ram) { throw 'Independent build or calibration failed' }
+      if ($null -eq $r.results[1].flash -or $null -eq $r.results[1].ram) { throw 'Missing independent size' }
       $item.independent_flash = [int]$r.results[1].flash
+      $item.independent_ram = [int]$r.results[1].ram
+      if ($item.independent_flash -le 0 -or $item.independent_ram -lt 0) { throw 'Invalid independent size' }
       $item.independent_delta = $item.independent_flash - $initial.flash
-      if ($item.independent_delta -ge 0) { throw 'Independent size did not decrease' }
+      $item.independent_ram_delta = $item.independent_ram - $initial.ram
+      if (!(Test-SizeImprovement $item.independent_delta $item.independent_ram_delta)) { throw 'Independent Flash/RAM policy rejected' }
       $item.decision = 'eligible'
       $eligible += $item
     } catch { $item.reason = $_.Exception.Message }
     Save-Report
   }
-  foreach ($item in ($eligible | Sort-Object { $_.independent_delta }, { $_.order })) {
+  foreach ($item in ($eligible | Sort-Object { $_.independent_delta }, { $_.independent_ram_delta }, { $_.order })) {
     $item.before_flash = $current.flash
+    $item.before_ram = $current.ram
     try {
       git -C $wt cherry-pick --no-commit $item.head | Out-Host
       if (!(git -C $wt diff --cached --name-only)) { throw 'Empty cumulative patch' }
@@ -138,12 +144,13 @@ try {
       $item.trial_flash = $measured.flash
       $item.trial_ram = $measured.ram
       $item.incremental_delta = $measured.flash - $current.flash
-      if ($item.incremental_delta -ge 0) { throw 'Cumulative size did not decrease' }
+      $item.incremental_ram_delta = $measured.ram - $current.ram
+      if (!(Test-SizeImprovement $item.incremental_delta $item.incremental_ram_delta)) { throw 'Cumulative Flash/RAM policy rejected' }
       $accepted = $trial
       $current = $measured
       $item.decision = 'adopted'
       $item.accepted_commit = $accepted
-      $item.reason = 'Strictly negative cumulative Flash delta'
+      $item.reason = 'Neither resource increased and at least one decreased'
     } catch {
       $item.decision = 'rejected'
       $item.reason = $_.Exception.Message
@@ -157,12 +164,15 @@ try {
   if ((git -C $repo rev-parse "$($base):Cart_Reader/Config.h") -ne (git -C $repo rev-parse "$($accepted):Cart_Reader/Config.h")) { throw 'Config.h changed' }
   $report.final = $final
   $report.delta = $final.flash - $initial.flash
+  $report.ram_delta = $final.ram - $initial.ram
+  if ($final.flash -gt $initial.flash -or $final.ram -gt $initial.ram) { throw 'Final size exceeds baseline' }
   $report.firmware_commit = $accepted
   $report.status = 'measured'
   Save-Report
-  $md = @(("# " + $request.id + " automatic integration"), "", "Run: $($env:GITHUB_RUN_ID)/$($env:GITHUB_RUN_ATTEMPT). Dry run: $dry. Hardware validation pending.", "", "Baseline: $($initial.flash) B / RAM $($initial.ram) B. Final: $($final.flash) B / RAM $($final.ram) B. Delta: $($report.delta) B.", "", '| Candidate | Independent delta | Cumulative delta | Decision |', '| --- | ---: | ---: | --- |')
+  $md = @(("# " + $request.id + " automatic integration"), "", "Run: $($env:GITHUB_RUN_ID)/$($env:GITHUB_RUN_ATTEMPT). Dry run: $dry. Hardware validation pending.", "", "Baseline: $($initial.flash) B / RAM $($initial.ram) B. Final: $($final.flash) B / RAM $($final.ram) B. Flash delta: $($report.delta) B. RAM delta: $($report.ram_delta) B.", "", '| Candidate | Independent Flash delta | Independent RAM delta | Cumulative Flash delta | Cumulative RAM delta | Decision | Reason |', '| --- | ---: | ---: | ---: | ---: | --- | --- |')
   foreach ($item in $report.candidates) {
-    $md += "| $($item.id) | $($item.independent_delta) | $($item.incremental_delta) | $($item.decision) |"
+    $reason = $item.reason -replace '[\r\n|]', ' '
+    $md += "| $($item.id) | $($item.independent_delta) | $($item.independent_ram_delta) | $($item.incremental_delta) | $($item.incremental_ram_delta) | $($item.decision) | $reason |"
   }
   $md | Set-Content -Encoding utf8 (Join-Path $out 'integration.md')
   $md | Add-Content $env:GITHUB_STEP_SUMMARY
@@ -172,7 +182,7 @@ try {
   Copy-Item (Join-Path $out 'integration.json') (Join-Path $dest "$name.json")
   Copy-Item (Join-Path $out 'integration.md') (Join-Path $dest "$name.md")
   git -C $wt add -- size-auto-results
-  git -C $wt commit -m "Finalize automatic size integration $name ($($report.delta) B)" | Out-Host
+  git -C $wt commit -m "Finalize automatic size integration $name (Flash $($report.delta) B, RAM $($report.ram_delta) B)" | Out-Host
   $commit = git -C $wt rev-parse HEAD
   git -C $wt bundle create (Join-Path $out 'integration.bundle') refs/heads/phase2-auto-local "^$start" | Out-Host
   @{commit=$commit; start=$start; dry_run=$dry; workflow_commit=$env:GITHUB_SHA} | ConvertTo-Json | Set-Content -Encoding utf8 (Join-Path $out 'manifest.json')

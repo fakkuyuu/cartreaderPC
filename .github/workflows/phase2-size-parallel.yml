@@ -316,6 +316,9 @@ jobs:
         with:
           pattern: size-candidate-*
           path: candidate-reports
+      - name: Test Flash/RAM acceptance policy
+        shell: pwsh
+        run: ./.github/scripts/test-size-policy.ps1
       - name: Measure and adopt cumulatively
         shell: pwsh
         run: ./.github/scripts/size-auto-integrate.ps1

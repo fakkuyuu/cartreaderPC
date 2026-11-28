@@ -1,0 +1,18 @@
+name: Size acceptance policy regression
+on:
+  push:
+    branches: [experiment/size-reduction-phase2]
+    paths:
+      - '.github/scripts/size-policy.ps1'
+      - '.github/scripts/test-size-policy.ps1'
+      - '.github/workflows/size-policy-test.yml'
+permissions:
+  contents: read
+jobs:
+  policy:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify all nine Flash and RAM sign combinations
+        shell: pwsh
+        run: ./.github/scripts/test-size-policy.ps1
