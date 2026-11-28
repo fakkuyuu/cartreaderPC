@@ -2124,6 +2124,11 @@ static void __attribute__((noinline)) writePair68R61_NES(byte a, byte b) {
   write_prg_byte(0x8000, b);
 }
 
+static void writeAndDump235R64_NES(word address, word base) {
+  write_prg_byte(address, 0);
+  dumpPRG32KiB(base);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3151,25 +3156,12 @@ void readPRG(bool readrom) {
         break;
 
       case 235:
-        for (size_t i = 0; i < 32; i++) {
-          write_prg_byte(0x8000 + i, 0);
-          dumpPRG32KiB(base);
-        }
-        if (prgsize > 6) {
-          for (size_t i = 32; i < 64; i++) {
-            write_prg_byte(0x80E0 + i, 0);
-            dumpPRG32KiB(base);
-          }
-          if (prgsize > 7) {
-            for (size_t i = 64; i < 96; i++) {
-              write_prg_byte(0x81E0 + i, 0);
-              dumpPRG32KiB(base);
-            }
-            for (size_t i = 96; i < 128; i++) {
-              write_prg_byte(0x82E0 + i, 0);
-              dumpPRG32KiB(base);
-            }
-          }
+        for (byte region = 0; region < 4; ++region) {
+          if (region == 1 && prgsize <= 6) break;
+          if (region == 2 && prgsize <= 7) break;
+          word start = region == 0 ? 0x8000U : 0x8000U + (word(region) << 8) + (word(region - 1) << 5);
+          for (byte bank = 0; bank < 32; ++bank)
+            writeAndDump235R64_NES(start + bank, base);
         }
         break;
 
