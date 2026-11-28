@@ -337,6 +337,11 @@ static void writeMSXRegister7000(uint8_t data) {
   writeData_MSX(0x7000, data);
 }
 
+static void writeMSXRegister6000(uint8_t data) __attribute__((noinline));
+static void writeMSXRegister6000(uint8_t data) {
+  writeData_MSX(0x6000, data);
+}
+
 static void writeMSXRegister4FFF(uint8_t data) __attribute__((noinline));
 static void writeMSXRegister4FFF(uint8_t data) {
   writeData_MSX(0x4FFF, data);
@@ -497,7 +502,7 @@ void readROM_MSX() {
 
       case 4:  // Game Master 2 (128K)
         readSegment_MSX(0x4000, 0x6000);  // 8K Fixed Bank 0
-        writeData_MSX(0x6000, 1);         // Set Bank 1 for subsequent reads
+        writeMSXRegister6000( 1);         // Set Bank 1 for subsequent reads
         readSegment_MSX(0x6000, 0x8000);  // 8K Init Bank 1
         readPairedRomR40_MSX(16);
         break;
@@ -520,7 +525,7 @@ void readROM_MSX() {
 
       case 6:  // Harry Fox (64K)
         CS1_ENABLE;
-        writeData_MSX(0x6000, 0);
+        writeMSXRegister6000( 0);
         readSegment_MSX(0x4000, 0x8000);  // 16K Init Bank 0
         CS1_DISABLE;
 
@@ -530,7 +535,7 @@ void readROM_MSX() {
         CS2_DISABLE;
 
         CS1_ENABLE;
-        writeData_MSX(0x6000, 1);
+        writeMSXRegister6000( 1);
         readSegment_MSX(0x4000, 0x8000);  // 16K
         CS1_DISABLE;
 
