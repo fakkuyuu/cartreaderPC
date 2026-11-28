@@ -1,49 +1,49 @@
 {
-  "id": "round71-auto",
-  "base": "aa467ff74bf647238e82695a00cce5c0cb3374df",
-  "expected_base_flash": 203012,
+  "id": "round72-auto",
+  "base": "a1a4156e6d7a9faa354cd3e8dac962319100b042",
+  "expected_base_flash": 202850,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "nes-start-menu-helper",
-      "head": "714b1db80b36f36e2fe713c70ae11cb033ec91f0",
+      "id": "nes-m233-display-join",
+      "head": "3f107522045eb75789293e4b6e7ba2721f637b13",
       "reviewed": true
     },
     {
-      "id": "nes-raw-menu-finish",
-      "head": "3efd71a5577c56094c5a0e31d45d63b74039a5ff",
+      "id": "nes-m43-prg-helper",
+      "head": "2c56eb77d2342f37cb263b770f10a75a23c4a62f",
       "reviewed": true
     },
     {
-      "id": "nes-db-crc-match",
-      "head": "bd3f2798a4442072e3af6905905f763eea12918b",
+      "id": "nes-m42-prg-mask-reuse",
+      "head": "f688a7d0c30d272df61d2e7f8cdfe6d8b617c2d8",
       "reviewed": true
     },
     {
-      "id": "nes-settings-ram-branches",
-      "head": "bc24da4bff37e28cb27b2408b158d720b561a974",
+      "id": "nes-m40-write-dump-reuse",
+      "head": "b07a459f4f68e65b9df33801ecac91ef4bfa629b",
       "reviewed": true
     },
     {
-      "id": "nes-ram-size-helper-reuse",
-      "head": "f940f34cf2f727f86e09931ecc1eacff43860e59",
+      "id": "nes-m120-prg-helper",
+      "head": "dc786509d91437d7f92619fdf548e16120bc449e",
       "reviewed": true
     },
     {
-      "id": "nes-config-direct-rom-size",
-      "head": "071f94de0e96104ea4329d59e5f85b2da51739ea",
+      "id": "nes-m125-prg-helper",
+      "head": "00fdec5b50b0eeccdd6a0a7567dbb48592de10bb",
       "reviewed": true
     },
     {
-      "id": "nes-settings-size-lines",
-      "head": "562b1072c62aa4e9645e4b76d71069156e2df252",
+      "id": "nes-m233-prg-mask",
+      "head": "ab9f36c15b43e69313f0222130533a3ab3f0b165",
       "reviewed": true
     },
     {
-      "id": "nes-mmc1-sram-bank-select",
-      "head": "f79b67b0c9917e74cfdf74735729c147d5b0f86a",
+      "id": "nes-m15-prg-mask",
+      "head": "20344929dd5ad402be6dd651a4603a62a277202f",
       "reviewed": true
     }
   ]
