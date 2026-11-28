@@ -4556,9 +4556,7 @@ void writeRAM() {
             uint8_t firstbyte = sdBuffer[0];
             for (size_t x = 0; x < 512; x++)
               write_prg_byte(base + address + x, sdBuffer[x]);
-            readSdBufferBlock();
-            for (size_t x = 0; x < 512; x++)
-              write_prg_byte(base + address + x + 512, sdBuffer[x]);
+            writeBankPRG(address + 512, address + 1024, base);
             write_prg_byte(base + address, firstbyte);  // REWRITE 1ST BYTE
           }
           setMapper82SramAccess_NES(false);
