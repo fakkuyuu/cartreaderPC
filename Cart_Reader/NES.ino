@@ -788,6 +788,10 @@ static bool matchesNesHeaderCrc(const uint32_t* table, uint8_t count) {
   return false;
 }
 
+static bool __attribute__((noinline)) matchesDatabaseCrcR71_NES(uint32_t crc) {
+  return crc != 0xBD7BC39F && (crc == oldcrc32 || crc == oldcrc32MMC3);
+}
+
 void getMapping() {
   standaloneCandidateAllowed(false);
   FsFile database;
@@ -836,8 +840,7 @@ void getMapping() {
 
       readDatabaseEntry(database, &entry);
       //if checksum search was successful set mapper and end search, also filter out 0xFF checksum
-      if (
-        entry.crc512 != 0xBD7BC39F && (entry.crc512 == oldcrc32 || entry.crc512 == oldcrc32MMC3)) {
+      if (matchesDatabaseCrcR71_NES(entry.crc512)) {
         // Rewind to start of entry
         rewind_line(database, 3);
         break;
@@ -865,8 +868,7 @@ void getMapping() {
     struct database_entry entry;
 
     if (checkCartSelection(database, &readDataLine_NES, &entry, &printDataLine_NES, &setRomnameFromString)) {
-      nesSaveTitleMatchesCrc = entry.crc512 != 0xBD7BC39F &&
-                               (entry.crc512 == oldcrc32 || entry.crc512 == oldcrc32MMC3);
+      nesSaveTitleMatchesCrc = matchesDatabaseCrcR71_NES(entry.crc512);
       // anything else: select current record
       // Save Mapper
       EEPROM_writeAnything(7, mapper);
