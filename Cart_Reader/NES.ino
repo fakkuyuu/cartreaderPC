@@ -2126,6 +2126,13 @@ static void writeAndDump235R64_NES(word address, word base) {
 
 static void initMapper19Ram_NES();
 
+static void __attribute__((noinline)) dumpShiftAddressR75_NES(word banks, byte shift, word base) {
+  for (word i = 0; i < banks; ++i) {
+    write_prg_byte(0x8000 | (i << shift), 0);
+    dumpPRG16KiB(base);
+  }
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2974,11 +2981,7 @@ void readPRG(bool readrom) {
         break;
 
       case 202:
-        banks = prgBanks16K;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8000 | (i << 1), 0);
-          dumpPRG16KiB(base);
-        }
+        dumpShiftAddressR75_NES(prgBanks16K, 1, base);
         break;
 
       case 203:
@@ -2995,11 +2998,7 @@ void readPRG(bool readrom) {
         break;
 
       case 214:
-        banks = prgBanks16K;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8000 | (i << 2), 0);
-          dumpPRG16KiB(base);
-        }
+        dumpShiftAddressR75_NES(prgBanks16K, 2, base);
         break;
 
       case 221:
