@@ -3406,6 +3406,11 @@ static void __attribute__((noinline)) dumpMaskedChrR65_NES(word banks, word reg,
   }
 }
 
+static void __attribute__((noinline)) writeTwiceR65_NES(word address, byte value) {
+  write_prg_byte(address, value);
+  write_prg_byte(address, value);
+}
+
 void readCHR(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3724,10 +3729,8 @@ void readCHR(bool readrom) {
         case 41:
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x6004 + ((i & 0x0C) << 1), 0);
-            write_prg_byte(0x6004 + ((i & 0x0C) << 1), 0);
-            write_prg_byte(0xFFF0 + (i & 0x03), i & 0x03);
-            write_prg_byte(0xFFF0 + (i & 0x03), i & 0x03);
+            writeTwiceR65_NES(0x6004 + ((i & 0x0C) << 1), 0);
+            writeTwiceR65_NES(0xFFF0 + (i & 0x03), i & 0x03);
             dumpCHR8KiB();
           }
           break;
