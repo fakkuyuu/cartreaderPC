@@ -74,6 +74,7 @@ void clearAndShowVerifying() __attribute__((noinline));
 void closeAndGreenLed() __attribute__((noinline));
 void showVerificationBytesTail() __attribute__((noinline));
 void formatFixedHex(char* dest, uint32_t value, uint8_t digits) __attribute__((noinline));
+void getCartInfo_GBA() __attribute__((noinline));
 void browseRootFileWithPathAndClear(const __FlashStringHelper* label) __attribute__((noinline));
 void appendSelectedFilePath() __attribute__((noinline));
 void clearAndRootDirectory() __attribute__((noinline));
