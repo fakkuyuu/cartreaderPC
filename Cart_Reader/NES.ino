@@ -3856,10 +3856,7 @@ void readCHR(bool readrom) {
 
         case 76:
           banks = chrBanks4K * 2;
-          for (size_t i = 0; i < banks; i++) {
-            writeMmc3PairR59_NES(2, i);
-            dumpCHR2KiB();
-          }
+          dumpMmc3ChrBankRangeR82_NES(banks, 2, 1, 0, 0x800);
           break;
 
         case 77:  // 32K
@@ -3998,22 +3995,13 @@ void readCHR(bool readrom) {
           break;
 
         case 154:  // 128K
-          for (size_t i = 0; i < 64; i += 2) {
-            writeMmc3PairR59_NES(0, i);
-            dumpCHR2KiB();
-          }
-          for (size_t i = 0; i < 64; i++) {
-            writeMmc3PairR59_NES(2, i);
-            dumpBankCHR(0x1000, 0x1400);
-          }
+          dumpMmc3ChrBankRangeR82_NES(64, 0, 2, 0, 0x800);
+          dumpMmc3ChrBankRangeR82_NES(64, 2, 1, 0x1000, 0x1400);
           break;
 
         case 165:  // 128K
           banks = chrBanks4K;
-          for (size_t i = 0; i < banks; i++) {
-            writeMmc3PairR59_NES(0x02, i);
-            dumpBankCHR(0x1000, 0x2000);
-          }
+          dumpMmc3ChrBankRangeR82_NES(banks, 2, 1, 0x1000, 0x2000);
           break;
 
         case 174:  // 64K
@@ -4303,6 +4291,18 @@ static void setMapper80SramAccess_NES(byte value) __attribute__((noinline));
 static void setMapper80SramAccess_NES(byte value) {
   write_prg_byte(0x7EF8, value);
   write_prg_byte(0x7EF9, value);
+}
+
+static void dumpMmc3ChrBankRangeR82_NES(size_t bankCount, uint8_t regNumber,
+                                               uint8_t bankStep, size_t dumpStart,
+                                               size_t dumpEnd) __attribute__((noinline));
+static void dumpMmc3ChrBankRangeR82_NES(size_t bankCount, uint8_t regNumber,
+                                        uint8_t bankStep, size_t dumpStart,
+                                        size_t dumpEnd) {
+  for (size_t bank = 0; bank < bankCount; bank += bankStep) {
+    writeMmc3PairR59_NES(regNumber, bank);
+    dumpBankCHR(dumpStart, dumpEnd);
+  }
 }
 
 void readRAM() {
