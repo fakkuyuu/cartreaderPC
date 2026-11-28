@@ -180,6 +180,116 @@ try {
   $report.pending = @($report.candidates | Where-Object decision -eq 'pending_conflict' | ForEach-Object {
     @{id=$_.id; original_base=$base; original_head=$_.head; conflict_onto=$_.conflict_onto; paths=$_.conflict_paths; independent_flash_delta=$_.independent_delta; independent_ram_delta=$_.independent_ram_delta; rebase_onto_firmware=$accepted; expected_base_flash=$final.flash; expected_base_ram=$final.ram; resubmission=$_.resubmission}
   })
+  # Maintain one canonical queue. A resubmission must point back to exactly one prior hold.
+  $queuePath = Join-Path $wt 'size-auto-results/pending-work.json'
+  if (Test-Path -LiteralPath $queuePath) {
+    $queue = Get-Content -LiteralPath $queuePath -Raw | ConvertFrom-Json -AsHashtable
+  } else {
+    $queue = [ordered]@{schema=1; description='Canonical queue of unresolved automatic size-reduction work.'; updated_by_run_id=$null; items=@()}
+  }
+  if ($null -eq $queue.items) { $queue.items = @() }
+  foreach ($item in $report.candidates) {
+    if ($null -ne $item.resubmission) {
+      $link = $item.resubmission
+      if ([string]$link.original_run_id -notmatch '^\\d+  $report.status = 'measured'
+  Save-Report
+  $md = @(("# " + $request.id + " automatic integration"), "", "Run: $($env:GITHUB_RUN_ID)/$($env:GITHUB_RUN_ATTEMPT). Dry run: $dry. Hardware validation pending.", "", "Baseline: $($initial.flash) B / RAM $($initial.ram) B. Final: $($final.flash) B / RAM $($final.ram) B. Flash delta: $($report.delta) B. RAM delta: $($report.ram_delta) B.", "", '| Candidate | Independent Flash delta | Independent RAM delta | Cumulative Flash delta | Cumulative RAM delta | Decision | Reason |', '| --- | ---: | ---: | ---: | ---: | --- | --- |')
+  foreach ($item in $report.candidates) {
+    $reason = $item.reason -replace '[\r\n|]', ' '
+    $md += "| $($item.id) | $($item.independent_delta) | $($item.independent_ram_delta) | $($item.incremental_delta) | $($item.incremental_ram_delta) | $($item.decision) | $reason |"
+  }
+  $md += @('', "Pending conflicts: $($report.pending_count). Not rejected; resolve against the final accepted firmware and submit as new reviewed independent candidates.")
+  foreach ($pending in $report.pending) {
+    $md += "- $($pending.id): original head $($pending.original_head); paths $($pending.paths -join ', '); rebase onto $($pending.rebase_onto_firmware)"
+  }
+  ConvertTo-Json -InputObject @($report.pending) -Depth 12 | Set-Content -Encoding utf8 (Join-Path $out 'pending-conflicts.json')
+  $md | Set-Content -Encoding utf8 (Join-Path $out 'integration.md')
+  $md | Add-Content $env:GITHUB_STEP_SUMMARY
+  $dest = Join-Path $wt 'size-auto-results'
+  New-Item -ItemType Directory -Force $dest | Out-Null
+  $name = "$($request.id)-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT)"
+  Copy-Item (Join-Path $out 'integration.json') (Join-Path $dest "$name.json")
+  Copy-Item (Join-Path $out 'integration.md') (Join-Path $dest "$name.md")
+  Copy-Item (Join-Path $out 'pending-conflicts.json') (Join-Path $dest "$name-pending.json")
+  git -C $wt add -- size-auto-results
+  git -C $wt commit -m "Finalize automatic size integration $name (Flash $($report.delta) B, RAM $($report.ram_delta) B)" | Out-Host
+  $commit = git -C $wt rev-parse HEAD
+  git -C $wt bundle create (Join-Path $out 'integration.bundle') refs/heads/phase2-auto-local "^$start" | Out-Host
+  @{commit=$commit; start=$start; dry_run=$dry; workflow_commit=$env:GITHUB_SHA} | ConvertTo-Json | Set-Content -Encoding utf8 (Join-Path $out 'manifest.json')
+} catch {
+  $report.status = 'error'
+  $report.error = $_.Exception.Message
+  Save-Report
+  throw
+}
+ -or [string]$link.original_candidate_sha -notmatch '^[0-9a-f]{40}  $report.status = 'measured'
+  Save-Report
+  $md = @(("# " + $request.id + " automatic integration"), "", "Run: $($env:GITHUB_RUN_ID)/$($env:GITHUB_RUN_ATTEMPT). Dry run: $dry. Hardware validation pending.", "", "Baseline: $($initial.flash) B / RAM $($initial.ram) B. Final: $($final.flash) B / RAM $($final.ram) B. Flash delta: $($report.delta) B. RAM delta: $($report.ram_delta) B.", "", '| Candidate | Independent Flash delta | Independent RAM delta | Cumulative Flash delta | Cumulative RAM delta | Decision | Reason |', '| --- | ---: | ---: | ---: | ---: | --- | --- |')
+  foreach ($item in $report.candidates) {
+    $reason = $item.reason -replace '[\r\n|]', ' '
+    $md += "| $($item.id) | $($item.independent_delta) | $($item.independent_ram_delta) | $($item.incremental_delta) | $($item.incremental_ram_delta) | $($item.decision) | $reason |"
+  }
+  $md += @('', "Pending conflicts: $($report.pending_count). Not rejected; resolve against the final accepted firmware and submit as new reviewed independent candidates.")
+  foreach ($pending in $report.pending) {
+    $md += "- $($pending.id): original head $($pending.original_head); paths $($pending.paths -join ', '); rebase onto $($pending.rebase_onto_firmware)"
+  }
+  ConvertTo-Json -InputObject @($report.pending) -Depth 12 | Set-Content -Encoding utf8 (Join-Path $out 'pending-conflicts.json')
+  $md | Set-Content -Encoding utf8 (Join-Path $out 'integration.md')
+  $md | Add-Content $env:GITHUB_STEP_SUMMARY
+  $dest = Join-Path $wt 'size-auto-results'
+  New-Item -ItemType Directory -Force $dest | Out-Null
+  $name = "$($request.id)-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT)"
+  Copy-Item (Join-Path $out 'integration.json') (Join-Path $dest "$name.json")
+  Copy-Item (Join-Path $out 'integration.md') (Join-Path $dest "$name.md")
+  Copy-Item (Join-Path $out 'pending-conflicts.json') (Join-Path $dest "$name-pending.json")
+  git -C $wt add -- size-auto-results
+  git -C $wt commit -m "Finalize automatic size integration $name (Flash $($report.delta) B, RAM $($report.ram_delta) B)" | Out-Host
+  $commit = git -C $wt rev-parse HEAD
+  git -C $wt bundle create (Join-Path $out 'integration.bundle') refs/heads/phase2-auto-local "^$start" | Out-Host
+  @{commit=$commit; start=$start; dry_run=$dry; workflow_commit=$env:GITHUB_SHA} | ConvertTo-Json | Set-Content -Encoding utf8 (Join-Path $out 'manifest.json')
+} catch {
+  $report.status = 'error'
+  $report.error = $_.Exception.Message
+  Save-Report
+  throw
+}
+ -or [string]$link.target_base_sha -ne $base -or [string]$link.candidate_sha -ne [string]$item.head) {
+        throw "Invalid resubmission lineage for $($item.id)"
+      }
+      $matches = @($queue.items | Where-Object {
+        [string]$_.original.run_id -eq [string]$link.original_run_id -and
+        [string]$_.original.candidate_sha -eq [string]$link.original_candidate_sha
+      })
+      if ($matches.Count -ne 1) { throw "Resubmission for $($item.id) must match exactly one pending-work entry; found $($matches.Count)" }
+      $held = $matches[0]
+      $held.latest_resubmission = @{
+        request_id=$request.id; run_id=$env:GITHUB_RUN_ID; candidate_sha=$item.head
+        target_base_sha=$base; measurement_record="size-measurements/$($request.id)-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT).json"
+        integration_record="size-auto-results/$($request.id)-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT).json"
+        decision=$item.decision; accepted_commit=$item.accepted_commit
+      }
+      if ($item.decision -eq 'pending_conflict') {
+        $held.status = 'pending'
+        $held.latest_conflict = @{candidate_sha=$item.head; files=$item.conflict_paths; conflict_onto_sha=$item.conflict_onto; rebase_onto_firmware=$accepted}
+      } else {
+        $held.status = 'resolved'
+        $held.result = @{decision=$item.decision; reason=$item.reason; independent_flash_delta=$item.independent_delta; independent_ram_delta=$item.independent_ram_delta; incremental_flash_delta=$item.incremental_delta; incremental_ram_delta=$item.incremental_ram_delta; accepted_commit=$item.accepted_commit; final_firmware_commit=$accepted; final_flash=$final.flash; final_ram=$final.ram; hardware_validation='pending'}
+      }
+      $held.updated_by_run_id = $env:GITHUB_RUN_ID
+    } elseif ($item.decision -eq 'pending_conflict') {
+      $key = "$($env:GITHUB_RUN_ID)/$($item.id)"
+      $existing = @($queue.items | Where-Object { $_.key -eq $key })
+      if ($existing.Count -eq 0) {
+        $queue.items += @{
+          key=$key; status='pending'; candidate_id=$item.id
+          original=@{run_id=$env:GITHUB_RUN_ID; candidate_id=$item.id; base_sha=$base; candidate_sha=$item.head; integration_record="size-auto-results/$($request.id)-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT).json"; pending_record="size-auto-results/$($request.id)-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT)-pending.json"; conflict_files=$item.conflict_paths; conflict_onto_sha=$item.conflict_onto; rebase_onto_firmware=$accepted}
+          created_by_run_id=$env:GITHUB_RUN_ID
+        }
+      }
+    }
+  }
+  $queue.updated_by_run_id = $env:GITHUB_RUN_ID
+  $queue | ConvertTo-Json -Depth 20 | Set-Content -Encoding utf8 $queuePath
   $report.status = 'measured'
   Save-Report
   $md = @(("# " + $request.id + " automatic integration"), "", "Run: $($env:GITHUB_RUN_ID)/$($env:GITHUB_RUN_ATTEMPT). Dry run: $dry. Hardware validation pending.", "", "Baseline: $($initial.flash) B / RAM $($initial.ram) B. Final: $($final.flash) B / RAM $($final.ram) B. Flash delta: $($report.delta) B. RAM delta: $($report.ram_delta) B.", "", '| Candidate | Independent Flash delta | Independent RAM delta | Cumulative Flash delta | Cumulative RAM delta | Decision | Reason |', '| --- | ---: | ---: | ---: | ---: | --- | --- |')
