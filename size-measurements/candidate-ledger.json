@@ -24062,7 +24062,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "adopted",
+      "integration_reason": "Neither resource increased and at least one decreased",
+      "integration_flash_delta": -22,
+      "integration_ram_delta": 0,
+      "accepted_commit": "4e9c7171b15da0a483b0e9a4992f78b925673b1d",
+      "conflict_paths": [],
+      "integration_base_sha": "29bfab9f093a608e1e81520f404687fb2673f089"
     },
     {
       "patch_id": "88c983d8f4bf9d08d4f7e3ca9ed51c873292b83f",
@@ -24099,7 +24106,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "adopted",
+      "integration_reason": "Neither resource increased and at least one decreased",
+      "integration_flash_delta": -14,
+      "integration_ram_delta": 0,
+      "accepted_commit": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "conflict_paths": [],
+      "integration_base_sha": "29bfab9f093a608e1e81520f404687fb2673f089"
     },
     {
       "patch_id": "1e34fd0750c6daa0997f3b0caf50f46282af3d3d",
@@ -24134,7 +24148,16 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "pending_conflict",
+      "integration_reason": "Manual semantic merge and remeasurement required",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/NES.ino"
+      ],
+      "integration_base_sha": "29bfab9f093a608e1e81520f404687fb2673f089"
     },
     {
       "patch_id": "603c6872e6a3c8601b2c0472b63ca254252d664e",
@@ -24170,7 +24193,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "adopted",
+      "integration_reason": "Neither resource increased and at least one decreased",
+      "integration_flash_delta": -16,
+      "integration_ram_delta": 0,
+      "accepted_commit": "fc4fad2780d907ef02bf4508dd97b572be2bbd37",
+      "conflict_paths": [],
+      "integration_base_sha": "29bfab9f093a608e1e81520f404687fb2673f089"
     },
     {
       "patch_id": "185d31975ec66abd2a083737941739b45108e677",
@@ -24206,7 +24236,16 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "pending_conflict",
+      "integration_reason": "Manual semantic merge and remeasurement required",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/MSX.ino"
+      ],
+      "integration_base_sha": "29bfab9f093a608e1e81520f404687fb2673f089"
     },
     {
       "patch_id": "2fefa013b81d21e8b94bc6a106652f26aa614382",
@@ -24245,7 +24284,16 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "pending_conflict",
+      "integration_reason": "Manual semantic merge and remeasurement required",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/GB.ino"
+      ],
+      "integration_base_sha": "29bfab9f093a608e1e81520f404687fb2673f089"
     },
     {
       "patch_id": "48587c730f299ff67adb7fbb0df25ed02a360e94",
@@ -24281,7 +24329,16 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "pending_conflict",
+      "integration_reason": "Manual semantic merge and remeasurement required",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/NES.ino"
+      ],
+      "integration_base_sha": "29bfab9f093a608e1e81520f404687fb2673f089"
     },
     {
       "patch_id": "2fc163955ad7c0d7987ec0c2b79729c53545b219",
@@ -24315,7 +24372,16 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "pending_conflict",
+      "integration_reason": "Manual semantic merge and remeasurement required",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/MSX.ino"
+      ],
+      "integration_base_sha": "29bfab9f093a608e1e81520f404687fb2673f089"
     }
   ],
   "duplicate_attempts": [
