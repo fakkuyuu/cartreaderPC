@@ -101,6 +101,7 @@ void closeBlankAndClear() __attribute__((noinline));
 void showInvalidChecksumTail() __attribute__((noinline));
 void showUnknownFlashIdAndWait() __attribute__((noinline));
 void showTurnOffPowerAndUpdate() __attribute__((noinline));
+void readROM_MD() __attribute__((noinline));
 void showRomNameAndSerial() __attribute__((noinline));
 void closeAndShowSramWritten() __attribute__((noinline));
 void showResettingAndUpdate() __attribute__((noinline));
