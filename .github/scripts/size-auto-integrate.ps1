@@ -160,7 +160,7 @@ try {
   $report.firmware_commit = $accepted
   $report.status = 'measured'
   Save-Report
-  $md = @("# " + $request.id + " automatic integration", "", "Run: $($env:GITHUB_RUN_ID)/$($env:GITHUB_RUN_ATTEMPT). Dry run: $dry. Hardware validation pending.", "", "Baseline: $($initial.flash) B / RAM $($initial.ram) B. Final: $($final.flash) B / RAM $($final.ram) B. Delta: $($report.delta) B.", "", '| Candidate | Independent delta | Cumulative delta | Decision |', '| --- | ---: | ---: | --- |')
+  $md = @(("# " + $request.id + " automatic integration"), "", "Run: $($env:GITHUB_RUN_ID)/$($env:GITHUB_RUN_ATTEMPT). Dry run: $dry. Hardware validation pending.", "", "Baseline: $($initial.flash) B / RAM $($initial.ram) B. Final: $($final.flash) B / RAM $($final.ram) B. Delta: $($report.delta) B.", "", '| Candidate | Independent delta | Cumulative delta | Decision |', '| --- | ---: | ---: | --- |')
   foreach ($item in $report.candidates) {
     $md += "| $($item.id) | $($item.independent_delta) | $($item.incremental_delta) | $($item.decision) |"
   }

@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       candidates: ${{ steps.prepare.outputs.candidates }}
+      auto_integrate: ${{ steps.prepare.outputs.auto_integrate }}
     steps:
       - uses: actions/checkout@v4
       - id: prepare
@@ -32,6 +33,13 @@ jobs:
           assert 1 <= len(request['candidates']) <= 8
           assert len({x['id'] for x in request['candidates']}) == len(request['candidates'])
           assert len({x['head'] for x in request['candidates']}) == len(request['candidates'])
+          auto = request.get('auto_integrate', False)
+          assert type(auto) is bool and type(request.get('dry_run', False)) is bool
+          if auto:
+              assert os.environ['GITHUB_REF'] == 'refs/heads/experiment/size-reduction-phase2'
+              assert not request.get('endpoints_only', False)
+              assert all(x.get('reviewed') is True for x in request['candidates'])
+              assert type(request['expected_base_flash']) is int and type(request['expected_base_ram']) is int
           matrix = []
           for candidate in request['candidates']:
               assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}', candidate['id'])
@@ -39,6 +47,7 @@ jobs:
               matrix.append(dict(candidate, base=request['base'], expected_base_flash=request['expected_base_flash'], expected_base_ram=request['expected_base_ram'], endpoints_only=request.get('endpoints_only', False)))
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               print('candidates=' + json.dumps(matrix, separators=(',', ':')), file=f)
+              print('auto_integrate=' + str(auto).lower(), file=f)
   measure:
     needs: prepare
     strategy:
@@ -286,4 +295,128 @@ jobs:
         run: |
           import json
           from pathlib import Path
-          assert json.loads(Path('size-measurement-output/results.json').read_text())['status'] == 'ok'
+          r = json.loads(Path('size-measurement-output/results.json').read_text())
+          # Auto mode rejects invalid individual results and independently recalibrates its baseline.
+          if not r['request'].get('auto_integrate', False):
+              assert r['status'] == 'ok'
+
+  auto-integrate:
+    needs: [prepare, aggregate]
+    if: needs.prepare.outputs.auto_integrate == 'true' && github.ref == 'refs/heads/experiment/size-reduction-phase2'
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: size-candidate-*
+          path: candidate-reports
+      - name: Measure and adopt cumulatively
+        shell: pwsh
+        run: ./.github/scripts/size-auto-integrate.ps1
+      - name: Upload integration reports, bundle and ELF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: auto-integration-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/phase2-auto-output/
+          if-no-files-found: error
+
+  auto-stage:
+    needs: auto-integrate
+    if: github.ref == 'refs/heads/experiment/size-reduction-phase2'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.stage.outputs.sha }}
+      start: ${{ steps.stage.outputs.start }}
+      dry_run: ${{ steps.stage.outputs.dry_run }}
+      stage: ${{ steps.stage.outputs.stage }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: auto-integration-${{ github.run_attempt }}
+          path: integration-output
+      - id: stage
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha=$(jq -er '.commit' integration-output/manifest.json)
+          start=$(jq -er '.start' integration-output/manifest.json)
+          dry=$(jq -r '.dry_run' integration-output/manifest.json)
+          [[ "$sha" =~ ^[0-9a-f]{40}$ && "$start" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$dry" == true || "$dry" == false ]]
+          [[ "$(jq -r '.workflow_commit' integration-output/manifest.json)" == "$GITHUB_SHA" ]]
+          [[ "$dry" == "$(jq -r '.dry_run // false' .github/size-parallel-request.json)" ]]
+          [[ "$(jq -r '.auto_integrate' .github/size-parallel-request.json)" == true ]]
+          [[ "$(jq -r '.status' integration-output/integration.json)" == measured ]]
+          if [[ "$dry" == false ]]; then
+            [[ "$start" == "$GITHUB_SHA" ]]
+          else
+            [[ "$start" == "$(jq -er '.base' .github/size-parallel-request.json)" ]]
+          fi
+          git bundle verify integration-output/integration.bundle
+          git fetch integration-output/integration.bundle refs/heads/phase2-auto-local
+          [[ "$(git rev-parse FETCH_HEAD)" == "$sha" ]]
+          git merge-base --is-ancestor "$start" "$sha"
+          [[ "$(git rev-parse "$start:Cart_Reader/Config.h")" == "$(git rev-parse "$sha:Cart_Reader/Config.h")" ]]
+          # Only firmware and the generated report may differ.
+          git diff --name-only "$start" "$sha" | while IFS= read -r path; do
+            [[ "$path" == Cart_Reader/* || "$path" == size-auto-results/* ]] || exit 1
+          done
+          stage="experiment/size-auto-stage-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          git push origin "$sha:refs/heads/$stage"
+          {
+            echo "sha=$sha"
+            echo "start=$start"
+            echo "dry_run=$dry"
+            echo "stage=$stage"
+          } >> "$GITHUB_OUTPUT"
+
+  auto-ci:
+    needs: auto-stage
+    permissions:
+      contents: read
+    uses: ./.github/workflows/ci.yml
+    with:
+      source_ref: ${{ needs.auto-stage.outputs.sha }}
+      compare_base: ${{ needs.auto-stage.outputs.start }}
+
+  auto-publish:
+    needs: [auto-stage, auto-ci]
+    if: github.ref == 'refs/heads/experiment/size-reduction-phase2' && needs.auto-stage.outputs.dry_run == 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Publish CI-verified result with branch lease
+        shell: bash
+        env:
+          STAGED_SHA: ${{ needs.auto-stage.outputs.sha }}
+          STAGE_BRANCH: ${{ needs.auto-stage.outputs.stage }}
+        run: |
+          set -euo pipefail
+          target=refs/heads/experiment/size-reduction-phase2
+          [[ "$GITHUB_REF" == "$target" ]]
+          [[ "$(jq -r '.auto_integrate' .github/size-parallel-request.json)" == true ]]
+          [[ "$(jq -r '.dry_run // false' .github/size-parallel-request.json)" == false ]]
+          [[ "$STAGED_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$STAGE_BRANCH" == "experiment/size-auto-stage-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" ]]
+          git fetch origin "refs/heads/$STAGE_BRANCH"
+          [[ "$(git rev-parse FETCH_HEAD)" == "$STAGED_SHA" ]]
+          git merge-base --is-ancestor "$GITHUB_SHA" "$STAGED_SHA"
+          [[ "$(git ls-remote origin "$target" | cut -f1)" == "$GITHUB_SHA" ]]
+          git push --force-with-lease="$target:$GITHUB_SHA" origin "$STAGED_SHA:$target"
+          echo "Published $STAGED_SHA to $target after CI success." >> "$GITHUB_STEP_SUMMARY"
