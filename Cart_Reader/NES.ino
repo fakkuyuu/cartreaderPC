@@ -1732,6 +1732,16 @@ void setCHRSize() {
 }
 
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
+static uint16_t __attribute__((noinline)) ramDisplaySizeR70_NES(int index) {
+  if (mapper == 19 && index == 2) return 128;
+  uint16_t size = pgm_read_byte(&(RAM[index]));
+  if (mapper == 0) return size / 4;
+  if (mapper == 16) return size * 32;
+  if (mapper == 159 || mapper == 80) return size * 16;
+  if (mapper == 82) return index * 5;
+  return size;
+}
+
 void printRamSize_NES(int index) {
   display_Clear();
   print_Msg(F("RAM Size: "));
@@ -1739,16 +1749,7 @@ void printRamSize_NES(int index) {
     println_Msg(F("128"));
     return;
   }
-  uint16_t size = pgm_read_byte(&(RAM[index]));
-  if (mapper == 0)
-    size /= 4;
-  else if (mapper == 16)
-    size *= 32;
-  else if ((mapper == 159) || (mapper == 80))
-    size *= 16;
-  else if (mapper == 82)
-    size = index * 5;
-  println_Msg(size);
+  println_Msg(ramDisplaySizeR70_NES(index));
 }
 #endif
 
@@ -1774,16 +1775,8 @@ void setRAMSize() {
         printMenuIndexP20_NES(i);
         if (mapper == 0)
           PcConsole.print(i * 2);
-        else if (mapper == 16)
-          PcConsole.print(pgm_read_byte(&(RAM[i])) * 32);
-        else if (mapper == 159 || mapper == 80)
-          PcConsole.print(pgm_read_byte(&(RAM[i])) * 16);
-        else if (mapper == 19 && i == 2)
-          PcConsole.print(128);
-        else if (mapper == 82)
-          PcConsole.print(i * 5);
         else
-          PcConsole.print(pgm_read_byte(&(RAM[i])));
+          PcConsole.print(ramDisplaySizeR70_NES(i));
         PcConsole.print((mapper == 16 || mapper == 159 || mapper == 80 || (mapper == 19 && i == 2)) ? F(" B") : F(" KB"));
       }
       finishPcMenuP30_NES();
