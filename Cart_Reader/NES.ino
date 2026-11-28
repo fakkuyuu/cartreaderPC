@@ -2563,10 +2563,7 @@ void readPRG(bool readrom) {
 
       case 43:
         base = 0xC000;
-        for (size_t i = 0; i < 8; i++) {
-          write_prg_byte(0x4022, i);
-          dumpPRG8KiB(base);
-        }
+        dumpSequentialPRGBanks(8, 0x4022, 0, 0x2000, base);
         base = 0x5000;
         for (size_t i = 0; i < 4; i++) {
           dumpBankPRG(0x0, 0x1000, base);
