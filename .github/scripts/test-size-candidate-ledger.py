@@ -145,7 +145,7 @@ class CandidateLedgerTests(unittest.TestCase):
         auto_results = self.repo / "auto-results"
         measurements.mkdir()
         auto_results.mkdir()
-        common = {"id": "round-test", "head": candidate["head"], "functions": ["readCHR"], "target": "NES readCHR"}
+        common = {"id": "candidate", "head": candidate["head"], "functions": ["readCHR"], "target": "NES readCHR"}
         independent = {
             "schema": 2, "mode": "parallel-independent", "run_id": "12345", "run_attempt": "1",
             "request": {"id": "round-test", "base": self.base},
