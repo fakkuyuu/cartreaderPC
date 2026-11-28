@@ -1,0 +1,47 @@
+{
+  "schema": 3,
+  "acceptance_policy": "flash_and_ram_nonincreasing_at_least_one_decreases",
+  "id": "round78c-auto",
+  "run_id": "46128323441",
+  "run_attempt": "1",
+  "base": "8917a27f35658a01477169d7c4981097b582b2f3",
+  "start": "f5df2979db7b327a4e6dbed687457c06b9f50fd0",
+  "dry_run": false,
+  "status": "measured",
+  "candidates": [
+    {
+      "id": "gb-0x6000",
+      "head": "f9bf861f9a5d3bdf4941f33bf503bc22f941d0c8",
+      "order": 1,
+      "independent_flash": 202106,
+      "independent_ram": 6059,
+      "independent_delta": -14,
+      "independent_ram_delta": 0,
+      "decision": "adopted",
+      "reason": "Neither resource increased and at least one decreased",
+      "before_flash": 202120,
+      "before_ram": 6059,
+      "trial_flash": 202106,
+      "trial_ram": 6059,
+      "incremental_delta": -14,
+      "incremental_ram_delta": 0,
+      "accepted_commit": "e92d674597ba1ec6b80df2f55ca3309af7a4a048",
+      "conflict_paths": [],
+      "conflict_onto": null
+    }
+  ],
+  "hardware_validation": "pending",
+  "baseline": {
+    "flash": 202120,
+    "ram": 6059
+  },
+  "final": {
+    "flash": 202106,
+    "ram": 6059
+  },
+  "delta": -14,
+  "ram_delta": 0,
+  "firmware_commit": "e92d674597ba1ec6b80df2f55ca3309af7a4a048",
+  "pending_count": 0,
+  "pending": []
+}
