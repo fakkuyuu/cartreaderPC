@@ -3428,6 +3428,21 @@ static void __attribute__((noinline)) dumpAddrChrR66_NES(word banks, word mask, 
   }
 }
 
+static void dumpRegisterGroupChrR82_NES(size_t bankCount, uint16_t firstAddress,
+                                               uint16_t addressStep, uint8_t banksPerGroup)
+    __attribute__((noinline));
+static void dumpRegisterGroupChrR82_NES(size_t bankCount, uint16_t firstAddress,
+                                        uint16_t addressStep, uint8_t banksPerGroup) {
+  for (size_t bankBase = 0; bankBase < bankCount; bankBase += banksPerGroup) {
+    uint16_t address = firstAddress;
+    for (byte bank = 0; bank < banksPerGroup; ++bank) {
+      write_prg_byte(address, bankBase + bank);
+      address += addressStep;
+    }
+    dumpCHR8KiB();
+  }
+}
+
 void readCHR(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3641,11 +3656,7 @@ void readCHR(bool readrom) {
           }
           banks = chrBanks4K * 4;
           write_ram_byte(0xE800, 0xC0);  // CHR RAM High/Low Disable (ROM Enable)
-          for (size_t i = 0; i < banks; i += 8) {
-            for (byte bank = 0; bank < 8; ++bank)
-              write_prg_byte(0x8000U + (word(bank) << 11), i + bank);
-            dumpCHR8KiB();
-          }
+          dumpRegisterGroupChrR82_NES(banks, 0x8000, 0x0800, 8);
           break;
 
         case 21:  // 128K/256K
@@ -3819,11 +3830,7 @@ void readCHR(bool readrom) {
 
         case 68:  // 128K/256K
           banks = chrBanks4K * 2;
-          for (size_t i = 0; i < banks; i += 4) {  // 2K Banks
-            for (byte bank = 0; bank < 4; ++bank)
-              write_prg_byte(0x8000U + (word(bank) << 12), i + bank);
-            dumpCHR8KiB();
-          }
+          dumpRegisterGroupChrR82_NES(banks, 0x8000, 0x1000, 4);
           break;
 
         case 69:  // 128K/256K
@@ -4104,11 +4111,7 @@ void readCHR(bool readrom) {
 
         case 246:
           banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i += 4) {
-            for (byte bank = 0; bank < 4; ++bank)
-              write_prg_byte(0x6004U + bank, i | bank);
-            dumpCHR8KiB();
-          }
+          dumpRegisterGroupChrR82_NES(banks, 0x6004, 1, 4);
           break;
 
         case 252:
