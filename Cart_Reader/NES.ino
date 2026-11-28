@@ -2289,7 +2289,7 @@ void readPRG(bool readrom) {
               write_prg_byte(0x4100, 0x01);  // MMC3 mode
             }
             if ((mapper == 126) || (mapper == 422) || (mapper == 534)) {
-              write_prg_byte(0x6800, (i & 0x300) >> 4 | (i & 0x70) >> 4);  // submapper 0
+              write_prg_byte(0x6800, (i & 0x370) >> 4);  // submapper 0
               // write_prg_byte(0x6800, (i & 0x80) >> 2 | (i & 0x70) >> 4); // submapper 1
             }
             if (mapper == 134) {
