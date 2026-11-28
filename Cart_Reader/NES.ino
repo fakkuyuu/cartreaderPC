@@ -446,12 +446,13 @@ void checkMapperSize();
 void setPRGSize();
 void setCHRSize();
 void setRAMSize();
+static void setRomSize_NES(bool chr);
 static void configureMapperP16_NES() __attribute__((noinline));
 static void configureMapperP16_NES() {
   setMapper();
   checkMapperSize();
-  setPRGSize();
-  setCHRSize();
+  setRomSize_NES(false);
+  setRomSize_NES(true);
   setRAMSize();
 }
 
