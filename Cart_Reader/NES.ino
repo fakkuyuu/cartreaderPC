@@ -668,11 +668,7 @@ void printPRG(unsigned long myOffset) {
 void setDefaultRomName() {
   dbSaveTitle[0] = '\0';
   nesSaveTitleMatchesCrc = false;
-  romName[0] = 'C';
-  romName[1] = 'A';
-  romName[2] = 'R';
-  romName[3] = 'T';
-  romName[4] = '\0';
+  memcpy_P(romName, PSTR("CART"), 5);
 }
 
 void setRomnameFromString(const char* input) {
