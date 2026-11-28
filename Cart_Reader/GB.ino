@@ -803,6 +803,11 @@ static void writeGBRegister7FE1(byte data) {
 
 
 
+static void writeGBRegister4AAA(byte data) __attribute__((noinline));
+static void writeGBRegister4AAA(byte data) {
+  writeByte_GB(0x4AAA, data);
+}
+
 void writeByte_GB(int myAddress, byte myData, boolean audio_as_WE) {
   // Set address
   PORTF = myAddress & 0xFF;
@@ -1567,7 +1572,7 @@ static void mbc6UnlockSequenceP16_GB() {
   writeGBRegister2000(0x01);
   writeGBRegister3000( 0x02);
   writeByte_GB(0x7555, 0xAA);
-  writeByte_GB(0x4AAA, 0x55);
+  writeGBRegister4AAA( 0x55);
 }
 
 void writeSRAMFLASH_MBC6_GB() {
@@ -1614,7 +1619,7 @@ void writeSRAMFLASH_MBC6_GB() {
         mbc6UnlockSequenceP16_GB();
         writeByte_GB(0x7555, 0x80);
         writeByte_GB(0x7555, 0xAA);
-        writeByte_GB(0x4AAA, 0x55);
+        writeGBRegister4AAA( 0x55);
         selectMbc6FlashBank_GB(currBank);
         writeGBRegister4000(0x30);
         byte lives = 100;
@@ -3213,7 +3218,7 @@ void sendGamesharkCommand_GB(byte cmd) {
   writeGBRegister7FE1( 0x2);
   writeGBRegister5555(0xAA);
   writeGBRegister7FE1( 0x1);
-  writeByte_GB(0x4AAA, 0x55);
+  writeGBRegister4AAA( 0x55);
   writeGBRegister7FE1( 0x2);
   writeGBRegister5555(cmd);
 }
