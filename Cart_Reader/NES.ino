@@ -459,8 +459,7 @@ void nesMenu() {
   unsigned char answer;
 
   // create menu with title "NES CART READER" and 7 options to choose from
-  convertPgm(menuOptionsNES, 7);
-  answer = chooseMenuOption(FS(SharedFlashText::textNESCARTREADER), 7);
+  answer = chooseFlashMenuOption(FS(SharedFlashText::textNESCARTREADER), menuOptionsNES, 7);
 
   // wait for user choice to come back from the question box menu
   switch (answer) {
