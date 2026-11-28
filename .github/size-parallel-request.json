@@ -1,49 +1,49 @@
 {
-  "id": "round76-retry-auto",
-  "base": "a6d7c3cd4fbc53ad0fe7e86bd5da722dde0405ab",
-  "expected_base_flash": 202704,
+  "id": "round77-auto",
+  "base": "50650411f8f09a6eb3b579054f861c64c9e54111",
+  "expected_base_flash": 202584,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "gb-show-info-noinline",
-      "head": "f4739febc65dfac13d016ca0754cfd71287116c9",
+      "id": "md-setup",
+      "head": "f07f702cd5ca4d74e8dd70c942389d57ebc18df0",
       "reviewed": true
     },
     {
-      "id": "gb-get-info-noinline",
-      "head": "84c02816b84293972c3be0b344eff40a17cffcb6",
+      "id": "gba-info",
+      "head": "b786fc6a4bad2fc5312a09d841f4bf4169f38bf4",
       "reviewed": true
     },
     {
-      "id": "gba-setup-noinline",
-      "head": "d369ee05862a49095389ade3588c540dbc77040f",
+      "id": "n64-setup",
+      "head": "102c773bfffdd88331f32520b7a997dd82e275ac",
       "reviewed": true
     },
     {
-      "id": "gba-read-rom-noinline",
-      "head": "ad618f684529e580c01082ef39b3602a0ea33d3e",
+      "id": "n64-info",
+      "head": "138fe30312593cb849abe412cf4ed160455d284f",
       "reviewed": true
     },
     {
-      "id": "md-read-rom-noinline",
-      "head": "58bdadb207c7f99d4b9872241fa9bdbdfb15c95e",
+      "id": "sms-setup",
+      "head": "e16c0de8163000f4cb63a47bed7bb3deb4d6bffb",
       "reviewed": true
     },
     {
-      "id": "msx-read-rom-noinline",
-      "head": "da12a407da4f36137cb62879a98e368c331ac45a",
+      "id": "sms-read",
+      "head": "0ced071c2e560f5b72a706ea10d5d459110a15a7",
       "reviewed": true
     },
     {
-      "id": "msx-write-ram-noinline",
-      "head": "cccc15c0c86860f47e90ed0754d73a739ced46af",
+      "id": "snes-read",
+      "head": "03b9703eff302bd440c68f0f7bfea017894136c5",
       "reviewed": true
     },
     {
-      "id": "gb-read-rom-noinline",
-      "head": "5c897abb62ca29c9431f2f4ac73a69914fed24b3",
+      "id": "pce-read",
+      "head": "aaf8abbbd286fe2fa2ebc51df09f376cdb730af4",
       "reviewed": true
     }
   ]
