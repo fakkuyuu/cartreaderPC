@@ -25255,6 +25255,46 @@
       ],
       "reason": "Identical candidate already exists on this base.",
       "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46129276387"
+    },
+    {
+      "run_id": "46139551868",
+      "run_attempt": "1",
+      "candidate_id": "r81b2-gb-7555",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "9ec4bfc6e05c6c2f4b45b3d817c652372c765f34",
+      "status": "duplicate_skipped",
+      "duplicate_matches": [
+        {
+          "candidate_id": "r81b-gb-7555",
+          "round_id": "round81b-auto",
+          "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+          "head_sha": "9ec4bfc6e05c6c2f4b45b3d817c652372c765f34",
+          "decision": "independent_improvement",
+          "patch_id": "a87098e54d8ebcf7d3f6736619c431f7fd90f21b"
+        }
+      ],
+      "reason": "Identical candidate already exists on this base.",
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46139551868"
+    },
+    {
+      "run_id": "46139551868",
+      "run_attempt": "1",
+      "candidate_id": "r81b2-gb-1000",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "e458d9e0f81d5682ae3f067f5865cd63be001952",
+      "status": "duplicate_skipped",
+      "duplicate_matches": [
+        {
+          "candidate_id": "r81b-gb-1000",
+          "round_id": "round81b-auto",
+          "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+          "head_sha": "e458d9e0f81d5682ae3f067f5865cd63be001952",
+          "decision": "independent_improvement",
+          "patch_id": "40f8285fdc62fd9040c84d26aec05f23dfa92963"
+        }
+      ],
+      "reason": "Identical candidate already exists on this base.",
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46139551868"
     }
   ]
 }
