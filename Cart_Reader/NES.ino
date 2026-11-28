@@ -1943,24 +1943,13 @@ static void printNESSettings(void) {
   print_Msg(chr);
   println_Msg(FS(SharedFlashText::unitK));
   print_Msg(F("RAM SIZE: "));
-  if (mapper == 0) {
-    print_Msg(ram / 4);
-    println_Msg(FS(SharedFlashText::unitK));
-  } else if ((mapper == 16) || (mapper == 80) || (mapper == 159)) {
-    if (mapper == 16)
-      print_Msg(ram * 32);
-    else
-      print_Msg(ram * 16);
+  if ((mapper == 16) || (mapper == 80) || (mapper == 159)) {
+    print_Msg(ram * (mapper == 16 ? 32 : 16));
     println_Msg(FS(SharedFlashText::unitB));
-  } else if (mapper == 19) {
-    if (ramsize == 2)
-      println_Msg(FS(SharedFlashText::text128B));
-    else {
-      print_Msg(ram);
-      println_Msg(FS(SharedFlashText::unitK));
-    }
+  } else if (mapper == 19 && ramsize == 2) {
+    println_Msg(FS(SharedFlashText::text128B));
   } else {
-    print_Msg(ram);
+    print_Msg(mapper == 0 ? ram / 4 : ram);
     println_Msg(FS(SharedFlashText::unitK));
   }
 }
