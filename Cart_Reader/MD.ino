@@ -1340,7 +1340,7 @@ static word advanceLockonBufferR39_MD(word d) {
   return d;
 }
 
-void readROM_MD() {
+void __attribute__((noinline)) readROM_MD() {
   // Checksum
   uint16_t calcCKS = 0;
   uint16_t calcCKSLockon = 0;
