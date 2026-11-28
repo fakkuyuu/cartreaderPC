@@ -1,15 +1,98 @@
 {
-  "id": "round78c-auto",
-  "base": "8917a27f35658a01477169d7c4981097b582b2f3",
-  "expected_base_flash": 202120,
+  "id": "round79-auto",
+  "base": "30e7ec1a0110a25a72892bb04797bd8a39c3fec6",
+  "expected_base_flash": 202106,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "gb-0x6000",
-      "head": "f9bf861f9a5d3bdf4941f33bf503bc22f941d0c8",
-      "reviewed": true
+      "id": "gb-sram-0xa000",
+      "head": "9f15789f8cab611c52354a337e829a60b86d3125",
+      "reviewed": true,
+      "target": "GB",
+      "functions": [
+        "writeByteSRAM_GB",
+        "writeGBSramRegisterA000"
+      ],
+      "description": "Share address 0xA000 setup for writeByteSRAM_GB at 20 source call sites"
+    },
+    {
+      "id": "gb-0xa080",
+      "head": "da0e1dde9198a05a614e46a4e8bcc9e4fe5c709b",
+      "reviewed": true,
+      "target": "GB",
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegisterA080"
+      ],
+      "description": "Share address 0xa080 setup for writeByte_GB at 15 source call sites"
+    },
+    {
+      "id": "gb-0x0000",
+      "head": "d4fde7b6bc164a7c59432522a9657e219409d4b0",
+      "reviewed": true,
+      "target": "GB",
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegister0000"
+      ],
+      "description": "Share address 0x0000 setup for writeByte_GB at 13 source call sites"
+    },
+    {
+      "id": "gb-0x3555",
+      "head": "f7e3aa0853f1c5ebb403db76e71a4357fcd5c9ac",
+      "reviewed": true,
+      "target": "GB",
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegister3555"
+      ],
+      "description": "Share address 0x3555 setup for writeByte_GB at 10 source call sites"
+    },
+    {
+      "id": "gb-0x5555",
+      "head": "32196e649c5ff117c2d866f5073f0977a10c64fc",
+      "reviewed": true,
+      "target": "GB",
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegister5555"
+      ],
+      "description": "Share address 0x5555 setup for writeByte_GB at 10 source call sites"
+    },
+    {
+      "id": "nes-0xa000",
+      "head": "26384ae93e99f3e039b176d0d378601cc743509f",
+      "reviewed": true,
+      "target": "NES",
+      "functions": [
+        "write_prg_byte",
+        "writeNESRegisterA000"
+      ],
+      "description": "Share address 0xA000 setup for write_prg_byte at 10 source call sites"
+    },
+    {
+      "id": "nes-0xa001",
+      "head": "50a2c8f4daace187378fb9d559b8e852ea38f397",
+      "reviewed": true,
+      "target": "NES",
+      "functions": [
+        "write_prg_byte",
+        "writeNESRegisterA001"
+      ],
+      "description": "Share address 0xA001 setup for write_prg_byte at 12 source call sites"
+    },
+    {
+      "id": "nes-0x5000",
+      "head": "d960aba098dfab5cb795eca57cda5ea431c25165",
+      "reviewed": true,
+      "target": "NES",
+      "functions": [
+        "write_prg_byte",
+        "writeNESRegister5000"
+      ],
+      "description": "Share address 0x5000 setup for write_prg_byte at 11 source call sites"
     }
   ]
 }
