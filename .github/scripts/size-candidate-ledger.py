@@ -303,6 +303,7 @@ def precheck(repo: Path, request_path: Path, ledger_path: Path, out_path: Path) 
     ledger = load_json(ledger_path, empty_ledger())
     base = str(request.get("base") or "")
     entries = ledger.get("entries", [])
+    known_entries = list(entries)
     results: list[dict[str, Any]] = []
     eligible: list[dict[str, Any]] = []
     if request.get("endpoints_only") is True:
@@ -329,7 +330,7 @@ def precheck(repo: Path, request_path: Path, ledger_path: Path, out_path: Path) 
         try:
             identity = patch_identity(repo, base, head, cand)
             row["identity"] = identity
-            matches = [e for e in entries if candidate_matches(e, identity, head)]
+            matches = [e for e in known_entries if candidate_matches(e, identity, head)]
             if matches:
                 same_base = [e for e in matches if e.get("base_sha") == base]
                 explicit_retest = cand.get("retest") is True and bool(str(cand.get("retest_reason") or "").strip())
@@ -360,7 +361,7 @@ def precheck(repo: Path, request_path: Path, ledger_path: Path, out_path: Path) 
             functions = set(identity.get("functions") or [])
             files = set(identity.get("files") or [])
             related = []
-            for e in entries:
+            for e in known_entries:
                 overlap = bool(files.intersection(e.get("files") or []))
                 fn_overlap = bool(functions.intersection(e.get("functions") or []))
                 target_overlap = bool(identity.get("target")) and identity.get("target") == e.get("target")
@@ -381,6 +382,15 @@ def precheck(repo: Path, request_path: Path, ledger_path: Path, out_path: Path) 
         results.append(row)
         if not row["skip"]:
             eligible.append(row["candidate"])
+            if row.get("identity"):
+                known_entries.append({
+                    **row["identity"],
+                    "candidate_id": row["id"],
+                    "base_sha": base,
+                    "head_sha": head,
+                    "round_id": request.get("id"),
+                    "source": "same-request-precheck",
+                })
     result = {
         "schema": SCHEMA,
         "applicable": True,

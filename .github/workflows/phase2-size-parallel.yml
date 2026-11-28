@@ -82,6 +82,15 @@ jobs:
                   expected_base_ram=request.get('expected_base_ram'),
                   endpoints_only=request.get('endpoints_only', False),
               ))
+          eligible_count = len(matrix)
+          if not matrix:
+              matrix = [dict(
+                  id='__ledger_noop__', head=request['base'], base=request['base'],
+                  expected_base_flash=request.get('expected_base_flash'),
+                  expected_base_ram=request.get('expected_base_ram'),
+                  endpoints_only=request.get('endpoints_only', False),
+                  skip=True, no_op=True, precheck_status='all_candidates_skipped',
+              )]
           eligible_request = dict(request)
           eligible_request['candidates'] = precheck['eligible']
           eligible_request['ledger_precheck'] = {
@@ -93,7 +102,7 @@ jobs:
           (out / 'eligible-request.json').write_text(json.dumps(eligible_request, indent=2) + '\n')
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               print('candidates=' + json.dumps(matrix, separators=(',', ':')), file=f)
-              print('eligible_count=' + str(len(matrix)), file=f)
+              print('eligible_count=' + str(eligible_count), file=f)
               print('auto_integrate=' + str(bool(request.get('auto_integrate', False))).lower(), file=f)
           print(f"Ledger precheck: {len(request['candidates'])} submitted, {len(matrix)} eligible, {eligible_request['ledger_precheck']['duplicate_count']} duplicates.")
           PY
@@ -112,10 +121,15 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
+      - name: No new candidates after ledger precheck
+        if: matrix.candidate.no_op == true
+        run: echo "All submitted candidates were already recorded in the shared ledger; no build is needed."
       - uses: actions/checkout@v4
+        if: matrix.candidate.no_op != true
         with:
           fetch-depth: 0
       - name: Build each commit separately (HW3 FLASH OFF)
+        if: matrix.candidate.no_op != true
         shell: pwsh
         env:
           SIZE_CANDIDATE: ${{ toJSON(matrix.candidate) }}
@@ -271,7 +285,7 @@ jobs:
           }
           if ($report.status -ne 'ok') { throw "Measurement status: $($report.status)" }
       - name: Upload candidate result and build logs
-        if: always()
+        if: always() && matrix.candidate.no_op != true
         uses: actions/upload-artifact@v4
         with:
           name: size-candidate-${{ matrix.candidate.id }}

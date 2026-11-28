@@ -73,6 +73,17 @@ class CandidateLedgerTests(unittest.TestCase):
         self.assertEqual(a["patch_id"], b["patch_id"])
         self.assertEqual(a["diff_sha256"], b["diff_sha256"])
 
+    def test_duplicate_patch_is_skipped_within_same_request(self):
+        first = self.make_candidate("first", self.base, "int bank = 0;", "int bank = 7;", "first")
+        second = self.make_candidate("second", self.base, "int bank = 0;", "int bank = 7;", "second")
+        request_path = self.repo / "request.json"
+        out_path = self.repo / "precheck.json"
+        request_path.write_text(json.dumps({"id": "same-request", "base": self.base, "candidates": [first, second]}), encoding="utf-8")
+        result = LEDGER.precheck(self.repo, request_path, self._ledger_file(), out_path)
+        self.assertEqual(result["candidates"][0]["status"], "new")
+        self.assertEqual(result["candidates"][1]["status"], "duplicate")
+        self.assertEqual(result["eligible_count"], 1)
+
     def test_same_base_duplicate_is_skipped(self):
         candidate = self.make_candidate("candidate", self.base, "int bank = 0;", "int bank = 7;", "candidate")
         identity = LEDGER.patch_identity(self.repo, self.base, candidate["head"], candidate)
