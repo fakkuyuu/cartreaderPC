@@ -2126,6 +2126,11 @@ static void writeAndDump235R64_NES(word address, word base) {
 
 static void initMapper19Ram_NES();
 
+static void __attribute__((noinline)) writePair58R75_NES(byte a, byte b) {
+  write_prg_byte(0x5000, a);
+  write_prg_byte(0x8000, b);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2456,12 +2461,10 @@ void readPRG(bool readrom) {
         banks = prgBanks16K / 2;
         for (byte k = 4; k != 0; ) {
           --k;
-          write_prg_byte(0x5000, ((k & 2) << 6) | (k & 1));
-          write_prg_byte(0x8000, 0);
+          writePair58R75_NES(((k & 2) << 6) | (k & 1), 0);
         }
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x5000, 0x81);
-          write_prg_byte(0x8000, i);
+          writePair58R75_NES(0x81, i);
           dumpPRG32KiB(base);
         }
         break;
