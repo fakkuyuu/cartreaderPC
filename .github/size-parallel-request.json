@@ -1,21 +1,40 @@
 {
-  "id": "round64-cumulative",
-  "base": "4b49f56e475a146b14d8d6920bc0c7e0452cb11c",
-  "expected_base_flash": 203914,
+  "id": "round65-independent",
+  "base": "6c98f5b223cd21f803f02bce5490a518bd11cc36",
+  "expected_base_flash": 203786,
   "expected_base_ram": 6059,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "stage2",
-      "head": "478856729624a3961a0a99de82095a24a4984c3e"
+      "id": "nes-vrc-extra",
+      "head": "02c77cd2432087209538232274bfa62794f8c424"
     },
     {
-      "id": "stage3",
-      "head": "f826bc59784749d0f031c9757783d2d2f0a61a6d"
+      "id": "nes-m86-m89-mask",
+      "head": "bbb498cf61f70666a78096ba316f6dc0d53a06ce"
     },
     {
-      "id": "stage4",
-      "head": "71519b1836f4078ba3771dba5b87d8867ce69707"
+      "id": "nes-m41-double-write",
+      "head": "cc3c99b479fe8cb05cfa408e5943843d564ee5ac"
+    },
+    {
+      "id": "nes-m210-sequential",
+      "head": "0b91649aba21645278a42aef49128ebb3dbac697"
+    },
+    {
+      "id": "nes-pulsem2-chr",
+      "head": "947ea7cb439be3688a4e173fd4a7505867aa6c82"
+    },
+    {
+      "id": "nes-mmc6-sram-loop",
+      "head": "3d183bf3084051d0753cbb85ad067180bae0fae1"
+    },
+    {
+      "id": "nes-mmc3-chr-switch",
+      "head": "8d206072e2890ebf4d866013691e7eaa4187e2f2"
+    },
+    {
+      "id": "nes-chr-masked",
+      "head": "c8f8329d1d42e015329a7df6d8dca60648e1916a"
     }
   ]
 }
