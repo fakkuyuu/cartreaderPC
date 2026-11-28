@@ -4636,17 +4636,19 @@ void EepromStop_NES() {
   write_prg_byte(0x800D, 0x00);  // STOP
 }
 
+static void __attribute__((noinline)) eepromPulseR66_NES(byte value) {
+  write_prg_byte(0x800D, value);
+  write_prg_byte(0x800D, value | 0x20);
+  write_prg_byte(0x800D, value);
+}
+
 void EepromSet0_NES() {
-  write_prg_byte(0x800D, 0x00);  // sda low, scl low
-  write_prg_byte(0x800D, 0x20);  // sda low, scl high // 0
-  write_prg_byte(0x800D, 0x00);  // sda low, scl low
+  eepromPulseR66_NES(0);
 }
 
 void EepromSet1_NES() {
-  write_prg_byte(0x800D, 0x40);  // sda high, scl low
-  write_prg_byte(0x800D, 0x60);  // sda high, scl high // 1
-  write_prg_byte(0x800D, 0x40);  // sda high, scl low
-  write_prg_byte(0x800D, 0x00);  // sda low, scl low
+  eepromPulseR66_NES(0x40);
+  write_prg_byte(0x800D, 0x00);
 }
 
 void EepromStatus_NES() {        // ACK
