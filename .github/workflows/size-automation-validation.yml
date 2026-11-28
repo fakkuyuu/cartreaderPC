@@ -1,0 +1,43 @@
+name: Size automation PowerShell validation
+
+on:
+  push:
+    branches: [experiment/size-reduction-phase2]
+    paths:
+      - '.github/scripts/size-auto-integrate.ps1'
+      - '.github/scripts/size-conflict.ps1'
+      - '.github/scripts/size-policy.ps1'
+      - '.github/scripts/test-size-*.ps1'
+      - '.github/workflows/size-automation-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  powershell-parse:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse automation scripts and run policy/conflict tests
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $files = @(
+            '.github/scripts/size-auto-integrate.ps1',
+            '.github/scripts/size-conflict.ps1',
+            '.github/scripts/size-policy.ps1',
+            '.github/scripts/test-size-conflict.ps1',
+            '.github/scripts/test-size-policy.ps1'
+          )
+          foreach ($file in $files) {
+            if (!(Test-Path -LiteralPath $file)) { throw "Missing script: $file" }
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $file), [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors.Count -gt 0) {
+              $errors | ForEach-Object { Write-Error "$file : $($_.Message) at $($_.Extent.StartLineNumber)" }
+              throw "PowerShell parse failed: $file"
+            }
+          }
+          ./.github/scripts/test-size-conflict.ps1
+          ./.github/scripts/test-size-policy.ps1
