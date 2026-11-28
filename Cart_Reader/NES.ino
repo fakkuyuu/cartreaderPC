@@ -3381,6 +3381,14 @@ static void setOuterChr45_NES(size_t i) {
   write_prg_byte(0x6000, 0x80);                       // PRG-AND
 }
 
+static void __attribute__((noinline)) dumpVrcChrR64_NES(word banks, word upperReg, byte upperMask) {
+  for (word i = 0; i < banks; ++i) {
+    write_prg_byte(0xB000, i & 0xF);
+    write_prg_byte(upperReg, (i >> 4) & upperMask);
+    dumpCHR1KiB();
+  }
+}
+
 void readCHR(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3613,14 +3621,7 @@ void readCHR(bool readrom) {
 
         case 21:  // 128K/256K
           banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xB000, i & 0xF);           // CHR Bank Lower 4 bits
-            if (chrsize == 5)                          // Check CHR Size to determine VRC4a (128K) or VRC4c (256K)
-              write_prg_byte(0xB002, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4a (Wai Wai World 2)
-            else                                       // banks == 256
-              write_prg_byte(0xB040, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4c (Ganbare Goemon Gaiden 2)
-            dumpCHR1KiB();
-          }
+          dumpVrcChrR64_NES(banks, chrsize == 5 ? 0xB002 : 0xB040, 0xF);
           break;
 
 
@@ -3646,11 +3647,7 @@ void readCHR(bool readrom) {
               display_Update();
               m23reg = 0xB004;
             }
-            for (size_t i = 0; i < banks; i++) {
-              write_prg_byte(0xB000, i & 0xF);          // CHR Bank 0: Lower 4 bits
-              write_prg_byte(m23reg, (i >> 4) & 0x1F);  // CHR Bank 0: Upper 5 bits
-              dumpCHR1KiB();
-            }
+            dumpVrcChrR64_NES(banks, m23reg, 0x1F);
             break;
           }
 
@@ -3663,11 +3660,7 @@ void readCHR(bool readrom) {
 
         case 25:  // 128K/256K
           banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xB000, i & 0xF);         // CHR Bank Lower 4 bits
-            write_prg_byte(0xB00A, (i >> 4) & 0xF);  // Combine VRC2c and VRC4b, VRC4d reg
-            dumpCHR1KiB();
-          }
+          dumpVrcChrR64_NES(banks, 0xB00A, 0xF);
           break;
 
 
