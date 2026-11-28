@@ -1,49 +1,49 @@
 {
-  "id": "round67-auto",
-  "base": "4dc7495cbfb35730742073c04dfb1483a64c94f4",
-  "expected_base_flash": 203362,
+  "id": "round68-auto",
+  "base": "ad7d8a50e008dfa9ef22f563504a390ff35fbd47",
+  "expected_base_flash": 203260,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "nes-prg-address-bank",
-      "head": "89b750df3cd1f5ebd9cd491dfa5f318fbf9d3f62",
+      "id": "nes-chr-address-value",
+      "head": "73cd04f28ddbab3d95b05afcdcaad44e30519fa7",
       "reviewed": true
     },
     {
-      "id": "nes-prg-masked-bank",
-      "head": "baf94b9628dc97ee9fcb426156122e978d6279cc",
+      "id": "nes-chr-vrc-extra-nibbles",
+      "head": "926bf3a2708debdbbdce5e78e7d1502bfb765d37",
       "reviewed": true
     },
     {
-      "id": "nes-m45-prg-outer",
-      "head": "b171d5923b993c2fa1b82a5a47bbbbfa87efc1dd",
+      "id": "nes-chr-group-registers",
+      "head": "811cbbbd48306bff59df64931fe001f8a5207288",
       "reviewed": true
     },
     {
-      "id": "nes-prg-sequential-extra",
-      "head": "70df9e741f86505cb8a8b9a41868fddd42e5f786",
+      "id": "nes-chr-pair-registers",
+      "head": "4b0fbed5f99c0332bc53030f7bc50fa02e759b4f",
       "reviewed": true
     },
     {
-      "id": "nes-prg-fixed-pair",
-      "head": "24ab71d91d8d65270ef59844e252b84be0cf3194",
+      "id": "nes-mmc3-outer-same",
+      "head": "ea7cd7c8c35b65276c80c26fb35bb1fb8a8a5fc1",
       "reviewed": true
     },
     {
-      "id": "nes-prg-offset-value",
-      "head": "c796a36ce69e8daec9e65f56b279ccfec3eb5e70",
+      "id": "nes-vrc-case-group",
+      "head": "ae5389bcb4ce71eff67d005c1ba362e1e8f39162",
       "reviewed": true
     },
     {
-      "id": "nes-m41-prg-double",
-      "head": "0a1dda50d5a7bb148e632edbbad98f27e4dcbec0",
+      "id": "nes-chr-address-m174",
+      "head": "afc4fe2081433b18e8ddf8465213081e83a6f265",
       "reviewed": true
     },
     {
-      "id": "nes-prg-sequential-m40-m232",
-      "head": "d7a5829b1673fb70d3e0b691e32c917559d6feb9",
+      "id": "nes-chr-command-pair",
+      "head": "95f5b692a7d252e859479c8b10d182cada7e700b",
       "reviewed": true
     }
   ]
