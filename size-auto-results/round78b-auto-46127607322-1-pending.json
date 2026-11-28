@@ -1,0 +1,16 @@
+[
+  {
+    "independent_ram_delta": 0,
+    "rebase_onto_firmware": "c5010100ec2cd50047410a1e3df17e35c6d6bedf",
+    "conflict_onto": "c5010100ec2cd50047410a1e3df17e35c6d6bedf",
+    "expected_base_flash": 202120,
+    "original_base": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+    "independent_flash_delta": -14,
+    "id": "gb-0x6000",
+    "paths": [
+      "Cart_Reader/GB.ino"
+    ],
+    "original_head": "f5ccba782f18345794bee1a2f8f0752d0f64bbe9",
+    "expected_base_ram": 6059
+  }
+]
