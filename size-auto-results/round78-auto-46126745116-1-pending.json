@@ -1,0 +1,58 @@
+[
+  {
+    "conflict_onto": "a17b2e8c8e98a4e4dc6c77febcf2082cc8f3f593",
+    "original_head": "94a329ce33832f83be6d0c789a912f8ad3231af4",
+    "id": "nes-0x6000",
+    "original_base": "ac1cf3ebf0ce5099d52bcc3c9c2c1590dca0e959",
+    "rebase_onto_firmware": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+    "independent_flash_delta": -92,
+    "paths": [
+      "Cart_Reader/NES.ino"
+    ],
+    "expected_base_flash": 202334,
+    "independent_ram_delta": 0,
+    "expected_base_ram": 6059
+  },
+  {
+    "conflict_onto": "a17b2e8c8e98a4e4dc6c77febcf2082cc8f3f593",
+    "original_head": "8f66702e76e72f4f1942445b7c827cf28d8ec0d0",
+    "id": "nes-0x800d",
+    "original_base": "ac1cf3ebf0ce5099d52bcc3c9c2c1590dca0e959",
+    "rebase_onto_firmware": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+    "independent_flash_delta": -88,
+    "paths": [
+      "Cart_Reader/NES.ino"
+    ],
+    "expected_base_flash": 202334,
+    "independent_ram_delta": 0,
+    "expected_base_ram": 6059
+  },
+  {
+    "conflict_onto": "14d140f453e30c94fd85137905b3a6ed2e00da35",
+    "original_head": "0df0d15d63f9c2c0397605e528328da2ba00f329",
+    "id": "gb-0x4000",
+    "original_base": "ac1cf3ebf0ce5099d52bcc3c9c2c1590dca0e959",
+    "rebase_onto_firmware": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+    "independent_flash_delta": -34,
+    "paths": [
+      "Cart_Reader/GB.ino"
+    ],
+    "expected_base_flash": 202334,
+    "independent_ram_delta": 0,
+    "expected_base_ram": 6059
+  },
+  {
+    "conflict_onto": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+    "original_head": "f5b62c3ace0a34ede74b46702f07ad7510f7a721",
+    "id": "gb-0x6000",
+    "original_base": "ac1cf3ebf0ce5099d52bcc3c9c2c1590dca0e959",
+    "rebase_onto_firmware": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+    "independent_flash_delta": -14,
+    "paths": [
+      "Cart_Reader/GB.ino"
+    ],
+    "expected_base_flash": 202334,
+    "independent_ram_delta": 0,
+    "expected_base_ram": 6059
+  }
+]

@@ -1,0 +1,252 @@
+{
+  "schema": 3,
+  "acceptance_policy": "flash_and_ram_nonincreasing_at_least_one_decreases",
+  "id": "round78-auto",
+  "run_id": "46126745116",
+  "run_attempt": "1",
+  "base": "ac1cf3ebf0ce5099d52bcc3c9c2c1590dca0e959",
+  "start": "1bac9b5da5892ce405373604638e47824cff6477",
+  "dry_run": false,
+  "status": "measured",
+  "candidates": [
+    {
+      "id": "nes-0x8000",
+      "head": "26d4e67d82315424f883eb8e09452e7c6b72c62a",
+      "order": 1,
+      "independent_flash": 202436,
+      "independent_ram": 6059,
+      "independent_delta": -144,
+      "independent_ram_delta": 0,
+      "decision": "adopted",
+      "reason": "Neither resource increased and at least one decreased",
+      "before_flash": 202580,
+      "before_ram": 6059,
+      "trial_flash": 202436,
+      "trial_ram": 6059,
+      "incremental_delta": -144,
+      "incremental_ram_delta": 0,
+      "accepted_commit": "a17b2e8c8e98a4e4dc6c77febcf2082cc8f3f593",
+      "conflict_paths": [],
+      "conflict_onto": null
+    },
+    {
+      "id": "nes-0x6000",
+      "head": "94a329ce33832f83be6d0c789a912f8ad3231af4",
+      "order": 2,
+      "independent_flash": 202488,
+      "independent_ram": 6059,
+      "independent_delta": -92,
+      "independent_ram_delta": 0,
+      "decision": "pending_conflict",
+      "reason": "Manual semantic merge and remeasurement required",
+      "before_flash": 202436,
+      "before_ram": 6059,
+      "trial_flash": null,
+      "trial_ram": null,
+      "incremental_delta": null,
+      "incremental_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/NES.ino"
+      ],
+      "conflict_onto": "a17b2e8c8e98a4e4dc6c77febcf2082cc8f3f593"
+    },
+    {
+      "id": "nes-0x800d",
+      "head": "8f66702e76e72f4f1942445b7c827cf28d8ec0d0",
+      "order": 3,
+      "independent_flash": 202492,
+      "independent_ram": 6059,
+      "independent_delta": -88,
+      "independent_ram_delta": 0,
+      "decision": "pending_conflict",
+      "reason": "Manual semantic merge and remeasurement required",
+      "before_flash": 202436,
+      "before_ram": 6059,
+      "trial_flash": null,
+      "trial_ram": null,
+      "incremental_delta": null,
+      "incremental_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/NES.ino"
+      ],
+      "conflict_onto": "a17b2e8c8e98a4e4dc6c77febcf2082cc8f3f593"
+    },
+    {
+      "id": "gb-0x2000",
+      "head": "159c205ac51afba0c9933a757a67b1b25bad467f",
+      "order": 4,
+      "independent_flash": 202512,
+      "independent_ram": 6059,
+      "independent_delta": -68,
+      "independent_ram_delta": 0,
+      "decision": "adopted",
+      "reason": "Neither resource increased and at least one decreased",
+      "before_flash": 202436,
+      "before_ram": 6059,
+      "trial_flash": 202368,
+      "trial_ram": 6059,
+      "incremental_delta": -68,
+      "incremental_ram_delta": 0,
+      "accepted_commit": "14d140f453e30c94fd85137905b3a6ed2e00da35",
+      "conflict_paths": [],
+      "conflict_onto": null
+    },
+    {
+      "id": "gb-0x4000",
+      "head": "0df0d15d63f9c2c0397605e528328da2ba00f329",
+      "order": 5,
+      "independent_flash": 202546,
+      "independent_ram": 6059,
+      "independent_delta": -34,
+      "independent_ram_delta": 0,
+      "decision": "pending_conflict",
+      "reason": "Manual semantic merge and remeasurement required",
+      "before_flash": 202368,
+      "before_ram": 6059,
+      "trial_flash": null,
+      "trial_ram": null,
+      "incremental_delta": null,
+      "incremental_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/GB.ino"
+      ],
+      "conflict_onto": "14d140f453e30c94fd85137905b3a6ed2e00da35"
+    },
+    {
+      "id": "gb-0x6000",
+      "head": "f5b62c3ace0a34ede74b46702f07ad7510f7a721",
+      "order": 6,
+      "independent_flash": 202566,
+      "independent_ram": 6059,
+      "independent_delta": -14,
+      "independent_ram_delta": 0,
+      "decision": "pending_conflict",
+      "reason": "Manual semantic merge and remeasurement required",
+      "before_flash": 202334,
+      "before_ram": 6059,
+      "trial_flash": null,
+      "trial_ram": null,
+      "incremental_delta": null,
+      "incremental_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/GB.ino"
+      ],
+      "conflict_onto": "b643df2d935db92cb0eec1cc5d6364a5e09e7836"
+    },
+    {
+      "id": "msx-0x7000",
+      "head": "600070202889a47d3b02dc8cb873d85be6e66a12",
+      "order": 7,
+      "independent_flash": 202546,
+      "independent_ram": 6059,
+      "independent_delta": -34,
+      "independent_ram_delta": 0,
+      "decision": "adopted",
+      "reason": "Neither resource increased and at least one decreased",
+      "before_flash": 202368,
+      "before_ram": 6059,
+      "trial_flash": 202334,
+      "trial_ram": 6059,
+      "incremental_delta": -34,
+      "incremental_ram_delta": 0,
+      "accepted_commit": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+      "conflict_paths": [],
+      "conflict_onto": null
+    },
+    {
+      "id": "md-0x5555",
+      "head": "410f5d71508efb5c0d23fd9d907fdacee55d9a8b",
+      "order": 8,
+      "independent_flash": 202580,
+      "independent_ram": 6059,
+      "independent_delta": 0,
+      "independent_ram_delta": 0,
+      "decision": "rejected",
+      "reason": "Independent Flash/RAM policy rejected",
+      "before_flash": null,
+      "before_ram": null,
+      "trial_flash": null,
+      "trial_ram": null,
+      "incremental_delta": null,
+      "incremental_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "conflict_onto": null
+    }
+  ],
+  "hardware_validation": "pending",
+  "baseline": {
+    "flash": 202580,
+    "ram": 6059
+  },
+  "final": {
+    "flash": 202334,
+    "ram": 6059
+  },
+  "delta": -246,
+  "ram_delta": 0,
+  "firmware_commit": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+  "pending_count": 4,
+  "pending": [
+    {
+      "conflict_onto": "a17b2e8c8e98a4e4dc6c77febcf2082cc8f3f593",
+      "original_head": "94a329ce33832f83be6d0c789a912f8ad3231af4",
+      "id": "nes-0x6000",
+      "original_base": "ac1cf3ebf0ce5099d52bcc3c9c2c1590dca0e959",
+      "rebase_onto_firmware": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+      "independent_flash_delta": -92,
+      "paths": [
+        "Cart_Reader/NES.ino"
+      ],
+      "expected_base_flash": 202334,
+      "independent_ram_delta": 0,
+      "expected_base_ram": 6059
+    },
+    {
+      "conflict_onto": "a17b2e8c8e98a4e4dc6c77febcf2082cc8f3f593",
+      "original_head": "8f66702e76e72f4f1942445b7c827cf28d8ec0d0",
+      "id": "nes-0x800d",
+      "original_base": "ac1cf3ebf0ce5099d52bcc3c9c2c1590dca0e959",
+      "rebase_onto_firmware": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+      "independent_flash_delta": -88,
+      "paths": [
+        "Cart_Reader/NES.ino"
+      ],
+      "expected_base_flash": 202334,
+      "independent_ram_delta": 0,
+      "expected_base_ram": 6059
+    },
+    {
+      "conflict_onto": "14d140f453e30c94fd85137905b3a6ed2e00da35",
+      "original_head": "0df0d15d63f9c2c0397605e528328da2ba00f329",
+      "id": "gb-0x4000",
+      "original_base": "ac1cf3ebf0ce5099d52bcc3c9c2c1590dca0e959",
+      "rebase_onto_firmware": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+      "independent_flash_delta": -34,
+      "paths": [
+        "Cart_Reader/GB.ino"
+      ],
+      "expected_base_flash": 202334,
+      "independent_ram_delta": 0,
+      "expected_base_ram": 6059
+    },
+    {
+      "conflict_onto": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+      "original_head": "f5b62c3ace0a34ede74b46702f07ad7510f7a721",
+      "id": "gb-0x6000",
+      "original_base": "ac1cf3ebf0ce5099d52bcc3c9c2c1590dca0e959",
+      "rebase_onto_firmware": "b643df2d935db92cb0eec1cc5d6364a5e09e7836",
+      "independent_flash_delta": -14,
+      "paths": [
+        "Cart_Reader/GB.ino"
+      ],
+      "expected_base_flash": 202334,
+      "independent_ram_delta": 0,
+      "expected_base_ram": 6059
+    }
+  ]
+}
