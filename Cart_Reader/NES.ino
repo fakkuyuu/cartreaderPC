@@ -4143,6 +4143,12 @@ void readCHR(bool readrom) {
 /******************************************
    RAM Functions
  *****************************************/
+static void __attribute__((noinline)) printNesSaveCrcR73_NES(char* buf, uint32_t crc, const __FlashStringHelper* label) {
+  formatFixedHex(buf, crc, 8);
+  myFile.print(label);
+  myFile.println(buf);
+}
+
 static void writeNesSaveLog(uint32_t saveSize, uint32_t saveCrc) {
   size_t extension = strlen(fileName) - 4;
   memcpy(fileName + extension, ".txt", 5);
@@ -4162,19 +4168,11 @@ static void writeNesSaveLog(uint32_t saveSize, uint32_t saveCrc) {
     myFile.print(saveSize);
     myFile.println(FS(SharedFlashText::textBytes));
     char crcText[9];
-    formatFixedHex(crcText, saveCrc, 8);
-    myFile.print(FS(SharedFlashText::textSaveCRC32));
-    myFile.println(crcText);
-    if (validSaveCrcR70_NES(oldcrc32)) {
-      formatFixedHex(crcText, oldcrc32, 8);
-      myFile.print(F("ROM identification CRC32 ($8000): "));
-      myFile.println(crcText);
-    }
-    if (oldcrc32MMC3 != oldcrc32 && validSaveCrcR70_NES(oldcrc32MMC3)) {
-      formatFixedHex(crcText, oldcrc32MMC3, 8);
-      myFile.print(F("ROM identification CRC32 ($E000): "));
-      myFile.println(crcText);
-    }
+    printNesSaveCrcR73_NES(crcText, saveCrc, FS(SharedFlashText::textSaveCRC32));
+    if (validSaveCrcR70_NES(oldcrc32))
+      printNesSaveCrcR73_NES(crcText, oldcrc32, F("ROM identification CRC32 ($8000): "));
+    if (oldcrc32MMC3 != oldcrc32 && validSaveCrcR70_NES(oldcrc32MMC3))
+      printNesSaveCrcR73_NES(crcText, oldcrc32MMC3, F("ROM identification CRC32 ($E000): "));
     closeCurrentFile();
   } else {
     println_Msg(F("Could not write save TXT"));
