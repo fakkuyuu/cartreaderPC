@@ -122,11 +122,13 @@ class CandidateLedgerTests(unittest.TestCase):
 
     def test_related_function_is_warning_not_duplicate(self):
         old_candidate = self.make_candidate("old-candidate", self.base, "int bank = 0;", "int bank = 7;", "old")
+        old_candidate["functions"] = ["readCHR"]
         identity = LEDGER.patch_identity(self.repo, self.base, old_candidate["head"], old_candidate)
         entry = dict(identity)
         entry.update({"candidate_id": "old", "base_sha": self.base, "head_sha": old_candidate["head"], "round_id": "old-round"})
         self.ledger["entries"].append(entry)
         related = self.make_candidate("related", self.base, "int result = bank + 1;", "int result = bank + 2;", "related")
+        related["functions"] = ["readCHR"]
         request_path = self.repo / "request.json"
         out_path = self.repo / "precheck.json"
         request_path.write_text(json.dumps({"id": "related-round", "base": self.base, "candidates": [related]}), encoding="utf-8")
@@ -135,6 +137,43 @@ class CandidateLedgerTests(unittest.TestCase):
         self.assertEqual(row["status"], "new")
         self.assertFalse(row["skip"])
         self.assertTrue(row["related_candidates"])
+
+    def test_backfill_merges_independent_and_integration_reports(self):
+        candidate = self.make_candidate("candidate", self.base, "int bank = 0;", "int bank = 7;", "candidate")
+        candidate["functions"] = ["readCHR"]
+        measurements = self.repo / "measurements"
+        auto_results = self.repo / "auto-results"
+        measurements.mkdir()
+        auto_results.mkdir()
+        common = {"id": "round-test", "head": candidate["head"], "functions": ["readCHR"], "target": "NES readCHR"}
+        independent = {
+            "schema": 2, "mode": "parallel-independent", "run_id": "12345", "run_attempt": "1",
+            "request": {"id": "round-test", "base": self.base},
+            "candidates": [{
+                "schema": 1, "run_id": "12345", "run_attempt": "1", "status": "ok",
+                "request": {"id": "round-test", "base": self.base, "head": candidate["head"]},
+                "candidate": common,
+                "results": [{"status": "ok", "flash": 1000, "ram": 100}, {"status": "ok", "flash": 990, "ram": 100}],
+            }],
+        }
+        (measurements / "round-test.json").write_text(json.dumps(independent), encoding="utf-8")
+        integrated = {
+            "schema": 3, "id": "round-test", "run_id": "12345", "run_attempt": "1", "base": self.base,
+            "candidates": [{
+                "id": "candidate", "head": candidate["head"], "decision": "adopted",
+                "reason": "Cumulative Flash/RAM improved", "incremental_delta": -8,
+                "incremental_ram_delta": 0, "accepted_commit": "a" * 40,
+            }],
+        }
+        (auto_results / "round-test.json").write_text(json.dumps(integrated), encoding="utf-8")
+        ledger = LEDGER.find_measurements(self.repo, measurements, auto_results)
+        self.assertEqual(len(ledger["entries"]), 1)
+        entry = ledger["entries"][0]
+        self.assertEqual(entry["independent_flash_delta"], -10)
+        self.assertEqual(entry["integration_decision"], "adopted")
+        self.assertEqual(entry["integration_flash_delta"], -8)
+        self.assertEqual(entry["accepted_commit"], "a" * 40)
+        self.assertEqual(entry["identity_status"], "complete")
 
     def _ledger_file(self):
         path = self.repo / "ledger.json"
