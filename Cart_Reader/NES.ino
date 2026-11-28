@@ -1035,6 +1035,11 @@ static void writeNESRegister6000(uint8_t data) {
   write_prg_byte(0x6000, data);
 }
 
+static void writeNESRegisterC000(uint8_t data) __attribute__((noinline));
+static void writeNESRegisterC000(uint8_t data) {
+  write_prg_byte(0xC000, data);
+}
+
 static void write_prg_byte(unsigned int address, uint8_t data) {
   PHI2_LOW;
   ROMSEL_HI;
@@ -2846,7 +2851,7 @@ void readPRG(bool readrom) {
       case 104:  // 1280K
         for (size_t i = 1; i < 80; i++) {
           writeNESRegister8000((i & 0x70) >> 4);  // outer bank
-          write_prg_byte(0xC000, i & 0x0F);         // inner bank
+          writeNESRegisterC000( i & 0x0F);         // inner bank
           dumpPRG16KiB(base);
         }
         break;
@@ -2892,7 +2897,7 @@ void readPRG(bool readrom) {
         writeNESRegister6000(0);
         for (size_t i = 0; i < banks; i++) {
           writeNESRegisterA000(4);
-          write_prg_byte(0xC000, i);
+          writeNESRegisterC000( i);
           dumpPRG8KiB(base);
         }
         break;
@@ -3111,7 +3116,7 @@ void readPRG(bool readrom) {
           display_Update();
           for (size_t i = 0; i < 16; i++) {
             writeNESRegister8000(((i & 0x04) << 2) | (i & 0x08));
-            write_prg_byte(0xC000, i & 0x03);
+            writeNESRegisterC000( i & 0x03);
             dumpPRG16KiB(base);
           }
         } else {
@@ -3281,7 +3286,7 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {
           write_prg_byte(0xE000, i >> 3);
           writeNESRegisterA000(i);
-          write_prg_byte(0xC000, i);
+          writeNESRegisterC000( i);
           dumpPRG32KiB(base);
         }
         break;
@@ -3591,7 +3596,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K;
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0xB000, i);
-            write_prg_byte(0xC000, i);
+            writeNESRegisterC000( i);
             dumpCHR4KiB();
           }
           break;
@@ -3964,7 +3969,7 @@ void readCHR(bool readrom) {
           for (size_t i = 0; i < banks; i++) {
             write_prg_byte(0x6001, (i & 0x80) >> 7);
             writeNESRegisterA000(6);
-            write_prg_byte(0xC000, i);
+            writeNESRegisterC000( i);
             dumpBankCHR(0x1000, 0x1400);
           }
           break;
@@ -4745,11 +4750,11 @@ void EepromWRITE(uint8_t address) {
    NESmaker Flash Cart [SST 39SF40]
  *****************************************/
 void NESmaker_Cmd(byte cmd) {
-  write_prg_byte(0xC000, 0x01);
+  writeNESRegisterC000( 0x01);
   write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xC000, 0x00);
+  writeNESRegisterC000( 0x00);
   write_prg_byte(0xAAAA, 0x55);
-  write_prg_byte(0xC000, 0x01);
+  writeNESRegisterC000( 0x01);
   write_prg_byte(0x9555, cmd);
 }
 
@@ -4767,17 +4772,17 @@ void NESmaker_ID() {   // Read Flash ID
 
 void NESmaker_SectorErase(uint8_t bank, word address) {
   NESmaker_Cmd(0x80);
-  write_prg_byte(0xC000, 0x01);
+  writeNESRegisterC000( 0x01);
   write_prg_byte(0x9555, 0xAA);
-  write_prg_byte(0xC000, 0x00);
+  writeNESRegisterC000( 0x00);
   write_prg_byte(0xAAAA, 0x55);
-  write_prg_byte(0xC000, bank);   // $00-$1F
+  writeNESRegisterC000( bank);   // $00-$1F
   write_prg_byte(address, 0x30);  // Sector Erase ($8000/$9000/$A000/$B000)
 }
 
 void NESmaker_ByteProgram(uint8_t bank, word address, uint8_t data) {
   NESmaker_Cmd(0xA0);
-  write_prg_byte(0xC000, bank);   // $00-$1F
+  writeNESRegisterC000( bank);   // $00-$1F
   write_prg_byte(address, data);  // $8000-$BFFF
 }
 
