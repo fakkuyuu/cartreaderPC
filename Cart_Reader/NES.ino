@@ -4754,24 +4754,20 @@ static void __attribute__((noinline)) finishEepromReadR62_NES() {
 
 void EepromREAD(uint8_t address) {
   EepromStart_NES();              // START
-  if (mapper == 159) {            // 24C01
+  const bool littleEndian = mapper == 159;
+  if (littleEndian) {            // 24C01
     EepromSetAddress01(address);  // 24C01 [Little Endian]
-    finishEepromReadR62_NES();
-    // OR 8 bits into byte
-    eeptemp = 0;
-    for (byte i = 0; i < 8; ++i) {
-      eeptemp = (eeptemp << 1) | eepbit[7 - i];
-    }
   } else {               // 24C02
     beginEepromAddress02R48_NES(address);
     EepromStart_NES();   // START
     EepromDevice_NES();  // DEVICE [1010] + ADDR [A2-A0]
-    finishEepromReadR62_NES();
-    // OR 8 bits into byte
-    eeptemp = 0;
-    for (byte i = 0; i < 8; ++i) {
-      eeptemp = (eeptemp << 1) | eepbit[i];
-    }
+  }
+  finishEepromReadR62_NES();
+  // OR 8 bits into byte
+  eeptemp = 0;
+  const byte reverse = littleEndian ? 7 : 0;
+  for (byte i = 0; i < 8; ++i) {
+    eeptemp = (eeptemp << 1) | eepbit[i ^ reverse];
   }
   sdBuffer[address] = eeptemp;
 }
