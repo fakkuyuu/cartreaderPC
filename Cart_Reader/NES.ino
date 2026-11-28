@@ -1050,6 +1050,11 @@ static void writeNESRegisterC000(uint8_t data) {
   write_prg_byte(0xC000, data);
 }
 
+static void writeNESRegister5001(uint8_t data) __attribute__((noinline));
+static void writeNESRegister5001(uint8_t data) {
+  write_prg_byte(0x5001, data);
+}
+
 static void write_prg_byte(unsigned int address, uint8_t data) {
   PHI2_LOW;
   ROMSEL_HI;
@@ -2130,7 +2135,7 @@ static void initMmc3OuterBanks_NES() {
   }
   if (mapper == 351) {
     writeNESRegister5000(0);
-    write_prg_byte(0x5001, 0);
+    writeNESRegister5001( 0);
     write_prg_byte(0x5002, 0);
   }
 }
