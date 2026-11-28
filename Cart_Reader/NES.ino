@@ -3737,19 +3737,10 @@ void readCHR(bool readrom) {
           banks = chrBanks4K * 4;
           write_prg_byte(0xA001, 0x80);  // Unlock Write Protection - not used by some carts
           for (size_t i = 0; i < banks; i++) {
-            // set outer bank registers
-            setOuterChr45_NES(i);
-            // set inner bank registers
-            writeMmc3PairR59_NES(0x2, i);
-            for (size_t address = 0x1000; address < 0x1200; address += 512) {
-              dumpCHR_M2(address);  // Read CHR with M2 Pulse
-            }
-            // set outer bank registers
-            setOuterChr45_NES(i);
-            // set inner bank registers
-            writeMmc3PairR59_NES(0x2, i);
-            for (size_t address = 0x1200; address < 0x1400; address += 512) {
-              dumpCHR_M2(address);  // Read CHR with M2 Pulse
+            for (word address = 0x1000; address < 0x1400; address += 512) {
+              setOuterChr45_NES(i);
+              writeMmc3PairR59_NES(0x2, i);
+              dumpCHR_M2(address);
             }
           }
           break;
