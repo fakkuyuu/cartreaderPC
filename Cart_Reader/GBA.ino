@@ -46,6 +46,131 @@ static uint32_t flashBankSizeP30_GBA(bool skip) {
   return 65536UL;
 }
 
+static void readSaveMenu_GBA_R82() __attribute__((noinline));
+static void readSaveMenu_GBA_R82() {
+  const uint32_t startedAt = PcLink::hostTime();
+          const byte detectedSaveType = getSaveType();
+          switch (detectedSaveType) {
+            case 1:
+            case 2:
+              readEeprom_GBA(detectedSaveType == 1 ? 4 : 64);
+              break;
+  
+            case 3:
+            case 6:
+              // 256K/512K SRAM/FRAM
+              readSRAM_GBA(1, detectedSaveType == 3 ? 32768UL : 65536UL, 0);
+              break;
+  
+            case 4:
+              // 512K FLASH
+              readFLASH_GBA(1, 65536, 0, true);
+              break;
+  
+            case 5:
+              // 1M FLASH (divided into two banks)
+              switchBank_GBA(0x0);
+              setROM_GBA();
+              readFLASH_GBA(1, 65536, 0, false);
+              switchBank_GBA(0x1);
+              setROM_GBA();
+              readFLASH_GBA(0, 65536, 65536, true);
+              break;
+  
+  
+          }
+          setROM_GBA();
+          if (detectedSaveType >= 1 && detectedSaveType <= 6)
+            finishDbSaveLog(startedAt);
+}
+
+static void writeSaveMenu_GBA_R82() __attribute__((noinline));
+static void writeSaveMenu_GBA_R82() {
+  const byte detectedWriteSaveType = getSaveType();
+        if (detectedWriteSaveType == 4 || detectedWriteSaveType == 5) {
+          idFlash_GBA();
+          resetFLASH_GBA();
+        }
+        switch (detectedWriteSaveType) {
+          case 1:
+          case 2: {
+            const byte size = detectedWriteSaveType == 1 ? 4 : 64;
+            writeEeprom_GBA(size);
+            verifyEEP_GBA(size);
+            if (detectedWriteSaveType == 1)
+              setROM_GBA();
+            break;
+          }
+  
+          case 3:
+          case 6: {
+            const uint32_t size = detectedWriteSaveType == 3 ? 32768UL : 65536UL;
+            writeSRAM_GBA(1, size, 0);
+            verifySRAM_GBA(size, 0);
+            break;
+          }
+  
+          case 4:
+            // 512K FLASH
+  
+            if (flashid == 0x1F3D) {
+              printFlashTypeAndWait(F("Atmel AT29LV512"));
+            } else if (flashid == 0xBFD4) {
+              printFlashTypeAndWait(F("SST 39VF512"));
+            } else if (flashid == 0xC21C) {
+              printFlashTypeAndWait(F("Macronix MX29L512"));
+            } else if (flashid == 0x321B) {
+              printFlashTypeAndWait(F("Panasonic MN63F805MNP"));
+            } else {
+              printFlashTypeAndWait(FS(SharedFlashText::textUnknown));
+              //print_FatalError(FSTRING_EMPTY);
+            }
+  
+            if (flashid == 0x1F3D) {  // Atmel
+              writeFLASH_GBA(1, 65536, 0, 1);
+              verifyFLASH_GBA(65536, 0);
+            } else {
+              eraseFLASH_GBA();
+              const uint32_t bankSize = flashBankSizeP30_GBA(strcmp("PEAJ", cartID) == 0);
+              if (blankcheckFLASH_GBA(bankSize)) {
+                writeFLASH_GBA(1, bankSize, 0, 0);
+                verifyFLASH_GBA(bankSize, 0);
+              }
+            }
+            break;
+  
+          case 5:
+            // 1M FLASH
+  
+            if (flashid == 0xC209) {
+              printFlashTypeAndWait(F("Macronix MX29L010"));
+            } else if (flashid == 0x6213) {
+              printFlashTypeAndWait(F("SANYO LE26FV10N1TS"));
+            } else {
+              printFlashTypeAndWait(FS(SharedFlashText::textUnknown));
+              //print_FatalError(FSTRING_EMPTY);
+            }
+  
+            eraseFLASH_GBA();
+            // 131072 bytes are divided into two 65536 byte banks
+            for (byte bank = 0; bank < 2; bank++) {
+              switchBank_GBA(bank);
+              setROM_GBA();
+              // Card e-Reader+ does not allow access to last 128 bytes of a bank
+              const uint32_t bankSize = flashBankSizeP30_GBA(strcmp("PSAE", cartID) == 0 || strcmp("PSAJ", cartID) == 0);
+              if (!blankcheckFLASH_GBA(bankSize))
+                break;
+              writeFLASH_GBA(!bank, bankSize, bank ? 65536 : 0, 0);
+              if (verifyFLASH_GBA(bankSize, bank ? 65536 : 0))
+                break;
+            }
+            break;
+  
+  
+        }
+  setROM_GBA();
+}
+
 void gbaMenu() {
   // create menu with title and 5 options to choose from
   unsigned char mainMenu;
@@ -87,42 +212,7 @@ void gbaMenu() {
     case 1:
       // Read save
       clearAndRootDirectory();
-      {
-        const uint32_t startedAt = PcLink::hostTime();
-        const byte detectedSaveType = getSaveType();
-        switch (detectedSaveType) {
-          case 1:
-          case 2:
-            readEeprom_GBA(detectedSaveType == 1 ? 4 : 64);
-            break;
-
-          case 3:
-          case 6:
-            // 256K/512K SRAM/FRAM
-            readSRAM_GBA(1, detectedSaveType == 3 ? 32768UL : 65536UL, 0);
-            break;
-
-          case 4:
-            // 512K FLASH
-            readFLASH_GBA(1, 65536, 0, true);
-            break;
-
-          case 5:
-            // 1M FLASH (divided into two banks)
-            switchBank_GBA(0x0);
-            setROM_GBA();
-            readFLASH_GBA(1, 65536, 0, false);
-            switchBank_GBA(0x1);
-            setROM_GBA();
-            readFLASH_GBA(0, 65536, 65536, true);
-            break;
-
-
-        }
-        setROM_GBA();
-        if (detectedSaveType >= 1 && detectedSaveType <= 6)
-          finishDbSaveLog(startedAt);
-      }
+      readSaveMenu_GBA_R82();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
       promptAndWaitForButton();
@@ -131,24 +221,13 @@ void gbaMenu() {
     case 2:
       // Write save
       clearAndRootDirectory();
-      {
-      const byte detectedWriteSaveType = getSaveType();
-      if (detectedWriteSaveType == 4 || detectedWriteSaveType == 5) {
-        idFlash_GBA();
-        resetFLASH_GBA();
-      }
-      switch (detectedWriteSaveType) {
-        case 1:
-        case 2: {
-          const byte size = detectedWriteSaveType == 1 ? 4 : 64;
-          writeEeprom_GBA(size);
-          verifyEEP_GBA(size);
-          if (detectedWriteSaveType == 1)
-            setROM_GBA();
-          break;
-        }
+      writeSaveMenu_GBA_R82();
+      printBlankLine();
+      // Prints string out of the common strings array either with or without newline
+      promptAndWaitForButton();
+      break;
 
-        case 3:
+    case 3:
         case 6: {
           const uint32_t size = detectedWriteSaveType == 3 ? 32768UL : 65536UL;
           writeSRAM_GBA(1, size, 0);
