@@ -337,6 +337,11 @@ static void writeMSXRegister7000(uint8_t data) {
   writeData_MSX(0x7000, data);
 }
 
+static void writeMSXRegister4FFF(uint8_t data) __attribute__((noinline));
+static void writeMSXRegister4FFF(uint8_t data) {
+  writeData_MSX(0x4FFF, data);
+}
+
 void writeData_MSX(uint16_t addr, uint8_t data) {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A15
@@ -501,13 +506,13 @@ void readROM_MSX() {
         MERQ_ENABLE;
         // Dummy Read - Needed to prevent random bytes
         for (uint8_t y = 0; y < 32; y++) {
-          writeData_MSX(0x4FFF, y);
+          writeMSXRegister4FFF( y);
           for (uint32_t addr = 0x4000; addr < 0x6000; addr++)
             readData_MSX(addr);  // Dummy Read
         }
         // READ
         for (uint8_t x = 0; x < 128; x++) {
-          writeData_MSX(0x4FFF, x);
+          writeMSXRegister4FFF( x);
           readSegment_MSX(0x4000, 0x6000);  // 8K Init Bank 0
         }
         MERQ_DISABLE;
@@ -713,9 +718,9 @@ void readRAM_MSX() {
 
       case 5:  // HAL Note (16K)
         MERQ_ENABLE;
-        writeData_MSX(0x4FFF, 0x80);      // Bit 7 Enable
+        writeMSXRegister4FFF( 0x80);      // Bit 7 Enable
         readSegment_MSX(0x0000, 0x4000);  // 16K
-        writeData_MSX(0x4FFF, 0);         // SRAM Disable
+        writeMSXRegister4FFF( 0);         // SRAM Disable
         MERQ_DISABLE;
         break;
 
@@ -799,11 +804,11 @@ void writeRAM_MSX() {
 
         case 5:  // HAL Note (16K)
           MERQ_ENABLE;
-          writeData_MSX(0x4FFF, 0x80);  // Bit 7 Enable
+          writeMSXRegister4FFF( 0x80);  // Bit 7 Enable
           for (word address = 0; address < 0x4000; address += 512) {  // 16K
             writeSramBlock_MSX(address);
           }
-          writeData_MSX(0x4FFF, 0);  // SRAM Disable
+          writeMSXRegister4FFF( 0);  // SRAM Disable
           MERQ_DISABLE;
           break;
 
