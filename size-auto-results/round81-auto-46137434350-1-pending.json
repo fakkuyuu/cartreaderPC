@@ -1,0 +1,32 @@
+[
+  {
+    "expected_base_flash": 201730,
+    "conflict_onto": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+    "id": "r81-gb-7555",
+    "original_base": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
+    "paths": [
+      "Cart_Reader/GB.ino"
+    ],
+    "expected_base_ram": 6059,
+    "rebase_onto_firmware": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+    "resubmission": null,
+    "independent_flash_delta": -6,
+    "independent_ram_delta": 0,
+    "original_head": "5cb8c796e5b7796fe8ae8ea152a5607b23ddf596"
+  },
+  {
+    "expected_base_flash": 201730,
+    "conflict_onto": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+    "id": "r81-gb-1000",
+    "original_base": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
+    "paths": [
+      "Cart_Reader/GB.ino"
+    ],
+    "expected_base_ram": 6059,
+    "rebase_onto_firmware": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+    "resubmission": null,
+    "independent_flash_delta": -6,
+    "independent_ram_delta": 0,
+    "original_head": "fe45505fcb0873bf7e87e6580e19e3b67ec23b30"
+  }
+]

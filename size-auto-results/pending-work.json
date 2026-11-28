@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "description": "Canonical queue for unresolved automatic size-reduction work. New chats should process only items whose status is pending or needs_human.",
-  "updated_by_run_id": "46135155027",
+  "updated_by_run_id": "46137434350",
   "items": [
     {
       "key": "46129657989/gb-0x0000",
@@ -353,6 +353,44 @@
         "independent_flash_delta": -2,
         "final_ram": 6059
       }
+    },
+    {
+      "candidate_id": "r81-gb-7555",
+      "original": {
+        "candidate_sha": "5cb8c796e5b7796fe8ae8ea152a5607b23ddf596",
+        "pending_record": "size-auto-results/round81-auto-46137434350-1-pending.json",
+        "run_id": "46137434350",
+        "conflict_files": [
+          "Cart_Reader/GB.ino"
+        ],
+        "base_sha": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
+        "rebase_onto_firmware": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+        "integration_record": "size-auto-results/round81-auto-46137434350-1.json",
+        "candidate_id": "r81-gb-7555",
+        "conflict_onto_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
+      },
+      "created_by_run_id": "46137434350",
+      "key": "46137434350/r81-gb-7555",
+      "status": "pending"
+    },
+    {
+      "candidate_id": "r81-gb-1000",
+      "original": {
+        "candidate_sha": "fe45505fcb0873bf7e87e6580e19e3b67ec23b30",
+        "pending_record": "size-auto-results/round81-auto-46137434350-1-pending.json",
+        "run_id": "46137434350",
+        "conflict_files": [
+          "Cart_Reader/GB.ino"
+        ],
+        "base_sha": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
+        "rebase_onto_firmware": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+        "integration_record": "size-auto-results/round81-auto-46137434350-1.json",
+        "candidate_id": "r81-gb-1000",
+        "conflict_onto_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
+      },
+      "created_by_run_id": "46137434350",
+      "key": "46137434350/r81-gb-1000",
+      "status": "pending"
     }
   ]
 }
