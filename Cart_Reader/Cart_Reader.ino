@@ -67,6 +67,7 @@ void getCartInfo_MD() __attribute__((noinline));
 void showCartInfo_GB() __attribute__((noinline));
 void pcVerificationResult(uint8_t code);
 void appendPathAndShowWritingProgress() __attribute__((noinline));
+void setup_MD() __attribute__((noinline));
 void resetStorageAndAppendPath() __attribute__((noinline));
 void blankLineAndWaitForButton() __attribute__((noinline));
 void clearAndShowSavingFolder() __attribute__((noinline));
