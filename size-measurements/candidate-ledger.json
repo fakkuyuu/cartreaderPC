@@ -23890,6 +23890,121 @@
       "accepted_commit": "00eb3e65c0bf2b78df0f96b457414552dd8dddaf",
       "conflict_paths": [],
       "integration_base_sha": "30e7ec1a0110a25a72892bb04797bd8a39c3fec6"
+    },
+    {
+      "patch_id": "264c37d6e03bf37941f9bf8ec4627fce0e819305",
+      "diff_sha256": "bfbeb788906cbf221ed790b173cf98f6259ab50733a54190a3e8cd5c829381dc",
+      "files": [
+        "Cart_Reader/GB.ino"
+      ],
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegister0000"
+      ],
+      "function_contexts": [
+        "static void processSramBlock_GB(word sramAddress, bool verifying) {",
+        "void readSRAM_GB() {",
+        "void writeSRAM_GB() {",
+        "unsigned long verifySRAM_GB() {",
+        "void readSRAMFLASH_MBC6_GB() {",
+        "void writeSRAMFLASH_MBC6_GB() {",
+        "void readEEPROM_MBC7_GB() {",
+        "void writeEEPROM_MBC7_GB() {"
+      ],
+      "target": "GB",
+      "description": "Share address 0x0000 setup for writeByte_GB at 13 source call sites",
+      "subject": "Share fixed-address writes gb-0x0000",
+      "candidate_id": "gb-0x0000",
+      "base_sha": "17e87e7ea7af8f11b26c1aaabbc716e054d2809b",
+      "head_sha": "7fce3bd99e1670024f224f26e43ff7e1d0bcdd3c",
+      "run_id": "46131321837",
+      "run_attempt": "1",
+      "round_id": "round79b-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46131321837",
+      "independent_flash_delta": -42,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_improvement",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "c05623a4b8a1cbca7f79103f7ada8b1e9ee1ef7d",
+      "diff_sha256": "571fa63779dc31395df159d795d1a9a0cd988a8574cfe9cb611b744943429053",
+      "files": [
+        "Cart_Reader/GB.ino"
+      ],
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegister3555"
+      ],
+      "function_contexts": [
+        "void sendW29C020Command_GB(byte cmd) {",
+        "static void dumpAccessoryRange_GB(word& startAddress, word finalAddress, uint32_",
+        "void writePelican_GB() {"
+      ],
+      "target": "GB",
+      "description": "Share address 0x3555 setup for writeByte_GB at 10 source call sites",
+      "subject": "Share fixed-address writes gb-0x3555",
+      "candidate_id": "gb-0x3555",
+      "base_sha": "17e87e7ea7af8f11b26c1aaabbc716e054d2809b",
+      "head_sha": "7fe58642f16e5b6f0746df02eb03f6316b8cf92d",
+      "run_id": "46131321837",
+      "run_attempt": "1",
+      "round_id": "round79b-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46131321837",
+      "independent_flash_delta": -8,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_improvement",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "09b08e540d449d637616aa71334ac4af870f8ef1",
+      "diff_sha256": "66fd0fa397861fc62e5fc1ad4ae2aa77c3350b6de1835ce21d3787afebbc28c8",
+      "files": [
+        "Cart_Reader/NES.ino"
+      ],
+      "functions": [
+        "write_prg_byte",
+        "writeNESRegisterA001"
+      ],
+      "function_contexts": [
+        "void dumpBankPRG(const size_t from, const size_t to, const size_t base) {",
+        "static void dumpSequentialCHRBanks(uint16_t count, uint16_t reg, uint8_t shift,",
+        "void readPRG(bool readrom) {",
+        "void readCHR(bool readrom) {",
+        "static void initMapper19Ram_NES() {",
+        "static void visitMmc6Sram_NES(word base, bool writing) {",
+        "void readRAM() {",
+        "void writeRAM() {"
+      ],
+      "target": "NES",
+      "description": "Share address 0xA001 setup for write_prg_byte at 12 source call sites",
+      "subject": "Share fixed-address writes nes-0xa001",
+      "candidate_id": "nes-0xa001",
+      "base_sha": "17e87e7ea7af8f11b26c1aaabbc716e054d2809b",
+      "head_sha": "c356c1c6035bd962b7e7abf5d9f3a66f21d6c498",
+      "run_id": "46131321837",
+      "run_attempt": "1",
+      "round_id": "round79b-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46131321837",
+      "independent_flash_delta": -22,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_improvement",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
     }
   ],
   "duplicate_attempts": [
