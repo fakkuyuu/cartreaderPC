@@ -808,6 +808,11 @@ static void writeGBRegister4AAA(byte data) {
   writeByte_GB(0x4AAA, data);
 }
 
+static void writeGBRegister7555(byte data) __attribute__((noinline));
+static void writeGBRegister7555(byte data) {
+  writeByte_GB(0x7555, data);
+}
+
 void writeByte_GB(int myAddress, byte myData, boolean audio_as_WE) {
   // Set address
   PORTF = myAddress & 0xFF;
@@ -1571,7 +1576,7 @@ static void mbc6UnlockSequenceP16_GB() __attribute__((noinline));
 static void mbc6UnlockSequenceP16_GB() {
   writeGBRegister2000(0x01);
   writeGBRegister3000( 0x02);
-  writeByte_GB(0x7555, 0xAA);
+  writeGBRegister7555( 0xAA);
   writeGBRegister4AAA( 0x55);
 }
 
@@ -1617,8 +1622,8 @@ void writeSRAMFLASH_MBC6_GB() {
       if (((processedProgressBar - 0x8000) % 0x20000) == 0) {
         writeMbc6ModeR61_GB(0x08);
         mbc6UnlockSequenceP16_GB();
-        writeByte_GB(0x7555, 0x80);
-        writeByte_GB(0x7555, 0xAA);
+        writeGBRegister7555( 0x80);
+        writeGBRegister7555( 0xAA);
         writeGBRegister4AAA( 0x55);
         selectMbc6FlashBank_GB(currBank);
         writeGBRegister4000(0x30);
@@ -1640,7 +1645,7 @@ void writeSRAMFLASH_MBC6_GB() {
       // Write to FLASH
       while (romAddress <= 0x5FFF) {
         mbc6UnlockSequenceP16_GB();
-        writeByte_GB(0x7555, 0xA0);
+        writeGBRegister7555( 0xA0);
         selectMbc6FlashBank_GB(currBank);
         for (int i = 0; i < 128; i++) {
           writeByte_GB(romAddress++, myFile.read());
