@@ -2065,7 +2065,7 @@ static void dumpSequentialPRGBanks(uint16_t count, uint16_t reg, uint8_t shift,
   }
 }
 
-static void dumpSequentialCHRBanks(uint16_t count, uint16_t reg, uint8_t shift,
+static void __attribute__((noinline)) dumpSequentialCHRBanks(uint16_t count, uint16_t reg, uint8_t shift,
                                    uint16_t bankSize) {
   for (uint16_t bank = 0; bank < count; ++bank) {
     write_prg_byte(reg, bank << shift);
