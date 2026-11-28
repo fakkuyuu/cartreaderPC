@@ -115,6 +115,7 @@ void clearAndUpdateDisplay() __attribute__((noinline));
 void showDoneAndUpdate() __attribute__((noinline));
 void showOkAndUpdate() __attribute__((noinline));
 void showOpenFileErrorAndUpdate() __attribute__((noinline));
+void writeRAM_MSX() __attribute__((noinline));
 void showVerifyingAndUpdate() __attribute__((noinline));
 void showEraseFailed() __attribute__((noinline, noreturn));
 void showErasingAndUpdate() __attribute__((noinline));
