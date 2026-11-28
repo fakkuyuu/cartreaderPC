@@ -46,6 +46,44 @@ static uint32_t flashBankSizeP30_GBA(bool skip) {
   return 65536UL;
 }
 
+static void readSaveMenu_GBA_R82() __attribute__((noinline));
+static void readSaveMenu_GBA_R82() {
+  const uint32_t startedAt = PcLink::hostTime();
+          const byte detectedSaveType = getSaveType();
+          switch (detectedSaveType) {
+            case 1:
+            case 2:
+              readEeprom_GBA(detectedSaveType == 1 ? 4 : 64);
+              break;
+  
+            case 3:
+            case 6:
+              // 256K/512K SRAM/FRAM
+              readSRAM_GBA(1, detectedSaveType == 3 ? 32768UL : 65536UL, 0);
+              break;
+  
+            case 4:
+              // 512K FLASH
+              readFLASH_GBA(1, 65536, 0, true);
+              break;
+  
+            case 5:
+              // 1M FLASH (divided into two banks)
+              switchBank_GBA(0x0);
+              setROM_GBA();
+              readFLASH_GBA(1, 65536, 0, false);
+              switchBank_GBA(0x1);
+              setROM_GBA();
+              readFLASH_GBA(0, 65536, 65536, true);
+              break;
+  
+  
+          }
+          setROM_GBA();
+          if (detectedSaveType >= 1 && detectedSaveType <= 6)
+            finishDbSaveLog(startedAt);
+}
+
 void gbaMenu() {
   // create menu with title and 5 options to choose from
   unsigned char mainMenu;
@@ -87,42 +125,7 @@ void gbaMenu() {
     case 1:
       // Read save
       clearAndRootDirectory();
-      {
-        const uint32_t startedAt = PcLink::hostTime();
-        const byte detectedSaveType = getSaveType();
-        switch (detectedSaveType) {
-          case 1:
-          case 2:
-            readEeprom_GBA(detectedSaveType == 1 ? 4 : 64);
-            break;
-
-          case 3:
-          case 6:
-            // 256K/512K SRAM/FRAM
-            readSRAM_GBA(1, detectedSaveType == 3 ? 32768UL : 65536UL, 0);
-            break;
-
-          case 4:
-            // 512K FLASH
-            readFLASH_GBA(1, 65536, 0, true);
-            break;
-
-          case 5:
-            // 1M FLASH (divided into two banks)
-            switchBank_GBA(0x0);
-            setROM_GBA();
-            readFLASH_GBA(1, 65536, 0, false);
-            switchBank_GBA(0x1);
-            setROM_GBA();
-            readFLASH_GBA(0, 65536, 65536, true);
-            break;
-
-
-        }
-        setROM_GBA();
-        if (detectedSaveType >= 1 && detectedSaveType <= 6)
-          finishDbSaveLog(startedAt);
-      }
+      readSaveMenu_GBA_R82();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
       promptAndWaitForButton();
