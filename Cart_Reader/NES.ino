@@ -2781,9 +2781,10 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         busConflict = true;
         for (size_t i = 0; i < banks; i++) {
+          const word bankValue = i << 2;
           for (size_t x = 0; x < 0x4000; x++) {
-            if (read_prg_byte(0xC000 + x) == (i << 2)) {
-              write_prg_byte(0xC000 + x, i << 2);
+            if (read_prg_byte(0xC000 + x) == bankValue) {
+              write_prg_byte(0xC000 + x, bankValue);
               busConflict = false;
               break;
             }
