@@ -1,134 +1,63 @@
 {
-  "id": "round80b-auto",
-  "base": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-  "expected_base_flash": 201772,
+  "id": "round80c-auto",
+  "base": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+  "expected_base_flash": 201750,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "r80b-nes-e000",
-      "head": "943ad5596bc335a9fcd3afd6d1f5a1cbe8a6fd2a",
+      "id": "r80c-nes-6001",
+      "head": "536f443394379900ea6d50e9c46f94678e809ac2",
       "reviewed": true,
       "retest": true,
-      "retest_reason": "Resubmission of round 80 pending_conflict after three round 80 candidates were adopted. The exact 0xE000 calls were reapplied on the final integrated firmware; the prior independent result did not include cumulative interaction with that firmware.",
-      "target": "NES",
-      "functions": [
-        "write_prg_byte",
-        "writeNESRegisterE000"
-      ],
-      "description": "Resubmit round 80 NES 0xE000 fixed-address helper; preserve six exact-address writes against the round 80 integrated firmware.",
-      "resubmission": {
-        "original_run_id": "46133264369",
-        "original_candidate_sha": "a39500c86ee74355d6f3a7a1da930a3621130db6",
-        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
-        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
-        "conflict_files": [
-          "Cart_Reader/NES.ino"
-        ],
-        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "candidate_sha": "943ad5596bc335a9fcd3afd6d1f5a1cbe8a6fd2a"
-      }
-    },
-    {
-      "id": "r80b-msx-a000",
-      "head": "292511b7ffa5f62373e45c3bfa270747ea124877",
-      "reviewed": true,
-      "retest": true,
-      "retest_reason": "Resubmission of round 80 pending_conflict after three round 80 candidates were adopted. The exact 0xA000 calls were reapplied on the final integrated firmware; the prior independent result did not include cumulative interaction with that firmware.",
-      "target": "MSX",
-      "functions": [
-        "writeData_MSX",
-        "writeMSXRegisterA000"
-      ],
-      "description": "Resubmit round 80 MSX 0xA000 fixed-address helper; preserve five exact-address writes against the round 80 integrated firmware.",
-      "resubmission": {
-        "original_run_id": "46133264369",
-        "original_candidate_sha": "cdc6aaeaf7fac4f19c89125845eabc08061091d8",
-        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
-        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
-        "conflict_files": [
-          "Cart_Reader/MSX.ino"
-        ],
-        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "candidate_sha": "292511b7ffa5f62373e45c3bfa270747ea124877"
-      }
-    },
-    {
-      "id": "r80b-gb-3000",
-      "head": "877c39f431ff0e25dcd2789a0e923c0caf377601",
-      "reviewed": true,
-      "retest": true,
-      "retest_reason": "Resubmission of round 80 pending_conflict after three round 80 candidates were adopted. The 2-argument writeByte_GB calls were reapplied on the final integrated firmware, keeping the 3-argument overload untouched.",
-      "target": "GB",
-      "functions": [
-        "writeByte_GB",
-        "writeGBRegister3000"
-      ],
-      "description": "Resubmit round 80 GB 0x3000 helper using only the 2-argument writeByte_GB overload; preserve eight exact-address writes against the round 80 integrated firmware.",
-      "resubmission": {
-        "original_run_id": "46133264369",
-        "original_candidate_sha": "81f647c2fcb69d249ed2f361d22093a2936581fa",
-        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
-        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
-        "conflict_files": [
-          "Cart_Reader/GB.ino"
-        ],
-        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "candidate_sha": "877c39f431ff0e25dcd2789a0e923c0caf377601"
-      }
-    },
-    {
-      "id": "r80b-nes-6001",
-      "head": "685d639cae05b9e4e987a5870297359843e93e27",
-      "reviewed": true,
-      "retest": true,
-      "retest_reason": "Resubmission of round 80 pending_conflict after three round 80 candidates were adopted. The exact 0x6001 calls were reapplied on the final integrated firmware; the prior independent result did not include cumulative interaction with that firmware.",
+      "retest_reason": "Second resubmission of the original round 80 NES 0x6001 pending conflict. Reapplied the exact 0x6001 helper and six original call sites onto the later accepted firmware after the NES 0xE000 candidate was adopted; cumulative result on that firmware must be measured.",
       "target": "NES",
       "functions": [
         "write_prg_byte",
         "writeNESRegister6001"
       ],
-      "description": "Resubmit round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes against the round 80 integrated firmware.",
+      "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
       "resubmission": {
         "original_run_id": "46133264369",
         "original_candidate_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
         "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
         "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "prior_resubmission_run_id": "46134316289",
+        "prior_resubmission_candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27",
         "conflict_files": [
           "Cart_Reader/NES.ino"
         ],
-        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27"
+        "conflict_onto_sha": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
+        "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "candidate_sha": "536f443394379900ea6d50e9c46f94678e809ac2"
       }
     },
     {
-      "id": "r80b-msx-6000",
-      "head": "947f388154f0e923ea2f682118c3e95300dad5c6",
+      "id": "r80c-msx-6000",
+      "head": "b27ce72e15943c7f2a306385f10b817855924ad1",
       "reviewed": true,
       "retest": true,
-      "retest_reason": "Resubmission of round 80 pending_conflict after three round 80 candidates were adopted. The exact 0x6000 calls were reapplied on the final integrated firmware; the prior independent result did not include cumulative interaction with that firmware.",
+      "retest_reason": "Second resubmission of the original round 80 MSX 0x6000 pending conflict. Reapplied the exact 0x6000 helper and three original call sites onto the later accepted firmware after the MSX 0xA000 candidate was adopted; cumulative result on that firmware must be measured.",
       "target": "MSX",
       "functions": [
         "writeData_MSX",
         "writeMSXRegister6000"
       ],
-      "description": "Resubmit round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes against the round 80 integrated firmware.",
+      "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
       "resubmission": {
         "original_run_id": "46133264369",
         "original_candidate_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
         "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
         "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "prior_resubmission_run_id": "46134316289",
+        "prior_resubmission_candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6",
         "conflict_files": [
           "Cart_Reader/MSX.ino"
         ],
-        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
-        "candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6"
+        "conflict_onto_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "candidate_sha": "b27ce72e15943c7f2a306385f10b817855924ad1"
       }
     }
   ]
