@@ -1309,9 +1309,14 @@ void CreateRAMFileInSD() {
   const char* title = dbSaveTitle;
   char fallback[40];
   if (!*title) {
-    uint32_t crc = mapper == 4 ? oldcrc32MMC3 : oldcrc32;
+    uint32_t crc = oldcrc32;
+    uint32_t alternate = oldcrc32MMC3;
+    if (mapper == 4) {
+      crc = oldcrc32MMC3;
+      alternate = oldcrc32;
+    }
     if (!validSaveCrcR70_NES(crc))
-      crc = mapper == 4 ? oldcrc32 : oldcrc32MMC3;
+      crc = alternate;
     if (validSaveCrcR70_NES(crc)) {
       snprintf(fallback, sizeof(fallback), "CRC_%08lX", crc);
     } else {
