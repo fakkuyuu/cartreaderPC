@@ -1,49 +1,49 @@
 {
-  "id": "round66-auto",
-  "base": "b5b4d402feae29a543a2c5cff319782a124ccc18",
-  "expected_base_flash": 203538,
+  "id": "round67-auto",
+  "base": "4dc7495cbfb35730742073c04dfb1483a64c94f4",
+  "expected_base_flash": 203362,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "nes-bus-conflict-select",
-      "head": "672212c2ddd5bc9b7e5c57741758bae78d460271",
+      "id": "nes-prg-address-bank",
+      "head": "89b750df3cd1f5ebd9cd491dfa5f318fbf9d3f62",
       "reviewed": true
     },
     {
-      "id": "nes-m19-register-repeat",
-      "head": "a507639b35cfdcd6a2209df3b4cd02460c6dc3eb",
+      "id": "nes-prg-masked-bank",
+      "head": "baf94b9628dc97ee9fcb426156122e978d6279cc",
       "reviewed": true
     },
     {
-      "id": "nes-eeprom-bit-pulse",
-      "head": "99e659bbdde30c0e0978fabdfb685b21e97bc4fb",
+      "id": "nes-m45-prg-outer",
+      "head": "b171d5923b993c2fa1b82a5a47bbbbfa87efc1dd",
       "reviewed": true
     },
     {
-      "id": "nes-m997-outer-register",
-      "head": "ed2d883fe9b35c15a836c4295d623902d5bdea34",
+      "id": "nes-prg-sequential-extra",
+      "head": "70df9e741f86505cb8a8b9a41868fddd42e5f786",
       "reviewed": true
     },
     {
-      "id": "nes-chr-address-bank",
-      "head": "8f6fe9a80871dfc5f3b5a0790f77c4a46b813856",
+      "id": "nes-prg-fixed-pair",
+      "head": "24ab71d91d8d65270ef59844e252b84be0cf3194",
       "reviewed": true
     },
     {
-      "id": "nes-chr-mmc3-bank-loop",
-      "head": "dd11ebff54ce58c1b02c3987af213d8e5a2dd251",
+      "id": "nes-prg-offset-value",
+      "head": "c796a36ce69e8daec9e65f56b279ccfec3eb5e70",
       "reviewed": true
     },
     {
-      "id": "nes-m82-sram-block",
-      "head": "9f6126402ef6db095525dd43b4d312094d58ea9b",
+      "id": "nes-m41-prg-double",
+      "head": "0a1dda50d5a7bb148e632edbbad98f27e4dcbec0",
       "reviewed": true
     },
     {
-      "id": "nes-eeprom-read-common",
-      "head": "04c7d3e8f8e603e30948660c4022ee9d1d107360",
+      "id": "nes-prg-sequential-m40-m232",
+      "head": "d7a5829b1673fb70d3e0b691e32c917559d6feb9",
       "reviewed": true
     }
   ]
