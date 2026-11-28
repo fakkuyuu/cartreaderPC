@@ -1,49 +1,49 @@
 {
-  "id": "round75-auto",
-  "base": "479d50282d05a25c44ae69d06d1f96e291915d1f",
+  "id": "round76-auto",
+  "base": "421c1c8065bc1225a63d910b9a18a3d128e01f2f",
   "expected_base_flash": 202704,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "nes-m21-m27-case-join",
-      "head": "d1b0375b5106021781d3432b1edc195e92459c73",
+      "id": "gb-show-info-noinline",
+      "head": "2571fb92263dbb3e17ccde7e61772ea51fefa921",
       "reviewed": true
     },
     {
-      "id": "nes-m58-m200-address-mask",
-      "head": "af22bf318beb717d6bad61197d0057a2cb0f6c9c",
+      "id": "gb-get-info-noinline",
+      "head": "f41a9004919534f256f8c116f3cc6a51b6e6683e",
       "reviewed": true
     },
     {
-      "id": "nes-m18-m153-register-pair",
-      "head": "8d69f8e8f7fe5bd9c28dda6ab321edafd04e8961",
+      "id": "gba-setup-noinline",
+      "head": "e799631207556d5165271a0e3509bf0d13992fc0",
       "reviewed": true
     },
     {
-      "id": "nes-m72-m92-dump-range",
-      "head": "06a554149cf21e26ce982f8cc83c912c302f5fec",
+      "id": "gba-read-rom-noinline",
+      "head": "8da2174ff6a909ffda8ac3de3a0279203810a561",
       "reviewed": true
     },
     {
-      "id": "nes-m36-bank-value-cache",
-      "head": "50f2c031740dba24c266dcecd9c057be89cb8c6f",
+      "id": "md-read-rom-noinline",
+      "head": "33e3faefc7e8b113b343703af6e67754f10fb641",
       "reviewed": true
     },
     {
-      "id": "nes-m28-register-pair",
-      "head": "095e1efba6580bf6e307564ffa7d2b4563a8bf91",
+      "id": "msx-read-rom-noinline",
+      "head": "43a3765efdc47a0bffbe3ffe94c94e685789baae",
       "reviewed": true
     },
     {
-      "id": "nes-m202-m214-address-shift",
-      "head": "f16fbdef903cd319ea5df49178a5462d852ce7b6",
+      "id": "msx-write-ram-noinline",
+      "head": "eb2f805f474ff5be962cd0bd17f579f72199459f",
       "reviewed": true
     },
     {
-      "id": "nes-m94-bank-value-cache",
-      "head": "340effcfdac0874ef6aec25b043b76708ab7675d",
+      "id": "gb-read-rom-noinline",
+      "head": "748f4a963087cd625c9634f4500a5e0f33c1d114",
       "reviewed": true
     }
   ]
