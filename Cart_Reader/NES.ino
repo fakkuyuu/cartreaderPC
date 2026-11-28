@@ -1474,17 +1474,10 @@ chooseMapper:
           else
             hundreds = 0;
         } else if (digit == 1) {
-          if (hundreds == 2) {
-            if (tens < 1)
-              tens++;
-            else
-              tens = 0;
-          } else {
-            if (tens < 9)
-              tens++;
-            else
-              tens = 0;
-          }
+          if (tens < (hundreds == 2 ? 1 : 9))
+            tens++;
+          else
+            tens = 0;
         } else if (digit == 2) {
           if (units < 9)
             units++;
