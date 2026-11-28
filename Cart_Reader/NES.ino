@@ -1117,6 +1117,26 @@ static void write_chr_byte(unsigned int address, uint8_t data) {
 }
 #endif
 
+static void writeBusConflictBankR82_NES(size_t bank, uint16_t scanBase,
+                                             size_t scanLength, uint16_t fallbackBase,
+                                             uint8_t valueShift, bool &busConflict)
+    __attribute__((noinline));
+static void writeBusConflictBankR82_NES(size_t bank, uint16_t scanBase,
+                                       size_t scanLength, uint16_t fallbackBase,
+                                       uint8_t valueShift, bool &busConflict) {
+  const size_t value = bank << valueShift;
+  for (size_t offset = 0; offset < scanLength; ++offset) {
+    const unsigned int address = scanBase + offset;
+    if (read_prg_byte(address) == value) {
+      write_prg_byte(address, value);
+      busConflict = false;
+      break;
+    }
+  }
+  if (busConflict)
+    write_prg_byte(fallbackBase + bank, value);
+}
+
 void resetROM() {
   set_address(0);
   PHI2_HI;
@@ -2239,16 +2259,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         busConflict = true;
         for (size_t i = 0; i < banks; i++) {
-          for (size_t x = 0; x < 0x8000; x++) {
-            if (read_prg_byte(0xC000 + x) == i) {
-              write_prg_byte(0xC000 + x, i);
-              busConflict = false;
-              break;
-            }
-          }
-          if (busConflict) {
-            write_prg_byte(0xC000 + i, i);
-          }
+          writeBusConflictBankR82_NES(i, 0xC000, 0x8000, 0xC000, 0, busConflict);
           dumpPRG16KiB(base);
         }
         break;
@@ -2834,16 +2845,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K;
         busConflict = true;
         for (size_t i = 0; i < banks; i++) {
-          for (size_t x = 0; x < 0x4000; x++) {
-            if (read_prg_byte(0xC000 + x) == (i << 2)) {
-              write_prg_byte(0xC000 + x, i << 2);
-              busConflict = false;
-              break;
-            }
-          }
-          if (busConflict) {
-            write_prg_byte(0x8000 + i, i << 2);
-          }
+          writeBusConflictBankR82_NES(i, 0xC000, 0x4000, 0x8000, 2, busConflict);
           dumpPRG16KiB(base);
         }
         break;
@@ -3477,16 +3479,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           busConflict = true;
           for (size_t i = 0; i < banks; i++) {
-            for (size_t x = 0; x < 0x8000; x++) {
-              if (read_prg_byte(0x8000 + x) == i) {
-                write_prg_byte(0x8000 + x, i);
-                busConflict = false;
-                break;
-              }
-            }
-            if (busConflict) {
-              write_prg_byte(0x8000 + i, i);
-            }
+            writeBusConflictBankR82_NES(i, 0x8000, 0x8000, 0x8000, 0, busConflict);
             dumpCHR8KiB();
           }
           break;
