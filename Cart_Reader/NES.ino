@@ -1905,12 +1905,13 @@ setram:
 // RAM is mapped differently between MMC3 and MMC6
 void checkMMC6() {               // Detect MMC6 Carts - read PRG 0x3E00A ("STARTROPICS")
   writeMmc3PairR59_NES(6, 0x1F);
-  uint8_t prgchk0 = read_prg_byte(0x800A);
-  uint8_t prgchk1 = read_prg_byte(0x800B);
-  uint8_t prgchk2 = read_prg_byte(0x800C);
-  uint8_t prgchk3 = read_prg_byte(0x800D);
-  if ((prgchk0 == 0x53) && (prgchk1 == 0x54) && (prgchk2 == 0x41) && (prgchk3 == 0x52))
-    mmc6 = true;  // MMC6 Cart
+  const byte signature[] = {0x53, 0x54, 0x41, 0x52};
+  bool match = true;
+  for (byte i = 0; i < sizeof(signature); ++i) {
+    byte value = read_prg_byte(0x800A + i);
+    if (value != signature[i]) match = false;
+  }
+  if (match) mmc6 = true;  // MMC6 Cart
 }
 
 void checkStatus_NES() {
