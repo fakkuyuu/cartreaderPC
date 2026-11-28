@@ -1,49 +1,49 @@
 {
-  "id": "round77-auto",
-  "base": "50650411f8f09a6eb3b579054f861c64c9e54111",
-  "expected_base_flash": 202584,
+  "id": "round78-auto",
+  "base": "ac1cf3ebf0ce5099d52bcc3c9c2c1590dca0e959",
+  "expected_base_flash": 202580,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "md-setup",
-      "head": "f07f702cd5ca4d74e8dd70c942389d57ebc18df0",
+      "id": "nes-0x8000",
+      "head": "26d4e67d82315424f883eb8e09452e7c6b72c62a",
       "reviewed": true
     },
     {
-      "id": "gba-info",
-      "head": "b786fc6a4bad2fc5312a09d841f4bf4169f38bf4",
+      "id": "nes-0x6000",
+      "head": "94a329ce33832f83be6d0c789a912f8ad3231af4",
       "reviewed": true
     },
     {
-      "id": "n64-setup",
-      "head": "102c773bfffdd88331f32520b7a997dd82e275ac",
+      "id": "nes-0x800d",
+      "head": "8f66702e76e72f4f1942445b7c827cf28d8ec0d0",
       "reviewed": true
     },
     {
-      "id": "n64-info",
-      "head": "138fe30312593cb849abe412cf4ed160455d284f",
+      "id": "gb-0x2000",
+      "head": "159c205ac51afba0c9933a757a67b1b25bad467f",
       "reviewed": true
     },
     {
-      "id": "sms-setup",
-      "head": "e16c0de8163000f4cb63a47bed7bb3deb4d6bffb",
+      "id": "gb-0x4000",
+      "head": "0df0d15d63f9c2c0397605e528328da2ba00f329",
       "reviewed": true
     },
     {
-      "id": "sms-read",
-      "head": "0ced071c2e560f5b72a706ea10d5d459110a15a7",
+      "id": "gb-0x6000",
+      "head": "f5b62c3ace0a34ede74b46702f07ad7510f7a721",
       "reviewed": true
     },
     {
-      "id": "snes-read",
-      "head": "03b9703eff302bd440c68f0f7bfea017894136c5",
+      "id": "msx-0x7000",
+      "head": "600070202889a47d3b02dc8cb873d85be6e66a12",
       "reviewed": true
     },
     {
-      "id": "pce-read",
-      "head": "aaf8abbbd286fe2fa2ebc51df09f376cdb730af4",
+      "id": "md-0x5555",
+      "head": "410f5d71508efb5c0d23fd9d907fdacee55d9a8b",
       "reviewed": true
     }
   ]
