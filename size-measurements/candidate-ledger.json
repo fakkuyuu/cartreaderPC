@@ -24720,7 +24720,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_rejected",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "rejected",
+      "integration_reason": "Independent Flash/RAM policy rejected",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "integration_base_sha": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64"
     },
     {
       "patch_id": "95ef03c9b85e7117dec92cbae6bd23f28613a184",
@@ -24755,7 +24762,16 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "pending_conflict",
+      "integration_reason": "Manual semantic merge and remeasurement required",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/GB.ino"
+      ],
+      "integration_base_sha": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64"
     },
     {
       "patch_id": "a11f7db9e9fca27d7a46ecfabf455531a9299d94",
@@ -24790,7 +24806,16 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "pending_conflict",
+      "integration_reason": "Manual semantic merge and remeasurement required",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/GB.ino"
+      ],
+      "integration_base_sha": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64"
     },
     {
       "patch_id": "48476d75fd19af2f01d584fa767ffc3742c52ef5",
@@ -24826,7 +24851,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "adopted",
+      "integration_reason": "Neither resource increased and at least one decreased",
+      "integration_flash_delta": -8,
+      "integration_ram_delta": 0,
+      "accepted_commit": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "conflict_paths": [],
+      "integration_base_sha": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64"
     },
     {
       "patch_id": "7869230c45cd72a7c249d5d254b3206163c81fb9",
@@ -24860,7 +24892,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "unchanged",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "rejected",
+      "integration_reason": "Independent Flash/RAM policy rejected",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "integration_base_sha": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64"
     },
     {
       "patch_id": "934754b2ea16893cf251aef8fb8022869cd1584d",
@@ -24894,7 +24933,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "unchanged",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "rejected",
+      "integration_reason": "Independent Flash/RAM policy rejected",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "integration_base_sha": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64"
     },
     {
       "patch_id": "af5e6175152dcae214b1b73ebce7d8b113173ecf",
@@ -24928,7 +24974,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_rejected",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "rejected",
+      "integration_reason": "Independent Flash/RAM policy rejected",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "integration_base_sha": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64"
     },
     {
       "patch_id": "ab818fafe1f5051c89dd3e50dd736a147c357742",
@@ -24962,7 +25015,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_rejected",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "rejected",
+      "integration_reason": "Independent Flash/RAM policy rejected",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "integration_base_sha": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64"
     }
   ],
   "duplicate_attempts": [
