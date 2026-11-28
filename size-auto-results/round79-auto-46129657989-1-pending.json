@@ -1,0 +1,44 @@
+[
+  {
+    "id": "gb-0x0000",
+    "expected_base_ram": 6059,
+    "original_head": "d4fde7b6bc164a7c59432522a9657e219409d4b0",
+    "rebase_onto_firmware": "00eb3e65c0bf2b78df0f96b457414552dd8dddaf",
+    "expected_base_flash": 201896,
+    "original_base": "30e7ec1a0110a25a72892bb04797bd8a39c3fec6",
+    "paths": [
+      "Cart_Reader/GB.ino"
+    ],
+    "independent_ram_delta": 0,
+    "independent_flash_delta": -42,
+    "conflict_onto": "51c019f87db8fcec54d2a1ba2195404675b7326d"
+  },
+  {
+    "id": "gb-0x3555",
+    "expected_base_ram": 6059,
+    "original_head": "f7e3aa0853f1c5ebb403db76e71a4357fcd5c9ac",
+    "rebase_onto_firmware": "00eb3e65c0bf2b78df0f96b457414552dd8dddaf",
+    "expected_base_flash": 201896,
+    "original_base": "30e7ec1a0110a25a72892bb04797bd8a39c3fec6",
+    "paths": [
+      "Cart_Reader/GB.ino"
+    ],
+    "independent_ram_delta": 0,
+    "independent_flash_delta": -32,
+    "conflict_onto": "51c019f87db8fcec54d2a1ba2195404675b7326d"
+  },
+  {
+    "id": "nes-0xa001",
+    "expected_base_ram": 6059,
+    "original_head": "50a2c8f4daace187378fb9d559b8e852ea38f397",
+    "rebase_onto_firmware": "00eb3e65c0bf2b78df0f96b457414552dd8dddaf",
+    "expected_base_flash": 201896,
+    "original_base": "30e7ec1a0110a25a72892bb04797bd8a39c3fec6",
+    "paths": [
+      "Cart_Reader/NES.ino"
+    ],
+    "independent_ram_delta": 0,
+    "independent_flash_delta": -22,
+    "conflict_onto": "00eb3e65c0bf2b78df0f96b457414552dd8dddaf"
+  }
+]
