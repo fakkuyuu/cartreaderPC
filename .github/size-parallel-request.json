@@ -1,49 +1,49 @@
 {
-  "id": "round73-auto",
-  "base": "abd0471df090793d08a062dc5298493c9756377d",
-  "expected_base_flash": 202850,
+  "id": "round74-auto",
+  "base": "69352db3f222319f30545b57c2286e65aa70eefe",
+  "expected_base_flash": 202734,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "nes-save-identification-print",
-      "head": "ebed42b1c95e77a9e4e13d3185b3ba7d38f44a1c",
+      "id": "nes-mapper-tens-up",
+      "head": "345cbbd6ceaf96e3767653c2dcab06989e2a79c8",
       "reviewed": true
     },
     {
-      "id": "nes-save-crc-log-common",
-      "head": "83fbe87adf701a3a64852b3bf0ec73533bd96cca",
+      "id": "nes-mapper-tens-down",
+      "head": "1f142522bd08e21918aaf39713dac922d32b4fe7",
       "reviewed": true
     },
     {
-      "id": "nes-save-crc-selection",
-      "head": "1479a909a44c5db7141fa9c8fb9049b41af5befc",
+      "id": "nes-settings-ram-unit",
+      "head": "12b9f4ff39d987c0947c7c7e39187ba99c19aa78",
       "reviewed": true
     },
     {
-      "id": "nes-db-crc-difference-cache",
-      "head": "a7a842289285b2ac1ce58612a20a7bdb876484bf",
+      "id": "nes-prg-read-setup",
+      "head": "b390705b744fc750f0eb09049e3c6df79912a3ed",
       "reviewed": true
     },
     {
-      "id": "nes-db-line-offsets",
-      "head": "5aed726462dee07ddff11259ac2ade775b2f9b6d",
+      "id": "nes-m997-outer-value",
+      "head": "1f7359175fc67972a6577bc47b93269b78379262",
       "reviewed": true
     },
     {
-      "id": "nes-rom-name-ascii-range",
-      "head": "ae6f27154e319a83a2db365970dc7f71c8130611",
+      "id": "nes-mmc3-outer-mask",
+      "head": "fdf3c9b5c30ceddf48858923fdd18ec29fe1814a",
       "reviewed": true
     },
     {
-      "id": "nes-header-prg-truncation",
-      "head": "5b70aab94907697a3cf6446189c783be8c2fb950",
+      "id": "nes-sequential-prg-noinline",
+      "head": "9bfd4fcfbe6404f7162c1b048db9faa3aa7ca7c8",
       "reviewed": true
     },
     {
-      "id": "nes-db-select-branch",
-      "head": "f5861186b4f8f027cf6abc3f55ac949a029d9723",
+      "id": "nes-sequential-chr-noinline",
+      "head": "1ed8429c5ca8b9e5e426a351324858e1b948d5bd",
       "reviewed": true
     }
   ]
