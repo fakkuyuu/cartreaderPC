@@ -2077,6 +2077,14 @@ static void dumpSequentialPRGBanks(uint16_t count, uint16_t reg, uint8_t shift,
   }
 }
 
+static void __attribute__((noinline)) dumpChrPair8AR68_NES(word banks, byte command, word from, word to) {
+  for (word i = 0; i < banks; ++i) {
+    write_prg_byte(0x8000, command);
+    write_prg_byte(0xA000, i);
+    dumpBankCHR(from, to);
+  }
+}
+
 static void dumpSequentialCHRBanks(uint16_t count, uint16_t reg, uint8_t shift,
                                    uint16_t bankSize) {
   for (uint16_t bank = 0; bank < count; ++bank) {
@@ -3802,11 +3810,7 @@ void readCHR(bool readrom) {
           break;
 
         case 69:  // 128K/256K
-          banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            writePair8AR61_NES(0, i);
-            dumpCHR1KiB();    // 1K Banks
-          }
+          dumpChrPair8AR68_NES(chrBanks4K * 4, 0, 0, 0x400);
           break;
 
         case 92:
@@ -3933,11 +3937,7 @@ void readCHR(bool readrom) {
           break;
 
         case 112:
-          banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            writePair8AR61_NES(6, i);
-            dumpBankCHR(0x1000, 0x1400);
-          }
+          dumpChrPair8AR68_NES(chrBanks4K * 4, 6, 0x1000, 0x1400);
           break;
 
         case 113:
