@@ -25093,6 +25093,274 @@
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
       "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "3481026218d1c69c5c280d8c19fa1b9572640036",
+      "diff_sha256": "485200335f3614528aa7bca79a684a687949ee66978803f744b4ffb92b32d503",
+      "files": [
+        "Cart_Reader/NES.ino"
+      ],
+      "functions": [
+        "readPRG",
+        "readCHR",
+        "writeBusConflictBankR82_NES"
+      ],
+      "function_contexts": [
+        "static void write_chr_byte(unsigned int address, uint8_t data) {",
+        "void readPRG(bool readrom) {",
+        "void readCHR(bool readrom) {"
+      ],
+      "target": "NES",
+      "description": "Factor three repeated PRG/CHR bus-conflict scan-and-fallback loops; preserve the existing busConflict flag lifetime and address/value rules.",
+      "subject": "Round 82: share NES bus-conflict bank scan",
+      "candidate_id": "r82-nes-bus-conflict",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "702b268b17c5e2cf1dabeca0e001a73786609335",
+      "run_id": "46140520310",
+      "run_attempt": "1",
+      "round_id": "round82-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46140520310",
+      "independent_flash_delta": 100,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_rejected",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "1fd9a56c5f6a9e23b7afc386f81bd7373527de75",
+      "diff_sha256": "6fcfe10ce8eb8b159b383920caf33079ed5faaed3cb49ef13ad177e07504f2fb",
+      "files": [
+        "Cart_Reader/NES.ino"
+      ],
+      "functions": [
+        "readCHR",
+        "dumpMmc3ChrBankRangeR82_NES",
+        "writeMmc3PairR59_NES"
+      ],
+      "function_contexts": [
+        "void readCHR(bool readrom) {",
+        "static void setMapper80SramAccess_NES(byte value) {"
+      ],
+      "target": "NES",
+      "description": "Share four MMC3 CHR bank loops with common register-write and dump-range structure, preserving counts, strides and windows.",
+      "subject": "Round 82: share MMC3 CHR bank range loops",
+      "candidate_id": "r82-nes-mmc3-chr-range",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "aab422835ded024a1e694d623c70b074613ebf7c",
+      "run_id": "46140520310",
+      "run_attempt": "1",
+      "round_id": "round82-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46140520310",
+      "independent_decision": "build_failed_or_missing",
+      "measurement_status": "build_failed",
+      "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "9c7f4e305dd8a0490118ae72f7f9b3ff526a0194",
+      "diff_sha256": "f997a19ef150b5f9f8d780b52ddda1012fd85c73f6978dcea8f5bfd080196155",
+      "files": [
+        "Cart_Reader/NES.ino"
+      ],
+      "functions": [
+        "readCHR",
+        "dumpRegisterGroupChrR82_NES"
+      ],
+      "function_contexts": [
+        "static void __attribute__((noinline)) dumpAddrChrR66_NES(word banks, word mask,",
+        "void readCHR(bool readrom) {"
+      ],
+      "target": "NES",
+      "description": "Share three grouped CHR register loops with 8-bank/4-bank groups and their original address strides.",
+      "subject": "Round 82: share grouped CHR bank register loops",
+      "candidate_id": "r82-nes-chr-register-groups",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "bf82397a0e0d634b3e83ee6b5947b40d9f29f428",
+      "run_id": "46140520310",
+      "run_attempt": "1",
+      "round_id": "round82-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46140520310",
+      "independent_flash_delta": -18,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_improvement",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "469ec987271e34b76b8abed52fde5fb11ed33eeb",
+      "diff_sha256": "fc56e40c5ce2fa54be2566e34a0d22078d5aa1d7294e2ddc4f19721c726abc14",
+      "files": [
+        "Cart_Reader/Cart_Reader.ino"
+      ],
+      "functions": [
+        "questionBox_Display",
+        "handlePcMenuInputR82"
+      ],
+      "function_contexts": [
+        "byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]",
+        "redraw:"
+      ],
+      "target": "PC Menu",
+      "description": "Move PC-only command parsing out of questionBox_Display into a noinline helper; retain continue/break/selection outcomes and physical input path.",
+      "subject": "Round 82: isolate PC menu command handler",
+      "candidate_id": "r82-pc-menu-handler",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "c7b93ba2a862f6bdcb3dc11e129c030c3b71b9f7",
+      "run_id": "46140520310",
+      "run_attempt": "1",
+      "round_id": "round82-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46140520310",
+      "independent_flash_delta": -674,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_improvement",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "f1757d236c3689577a117d62a759002eecb0a897",
+      "diff_sha256": "9b89c82edc70be4590fcab8809434b6e4df27fb34daa294389b1b5f7acca2042",
+      "files": [
+        "Cart_Reader/NES.ino"
+      ],
+      "functions": [
+        "readPRG",
+        "configureMmc3PrgBankR82_NES"
+      ],
+      "function_contexts": [
+        "static void writeAndDump235R64_NES(word address, word base) {",
+        "void readPRG(bool readrom) {"
+      ],
+      "target": "NES",
+      "description": "Move the large mapper-specific MMC3 PRG outer-bank conditional block out of readPRG while preserving mapper register sequences.",
+      "subject": "Round 82: isolate MMC3 PRG mapper bank setup",
+      "candidate_id": "r82-nes-mmc3-prg-config",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "a15773aa3c94ec6548cfc1194f5fb32268de1bdf",
+      "run_id": "46140520310",
+      "run_attempt": "1",
+      "round_id": "round82-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46140520310",
+      "independent_flash_delta": 18,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_rejected",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "29b9c4d56a066cd35c5df35fe041dfe2d44546a3",
+      "diff_sha256": "447033bb184f3870897135500b0cb2e4c6d877df04f3051dee14fd46af728c66",
+      "files": [
+        "Cart_Reader/NES.ino"
+      ],
+      "functions": [
+        "readCHR",
+        "configureMmc3ChrBankR82_NES"
+      ],
+      "function_contexts": [
+        "void readCHR(bool readrom) {",
+        "static void __attribute__((noinline)) printNesSaveCrcR73_NES(char* buf, uint32_t"
+      ],
+      "target": "NES",
+      "description": "Move the mapper-specific MMC3 CHR outer-bank conditional block out of readCHR while preserving mapper register sequences.",
+      "subject": "Round 82: isolate MMC3 CHR mapper bank setup",
+      "candidate_id": "r82-nes-mmc3-chr-config",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "63cc612a09ad52e77add0d2eee826ef0258337d4",
+      "run_id": "46140520310",
+      "run_attempt": "1",
+      "round_id": "round82-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46140520310",
+      "independent_decision": "build_failed_or_missing",
+      "measurement_status": "build_failed",
+      "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "eecae5a777e2f0072b58afde08679b5bf4d5d2c0",
+      "diff_sha256": "eef829f5b2e74582e2c2fe913d92dd86f0911bd7bc4f3c9134ac217de30111fa",
+      "files": [
+        "Cart_Reader/GBA.ino"
+      ],
+      "functions": [
+        "gbaMenu",
+        "readSaveMenu_GBA_R82"
+      ],
+      "function_contexts": [
+        "static uint32_t flashBankSizeP30_GBA(bool skip) {",
+        "void gbaMenu() {"
+      ],
+      "target": "GBA",
+      "description": "Move GBA save-read dispatch, EEPROM/SRAM/FLASH handling and two-bank read path out of the large gbaMenu function.",
+      "subject": "Round 82: isolate GBA save read path",
+      "candidate_id": "r82-gba-read-save",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "db7a766f50376285a50e6bcddc1852dee5140c71",
+      "run_id": "46140520310",
+      "run_attempt": "1",
+      "round_id": "round82-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46140520310",
+      "independent_flash_delta": 38,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_rejected",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "79b262974e0dc2f4a77b202022b44ee953654859",
+      "diff_sha256": "5b5d676b8f330f77d216a60be1ba4f04605189f5c7fb7e922ee525789c6567a0",
+      "files": [
+        "Cart_Reader/GBA.ino"
+      ],
+      "functions": [
+        "gbaMenu",
+        "writeSaveMenu_GBA_R82"
+      ],
+      "function_contexts": [
+        "void gbaMenu() {"
+      ],
+      "target": "GBA",
+      "description": "Move GBA save-write dispatch, EEPROM/SRAM/FLASH programming and verification path out of the large gbaMenu function.",
+      "subject": "Round 82: isolate GBA save write path",
+      "candidate_id": "r82-gba-write-save",
+      "base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866",
+      "head_sha": "6b05afb8fc93b94bf72ee6a76e12c597722a11a2",
+      "run_id": "46140520310",
+      "run_attempt": "1",
+      "round_id": "round82-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46140520310",
+      "independent_decision": "build_failed_or_missing",
+      "measurement_status": "build_failed",
+      "reason": "No identical patch or commit was found in the ledger."
     }
   ],
   "duplicate_attempts": [
