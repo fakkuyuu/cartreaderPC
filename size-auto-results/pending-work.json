@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "description": "Canonical queue for unresolved automatic size-reduction work. New chats should process only items whose status is pending or needs_human.",
-  "updated_by_run_id": "46131321837",
+  "updated_by_run_id": "46133264369",
   "items": [
     {
       "key": "46129657989/gb-0x0000",
@@ -122,6 +122,101 @@
         "final_ram": 6059,
         "hardware_validation": "pending"
       }
+    },
+    {
+      "created_by_run_id": "46133264369",
+      "status": "pending",
+      "key": "46133264369/nes-0xe000",
+      "original": {
+        "run_id": "46133264369",
+        "candidate_sha": "a39500c86ee74355d6f3a7a1da930a3621130db6",
+        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "base_sha": "29bfab9f093a608e1e81520f404687fb2673f089",
+        "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "conflict_files": [
+          "Cart_Reader/NES.ino"
+        ],
+        "pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "candidate_id": "nes-0xe000"
+      },
+      "candidate_id": "nes-0xe000"
+    },
+    {
+      "created_by_run_id": "46133264369",
+      "status": "pending",
+      "key": "46133264369/msx-0xa000",
+      "original": {
+        "run_id": "46133264369",
+        "candidate_sha": "cdc6aaeaf7fac4f19c89125845eabc08061091d8",
+        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "base_sha": "29bfab9f093a608e1e81520f404687fb2673f089",
+        "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "conflict_files": [
+          "Cart_Reader/MSX.ino"
+        ],
+        "pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "candidate_id": "msx-0xa000"
+      },
+      "candidate_id": "msx-0xa000"
+    },
+    {
+      "created_by_run_id": "46133264369",
+      "status": "pending",
+      "key": "46133264369/gb-0x3000",
+      "original": {
+        "run_id": "46133264369",
+        "candidate_sha": "81f647c2fcb69d249ed2f361d22093a2936581fa",
+        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "base_sha": "29bfab9f093a608e1e81520f404687fb2673f089",
+        "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "conflict_files": [
+          "Cart_Reader/GB.ino"
+        ],
+        "pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "candidate_id": "gb-0x3000"
+      },
+      "candidate_id": "gb-0x3000"
+    },
+    {
+      "created_by_run_id": "46133264369",
+      "status": "pending",
+      "key": "46133264369/nes-0x6001",
+      "original": {
+        "run_id": "46133264369",
+        "candidate_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "base_sha": "29bfab9f093a608e1e81520f404687fb2673f089",
+        "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "conflict_files": [
+          "Cart_Reader/NES.ino"
+        ],
+        "pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "candidate_id": "nes-0x6001"
+      },
+      "candidate_id": "nes-0x6001"
+    },
+    {
+      "created_by_run_id": "46133264369",
+      "status": "pending",
+      "key": "46133264369/msx-0x6000",
+      "original": {
+        "run_id": "46133264369",
+        "candidate_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "base_sha": "29bfab9f093a608e1e81520f404687fb2673f089",
+        "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "conflict_files": [
+          "Cart_Reader/MSX.ino"
+        ],
+        "pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "candidate_id": "msx-0x6000"
+      },
+      "candidate_id": "msx-0x6000"
     }
   ]
 }

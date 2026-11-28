@@ -1,0 +1,77 @@
+[
+  {
+    "id": "nes-0xe000",
+    "expected_base_flash": 201772,
+    "paths": [
+      "Cart_Reader/NES.ino"
+    ],
+    "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "independent_flash_delta": -14,
+    "expected_base_ram": 6059,
+    "original_head": "a39500c86ee74355d6f3a7a1da930a3621130db6",
+    "original_base": "29bfab9f093a608e1e81520f404687fb2673f089",
+    "independent_ram_delta": 0,
+    "resubmission": null
+  },
+  {
+    "id": "msx-0xa000",
+    "expected_base_flash": 201772,
+    "paths": [
+      "Cart_Reader/MSX.ino"
+    ],
+    "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "independent_flash_delta": -2,
+    "expected_base_ram": 6059,
+    "original_head": "cdc6aaeaf7fac4f19c89125845eabc08061091d8",
+    "original_base": "29bfab9f093a608e1e81520f404687fb2673f089",
+    "independent_ram_delta": 0,
+    "resubmission": null
+  },
+  {
+    "id": "gb-0x3000",
+    "expected_base_flash": 201772,
+    "paths": [
+      "Cart_Reader/GB.ino"
+    ],
+    "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "independent_flash_delta": -6,
+    "expected_base_ram": 6059,
+    "original_head": "81f647c2fcb69d249ed2f361d22093a2936581fa",
+    "original_base": "29bfab9f093a608e1e81520f404687fb2673f089",
+    "independent_ram_delta": 0,
+    "resubmission": null
+  },
+  {
+    "id": "nes-0x6001",
+    "expected_base_flash": 201772,
+    "paths": [
+      "Cart_Reader/NES.ino"
+    ],
+    "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "independent_flash_delta": -10,
+    "expected_base_ram": 6059,
+    "original_head": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+    "original_base": "29bfab9f093a608e1e81520f404687fb2673f089",
+    "independent_ram_delta": 0,
+    "resubmission": null
+  },
+  {
+    "id": "msx-0x6000",
+    "expected_base_flash": 201772,
+    "paths": [
+      "Cart_Reader/MSX.ino"
+    ],
+    "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+    "independent_flash_delta": -2,
+    "expected_base_ram": 6059,
+    "original_head": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+    "original_base": "29bfab9f093a608e1e81520f404687fb2673f089",
+    "independent_ram_delta": 0,
+    "resubmission": null
+  }
+]

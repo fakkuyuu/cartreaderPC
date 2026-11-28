@@ -1,0 +1,281 @@
+{
+  "schema": 3,
+  "acceptance_policy": "flash_and_ram_nonincreasing_at_least_one_decreases",
+  "id": "round80-auto",
+  "run_id": "46133264369",
+  "run_attempt": "1",
+  "base": "29bfab9f093a608e1e81520f404687fb2673f089",
+  "start": "347c5eda76234bbb7306fc14eb62aad4815690d0",
+  "dry_run": false,
+  "status": "measured",
+  "candidates": [
+    {
+      "id": "gb-0x7fe1",
+      "head": "c84fbe475587c582f167f38f110cfd76cb2ac19d",
+      "order": 1,
+      "resubmission": null,
+      "independent_flash": 201802,
+      "independent_ram": 6059,
+      "independent_delta": -22,
+      "independent_ram_delta": 0,
+      "decision": "adopted",
+      "reason": "Neither resource increased and at least one decreased",
+      "before_flash": 201824,
+      "before_ram": 6059,
+      "trial_flash": 201802,
+      "trial_ram": 6059,
+      "incremental_delta": -22,
+      "incremental_ram_delta": 0,
+      "accepted_commit": "4e9c7171b15da0a483b0e9a4992f78b925673b1d",
+      "conflict_paths": [],
+      "conflict_onto": null
+    },
+    {
+      "id": "nes-0xc000",
+      "head": "4da0b9c3e2298a31bf0efdb4f8e92b7c076b9453",
+      "order": 2,
+      "resubmission": null,
+      "independent_flash": 201810,
+      "independent_ram": 6059,
+      "independent_delta": -14,
+      "independent_ram_delta": 0,
+      "decision": "adopted",
+      "reason": "Neither resource increased and at least one decreased",
+      "before_flash": 201786,
+      "before_ram": 6059,
+      "trial_flash": 201772,
+      "trial_ram": 6059,
+      "incremental_delta": -14,
+      "incremental_ram_delta": 0,
+      "accepted_commit": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "conflict_paths": [],
+      "conflict_onto": null
+    },
+    {
+      "id": "nes-0xe000",
+      "head": "a39500c86ee74355d6f3a7a1da930a3621130db6",
+      "order": 3,
+      "resubmission": null,
+      "independent_flash": 201810,
+      "independent_ram": 6059,
+      "independent_delta": -14,
+      "independent_ram_delta": 0,
+      "decision": "pending_conflict",
+      "reason": "Manual semantic merge and remeasurement required",
+      "before_flash": 201772,
+      "before_ram": 6059,
+      "trial_flash": null,
+      "trial_ram": null,
+      "incremental_delta": null,
+      "incremental_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/NES.ino"
+      ],
+      "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46"
+    },
+    {
+      "id": "msx-0x4fff",
+      "head": "19850de16f29402e165c928b5fd100b2344d2ec9",
+      "order": 4,
+      "resubmission": null,
+      "independent_flash": 201808,
+      "independent_ram": 6059,
+      "independent_delta": -16,
+      "independent_ram_delta": 0,
+      "decision": "adopted",
+      "reason": "Neither resource increased and at least one decreased",
+      "before_flash": 201802,
+      "before_ram": 6059,
+      "trial_flash": 201786,
+      "trial_ram": 6059,
+      "incremental_delta": -16,
+      "incremental_ram_delta": 0,
+      "accepted_commit": "fc4fad2780d907ef02bf4508dd97b572be2bbd37",
+      "conflict_paths": [],
+      "conflict_onto": null
+    },
+    {
+      "id": "msx-0xa000",
+      "head": "cdc6aaeaf7fac4f19c89125845eabc08061091d8",
+      "order": 5,
+      "resubmission": null,
+      "independent_flash": 201822,
+      "independent_ram": 6059,
+      "independent_delta": -2,
+      "independent_ram_delta": 0,
+      "decision": "pending_conflict",
+      "reason": "Manual semantic merge and remeasurement required",
+      "before_flash": 201772,
+      "before_ram": 6059,
+      "trial_flash": null,
+      "trial_ram": null,
+      "incremental_delta": null,
+      "incremental_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/MSX.ino"
+      ],
+      "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46"
+    },
+    {
+      "id": "gb-0x3000",
+      "head": "81f647c2fcb69d249ed2f361d22093a2936581fa",
+      "order": 6,
+      "resubmission": null,
+      "independent_flash": 201818,
+      "independent_ram": 6059,
+      "independent_delta": -6,
+      "independent_ram_delta": 0,
+      "decision": "pending_conflict",
+      "reason": "Manual semantic merge and remeasurement required",
+      "before_flash": 201772,
+      "before_ram": 6059,
+      "trial_flash": null,
+      "trial_ram": null,
+      "incremental_delta": null,
+      "incremental_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/GB.ino"
+      ],
+      "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46"
+    },
+    {
+      "id": "nes-0x6001",
+      "head": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+      "order": 7,
+      "resubmission": null,
+      "independent_flash": 201814,
+      "independent_ram": 6059,
+      "independent_delta": -10,
+      "independent_ram_delta": 0,
+      "decision": "pending_conflict",
+      "reason": "Manual semantic merge and remeasurement required",
+      "before_flash": 201772,
+      "before_ram": 6059,
+      "trial_flash": null,
+      "trial_ram": null,
+      "incremental_delta": null,
+      "incremental_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/NES.ino"
+      ],
+      "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46"
+    },
+    {
+      "id": "msx-0x6000",
+      "head": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+      "order": 8,
+      "resubmission": null,
+      "independent_flash": 201822,
+      "independent_ram": 6059,
+      "independent_delta": -2,
+      "independent_ram_delta": 0,
+      "decision": "pending_conflict",
+      "reason": "Manual semantic merge and remeasurement required",
+      "before_flash": 201772,
+      "before_ram": 6059,
+      "trial_flash": null,
+      "trial_ram": null,
+      "incremental_delta": null,
+      "incremental_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [
+        "Cart_Reader/MSX.ino"
+      ],
+      "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46"
+    }
+  ],
+  "hardware_validation": "pending",
+  "baseline": {
+    "ram": 6059,
+    "flash": 201824
+  },
+  "final": {
+    "ram": 6059,
+    "flash": 201772
+  },
+  "delta": -52,
+  "ram_delta": 0,
+  "firmware_commit": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+  "pending_count": 5,
+  "pending": [
+    {
+      "id": "nes-0xe000",
+      "expected_base_flash": 201772,
+      "paths": [
+        "Cart_Reader/NES.ino"
+      ],
+      "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "independent_flash_delta": -14,
+      "expected_base_ram": 6059,
+      "original_head": "a39500c86ee74355d6f3a7a1da930a3621130db6",
+      "original_base": "29bfab9f093a608e1e81520f404687fb2673f089",
+      "independent_ram_delta": 0,
+      "resubmission": null
+    },
+    {
+      "id": "msx-0xa000",
+      "expected_base_flash": 201772,
+      "paths": [
+        "Cart_Reader/MSX.ino"
+      ],
+      "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "independent_flash_delta": -2,
+      "expected_base_ram": 6059,
+      "original_head": "cdc6aaeaf7fac4f19c89125845eabc08061091d8",
+      "original_base": "29bfab9f093a608e1e81520f404687fb2673f089",
+      "independent_ram_delta": 0,
+      "resubmission": null
+    },
+    {
+      "id": "gb-0x3000",
+      "expected_base_flash": 201772,
+      "paths": [
+        "Cart_Reader/GB.ino"
+      ],
+      "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "independent_flash_delta": -6,
+      "expected_base_ram": 6059,
+      "original_head": "81f647c2fcb69d249ed2f361d22093a2936581fa",
+      "original_base": "29bfab9f093a608e1e81520f404687fb2673f089",
+      "independent_ram_delta": 0,
+      "resubmission": null
+    },
+    {
+      "id": "nes-0x6001",
+      "expected_base_flash": 201772,
+      "paths": [
+        "Cart_Reader/NES.ino"
+      ],
+      "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "independent_flash_delta": -10,
+      "expected_base_ram": 6059,
+      "original_head": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+      "original_base": "29bfab9f093a608e1e81520f404687fb2673f089",
+      "independent_ram_delta": 0,
+      "resubmission": null
+    },
+    {
+      "id": "msx-0x6000",
+      "expected_base_flash": 201772,
+      "paths": [
+        "Cart_Reader/MSX.ino"
+      ],
+      "rebase_onto_firmware": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "conflict_onto": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+      "independent_flash_delta": -2,
+      "expected_base_ram": 6059,
+      "original_head": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+      "original_base": "29bfab9f093a608e1e81520f404687fb2673f089",
+      "independent_ram_delta": 0,
+      "resubmission": null
+    }
+  ]
+}
