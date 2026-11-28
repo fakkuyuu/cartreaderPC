@@ -110,6 +110,7 @@ void showResettingAndUpdate() __attribute__((noinline));
 void showFlashingFileAndUpdate() __attribute__((noinline));
 void formatFlashId() __attribute__((noinline));
 
+void readROM_SNES() __attribute__((noinline));
 void showVerificationErrorCount(unsigned long errors) __attribute__((noinline));
 void readROM_MSX() __attribute__((noinline));
 void browseRootFileAndClear() __attribute__((noinline));
