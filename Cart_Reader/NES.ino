@@ -4144,12 +4144,7 @@ static void writeNesSaveLog(uint32_t saveSize, uint32_t saveCrc) {
     myFile.print(FS(SharedFlashText::textGame));
     myFile.println(*dbSaveTitle ? dbSaveTitle : "Unknown");
     myFile.print(F("Identification: "));
-    if (!*dbSaveTitle)
-      myFile.println(F("Mapper settings"));
-    else if (nesSaveTitleMatchesCrc)
-      myFile.println(F("DB CRC match"));
-    else
-      myFile.println(F("Manual DB selection"));
+    myFile.println(!*dbSaveTitle ? F("Mapper settings") : nesSaveTitleMatchesCrc ? F("DB CRC match") : F("Manual DB selection"));
     myFile.print(F("Mapper: "));
     myFile.println(mapper);
     myFile.print(F("Save size: "));
