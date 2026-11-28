@@ -620,6 +620,12 @@ word readWord_MD(unsigned long myAddress) {
   return tempWord;
 }
 
+void writeFlash_MD(unsigned long, word);
+static void writeMDRegister5555(word data) __attribute__((noinline));
+static void writeMDRegister5555(word data) {
+  writeFlash_MD(0x5555, data);
+}
+
 void writeFlash_MD(unsigned long myAddress, word myData) {
   PORTF = myAddress & 0xFF;
   PORTK = (myAddress >> 8) & 0xFF;
@@ -1863,9 +1869,9 @@ void resetFlash_MD() {
   dataOut_MD();
 
   // Reset command sequence
-  writeFlash_MD(0x5555, 0xaa);
+  writeMDRegister5555(0xaa);
   writeFlash_MD(0x2aaa, 0x55);
-  writeFlash_MD(0x5555, 0xf0);
+  writeMDRegister5555(0xf0);
 
   // Set data pins to input again
   dataIn_MD();
@@ -1902,9 +1908,9 @@ void write29F1610_MD() {
       }
 
       // Write command sequence
-      writeFlash_MD(0x5555, 0xaa);
+      writeMDRegister5555(0xaa);
       writeFlash_MD(0x2aaa, 0x55);
-      writeFlash_MD(0x5555, 0xa0);
+      writeMDRegister5555(0xa0);
 
       // Write one full page at a time
       for (byte c = 0; c < 64; c++) {
@@ -2014,9 +2020,9 @@ void idFlash_MD() {
   dataOut_MD();
 
   // ID command sequence
-  writeFlash_MD(0x5555, 0xaa);
+  writeMDRegister5555(0xaa);
   writeFlash_MD(0x2aaa, 0x55);
-  writeFlash_MD(0x5555, 0x90);
+  writeMDRegister5555(0x90);
 
   // Set data pins to input again
   dataIn_MD();
@@ -2032,9 +2038,9 @@ byte readStatusReg_MD() {
   dataOut_MD();
 
   // Status reg command sequence
-  writeFlash_MD(0x5555, 0xaa);
+  writeMDRegister5555(0xaa);
   writeFlash_MD(0x2aaa, 0x55);
-  writeFlash_MD(0x5555, 0x70);
+  writeMDRegister5555(0x70);
 
   // Set data pins to input again
   dataIn_MD();
@@ -2049,12 +2055,12 @@ void eraseFlash_MD() {
   dataOut_MD();
 
   // Erase command sequence
-  writeFlash_MD(0x5555, 0xaa);
+  writeMDRegister5555(0xaa);
   writeFlash_MD(0x2aaa, 0x55);
-  writeFlash_MD(0x5555, 0x80);
-  writeFlash_MD(0x5555, 0xaa);
+  writeMDRegister5555(0x80);
+  writeMDRegister5555(0xaa);
   writeFlash_MD(0x2aaa, 0x55);
-  writeFlash_MD(0x5555, 0x10);
+  writeMDRegister5555(0x10);
 
   // Set data pins to input again
   dataIn_MD();
