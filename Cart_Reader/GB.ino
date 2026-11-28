@@ -587,6 +587,12 @@ void setup_GB() {
   }
 }
 
+void writeByte_GB(int, byte);
+static void writeGBRegister5555(uint8_t data) __attribute__((noinline));
+static void writeGBRegister5555(uint8_t data) {
+  writeByte_GB(0x5555, data);
+}
+
 void showCartInfo_GB() {
   display_Clear();
   if (strcmp(checksumStr, "00") != 0) {
@@ -3025,16 +3031,16 @@ void writeMegaMem_GB() {
   if (openSelectedFileForRead()) {
 
     writeGBRegister2000(0x1);
-    writeByte_GB(0x5555, 0xFF);
+    writeGBRegister5555(0xFF);
     delay(100);
     writeGBRegister2000(0x1);
-    writeByte_GB(0x5555, 0x90);
+    writeGBRegister5555(0x90);
     delay(100);
     writeGBRegister2000(0x0);
     flashid = readByte_GB(0x4000) << 8;
     flashid |= readByte_GB(0x4001);
     writeGBRegister2000(0x1);
-    writeByte_GB(0x5555, 0xFF);
+    writeGBRegister5555(0xFF);
     delay(100);
     if (flashid != 0xBF04) {
       showUnknownFlashIdAndWait();
@@ -3052,12 +3058,12 @@ void writeMegaMem_GB() {
 
     //Erase flash
     writeGBRegister2000(0x1);
-    writeByte_GB(0x5555, 0x30);
-    writeByte_GB(0x5555, 0x30);
+    writeGBRegister5555(0x30);
+    writeGBRegister5555(0x30);
     delay(100);
 
     writeGBRegister2000(0x1);
-    writeByte_GB(0x5555, 0xFF);
+    writeGBRegister5555(0xFF);
     delay(100);
   }
 
@@ -3106,7 +3112,7 @@ void writeMegaMem_GB() {
           toggle = true;
           // Write current byte
           writeGBRegister2000(0x1);
-          writeByte_GB(0x5555, 0x10);
+          writeGBRegister5555(0x10);
           writeGBRegister2000(currBank);
           writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
           while (toggle) {
@@ -3117,7 +3123,7 @@ void writeMegaMem_GB() {
           byte1 = readByte_GB(currAddr + currByte);
           if (byte1 != sdBuffer[currByte]) {
             writeGBRegister2000(0x1);
-            writeByte_GB(0x5555, 0x10);
+            writeGBRegister5555(0x10);
             writeGBRegister2000(currBank);
             writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
             while (toggle) {
@@ -3171,11 +3177,11 @@ void writeMegaMem_GB() {
 ***************************************************/
 void sendGamesharkCommand_GB(byte cmd) {
   writeByte_GB(0x7FE1, 0x2);
-  writeByte_GB(0x5555, 0xAA);
+  writeGBRegister5555(0xAA);
   writeByte_GB(0x7FE1, 0x1);
   writeByte_GB(0x4AAA, 0x55);
   writeByte_GB(0x7FE1, 0x2);
-  writeByte_GB(0x5555, cmd);
+  writeGBRegister5555(cmd);
 }
 
 // Read Datel GBC Gameshark Device
