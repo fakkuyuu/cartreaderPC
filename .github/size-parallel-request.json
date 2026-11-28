@@ -1,49 +1,49 @@
 {
-  "id": "round69-auto",
-  "base": "1709308e18a971adf61919dcbe08049a4041a310",
-  "expected_base_flash": 203194,
+  "id": "round70-auto",
+  "base": "3ecf77d4780312b8b41b8386dd807d6142e4c31f",
+  "expected_base_flash": 203164,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "nes-prg-step-mask-reuse",
-      "head": "e31a2fcf87f163e18deac79164eb10032f01dd92",
+      "id": "nes-mmc6-signature-loop",
+      "head": "a1cdcc299f72e59ca9f586b4180ca2f3b3112606",
       "reviewed": true
     },
     {
-      "id": "nes-m37-outer-bank",
-      "head": "ece104714a69c3e572aa280fa8a82d35efef1062",
+      "id": "nes-default-rom-name",
+      "head": "e416a15f021372b40f50e47bdbd41264e6e30da2",
       "reviewed": true
     },
     {
-      "id": "nes-m19-prg-init-reuse",
-      "head": "5124a2df0f4ff9ae421990e15987051ae4875ce2",
+      "id": "nes-mapper-search-early-exit",
+      "head": "edcce1feda26aed769ff1114484cb0a2acd7c433",
       "reviewed": true
     },
     {
-      "id": "nes-vrc-prg-init",
-      "head": "d4d38de927989da27d9bd71f9c7049f91fb6ce8c",
+      "id": "nes-rom-size-display",
+      "head": "f01208acbe11b883023e6c8f9234fb397debdf33",
       "reviewed": true
     },
     {
-      "id": "nes-eeprom-device-zero-loop",
-      "head": "5a1e43a1be24e8204191acddaaf27bd10c224788",
+      "id": "nes-save-crc-validity",
+      "head": "bdf3cb830aae65df0b54ced5dd089fe20c5a548b",
       "reviewed": true
     },
     {
-      "id": "nes-eeprom-address-serialization",
-      "head": "3195267c1e524cded3bca83b026405e83ada87e5",
+      "id": "nes-save-folder-increment",
+      "head": "d0a1834501e9a71690c15616135c35efff576f87",
       "reviewed": true
     },
     {
-      "id": "nes-mmc5-protection-pair",
-      "head": "5ba082c582320b9891d2595237c64d555176a7b6",
+      "id": "nes-ram-size-display",
+      "head": "6651f8edaafcedca2b773ca23acf4a5314f5ba3e",
       "reviewed": true
     },
     {
-      "id": "nes-prg-nina-sequential",
-      "head": "da79d016415bf78f87859d104b1936e527290fe5",
+      "id": "nes-eeprom-size-expression",
+      "head": "622856f8e89ce4eaaf6bc3e2ec52887c3ad72247",
       "reviewed": true
     }
   ]
