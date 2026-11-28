@@ -3374,6 +3374,13 @@ void readPRG(bool readrom) {
   finishRead_NES();
 }
 
+static void __attribute__((noinline)) dumpMmc3ChrR66_NES(word banks, word from, word to) {
+  for (word i = 0; i < banks; ++i) {
+    writeMmc3PairR59_NES(2, i);
+    dumpBankCHR(from, to);
+  }
+}
+
 static void setOuterChr45_NES(size_t i) {
   write_prg_byte(0x6000, 0);                          // CHR-OR
   write_prg_byte(0x6000, 0);                          // PRG-OR
@@ -3850,11 +3857,7 @@ void readCHR(bool readrom) {
           break;
 
         case 76:
-          banks = chrBanks4K * 2;
-          for (size_t i = 0; i < banks; i++) {
-            writeMmc3PairR59_NES(2, i);
-            dumpCHR2KiB();
-          }
+          dumpMmc3ChrR66_NES(chrBanks4K * 2, 0, 0x800);
           break;
 
         case 77:  // 32K
@@ -3997,18 +4000,11 @@ void readCHR(bool readrom) {
             writeMmc3PairR59_NES(0, i);
             dumpCHR2KiB();
           }
-          for (size_t i = 0; i < 64; i++) {
-            writeMmc3PairR59_NES(2, i);
-            dumpBankCHR(0x1000, 0x1400);
-          }
+          dumpMmc3ChrR66_NES(64, 0x1000, 0x1400);
           break;
 
         case 165:  // 128K
-          banks = chrBanks4K;
-          for (size_t i = 0; i < banks; i++) {
-            writeMmc3PairR59_NES(0x02, i);
-            dumpBankCHR(0x1000, 0x2000);
-          }
+          dumpMmc3ChrR66_NES(chrBanks4K, 0x1000, 0x2000);
           break;
 
         case 174:  // 64K
