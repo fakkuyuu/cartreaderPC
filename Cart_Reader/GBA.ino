@@ -295,7 +295,7 @@ void repro369in1Menu() {
 /******************************************
    Setup
  *****************************************/
-void setup_GBA() {
+void __attribute__((noinline)) setup_GBA() {
   // Request 3.3V
   setVoltage(VOLTS_SET_3V3);
 
