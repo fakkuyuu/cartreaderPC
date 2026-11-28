@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "description": "Canonical queue for unresolved automatic size-reduction work. New chats should process only items whose status is pending or needs_human.",
+  "updated_by_run_id": "46131321837",
+  "items": [
+    {
+      "key": "46129657989/gb-0x0000",
+      "status": "resolved",
+      "candidate_id": "gb-0x0000",
+      "original": {
+        "run_id": "46129657989",
+        "base_sha": "30e7ec1a0110a25a72892bb04797bd8a39c3fec6",
+        "candidate_sha": "d4fde7b6bc164a7c59432522a9657e219409d4b0",
+        "pending_record": "size-auto-results/round79-auto-46129657989-1-pending.json",
+        "integration_record": "size-auto-results/round79-auto-46129657989-1.json",
+        "conflict_files": [
+          "Cart_Reader/GB.ino"
+        ],
+        "conflict_onto_sha": "51c019f87db8fcec54d2a1ba2195404675b7326d",
+        "rebase_onto_firmware": "00eb3e65c0bf2b78df0f96b457414552dd8dddaf"
+      },
+      "resubmission": {
+        "request_id": "round79b-auto",
+        "target_base_sha": "17e87e7ea7af8f11b26c1aaabbc716e054d2809b",
+        "candidate_sha": "7fce3bd99e1670024f224f26e43ff7e1d0bcdd3c",
+        "run_id": "46131321837",
+        "measurement_record": "size-measurements/round79b-auto-46131321837-1.json",
+        "integration_record": "size-auto-results/round79b-auto-46131321837-1.json"
+      },
+      "result": {
+        "decision": "adopted",
+        "independent_flash_delta": -42,
+        "independent_ram_delta": 0,
+        "accepted_commit": "2ef34ec8109010c17a99251f06ee129c78eac396",
+        "final_firmware_commit": "42199e40a1c5d7a7a8c6a667ab10349007348b1d",
+        "final_flash": 201824,
+        "final_ram": 6059,
+        "hardware_validation": "pending"
+      }
+    },
+    {
+      "key": "46129657989/gb-0x3555",
+      "status": "resolved",
+      "candidate_id": "gb-0x3555",
+      "original": {
+        "run_id": "46129657989",
+        "base_sha": "30e7ec1a0110a25a72892bb04797bd8a39c3fec6",
+        "candidate_sha": "f7e3aa0853f1c5ebb403db76e71a4357fcd5c9ac",
+        "pending_record": "size-auto-results/round79-auto-46129657989-1-pending.json",
+        "integration_record": "size-auto-results/round79-auto-46129657989-1.json",
+        "conflict_files": [
+          "Cart_Reader/GB.ino"
+        ],
+        "conflict_onto_sha": "51c019f87db8fcec54d2a1ba2195404675b7326d",
+        "rebase_onto_firmware": "00eb3e65c0bf2b78df0f96b457414552dd8dddaf"
+      },
+      "resubmission": {
+        "request_id": "round79b-auto",
+        "target_base_sha": "17e87e7ea7af8f11b26c1aaabbc716e054d2809b",
+        "candidate_sha": "7fe58642f16e5b6f0746df02eb03f6316b8cf92d",
+        "run_id": "46131321837",
+        "measurement_record": "size-measurements/round79b-auto-46131321837-1.json",
+        "integration_record": "size-auto-results/round79b-auto-46131321837-1.json"
+      },
+      "result": {
+        "decision": "adopted",
+        "independent_flash_delta": -8,
+        "independent_ram_delta": 0,
+        "accepted_commit": "42199e40a1c5d7a7a8c6a667ab10349007348b1d",
+        "final_firmware_commit": "42199e40a1c5d7a7a8c6a667ab10349007348b1d",
+        "final_flash": 201824,
+        "final_ram": 6059,
+        "hardware_validation": "pending"
+      }
+    },
+    {
+      "key": "46129657989/nes-0xa001",
+      "status": "resolved",
+      "candidate_id": "nes-0xa001",
+      "original": {
+        "run_id": "46129657989",
+        "base_sha": "30e7ec1a0110a25a72892bb04797bd8a39c3fec6",
+        "candidate_sha": "50a2c8f4daace187378fb9d559b8e852ea38f397",
+        "pending_record": "size-auto-results/round79-auto-46129657989-1-pending.json",
+        "integration_record": "size-auto-results/round79-auto-46129657989-1.json",
+        "conflict_files": [
+          "Cart_Reader/NES.ino"
+        ],
+        "conflict_onto_sha": "00eb3e65c0bf2b78df0f96b457414552dd8dddaf",
+        "rebase_onto_firmware": "00eb3e65c0bf2b78df0f96b457414552dd8dddaf"
+      },
+      "resubmission": {
+        "request_id": "round79b-auto",
+        "target_base_sha": "17e87e7ea7af8f11b26c1aaabbc716e054d2809b",
+        "candidate_sha": "c356c1c6035bd962b7e7abf5d9f3a66f21d6c498",
+        "run_id": "46131321837",
+        "measurement_record": "size-measurements/round79b-auto-46131321837-1.json",
+        "integration_record": "size-auto-results/round79b-auto-46131321837-1.json"
+      },
+      "result": {
+        "decision": "adopted",
+        "independent_flash_delta": -22,
+        "independent_ram_delta": 0,
+        "accepted_commit": "8b878ccaf3b7fb989dad63b1731c58b65843a30a",
+        "final_firmware_commit": "42199e40a1c5d7a7a8c6a667ab10349007348b1d",
+        "final_flash": 201824,
+        "final_ram": 6059,
+        "hardware_validation": "pending"
+      }
+    }
+  ]
+}
