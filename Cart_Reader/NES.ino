@@ -2408,11 +2408,7 @@ void readPRG(bool readrom) {
         break;
 
       case 15:
-        banks = prgBanks16K;
-        for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x8000, i);
-          dumpPRG32KiB(base);
-        }
+        dumpMaskedPrgR67_NES(prgBanks16K, 0x8000, 0xFF, 0, 2, 0x8000, base);
         break;
 
       case 16:
@@ -3137,10 +3133,7 @@ void readPRG(bool readrom) {
           println_Msg(F("READING UPPER CHIP"));
           display_Update();
         }
-        for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x8000, i & 0x1F);
-          dumpPRG32KiB(base);
-        }
+        dumpMaskedPrgR67_NES(banks, 0x8000, 0x1F, 0, 2, 0x8000, base);
         println_Msg(F("POWER CYCLE TO SWITCH"));
         display_Update();
         break;
