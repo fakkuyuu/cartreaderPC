@@ -24601,6 +24601,76 @@
         "Cart_Reader/MSX.ino"
       ],
       "integration_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46"
+    },
+    {
+      "patch_id": "c6dd13ba42b144c63c013d3364c5c580deda81d0",
+      "diff_sha256": "8649587dffaf72388695b82998f9a0a3bb7fca3fa4a2e51d22de1d0df4cd506e",
+      "files": [
+        "Cart_Reader/NES.ino"
+      ],
+      "functions": [
+        "write_prg_byte",
+        "writeNESRegister6001"
+      ],
+      "function_contexts": [
+        "static void writeNESRegister6000(uint8_t data) {",
+        "static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {",
+        "void readPRG(bool readrom) {",
+        "void readCHR(bool readrom) {"
+      ],
+      "target": "NES",
+      "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
+      "subject": "Resubmit round 80 NES 0x6001 onto updated integrated firmware",
+      "candidate_id": "r80c-nes-6001",
+      "base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+      "head_sha": "536f443394379900ea6d50e9c46f94678e809ac2",
+      "run_id": "46135155027",
+      "run_attempt": "1",
+      "round_id": "round80c-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46135155027",
+      "independent_flash_delta": -10,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_improvement",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
+    },
+    {
+      "patch_id": "738a161bf5d37879def08708a25fc00cc76965b8",
+      "diff_sha256": "bfa5d16fe6182a08c0971f51dc385bac37f9114fbb7693bb03b0a554955195cb",
+      "files": [
+        "Cart_Reader/MSX.ino"
+      ],
+      "functions": [
+        "writeData_MSX",
+        "writeMSXRegister6000"
+      ],
+      "function_contexts": [
+        "static void writeMSXRegister7000(uint8_t data) {",
+        "void readROM_MSX() {"
+      ],
+      "target": "MSX",
+      "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
+      "subject": "Resubmit round 80 MSX 0x6000 onto updated integrated firmware",
+      "candidate_id": "r80c-msx-6000",
+      "base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+      "head_sha": "b27ce72e15943c7f2a306385f10b817855924ad1",
+      "run_id": "46135155027",
+      "run_attempt": "1",
+      "round_id": "round80c-auto",
+      "source": "live-independent-measurement",
+      "identity_status": "complete",
+      "precheck_status": "new",
+      "retest_of": [],
+      "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46135155027",
+      "independent_flash_delta": -2,
+      "independent_ram_delta": 0,
+      "independent_decision": "independent_improvement",
+      "measurement_status": "ok",
+      "reason": "No identical patch or commit was found in the ledger."
     }
   ],
   "duplicate_attempts": [

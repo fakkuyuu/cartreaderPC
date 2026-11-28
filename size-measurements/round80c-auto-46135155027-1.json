@@ -1,0 +1,2385 @@
+{
+  "schema": 3,
+  "mode": "parallel-independent",
+  "run_id": "46135155027",
+  "run_attempt": "1",
+  "workflow_commit": "6e847eadd584ac3042721c3600595435509487de",
+  "request": {
+    "id": "round80c-auto",
+    "base": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+    "expected_base_flash": 201750,
+    "expected_base_ram": 6059,
+    "auto_integrate": true,
+    "dry_run": false,
+    "candidates": [
+      {
+        "id": "r80c-nes-6001",
+        "head": "536f443394379900ea6d50e9c46f94678e809ac2",
+        "reviewed": true,
+        "retest": true,
+        "retest_reason": "Second resubmission of the original round 80 NES 0x6001 pending conflict. Reapplied the exact 0x6001 helper and six original call sites onto the later accepted firmware after the NES 0xE000 candidate was adopted; cumulative result on that firmware must be measured.",
+        "target": "NES",
+        "functions": [
+          "write_prg_byte",
+          "writeNESRegister6001"
+        ],
+        "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
+        "resubmission": {
+          "original_run_id": "46133264369",
+          "original_candidate_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+          "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+          "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+          "prior_resubmission_run_id": "46134316289",
+          "prior_resubmission_candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27",
+          "conflict_files": [
+            "Cart_Reader/NES.ino"
+          ],
+          "conflict_onto_sha": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
+          "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "candidate_sha": "536f443394379900ea6d50e9c46f94678e809ac2"
+        }
+      },
+      {
+        "id": "r80c-msx-6000",
+        "head": "b27ce72e15943c7f2a306385f10b817855924ad1",
+        "reviewed": true,
+        "retest": true,
+        "retest_reason": "Second resubmission of the original round 80 MSX 0x6000 pending conflict. Reapplied the exact 0x6000 helper and three original call sites onto the later accepted firmware after the MSX 0xA000 candidate was adopted; cumulative result on that firmware must be measured.",
+        "target": "MSX",
+        "functions": [
+          "writeData_MSX",
+          "writeMSXRegister6000"
+        ],
+        "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
+        "resubmission": {
+          "original_run_id": "46133264369",
+          "original_candidate_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+          "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+          "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+          "prior_resubmission_run_id": "46134316289",
+          "prior_resubmission_candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6",
+          "conflict_files": [
+            "Cart_Reader/MSX.ino"
+          ],
+          "conflict_onto_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "candidate_sha": "b27ce72e15943c7f2a306385f10b817855924ad1"
+        }
+      }
+    ]
+  },
+  "ledger_precheck": {
+    "schema": 1,
+    "applicable": true,
+    "base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+    "request_id": "round80c-auto",
+    "ledger_entries_seen": 677,
+    "candidate_count": 2,
+    "eligible_count": 2,
+    "candidates": [
+      {
+        "id": "r80c-nes-6001",
+        "head": "536f443394379900ea6d50e9c46f94678e809ac2",
+        "candidate": {
+          "id": "r80c-nes-6001",
+          "head": "536f443394379900ea6d50e9c46f94678e809ac2",
+          "reviewed": true,
+          "retest": true,
+          "retest_reason": "Second resubmission of the original round 80 NES 0x6001 pending conflict. Reapplied the exact 0x6001 helper and six original call sites onto the later accepted firmware after the NES 0xE000 candidate was adopted; cumulative result on that firmware must be measured.",
+          "target": "NES",
+          "functions": [
+            "write_prg_byte",
+            "writeNESRegister6001"
+          ],
+          "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
+          "resubmission": {
+            "original_run_id": "46133264369",
+            "original_candidate_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+            "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+            "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+            "prior_resubmission_run_id": "46134316289",
+            "prior_resubmission_candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27",
+            "conflict_files": [
+              "Cart_Reader/NES.ino"
+            ],
+            "conflict_onto_sha": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
+            "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+            "candidate_sha": "536f443394379900ea6d50e9c46f94678e809ac2"
+          },
+          "skip": false,
+          "precheck_status": "new",
+          "ledger_identity": {
+            "patch_id": "c6dd13ba42b144c63c013d3364c5c580deda81d0",
+            "diff_sha256": "8649587dffaf72388695b82998f9a0a3bb7fca3fa4a2e51d22de1d0df4cd506e",
+            "files": [
+              "Cart_Reader/NES.ino"
+            ],
+            "functions": [
+              "write_prg_byte",
+              "writeNESRegister6001"
+            ],
+            "function_contexts": [
+              "static void writeNESRegister6000(uint8_t data) {",
+              "static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {",
+              "void readPRG(bool readrom) {",
+              "void readCHR(bool readrom) {"
+            ],
+            "target": "NES",
+            "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
+            "subject": "Resubmit round 80 NES 0x6001 onto updated integrated firmware"
+          },
+          "retest_of": []
+        },
+        "identity": {
+          "patch_id": "c6dd13ba42b144c63c013d3364c5c580deda81d0",
+          "diff_sha256": "8649587dffaf72388695b82998f9a0a3bb7fca3fa4a2e51d22de1d0df4cd506e",
+          "files": [
+            "Cart_Reader/NES.ino"
+          ],
+          "functions": [
+            "write_prg_byte",
+            "writeNESRegister6001"
+          ],
+          "function_contexts": [
+            "static void writeNESRegister6000(uint8_t data) {",
+            "static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {",
+            "void readPRG(bool readrom) {",
+            "void readCHR(bool readrom) {"
+          ],
+          "target": "NES",
+          "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
+          "subject": "Resubmit round 80 NES 0x6001 onto updated integrated firmware"
+        },
+        "status": "new",
+        "reason": "No identical patch or commit was found in the ledger.",
+        "related_candidates": [
+          {
+            "candidate_id": "nes-0xa000",
+            "round_id": "round79-auto",
+            "head_sha": "26384ae93e99f3e039b176d0d378601cc743509f",
+            "functions": [
+              "write_prg_byte",
+              "writeNESRegisterA000"
+            ]
+          },
+          {
+            "candidate_id": "nes-0xa001",
+            "round_id": "round79-auto",
+            "head_sha": "50a2c8f4daace187378fb9d559b8e852ea38f397",
+            "functions": [
+              "write_prg_byte",
+              "writeNESRegisterA001"
+            ]
+          },
+          {
+            "candidate_id": "nes-0x5000",
+            "round_id": "round79-auto",
+            "head_sha": "d960aba098dfab5cb795eca57cda5ea431c25165",
+            "functions": [
+              "write_prg_byte",
+              "writeNESRegister5000"
+            ]
+          },
+          {
+            "candidate_id": "nes-0xa001",
+            "round_id": "round79b-auto",
+            "head_sha": "c356c1c6035bd962b7e7abf5d9f3a66f21d6c498",
+            "functions": [
+              "write_prg_byte",
+              "writeNESRegisterA001"
+            ]
+          },
+          {
+            "candidate_id": "nes-0xc000",
+            "round_id": "round80-auto",
+            "head_sha": "4da0b9c3e2298a31bf0efdb4f8e92b7c076b9453",
+            "functions": [
+              "write_prg_byte",
+              "writeNESRegisterC000"
+            ]
+          },
+          {
+            "candidate_id": "nes-0xe000",
+            "round_id": "round80-auto",
+            "head_sha": "a39500c86ee74355d6f3a7a1da930a3621130db6",
+            "functions": [
+              "write_prg_byte",
+              "writeNESRegisterE000"
+            ]
+          },
+          {
+            "candidate_id": "nes-0x6001",
+            "round_id": "round80-auto",
+            "head_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+            "functions": [
+              "write_prg_byte",
+              "writeNESRegister6001"
+            ]
+          },
+          {
+            "candidate_id": "r80b-nes-e000",
+            "round_id": "round80b-auto",
+            "head_sha": "943ad5596bc335a9fcd3afd6d1f5a1cbe8a6fd2a",
+            "functions": [
+              "write_prg_byte",
+              "writeNESRegisterE000"
+            ]
+          },
+          {
+            "candidate_id": "r80b-nes-6001",
+            "round_id": "round80b-auto",
+            "head_sha": "685d639cae05b9e4e987a5870297359843e93e27",
+            "functions": [
+              "write_prg_byte",
+              "writeNESRegister6001"
+            ]
+          }
+        ],
+        "skip": false
+      },
+      {
+        "id": "r80c-msx-6000",
+        "head": "b27ce72e15943c7f2a306385f10b817855924ad1",
+        "candidate": {
+          "id": "r80c-msx-6000",
+          "head": "b27ce72e15943c7f2a306385f10b817855924ad1",
+          "reviewed": true,
+          "retest": true,
+          "retest_reason": "Second resubmission of the original round 80 MSX 0x6000 pending conflict. Reapplied the exact 0x6000 helper and three original call sites onto the later accepted firmware after the MSX 0xA000 candidate was adopted; cumulative result on that firmware must be measured.",
+          "target": "MSX",
+          "functions": [
+            "writeData_MSX",
+            "writeMSXRegister6000"
+          ],
+          "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
+          "resubmission": {
+            "original_run_id": "46133264369",
+            "original_candidate_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+            "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+            "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+            "prior_resubmission_run_id": "46134316289",
+            "prior_resubmission_candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6",
+            "conflict_files": [
+              "Cart_Reader/MSX.ino"
+            ],
+            "conflict_onto_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+            "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+            "candidate_sha": "b27ce72e15943c7f2a306385f10b817855924ad1"
+          },
+          "skip": false,
+          "precheck_status": "new",
+          "ledger_identity": {
+            "patch_id": "738a161bf5d37879def08708a25fc00cc76965b8",
+            "diff_sha256": "bfa5d16fe6182a08c0971f51dc385bac37f9114fbb7693bb03b0a554955195cb",
+            "files": [
+              "Cart_Reader/MSX.ino"
+            ],
+            "functions": [
+              "writeData_MSX",
+              "writeMSXRegister6000"
+            ],
+            "function_contexts": [
+              "static void writeMSXRegister7000(uint8_t data) {",
+              "void readROM_MSX() {"
+            ],
+            "target": "MSX",
+            "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
+            "subject": "Resubmit round 80 MSX 0x6000 onto updated integrated firmware"
+          },
+          "retest_of": []
+        },
+        "identity": {
+          "patch_id": "738a161bf5d37879def08708a25fc00cc76965b8",
+          "diff_sha256": "bfa5d16fe6182a08c0971f51dc385bac37f9114fbb7693bb03b0a554955195cb",
+          "files": [
+            "Cart_Reader/MSX.ino"
+          ],
+          "functions": [
+            "writeData_MSX",
+            "writeMSXRegister6000"
+          ],
+          "function_contexts": [
+            "static void writeMSXRegister7000(uint8_t data) {",
+            "void readROM_MSX() {"
+          ],
+          "target": "MSX",
+          "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
+          "subject": "Resubmit round 80 MSX 0x6000 onto updated integrated firmware"
+        },
+        "status": "new",
+        "reason": "No identical patch or commit was found in the ledger.",
+        "related_candidates": [
+          {
+            "candidate_id": "msx-0x4fff",
+            "round_id": "round80-auto",
+            "head_sha": "19850de16f29402e165c928b5fd100b2344d2ec9",
+            "functions": [
+              "writeData_MSX",
+              "writeMSXRegister4FFF"
+            ]
+          },
+          {
+            "candidate_id": "msx-0xa000",
+            "round_id": "round80-auto",
+            "head_sha": "cdc6aaeaf7fac4f19c89125845eabc08061091d8",
+            "functions": [
+              "writeData_MSX",
+              "writeMSXRegisterA000"
+            ]
+          },
+          {
+            "candidate_id": "msx-0x6000",
+            "round_id": "round80-auto",
+            "head_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+            "functions": [
+              "writeData_MSX",
+              "writeMSXRegister6000"
+            ]
+          },
+          {
+            "candidate_id": "r80b-msx-a000",
+            "round_id": "round80b-auto",
+            "head_sha": "292511b7ffa5f62373e45c3bfa270747ea124877",
+            "functions": [
+              "writeData_MSX",
+              "writeMSXRegisterA000"
+            ]
+          },
+          {
+            "candidate_id": "r80b-msx-6000",
+            "round_id": "round80b-auto",
+            "head_sha": "947f388154f0e923ea2f682118c3e95300dad5c6",
+            "functions": [
+              "writeData_MSX",
+              "writeMSXRegister6000"
+            ]
+          }
+        ],
+        "skip": false
+      }
+    ],
+    "eligible": [
+      {
+        "id": "r80c-nes-6001",
+        "head": "536f443394379900ea6d50e9c46f94678e809ac2",
+        "reviewed": true,
+        "retest": true,
+        "retest_reason": "Second resubmission of the original round 80 NES 0x6001 pending conflict. Reapplied the exact 0x6001 helper and six original call sites onto the later accepted firmware after the NES 0xE000 candidate was adopted; cumulative result on that firmware must be measured.",
+        "target": "NES",
+        "functions": [
+          "write_prg_byte",
+          "writeNESRegister6001"
+        ],
+        "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
+        "resubmission": {
+          "original_run_id": "46133264369",
+          "original_candidate_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+          "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+          "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+          "prior_resubmission_run_id": "46134316289",
+          "prior_resubmission_candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27",
+          "conflict_files": [
+            "Cart_Reader/NES.ino"
+          ],
+          "conflict_onto_sha": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
+          "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "candidate_sha": "536f443394379900ea6d50e9c46f94678e809ac2"
+        },
+        "skip": false,
+        "precheck_status": "new",
+        "ledger_identity": {
+          "patch_id": "c6dd13ba42b144c63c013d3364c5c580deda81d0",
+          "diff_sha256": "8649587dffaf72388695b82998f9a0a3bb7fca3fa4a2e51d22de1d0df4cd506e",
+          "files": [
+            "Cart_Reader/NES.ino"
+          ],
+          "functions": [
+            "write_prg_byte",
+            "writeNESRegister6001"
+          ],
+          "function_contexts": [
+            "static void writeNESRegister6000(uint8_t data) {",
+            "static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {",
+            "void readPRG(bool readrom) {",
+            "void readCHR(bool readrom) {"
+          ],
+          "target": "NES",
+          "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
+          "subject": "Resubmit round 80 NES 0x6001 onto updated integrated firmware"
+        },
+        "retest_of": []
+      },
+      {
+        "id": "r80c-msx-6000",
+        "head": "b27ce72e15943c7f2a306385f10b817855924ad1",
+        "reviewed": true,
+        "retest": true,
+        "retest_reason": "Second resubmission of the original round 80 MSX 0x6000 pending conflict. Reapplied the exact 0x6000 helper and three original call sites onto the later accepted firmware after the MSX 0xA000 candidate was adopted; cumulative result on that firmware must be measured.",
+        "target": "MSX",
+        "functions": [
+          "writeData_MSX",
+          "writeMSXRegister6000"
+        ],
+        "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
+        "resubmission": {
+          "original_run_id": "46133264369",
+          "original_candidate_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+          "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+          "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+          "prior_resubmission_run_id": "46134316289",
+          "prior_resubmission_candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6",
+          "conflict_files": [
+            "Cart_Reader/MSX.ino"
+          ],
+          "conflict_onto_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "candidate_sha": "b27ce72e15943c7f2a306385f10b817855924ad1"
+        },
+        "skip": false,
+        "precheck_status": "new",
+        "ledger_identity": {
+          "patch_id": "738a161bf5d37879def08708a25fc00cc76965b8",
+          "diff_sha256": "bfa5d16fe6182a08c0971f51dc385bac37f9114fbb7693bb03b0a554955195cb",
+          "files": [
+            "Cart_Reader/MSX.ino"
+          ],
+          "functions": [
+            "writeData_MSX",
+            "writeMSXRegister6000"
+          ],
+          "function_contexts": [
+            "static void writeMSXRegister7000(uint8_t data) {",
+            "void readROM_MSX() {"
+          ],
+          "target": "MSX",
+          "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
+          "subject": "Resubmit round 80 MSX 0x6000 onto updated integrated firmware"
+        },
+        "retest_of": []
+      }
+    ]
+  },
+  "status": "ok",
+  "candidates": [
+    {
+      "schema": 1,
+      "run_id": "46135155027",
+      "run_attempt": "1",
+      "workflow_commit": "6e847eadd584ac3042721c3600595435509487de",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "r80c-nes-6001",
+        "head": "536f443394379900ea6d50e9c46f94678e809ac2",
+        "reviewed": true,
+        "retest": true,
+        "retest_reason": "Second resubmission of the original round 80 NES 0x6001 pending conflict. Reapplied the exact 0x6001 helper and six original call sites onto the later accepted firmware after the NES 0xE000 candidate was adopted; cumulative result on that firmware must be measured.",
+        "target": "NES",
+        "functions": [
+          "write_prg_byte",
+          "writeNESRegister6001"
+        ],
+        "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
+        "resubmission": {
+          "original_run_id": "46133264369",
+          "original_candidate_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+          "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+          "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+          "prior_resubmission_run_id": "46134316289",
+          "prior_resubmission_candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27",
+          "conflict_files": [
+            "Cart_Reader/NES.ino"
+          ],
+          "conflict_onto_sha": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
+          "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "candidate_sha": "536f443394379900ea6d50e9c46f94678e809ac2"
+        },
+        "skip": false,
+        "precheck_status": "new",
+        "ledger_identity": {
+          "patch_id": "c6dd13ba42b144c63c013d3364c5c580deda81d0",
+          "diff_sha256": "8649587dffaf72388695b82998f9a0a3bb7fca3fa4a2e51d22de1d0df4cd506e",
+          "files": [
+            "Cart_Reader/NES.ino"
+          ],
+          "functions": [
+            "write_prg_byte",
+            "writeNESRegister6001"
+          ],
+          "function_contexts": [
+            "static void writeNESRegister6000(uint8_t data) {",
+            "static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {",
+            "void readPRG(bool readrom) {",
+            "void readCHR(bool readrom) {"
+          ],
+          "target": "NES",
+          "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
+          "subject": "Resubmit round 80 NES 0x6001 onto updated integrated firmware"
+        },
+        "retest_of": [],
+        "base": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "expected_base_flash": 201750,
+        "expected_base_ram": 6059,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "subject": "Auto size trial: r80b-msx-a000 (292511b7ffa5f62373e45c3bfa270747ea124877)",
+          "status": "ok",
+          "flash": 201750,
+          "ram": 6059,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2144,
+            "top_flash_symbols": [
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 7164
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7gbxMenuv",
+                "kind": "t",
+                "bytes": 4378
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 4138
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3160
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 3026
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 2884
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 2818
+              },
+              {
+                "name": "_Z6gbMenuv",
+                "kind": "t",
+                "bytes": 2804
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2718
+              },
+              {
+                "name": "_Z10readROM_MDv",
+                "kind": "t",
+                "bytes": 2518
+              },
+              {
+                "name": "_Z7n64Menuv",
+                "kind": "t",
+                "bytes": 2440
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 2336
+              },
+              {
+                "name": "_ZL22enterSnesSystemMenuR51v",
+                "kind": "t",
+                "bytes": 2268
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_ZL20enterWsSystemMenuR51v",
+                "kind": "t",
+                "bytes": 1896
+              },
+              {
+                "name": "_Z6svMenuv",
+                "kind": "t",
+                "bytes": 1874
+              },
+              {
+                "name": "_Z17n64ControllerMenuv",
+                "kind": "t",
+                "bytes": 1782
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 1676
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z12readROM_SNESv",
+                "kind": "t",
+                "bytes": 1614
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_Z7ngpMenuv",
+                "kind": "t",
+                "bytes": 1436
+              },
+              {
+                "name": "_Z11readROM_MSXv",
+                "kind": "t",
+                "bytes": 1376
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1272
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZL21enterNesSystemMenuR51v",
+                "kind": "t",
+                "bytes": 1232
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1176
+              },
+              {
+                "name": "_Z7pceMenuv",
+                "kind": "t",
+                "bytes": 1104
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2802",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact."
+          }
+        },
+        {
+          "commit": "536f443394379900ea6d50e9c46f94678e809ac2",
+          "subject": "Resubmit round 80 NES 0x6001 onto updated integrated firmware",
+          "status": "ok",
+          "flash": 201740,
+          "ram": 6059,
+          "delta_previous": -10,
+          "delta_base": -10,
+          "classification": "reduced",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2145,
+            "top_flash_symbols": [
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 7156
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7gbxMenuv",
+                "kind": "t",
+                "bytes": 4378
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 4130
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3160
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 3026
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 2884
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 2818
+              },
+              {
+                "name": "_Z6gbMenuv",
+                "kind": "t",
+                "bytes": 2804
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2718
+              },
+              {
+                "name": "_Z10readROM_MDv",
+                "kind": "t",
+                "bytes": 2518
+              },
+              {
+                "name": "_Z7n64Menuv",
+                "kind": "t",
+                "bytes": 2440
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 2336
+              },
+              {
+                "name": "_ZL22enterSnesSystemMenuR51v",
+                "kind": "t",
+                "bytes": 2268
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_ZL20enterWsSystemMenuR51v",
+                "kind": "t",
+                "bytes": 1896
+              },
+              {
+                "name": "_Z6svMenuv",
+                "kind": "t",
+                "bytes": 1874
+              },
+              {
+                "name": "_Z17n64ControllerMenuv",
+                "kind": "t",
+                "bytes": 1782
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 1676
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z12readROM_SNESv",
+                "kind": "t",
+                "bytes": 1614
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_Z7ngpMenuv",
+                "kind": "t",
+                "bytes": 1436
+              },
+              {
+                "name": "_Z11readROM_MSXv",
+                "kind": "t",
+                "bytes": 1376
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1272
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZL21enterNesSystemMenuR51v",
+                "kind": "t",
+                "bytes": 1232
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1176
+              },
+              {
+                "name": "_Z7pceMenuv",
+                "kind": "t",
+                "bytes": 1104
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2802",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
+            "changed_symbols": 4,
+            "largest_increases": [
+              {
+                "name": "_ZL20writeNESRegister6001h",
+                "kind": "t",
+                "before": 0,
+                "after": 10,
+                "delta": 10
+              }
+            ],
+            "largest_decreases": [
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "before": 4138,
+                "after": 4130,
+                "delta": -8
+              },
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "before": 7164,
+                "after": 7156,
+                "delta": -8
+              },
+              {
+                "name": "_ZL21writeOuterPairR59_NEShh",
+                "kind": "t",
+                "before": 46,
+                "after": 42,
+                "delta": -4
+              }
+            ]
+          }
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "r80c-nes-6001",
+        "head": "536f443394379900ea6d50e9c46f94678e809ac2",
+        "reviewed": true,
+        "retest": true,
+        "retest_reason": "Second resubmission of the original round 80 NES 0x6001 pending conflict. Reapplied the exact 0x6001 helper and six original call sites onto the later accepted firmware after the NES 0xE000 candidate was adopted; cumulative result on that firmware must be measured.",
+        "target": "NES",
+        "functions": [
+          "write_prg_byte",
+          "writeNESRegister6001"
+        ],
+        "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
+        "resubmission": {
+          "original_run_id": "46133264369",
+          "original_candidate_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+          "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+          "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+          "prior_resubmission_run_id": "46134316289",
+          "prior_resubmission_candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27",
+          "conflict_files": [
+            "Cart_Reader/NES.ino"
+          ],
+          "conflict_onto_sha": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
+          "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "candidate_sha": "536f443394379900ea6d50e9c46f94678e809ac2"
+        }
+      }
+    },
+    {
+      "schema": 1,
+      "run_id": "46135155027",
+      "run_attempt": "1",
+      "workflow_commit": "6e847eadd584ac3042721c3600595435509487de",
+      "config": "HW3; FLASH OFF; Arduino AVR MEGA2560; portable V15.5; AVR GCC 15.2",
+      "status": "ok",
+      "request": {
+        "id": "r80c-msx-6000",
+        "head": "b27ce72e15943c7f2a306385f10b817855924ad1",
+        "reviewed": true,
+        "retest": true,
+        "retest_reason": "Second resubmission of the original round 80 MSX 0x6000 pending conflict. Reapplied the exact 0x6000 helper and three original call sites onto the later accepted firmware after the MSX 0xA000 candidate was adopted; cumulative result on that firmware must be measured.",
+        "target": "MSX",
+        "functions": [
+          "writeData_MSX",
+          "writeMSXRegister6000"
+        ],
+        "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
+        "resubmission": {
+          "original_run_id": "46133264369",
+          "original_candidate_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+          "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+          "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+          "prior_resubmission_run_id": "46134316289",
+          "prior_resubmission_candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6",
+          "conflict_files": [
+            "Cart_Reader/MSX.ino"
+          ],
+          "conflict_onto_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "candidate_sha": "b27ce72e15943c7f2a306385f10b817855924ad1"
+        },
+        "skip": false,
+        "precheck_status": "new",
+        "ledger_identity": {
+          "patch_id": "738a161bf5d37879def08708a25fc00cc76965b8",
+          "diff_sha256": "bfa5d16fe6182a08c0971f51dc385bac37f9114fbb7693bb03b0a554955195cb",
+          "files": [
+            "Cart_Reader/MSX.ino"
+          ],
+          "functions": [
+            "writeData_MSX",
+            "writeMSXRegister6000"
+          ],
+          "function_contexts": [
+            "static void writeMSXRegister7000(uint8_t data) {",
+            "void readROM_MSX() {"
+          ],
+          "target": "MSX",
+          "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
+          "subject": "Resubmit round 80 MSX 0x6000 onto updated integrated firmware"
+        },
+        "retest_of": [],
+        "base": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+        "expected_base_flash": 201750,
+        "expected_base_ram": 6059,
+        "endpoints_only": false
+      },
+      "baseline_matches_local": true,
+      "head_matches_local": null,
+      "compiler_version": "avr-gcc.exe (GCC) 15.2.0 Copyright (C) 2025 Free Software Foundation, Inc. This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. ",
+      "results": [
+        {
+          "commit": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "subject": "Auto size trial: r80b-msx-a000 (292511b7ffa5f62373e45c3bfa270747ea124877)",
+          "status": "ok",
+          "flash": 201750,
+          "ram": 6059,
+          "delta_previous": null,
+          "delta_base": 0,
+          "classification": "baseline",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2144,
+            "top_flash_symbols": [
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 7164
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7gbxMenuv",
+                "kind": "t",
+                "bytes": 4378
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 4138
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3160
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 3026
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 2884
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 2818
+              },
+              {
+                "name": "_Z6gbMenuv",
+                "kind": "t",
+                "bytes": 2804
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2718
+              },
+              {
+                "name": "_Z10readROM_MDv",
+                "kind": "t",
+                "bytes": 2518
+              },
+              {
+                "name": "_Z7n64Menuv",
+                "kind": "t",
+                "bytes": 2440
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 2336
+              },
+              {
+                "name": "_ZL22enterSnesSystemMenuR51v",
+                "kind": "t",
+                "bytes": 2268
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_ZL20enterWsSystemMenuR51v",
+                "kind": "t",
+                "bytes": 1896
+              },
+              {
+                "name": "_Z6svMenuv",
+                "kind": "t",
+                "bytes": 1874
+              },
+              {
+                "name": "_Z17n64ControllerMenuv",
+                "kind": "t",
+                "bytes": 1782
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 1676
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z12readROM_SNESv",
+                "kind": "t",
+                "bytes": 1614
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_Z7ngpMenuv",
+                "kind": "t",
+                "bytes": 1436
+              },
+              {
+                "name": "_Z11readROM_MSXv",
+                "kind": "t",
+                "bytes": 1376
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1272
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZL21enterNesSystemMenuR51v",
+                "kind": "t",
+                "bytes": 1232
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1176
+              },
+              {
+                "name": "_Z7pceMenuv",
+                "kind": "t",
+                "bytes": 1104
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2802",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact."
+          }
+        },
+        {
+          "commit": "b27ce72e15943c7f2a306385f10b817855924ad1",
+          "subject": "Resubmit round 80 MSX 0x6000 onto updated integrated firmware",
+          "status": "ok",
+          "flash": 201748,
+          "ram": 6059,
+          "delta_previous": -2,
+          "delta_base": -2,
+          "classification": "reduced",
+          "error": null,
+          "elf_analysis": {
+            "status": "ok",
+            "symbol_count": 2145,
+            "top_flash_symbols": [
+              {
+                "name": "_Z7readPRGb",
+                "kind": "t",
+                "bytes": 7164
+              },
+              {
+                "name": "_Z19questionBox_DisplayPK19__FlashStringHelperPA20_chh.constprop.0",
+                "kind": "t",
+                "bytes": 6962
+              },
+              {
+                "name": "_Z7gbxMenuv",
+                "kind": "t",
+                "bytes": 4378
+              },
+              {
+                "name": "_Z7readCHRb",
+                "kind": "t",
+                "bytes": 4138
+              },
+              {
+                "name": "_Z7gbaMenuv",
+                "kind": "t",
+                "bytes": 3160
+              },
+              {
+                "name": "main",
+                "kind": "T",
+                "bytes": 3026
+              },
+              {
+                "name": "_Z7nesMenuv",
+                "kind": "t",
+                "bytes": 2884
+              },
+              {
+                "name": "_Z14getCartInfo_MDv",
+                "kind": "t",
+                "bytes": 2818
+              },
+              {
+                "name": "_Z6gbMenuv",
+                "kind": "t",
+                "bytes": 2804
+              },
+              {
+                "name": "_Z6wsMenuv",
+                "kind": "t",
+                "bytes": 2718
+              },
+              {
+                "name": "_Z10readROM_MDv",
+                "kind": "t",
+                "bytes": 2518
+              },
+              {
+                "name": "_Z7n64Menuv",
+                "kind": "t",
+                "bytes": 2440
+              },
+              {
+                "name": "_Z7msxMenuv",
+                "kind": "t",
+                "bytes": 2336
+              },
+              {
+                "name": "_ZL22enterSnesSystemMenuR51v",
+                "kind": "t",
+                "bytes": 2268
+              },
+              {
+                "name": "_Z11n64CartMenuv",
+                "kind": "t",
+                "bytes": 2128
+              },
+              {
+                "name": "_ZN10FsBaseFile5writeEPKvj",
+                "kind": "t",
+                "bytes": 2028
+              },
+              {
+                "name": "_ZL20enterWsSystemMenuR51v",
+                "kind": "t",
+                "bytes": 1896
+              },
+              {
+                "name": "_Z6svMenuv",
+                "kind": "t",
+                "bytes": 1874
+              },
+              {
+                "name": "_Z17n64ControllerMenuv",
+                "kind": "t",
+                "bytes": 1782
+              },
+              {
+                "name": "_Z10mdCartMenuv",
+                "kind": "t",
+                "bytes": 1676
+              },
+              {
+                "name": "_Z7smsMenuv",
+                "kind": "t",
+                "bytes": 1668
+              },
+              {
+                "name": "_Z12readROM_SNESv",
+                "kind": "t",
+                "bytes": 1614
+              },
+              {
+                "name": "_Z11fileBrowserPK19__FlashStringHelper",
+                "kind": "t",
+                "bytes": 1552
+              },
+              {
+                "name": "_ZN6PcLinkL16gbaRetryTransferEhmPFvmEPFvPhEhPmPFvhEbS1_",
+                "kind": "t",
+                "bytes": 1506
+              },
+              {
+                "name": "_Z7ngpMenuv",
+                "kind": "t",
+                "bytes": 1436
+              },
+              {
+                "name": "_Z11readROM_MSXv",
+                "kind": "t",
+                "bytes": 1364
+              },
+              {
+                "name": "_ZN7FatFile4openEPS_P8FatLfn_th",
+                "kind": "t",
+                "bytes": 1350
+              },
+              {
+                "name": "_ZL22configureMapperP16_NESv",
+                "kind": "t",
+                "bytes": 1272
+              },
+              {
+                "name": "_Z8vboyMenuv",
+                "kind": "t",
+                "bytes": 1244
+              },
+              {
+                "name": "_Z9verifyCRCv",
+                "kind": "t",
+                "bytes": 1238
+              },
+              {
+                "name": "_ZL21enterNesSystemMenuR51v",
+                "kind": "t",
+                "bytes": 1232
+              },
+              {
+                "name": "_ZN8FsVolume5beginEP9SdSpiCardbhm.constprop.0",
+                "kind": "t",
+                "bytes": 1216
+              },
+              {
+                "name": "_Z15getCartInfo_GBAv",
+                "kind": "t",
+                "bytes": 1176
+              },
+              {
+                "name": "_Z7pceMenuv",
+                "kind": "t",
+                "bytes": 1104
+              },
+              {
+                "name": "_ZN9ExFatFile11openPrivateEPS_P8ExName_th",
+                "kind": "t",
+                "bytes": 1082
+              },
+              {
+                "name": "_Z12checkAltConfPc",
+                "kind": "t",
+                "bytes": 1046
+              },
+              {
+                "name": "_ZL10crc_32_tab",
+                "kind": "t",
+                "bytes": 1024
+              },
+              {
+                "name": "vfprintf",
+                "kind": "T",
+                "bytes": 1012
+              },
+              {
+                "name": "_Z15getCartInfo_SFMv",
+                "kind": "t",
+                "bytes": 988
+              },
+              {
+                "name": "_ZN6Si53518set_freqEy12si5351_clock.constprop.0.isra.0",
+                "kind": "t",
+                "bytes": 988
+              }
+            ],
+            "top_ram_symbols": [
+              {
+                "name": "buf.198",
+                "kind": "b",
+                "bytes": 1024
+              },
+              {
+                "name": "sd",
+                "kind": "b",
+                "bytes": 634
+              },
+              {
+                "name": "sdBuffer",
+                "kind": "b",
+                "bytes": 512
+              },
+              {
+                "name": "Serial",
+                "kind": "b",
+                "bytes": 157
+              },
+              {
+                "name": "PcConsole",
+                "kind": "b",
+                "bytes": 143
+              },
+              {
+                "name": "menuOptions",
+                "kind": "b",
+                "bytes": 140
+              },
+              {
+                "name": "clockgen",
+                "kind": "b",
+                "bytes": 135
+              },
+              {
+                "name": "filePath",
+                "kind": "b",
+                "bytes": 132
+              },
+              {
+                "name": "display",
+                "kind": "b",
+                "bytes": 123
+              },
+              {
+                "name": "myFile",
+                "kind": "b",
+                "bytes": 108
+              },
+              {
+                "name": "fileName",
+                "kind": "b",
+                "bytes": 100
+              },
+              {
+                "name": "_ZL11dbSaveTitle",
+                "kind": "b",
+                "bytes": 96
+              },
+              {
+                "name": "_ZL11physicalCwd",
+                "kind": "d",
+                "bytes": 64
+              },
+              {
+                "name": "myLog",
+                "kind": "b",
+                "bytes": 64
+              },
+              {
+                "name": "u8x8_d_ssd1306_128x64_noname_init_seq",
+                "kind": "d",
+                "bytes": 53
+              },
+              {
+                "name": "folder",
+                "kind": "b",
+                "bytes": 38
+              },
+              {
+                "name": "_ZL18md2mBlockChecksums",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8rxBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "_ZN7TwoWire8txBufferE",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_masterBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_rxBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "twi_txBuffer",
+                "kind": "b",
+                "bytes": 32
+              },
+              {
+                "name": "u8x8_ssd1306_128x64_noname_display_info",
+                "kind": "d",
+                "bytes": 24
+              },
+              {
+                "name": "_ZL12browserToken",
+                "kind": "d",
+                "bytes": 23
+              },
+              {
+                "name": "romName",
+                "kind": "b",
+                "bytes": 22
+              },
+              {
+                "name": "CSWTCH.2802",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "MSX",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV12HybridFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV14HardwareSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV6FsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV7TwoWire",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcFsFile",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZTV8PcSerial",
+                "kind": "d",
+                "bytes": 18
+              },
+              {
+                "name": "_ZL11oledButton1",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "_ZL11oledButton2",
+                "kind": "d",
+                "bytes": 17
+              },
+              {
+                "name": "iNES_HEADER",
+                "kind": "b",
+                "bytes": 16
+              },
+              {
+                "name": "Wire",
+                "kind": "b",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV22ConnectedReaderDisplayI35U8G2_SSD1306_128X64_NONAME_F_HW_I2CLb0EE",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "_ZTV35U8G2_SSD1306_128X64_NONAME_F_HW_I2C",
+                "kind": "d",
+                "bytes": 12
+              },
+              {
+                "name": "CSWTCH.704",
+                "kind": "d",
+                "bytes": 10
+              }
+            ],
+            "notes": "Symbol sizes are not an exact section accounting. Initialized data uses Flash and RAM; aliases, LTO clones and linker padding can affect attribution. Names are mangled; full nm output is an artifact.",
+            "changed_symbols": 2,
+            "largest_increases": [
+              {
+                "name": "_ZL20writeMSXRegister6000h",
+                "kind": "t",
+                "before": 0,
+                "after": 10,
+                "delta": 10
+              }
+            ],
+            "largest_decreases": [
+              {
+                "name": "_Z11readROM_MSXv",
+                "kind": "t",
+                "before": 1376,
+                "after": 1364,
+                "delta": -12
+              }
+            ]
+          }
+        }
+      ],
+      "fatal_error": null,
+      "candidate": {
+        "id": "r80c-msx-6000",
+        "head": "b27ce72e15943c7f2a306385f10b817855924ad1",
+        "reviewed": true,
+        "retest": true,
+        "retest_reason": "Second resubmission of the original round 80 MSX 0x6000 pending conflict. Reapplied the exact 0x6000 helper and three original call sites onto the later accepted firmware after the MSX 0xA000 candidate was adopted; cumulative result on that firmware must be measured.",
+        "target": "MSX",
+        "functions": [
+          "writeData_MSX",
+          "writeMSXRegister6000"
+        ],
+        "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
+        "resubmission": {
+          "original_run_id": "46133264369",
+          "original_candidate_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+          "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+          "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+          "prior_resubmission_run_id": "46134316289",
+          "prior_resubmission_candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6",
+          "conflict_files": [
+            "Cart_Reader/MSX.ino"
+          ],
+          "conflict_onto_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
+          "candidate_sha": "b27ce72e15943c7f2a306385f10b817855924ad1"
+        }
+      }
+    }
+  ]
+}
