@@ -4198,10 +4198,7 @@ static void visitMmc1Sram_NES(word base, bool writing) {
     write_prg_byte(0x8000, 0x80);       // Clear Register
     write_mmc1_byte(0x8000, 1 << 3);
     write_mmc1_byte(0xE000, 0);
-    if (banks == 4)  // 32K
-      write_mmc1_byte(0xA000, i << 2);
-    else
-      write_mmc1_byte(0xA000, i << 3);
+    write_mmc1_byte(0xA000, banks == 4 ? i << 2 : i << 3);
     if (writing)
       writeBankPRG(0x0, 0x2000, base);
     else
