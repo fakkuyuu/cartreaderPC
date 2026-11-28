@@ -587,7 +587,7 @@ void setup_GB() {
   }
 }
 
-void showCartInfo_GB() {
+void __attribute__((noinline)) showCartInfo_GB() {
   display_Clear();
   if (strcmp(checksumStr, "00") != 0) {
     showRomNameLine();
