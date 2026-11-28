@@ -25,7 +25,12 @@
         "candidate_sha": "7fce3bd99e1670024f224f26e43ff7e1d0bcdd3c",
         "run_id": "46131321837",
         "measurement_record": "size-measurements/round79b-auto-46131321837-1.json",
-        "integration_record": "size-auto-results/round79b-auto-46131321837-1.json"
+        "integration_record": "size-auto-results/round79b-auto-46131321837-1.json",
+        "integration_branch": "experiment/size-auto-stage-46131321837-1",
+        "integration_commit": "d95375c3457f04a909a7333671a27754367bc902",
+        "firmware_commit": "42199e40a1c5d7a7a8c6a667ab10349007348b1d",
+        "ci_run_id": "46131321817",
+        "ci_conclusion": "success"
       },
       "result": {
         "decision": "adopted",
@@ -60,7 +65,12 @@
         "candidate_sha": "7fe58642f16e5b6f0746df02eb03f6316b8cf92d",
         "run_id": "46131321837",
         "measurement_record": "size-measurements/round79b-auto-46131321837-1.json",
-        "integration_record": "size-auto-results/round79b-auto-46131321837-1.json"
+        "integration_record": "size-auto-results/round79b-auto-46131321837-1.json",
+        "integration_branch": "experiment/size-auto-stage-46131321837-1",
+        "integration_commit": "d95375c3457f04a909a7333671a27754367bc902",
+        "firmware_commit": "42199e40a1c5d7a7a8c6a667ab10349007348b1d",
+        "ci_run_id": "46131321817",
+        "ci_conclusion": "success"
       },
       "result": {
         "decision": "adopted",
@@ -95,7 +105,12 @@
         "candidate_sha": "c356c1c6035bd962b7e7abf5d9f3a66f21d6c498",
         "run_id": "46131321837",
         "measurement_record": "size-measurements/round79b-auto-46131321837-1.json",
-        "integration_record": "size-auto-results/round79b-auto-46131321837-1.json"
+        "integration_record": "size-auto-results/round79b-auto-46131321837-1.json",
+        "integration_branch": "experiment/size-auto-stage-46131321837-1",
+        "integration_commit": "d95375c3457f04a909a7333671a27754367bc902",
+        "firmware_commit": "42199e40a1c5d7a7a8c6a667ab10349007348b1d",
+        "ci_run_id": "46131321817",
+        "ci_conclusion": "success"
       },
       "result": {
         "decision": "adopted",
