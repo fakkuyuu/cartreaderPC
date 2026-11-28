@@ -5093,6 +5093,11 @@ static void showA29040Title_NES() {
   printBlankLine();
 }
 
+static void __attribute__((noinline)) showClearedA29040R63_NES() {
+  display_Clear();
+  showA29040Title_NES();
+}
+
 void A29040B_writeFLASH() {
 
   display_Clear();
@@ -5127,8 +5132,7 @@ void A29040B_writeFLASH() {
       chrSize = (uint32_t)header[5] * 8192;   // CHR size in bytes (header[5] gives size in 8 KB units)
 
       // Output the sizes for verification
-      display_Clear();
-      showA29040Title_NES();
+      showClearedA29040R63_NES();
       println_Msg(F("PRG Size:"));
       sprintf(data_str, "%lu", prgSize);
       println_Msg(data_str);
@@ -5141,8 +5145,7 @@ void A29040B_writeFLASH() {
 
       // Step 2: Erase the entire PRG space
       rgbLed(red_color);
-      display_Clear();
-      showA29040Title_NES();
+      showClearedA29040R63_NES();
       A29040B_PRG_ResetFlash();
       println_Msg(F("ERASING PRG..."));
       display_Update();
@@ -5203,8 +5206,7 @@ void A29040B_writeFLASH() {
 
       // Step 4: Erase and Write CHR data
       A29040B_CHR_ResetFlash();
-      display_Clear();
-      showA29040Title_NES();
+      showClearedA29040R63_NES();
       println_Msg(F("ERASING CHR..."));
       display_Update();
       A29040B_CHR_ChipErase();
@@ -5249,8 +5251,7 @@ void A29040B_writeFLASH() {
       }
       delay(3000);
       closeAndGreenLed();
-      display_Clear();
-      showA29040Title_NES();
+      showClearedA29040R63_NES();
       println_Msg(FS(SharedFlashText::textFLASHFILEWRITTEN));
       display_Update();
     } else {
