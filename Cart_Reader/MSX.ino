@@ -331,6 +331,12 @@ void readSegment_MSX(uint32_t startaddr, uint32_t endaddr) {
 //******************************************
 // WRITE DATA
 //******************************************
+void writeData_MSX(uint16_t, uint8_t);
+static void writeMSXRegister7000(uint8_t data) __attribute__((noinline));
+static void writeMSXRegister7000(uint8_t data) {
+  writeData_MSX(0x7000, data);
+}
+
 void writeData_MSX(uint16_t addr, uint8_t data) {
   PORTF = addr & 0xFF;         // A0-A7
   PORTK = (addr >> 8) & 0xFF;  // A8-A15
@@ -514,7 +520,7 @@ void readROM_MSX() {
         CS1_DISABLE;
 
         CS2_ENABLE;
-        writeData_MSX(0x7000, 0);
+        writeMSXRegister7000(0);
         readSegment_MSX(0x8000, 0xC000);  // 16K Init Bank 1
         CS2_DISABLE;
 
@@ -524,7 +530,7 @@ void readROM_MSX() {
         CS1_DISABLE;
 
         CS2_ENABLE;
-        writeData_MSX(0x7000, 1);
+        writeMSXRegister7000(1);
         readSegment_MSX(0x8000, 0xC000);  // 16K
         CS2_DISABLE;
         break;
@@ -569,7 +575,7 @@ void readROM_MSX() {
 
       case 12:  // R-TYPE (384K)
         for (int x = 0; x < 23; x++) {
-          writeData_MSX(0x7000, x);
+          writeMSXRegister7000(x);
           readSegment_MSX(0x8000, 0xC000);  // 16K Init Bank 0
         }
         readSegment_MSX(0x4000, 0x8000);  // 16K Init Bank 0F
@@ -607,9 +613,9 @@ void readROM_MSX() {
 boolean testRAM(byte enable1, byte enable2) {
   boolean testbit = false;
   for (int x = 0; x < 0x10; x++) {  // Test 16 Bytes
-    writeData_MSX(0x7000, enable1);
+    writeMSXRegister7000(enable1);
     byte test1 = readData_MSX(0x8000 + x);
-    writeData_MSX(0x7000, enable2);
+    writeMSXRegister7000(enable2);
     byte test2 = readData_MSX(0x8000 + x);
     if (test1 == test2)
       testbit = true;
@@ -683,18 +689,18 @@ void readRAM_MSX() {
         // Bit 7 (0x80) - Wizardry
         {
           const bool small = msxramsize == 1;
-          writeData_MSX(0x7000, small ? 0x10 : 0xA0);
+          writeMSXRegister7000(small ? 0x10 : 0xA0);
           readSegment_MSX(0x8000, small ? 0x8800 : 0xA000);
         }
-        writeData_MSX(0x7000, 0);  // SRAM Disable
+        writeMSXRegister7000(0);  // SRAM Disable
         break;
 
       case 2:  // ASCII16 (2K/8K)
-        writeData_MSX(0x7000, 0x10);        // Bit 4 Enable
+        writeMSXRegister7000(0x10);        // Bit 4 Enable
         readSegment_MSX(0x8000, 0x8800);    // 2K - Hydlide 2 & Daisenryaku (2K)
         if (msxramsize == 2)                // A-Train (8K)
           readSegment_MSX(0x8800, 0xA000);  // +6K = 8K
-        writeData_MSX(0x7000, 0);           // SRAM Disable
+        writeMSXRegister7000(0);           // SRAM Disable
         break;
 
       case 4:  // Game Master 2 (8K)
@@ -722,10 +728,10 @@ void readRAM_MSX() {
         // Note:  Combined 0xE0 (Bit 5 + Bit 6 + Bit 7) does not work
         checkRAM();
         for (int x = 0; x < (msxramsize > 2 ? 4 : 1); x++) {
-          writeData_MSX(0x7000, (srambit6 ? 0xC0 : 0xA0) + x);
+          writeMSXRegister7000((srambit6 ? 0xC0 : 0xA0) + x);
           readSegment_MSX(0x8000, 0xA000);
         }
-        writeData_MSX(0x7000, 0);  // SRAM Disable
+        writeMSXRegister7000(0);  // SRAM Disable
         break;
 
       case 11:  // PAC/FM-PAC (8K)
@@ -772,13 +778,13 @@ void writeRAM_MSX() {
         case 1:  // ASCII8 (2K/8K)
         case 2:  // ASCII16 (2K/8K)
           if (msxmapper == 2)
-            writeData_MSX(0x7000, 0x10);
+            writeMSXRegister7000(0x10);
           for (word address = 0x0; address < (0x800 * msxramsize * msxramsize); address += 512) {
             if (msxmapper == 1)
-              writeData_MSX(0x7000, msxramsize == 1 ? 0x10 : 0xA0);
+              writeMSXRegister7000(msxramsize == 1 ? 0x10 : 0xA0);
             writeSramBlock_MSX(0x8000 + address);
           }
-          writeData_MSX(0x7000, 0);
+          writeMSXRegister7000(0);
           break;
 
         case 4:  // Game Master 2 (8K)
@@ -805,14 +811,14 @@ void writeRAM_MSX() {
           checkRAM();
           for (int y = 0; y < (msxramsize > 2 ? 4 : 1); y++) {
             if (srambit6)
-              writeData_MSX(0x7000, 0xC0 + y);
+              writeMSXRegister7000(0xC0 + y);
             else
-              writeData_MSX(0x7000, 0xA0 + y);
+              writeMSXRegister7000(0xA0 + y);
             for (word address = 0x0; address < 0x2000; address += 512) {
               writeSramBlock_MSX(0x8000 + address);
             }
           }
-          writeData_MSX(0x7000, 0);  // SRAM Disable
+          writeMSXRegister7000(0);  // SRAM Disable
           break;
 
         case 11:  // PAC/FM-PAC (8K)
