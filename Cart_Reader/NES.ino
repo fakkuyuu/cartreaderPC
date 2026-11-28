@@ -1772,10 +1772,7 @@ void setRAMSize() {
       PcConsole.print(F("[Control] nes-options\tR\tRAM/Saveサイズ"));
       for (uint8_t i = 0; i <= ramhi; i++) {
         printMenuIndexP20_NES(i);
-        if (mapper == 0)
-          PcConsole.print(i * 2);
-        else
-          PcConsole.print(ramDisplaySizeR70_NES(i));
+        PcConsole.print(ramDisplaySizeR70_NES(i));
         PcConsole.print((mapper == 16 || mapper == 159 || mapper == 80 || (mapper == 19 && i == 2)) ? F(" B") : F(" KB"));
       }
       finishPcMenuP30_NES();
@@ -1791,19 +1788,11 @@ void setRAMSize() {
   }
   const bool eeprom = mapper == 16 || mapper == 159;
   print_Msg(eeprom ? F("EEPROM SIZE ") : FS(SharedFlashText::textRAMSIZE));
-  if (eeprom || mapper == 80) {
-    print_Msg(pgm_read_byte(&(RAM[newramsize])) * (mapper == 16 ? 32 : 16));
-    println_Msg(FS(SharedFlashText::unitB));
-  } else if (mapper == 19 && newramsize == 2) {
+  if (mapper == 19 && newramsize == 2) {
     println_Msg(FS(SharedFlashText::text128B));
   } else {
-    if (mapper == 0)
-      print_Msg(newramsize * 2);
-    else if (mapper == 82)
-      print_Msg(newramsize * 5);
-    else
-      print_Msg(pgm_read_byte(&(RAM[newramsize])));
-    println_Msg(FS(SharedFlashText::unitK));
+    print_Msg(ramDisplaySizeR70_NES(newramsize));
+    println_Msg((eeprom || mapper == 80) ? FS(SharedFlashText::unitB) : FS(SharedFlashText::unitK));
   }
   display_Update();
   delay(500);
