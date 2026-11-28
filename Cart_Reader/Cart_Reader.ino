@@ -3735,6 +3735,135 @@ byte questionBox_Serial(const __FlashStringHelper* question, char answers[7][20]
 // OLED & LCD
 #if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
 // Display a question box with selectable answers. Make sure default choice is in (0, num_answers]
+#ifdef PC_MENU
+// Handle one PC-side menu command; physical controls remain in questionBox_Display.
+static uint8_t handlePcMenuInputR82(char incomingByte, uint8_t num_answers,
+                                    bool &bootHeaderSelected, uint8_t &pcButtonEvent)
+    __attribute__((noinline));
+static uint8_t handlePcMenuInputR82(char incomingByte, uint8_t num_answers,
+                                    bool &bootHeaderSelected, uint8_t &pcButtonEvent) {
+      if (incomingByte == 'T' || incomingByte == 'Y' || incomingByte == 'W') {
+        PcLink::transmitTest(incomingByte == 'Y', incomingByte == 'W');
+        PcLink::menuReady();
+    return 1;
+      }
+      if (incomingByte == 'H') {
+        sd.copyPhysicalToPc(SS);
+        PcLink::menuReady();
+    return 1;
+      }
+      if (incomingByte == 'K') {
+        unsigned long deadline = millis() + 3000UL;
+        while (!PcConsole.available() && (long)(millis() - deadline) < 0) delay(5);
+        int action = PcConsole.read();
+        // New browser commands contain only Q plus newline. Drain old commands
+        // without allocating a String or a path-sized stack array.
+        bool ended=false, invalid=false;
+        uint16_t drained=0;
+        while((long)(millis()-deadline)<0 && drained<1024) {
+          if(!PcConsole.available()) { delay(1); continue; }
+          int c=PcConsole.read();
+          if(c=='\n') { ended=true; break; }
+          if(c!='\r') invalid=true;
+          drained++;
+        }
+        if(action=='Q' && ended && !invalid) {
+          if(!sd.browserRequest(SS)) PcConsole.println(F("[SD Browser] request failed"));
+        }
+        else PcConsole.println(F("[SD Browser] PC88 tool required or invalid command"));
+        PcLink::menuReady();
+    return 1;
+      }
+      if (incomingByte == 'I') {
+        if (sd.selectPhysical(SS)) {
+#ifdef ENABLE_GLOBAL_LOG
+          if (loggingEnabled && !myLog) {
+            if (myLog.open("/OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
+              myLog.print(F("OSCR ")); myLog.println(FS(FSTRING_VERSION));
+              myLog.flush();
+            } else {
+              PcConsole.println(F("[SD] Cannot open OSCR_LOG.txt"));
+            }
+          }
+#endif
+          PcConsole.println(F("[Storage Mode] SD"));
+        } else {
+          PcConsole.println(F("[Storage Mode] SD init failed; PC retained"));
+        }
+        PcLink::menuReady();
+    return 1;
+      }
+      if (incomingByte == 'J') {
+        sd.selectPc();
+        PcConsole.println(F("[Storage Mode] PC"));
+        PcLink::menuReady();
+    return 1;
+      }
+      if (incomingByte >= 'A' && incomingByte <= 'G') {
+        uint32_t testedBaud = 0;
+        bool passed = PcLink::benchmarkOne(incomingByte - 'A', testedBaud);
+        if (passed) {
+          PcConsole.print(F("[Benchmark] passed baud="));
+        } else {
+          PcConsole.print(F("[Benchmark] failed baud="));
+        }
+        PcConsole.println(testedBaud);
+        delay(300);
+        standaloneSuppressNextBoot();
+        wdt_enable(WDTO_15MS);
+        while (1) {}
+      }
+      if (incomingByte == 'b' || incomingByte == 'B') {
+        PcConsole.println(F("[Benchmark] command received"));
+        uint32_t selectedBaud = PcLink::benchmark();
+        PcConsole.print(F("[Benchmark] stable baud="));
+        PcConsole.println(selectedBaud);
+        delay(750);
+        standaloneSuppressNextBoot();
+        wdt_enable(WDTO_15MS);
+        while (1) {}
+      }
+      // The GUI page buttons must change pages immediately.  Lower-case
+      // u/d deliberately remain physical-button gestures for cursor motion.
+      if (incomingByte == '[' && numPages > 1) {
+        if (currPage > 1) {
+          lastPage = currPage;
+          currPage--;
+    return 2;
+        }
+        PcLink::menuReady();
+    return 1;
+      }
+      if (incomingByte == ']' && numPages > 1) {
+        if (numPages > currPage) {
+          lastPage = currPage;
+          currPage++;
+    return 2;
+        }
+        PcLink::menuReady();
+    return 1;
+      }
+      // Persistent PC controls emulate the physical HW3 button even in an
+      // ordinary numbered menu.  This preserves cursor movement within a
+      // page; the existing physical-button code below also handles paging at
+      // the first/last item.
+      if (incomingByte == 'd') pcButtonEvent = 1;
+      else if (incomingByte == 'u') pcButtonEvent = 2;
+      else if (incomingByte == ' ') pcButtonEvent = 3;
+      else if (incomingByte == 'l' || incomingByte == 'L') pcButtonEvent = 4;
+      if (incomingByte >= '0' && incomingByte < ('0' + num_answers)) {
+        bootHeaderSelected=false;
+        choice = incomingByte - '0';
+        PcConsole.print(F("[Menu] accepted choice="));
+        PcConsole.println(choice);
+        numPages = 0;
+    return 2;
+      }
+    
+    return 0;
+}
+#endif
+
 unsigned char questionBox_Display(const __FlashStringHelper* question, char answers[7][20], uint8_t num_answers, uint8_t default_choice) {
   const uint8_t displayedPage = currPage;
 #ifdef PC_MENU
@@ -3810,124 +3939,11 @@ redraw:
     // Poll PC input without disabling the physical controls. Ignore line
     // endings left by the PC entry box.
     if (PcConsole.available()) {
-      char incomingByte = PcConsole.read();
-      if (incomingByte == 'T' || incomingByte == 'Y' || incomingByte == 'W') {
-        PcLink::transmitTest(incomingByte == 'Y', incomingByte == 'W');
-        PcLink::menuReady();
-        continue;
-      }
-      if (incomingByte == 'H') {
-        sd.copyPhysicalToPc(SS);
-        PcLink::menuReady();
-        continue;
-      }
-      if (incomingByte == 'K') {
-        unsigned long deadline = millis() + 3000UL;
-        while (!PcConsole.available() && (long)(millis() - deadline) < 0) delay(5);
-        int action = PcConsole.read();
-        // New browser commands contain only Q plus newline. Drain old commands
-        // without allocating a String or a path-sized stack array.
-        bool ended=false, invalid=false;
-        uint16_t drained=0;
-        while((long)(millis()-deadline)<0 && drained<1024) {
-          if(!PcConsole.available()) { delay(1); continue; }
-          int c=PcConsole.read();
-          if(c=='\n') { ended=true; break; }
-          if(c!='\r') invalid=true;
-          drained++;
-        }
-        if(action=='Q' && ended && !invalid) {
-          if(!sd.browserRequest(SS)) PcConsole.println(F("[SD Browser] request failed"));
-        }
-        else PcConsole.println(F("[SD Browser] PC88 tool required or invalid command"));
-        PcLink::menuReady();
-        continue;
-      }
-      if (incomingByte == 'I') {
-        if (sd.selectPhysical(SS)) {
-#ifdef ENABLE_GLOBAL_LOG
-          if (loggingEnabled && !myLog) {
-            if (myLog.open("/OSCR_LOG.txt", O_RDWR | O_CREAT | O_APPEND)) {
-              myLog.print(F("OSCR ")); myLog.println(FS(FSTRING_VERSION));
-              myLog.flush();
-            } else {
-              PcConsole.println(F("[SD] Cannot open OSCR_LOG.txt"));
-            }
-          }
-#endif
-          PcConsole.println(F("[Storage Mode] SD"));
-        } else {
-          PcConsole.println(F("[Storage Mode] SD init failed; PC retained"));
-        }
-        PcLink::menuReady();
-        continue;
-      }
-      if (incomingByte == 'J') {
-        sd.selectPc();
-        PcConsole.println(F("[Storage Mode] PC"));
-        PcLink::menuReady();
-        continue;
-      }
-      if (incomingByte >= 'A' && incomingByte <= 'G') {
-        uint32_t testedBaud = 0;
-        bool passed = PcLink::benchmarkOne(incomingByte - 'A', testedBaud);
-        if (passed) {
-          PcConsole.print(F("[Benchmark] passed baud="));
-        } else {
-          PcConsole.print(F("[Benchmark] failed baud="));
-        }
-        PcConsole.println(testedBaud);
-        delay(300);
-        standaloneSuppressNextBoot();
-        wdt_enable(WDTO_15MS);
-        while (1) {}
-      }
-      if (incomingByte == 'b' || incomingByte == 'B') {
-        PcConsole.println(F("[Benchmark] command received"));
-        uint32_t selectedBaud = PcLink::benchmark();
-        PcConsole.print(F("[Benchmark] stable baud="));
-        PcConsole.println(selectedBaud);
-        delay(750);
-        standaloneSuppressNextBoot();
-        wdt_enable(WDTO_15MS);
-        while (1) {}
-      }
-      // The GUI page buttons must change pages immediately.  Lower-case
-      // u/d deliberately remain physical-button gestures for cursor motion.
-      if (incomingByte == '[' && numPages > 1) {
-        if (currPage > 1) {
-          lastPage = currPage;
-          currPage--;
-          break;
-        }
-        PcLink::menuReady();
-        continue;
-      }
-      if (incomingByte == ']' && numPages > 1) {
-        if (numPages > currPage) {
-          lastPage = currPage;
-          currPage++;
-          break;
-        }
-        PcLink::menuReady();
-        continue;
-      }
-      // Persistent PC controls emulate the physical HW3 button even in an
-      // ordinary numbered menu.  This preserves cursor movement within a
-      // page; the existing physical-button code below also handles paging at
-      // the first/last item.
-      if (incomingByte == 'd') pcButtonEvent = 1;
-      else if (incomingByte == 'u') pcButtonEvent = 2;
-      else if (incomingByte == ' ') pcButtonEvent = 3;
-      else if (incomingByte == 'l' || incomingByte == 'L') pcButtonEvent = 4;
-      if (incomingByte >= '0' && incomingByte < ('0' + num_answers)) {
-        bootHeaderSelected=false;
-        choice = incomingByte - '0';
-        PcConsole.print(F("[Menu] accepted choice="));
-        PcConsole.println(choice);
-        numPages = 0;
-        break;
-      }
+      const char incomingByte = PcConsole.read();
+      const uint8_t pcInputResult = handlePcMenuInputR82(
+          incomingByte, num_answers, bootHeaderSelected, pcButtonEvent);
+      if (pcInputResult == 1) continue;
+      if (pcInputResult == 2) break;
     }
 #endif
     // Standalone right/knob holds commit only after release. PC controls
