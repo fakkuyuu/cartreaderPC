@@ -3389,6 +3389,28 @@ static void __attribute__((noinline)) dumpVrcChrR64_NES(word banks, word upperRe
   }
 }
 
+static void __attribute__((noinline)) dumpPulseChrR65_NES(word banks, word reg1, word reg2, byte value1Or, byte value2Or) {
+  for (word i = 0; i < banks; ++i) {
+    for (word address = 0; address < 0x2000; address += 512) {
+      write_prg_pulsem2(reg1, value1Or | (i & 7));
+      write_prg_pulsem2(reg2, value2Or | ((i & 8) << 3));
+      dumpCHR_pulsem2(address);
+    }
+  }
+}
+
+static void __attribute__((noinline)) dumpMaskedChrR65_NES(word banks, word reg, byte mask, word bankSize) {
+  for (word i = 0; i < banks; ++i) {
+    write_prg_byte(reg, i & mask);
+    dumpBankCHR(0, bankSize);
+  }
+}
+
+static void __attribute__((noinline)) writeTwiceR65_NES(word address, byte value) {
+  write_prg_byte(address, value);
+  write_prg_byte(address, value);
+}
+
 void readCHR(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3661,11 +3683,7 @@ void readCHR(bool readrom) {
 
         case 27:
           banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xB000, i & 0x0F);
-            write_prg_byte(0xB001, i >> 4);
-            dumpCHR1KiB();
-          }
+          dumpVrcChrR64_NES(banks, 0xB001, 0xFF);
           break;
 
         case 32:  // 128K
@@ -3711,20 +3729,14 @@ void readCHR(bool readrom) {
         case 41:
           banks = chrBanks4K / 2;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x6004 + ((i & 0x0C) << 1), 0);
-            write_prg_byte(0x6004 + ((i & 0x0C) << 1), 0);
-            write_prg_byte(0xFFF0 + (i & 0x03), i & 0x03);
-            write_prg_byte(0xFFF0 + (i & 0x03), i & 0x03);
+            writeTwiceR65_NES(0x6004 + ((i & 0x0C) << 1), 0);
+            writeTwiceR65_NES(0xFFF0 + (i & 0x03), i & 0x03);
             dumpCHR8KiB();
           }
           break;
 
         case 42:
-          banks = chrBanks4K;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, i & 0x0F);
-            dumpCHR4KiB();
-          }
+          dumpMaskedChrR65_NES(chrBanks4K, 0x8000, 0x0F, 0x1000);
           break;
 
         case 45:  // 128K/256K/512K/1024K
@@ -3752,14 +3764,7 @@ void readCHR(bool readrom) {
           break;
 
         case 57:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            for (word address = 0x0; address < 0x2000; address += 512) {
-              write_prg_pulsem2(0x8800, i & 0x07);                  // A15-A13
-              write_prg_pulsem2(0x8000, 0x80 | ((i & 0x08) << 3));  // A16
-              dumpCHR_pulsem2(address);
-            }
-          }
+          dumpPulseChrR65_NES(chrBanks4K / 2, 0x8800, 0x8000, 0, 0x80);
           break;
 
         case 58:
@@ -4062,20 +4067,12 @@ void readCHR(bool readrom) {
           break;
 
         case 203:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, (i & 0x03));
-            dumpCHR8KiB();
-          }
+          dumpMaskedChrR65_NES(chrBanks4K / 2, 0x8000, 0x03, 0x2000);
           break;
 
         case 210:  // 128K/256K
-          banks = chrBanks4K * 4;
           write_prg_byte(0xE800, 0xC0);  // CHR RAM DISABLE (Bit 6 and 7) [WRITE NO RAM]
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, i);  // CHR Bank 0
-            dumpCHR1KiB();
-          }
+          dumpSequentialCHRBanks(chrBanks4K * 4, 0x8000, 0, 0x400);
           break;
 
         case 214:
@@ -4120,11 +4117,7 @@ void readCHR(bool readrom) {
           break;
 
         case 240:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x5FFF, (i & 0xF));
-            dumpCHR8KiB();
-          }
+          dumpMaskedChrR65_NES(chrBanks4K / 2, 0x5FFF, 0xF, 0x2000);
           break;
 
         case 246:
@@ -4139,11 +4132,7 @@ void readCHR(bool readrom) {
         case 252:
         case 253:
           banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xB000, i & 0x0F);
-            write_prg_byte(0xB004, ((i >> 4) & 0x0F) | ((i >> 8) << 4));
-            dumpCHR1KiB();
-          }
+          dumpVrcChrR64_NES(banks, 0xB004, 0xFF);
           break;
 
         case 261:
@@ -4201,22 +4190,11 @@ void readCHR(bool readrom) {
           break;
 
         case 332:  // 128K
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            for (word address = 0x0; address < 0x2000; address += 512) {
-              write_prg_pulsem2(0x6001, 0x30 | (i & 0x07));
-              write_prg_pulsem2(0x6000, (i & 0x08) << 3);
-              dumpCHR_pulsem2(address);
-            }
-          }
+          dumpPulseChrR65_NES(chrBanks4K / 2, 0x6001, 0x6000, 0x30, 0);
           break;
 
         case 519:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, i & 0x7F);
-            dumpCHR8KiB();
-          }
+          dumpMaskedChrR65_NES(chrBanks4K / 2, 0x8000, 0x7F, 0x2000);
           break;
       }
       if (!readrom) {
@@ -4343,20 +4321,16 @@ static void enableDefaultSram_NES(bool writing) {
 void writeBankWRAM(const size_t from, const size_t to, const size_t base);
 static void visitMmc6Sram_NES(word base, bool writing) __attribute__((noinline));
 static void visitMmc6Sram_NES(word base, bool writing) {
-  write_prg_byte(0x8000, 0x20);
-  write_prg_byte(0xA001, writing ? 0x30 : 0x20);
-  if (writing)
-    writeBankWRAM(0x1000, 0x1200, base);
-  else
-    dumpMMC5RAM(base, 0x1000);
-
-  write_prg_byte(0x8000, 0x20);
-  write_prg_byte(0xA001, writing ? 0xC0 : 0x80);
-  if (writing)
-    writeBankWRAM(0x1200, 0x1400, base);
-  else
-    dumpMMC5RAM(base, 0x1200);
-
+  byte access = writing ? 0x30 : 0x20;
+  for (word address = 0x1000; address < 0x1400; address += 512) {
+    write_prg_byte(0x8000, 0x20);
+    write_prg_byte(0xA001, access);
+    if (writing)
+      writeBankWRAM(address, address + 512, base);
+    else
+      dumpMMC5RAM(base, address);
+    access <<= 2;
+  }
   write_prg_byte(0x8000, 6);
 }
 
