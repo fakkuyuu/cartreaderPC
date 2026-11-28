@@ -911,7 +911,7 @@ void writeByteSRAM_GB(int myAddress, byte myData) {
   Game Boy functions
 *****************************************/
 // Read Cartridge Header
-void getCartInfo_GB() {
+void __attribute__((noinline)) getCartInfo_GB() {
   byte headerChecksum;
   for (byte attempt = 0; attempt < 2; ++attempt) {
     for (int currByte = 0x100; currByte < 0x150; currByte++) {
