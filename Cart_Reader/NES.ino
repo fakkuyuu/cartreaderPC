@@ -2006,19 +2006,22 @@ void dumpMMC5RAM(word base, word address) {  // MMC5 SRAM DUMP - PULSE M2 LO/HI
   writeSdBufferBlock();
 }
 
+static void __attribute__((noinline)) setMmc5ProtectR69_NES(bool enabled) {
+  write_prg_byte(0x5102, enabled ? 2 : 0);
+  write_prg_byte(0x5103, enabled ? 1 : 0);
+}
+
 void writeMMC5RAM(word base, word address) {  // MMC5 SRAM WRITE
   uint8_t bytecheck;
   readSdBufferBlock();
   for (size_t x = 0; x < 512; x++) {
     do {
-      write_prg_byte(0x5102, 2);  // PRG RAM PROTECT1
-      write_prg_byte(0x5103, 1);  // PRG RAM PROTECT2
+      setMmc5ProtectR69_NES(true);
       write_wram_byte(base + address + x, sdBuffer[x]);
       bytecheck = read_prg_byte(base + address + x);
     } while (bytecheck != sdBuffer[x]);  // CHECK WRITTEN BYTE
   }
-  write_prg_byte(0x5102, 0);  // PRG RAM PROTECT1
-  write_prg_byte(0x5103, 0);  // PRG RAM PROTECT2
+  setMmc5ProtectR69_NES(false);
 }
 
 void dumpBankPRG(const size_t from, const size_t to, const size_t base) {
