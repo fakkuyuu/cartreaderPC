@@ -3392,9 +3392,9 @@ static void __attribute__((noinline)) dumpMaskedChrR65_NES(word banks, word reg,
   }
 }
 
-static void __attribute__((noinline)) dumpAddrChrR66_NES(word banks, word mask, byte shift) {
+static void __attribute__((noinline)) dumpAddrChrR66_NES(word banks, word mask, byte shift, word reg = 0x8000) {
   for (word i = 0; i < banks; ++i) {
-    write_prg_byte(0x8000 | ((i & mask) << shift), 0);
+    write_prg_byte(reg | ((i & mask) << shift), 0);
     dumpCHR8KiB();
   }
 }
@@ -3992,10 +3992,7 @@ void readCHR(bool readrom) {
           break;
 
         case 174:  // 64K
-          for (size_t i = 0; i < 8; i++) {
-            write_prg_byte(0xFF00 + (i << 1), 0);
-            dumpCHR8KiB();
-          }
+          dumpAddrChrR66_NES(8, 0x07, 1, 0xFF00);
           break;
 
         case 175:  // 128K
