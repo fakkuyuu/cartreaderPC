@@ -1303,16 +1303,19 @@ void CreateCHRFileInSD() {
   myFile = createNewFile("CHR", "bin");
 }
 
+static bool __attribute__((noinline)) validSaveCrcR70_NES(uint32_t crc) {
+  return crc != 0xBD7BC39FUL && crc != 0xFFFFFFFFUL;
+}
+
 void CreateRAMFileInSD() {
   // Keep the full DB title for saves without changing the ROM naming rules.
   const char* title = dbSaveTitle;
   char fallback[40];
   if (!*title) {
-    constexpr uint32_t blankCrc = 0xBD7BC39F;
     uint32_t crc = mapper == 4 ? oldcrc32MMC3 : oldcrc32;
-    if (crc == blankCrc || crc == 0xFFFFFFFF)
+    if (!validSaveCrcR70_NES(crc))
       crc = mapper == 4 ? oldcrc32 : oldcrc32MMC3;
-    if (crc != blankCrc && crc != 0xFFFFFFFF) {
+    if (validSaveCrcR70_NES(crc)) {
       snprintf(fallback, sizeof(fallback), "CRC_%08lX", crc);
     } else {
       snprintf(fallback, sizeof(fallback), "Mapper%03u_PRG%uK_CHR%uK_RAM%uK", mapper, prg, chr, static_cast<unsigned>(ram));
@@ -4170,12 +4173,12 @@ static void writeNesSaveLog(uint32_t saveSize, uint32_t saveCrc) {
     formatFixedHex(crcText, saveCrc, 8);
     myFile.print(FS(SharedFlashText::textSaveCRC32));
     myFile.println(crcText);
-    if (oldcrc32 != 0xBD7BC39F && oldcrc32 != 0xFFFFFFFF) {
+    if (validSaveCrcR70_NES(oldcrc32)) {
       formatFixedHex(crcText, oldcrc32, 8);
       myFile.print(F("ROM identification CRC32 ($8000): "));
       myFile.println(crcText);
     }
-    if (oldcrc32MMC3 != oldcrc32 && oldcrc32MMC3 != 0xBD7BC39F && oldcrc32MMC3 != 0xFFFFFFFF) {
+    if (oldcrc32MMC3 != oldcrc32 && validSaveCrcR70_NES(oldcrc32MMC3)) {
       formatFixedHex(crcText, oldcrc32MMC3, 8);
       myFile.print(F("ROM identification CRC32 ($E000): "));
       myFile.println(crcText);
