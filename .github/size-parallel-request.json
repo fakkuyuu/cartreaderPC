@@ -1,49 +1,49 @@
 {
-  "id": "round70-auto",
-  "base": "3ecf77d4780312b8b41b8386dd807d6142e4c31f",
-  "expected_base_flash": 203164,
+  "id": "round71-auto",
+  "base": "aa467ff74bf647238e82695a00cce5c0cb3374df",
+  "expected_base_flash": 203012,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "nes-mmc6-signature-loop",
-      "head": "a1cdcc299f72e59ca9f586b4180ca2f3b3112606",
+      "id": "nes-start-menu-helper",
+      "head": "714b1db80b36f36e2fe713c70ae11cb033ec91f0",
       "reviewed": true
     },
     {
-      "id": "nes-default-rom-name",
-      "head": "e416a15f021372b40f50e47bdbd41264e6e30da2",
+      "id": "nes-raw-menu-finish",
+      "head": "3efd71a5577c56094c5a0e31d45d63b74039a5ff",
       "reviewed": true
     },
     {
-      "id": "nes-mapper-search-early-exit",
-      "head": "edcce1feda26aed769ff1114484cb0a2acd7c433",
+      "id": "nes-db-crc-match",
+      "head": "bd3f2798a4442072e3af6905905f763eea12918b",
       "reviewed": true
     },
     {
-      "id": "nes-rom-size-display",
-      "head": "f01208acbe11b883023e6c8f9234fb397debdf33",
+      "id": "nes-settings-ram-branches",
+      "head": "bc24da4bff37e28cb27b2408b158d720b561a974",
       "reviewed": true
     },
     {
-      "id": "nes-save-crc-validity",
-      "head": "bdf3cb830aae65df0b54ced5dd089fe20c5a548b",
+      "id": "nes-ram-size-helper-reuse",
+      "head": "f940f34cf2f727f86e09931ecc1eacff43860e59",
       "reviewed": true
     },
     {
-      "id": "nes-save-folder-increment",
-      "head": "d0a1834501e9a71690c15616135c35efff576f87",
+      "id": "nes-config-direct-rom-size",
+      "head": "071f94de0e96104ea4329d59e5f85b2da51739ea",
       "reviewed": true
     },
     {
-      "id": "nes-ram-size-display",
-      "head": "6651f8edaafcedca2b773ca23acf4a5314f5ba3e",
+      "id": "nes-settings-size-lines",
+      "head": "562b1072c62aa4e9645e4b76d71069156e2df252",
       "reviewed": true
     },
     {
-      "id": "nes-eeprom-size-expression",
-      "head": "622856f8e89ce4eaaf6bc3e2ec52887c3ad72247",
+      "id": "nes-mmc1-sram-bank-select",
+      "head": "f79b67b0c9917e74cfdf74735729c147d5b0f86a",
       "reviewed": true
     }
   ]
