@@ -1035,6 +1035,11 @@ static void writeNESRegister6000(uint8_t data) {
   write_prg_byte(0x6000, data);
 }
 
+static void writeNESRegisterE000(uint8_t data) __attribute__((noinline));
+static void writeNESRegisterE000(uint8_t data) {
+  write_prg_byte(0xE000, data);
+}
+
 static void write_prg_byte(unsigned int address, uint8_t data) {
   PHI2_LOW;
   ROMSEL_HI;
@@ -2584,7 +2589,7 @@ void readPRG(bool readrom) {
         banks = prgBanks16K * 2;
         base = 0x6000;  // 8k switchable PRG ROM bank at $6000-$7FFF
         for (size_t i = 0; i < banks - 4; i++) {
-          write_prg_byte(0xE000, i & 0x0F);
+          writeNESRegisterE000( i & 0x0F);
           dumpPRG8KiB(base);
         }
         base = 0x8000;  // last 32k fixed to $8000-$FFFF
@@ -2657,7 +2662,7 @@ void readPRG(bool readrom) {
       case 56:
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xE000, 1);
+          writeNESRegisterE000( 1);
           write_prg_byte(0xF000, i);
           dumpPRG8KiB(base);
         }
@@ -2920,7 +2925,7 @@ void readPRG(bool readrom) {
         base = 0x6000;  // 4x 8k switchable PRG ROM banks at $6000-$DFFF
         for (size_t i = 0; i < banks; i += 4) {
           for (byte bank = 0; bank < 4; ++bank) {
-            write_prg_byte(0xE000, bank == 0 ? 4 : bank);
+            writeNESRegisterE000( bank == 0 ? 4 : bank);
             write_prg_byte(0xF000, i + bank);
           }
           dumpPRG32KiB(base);
@@ -3026,7 +3031,7 @@ void readPRG(bool readrom) {
       case 210:  // 128K/256K
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0xE000, i);      // PRG Bank 0 ($8000-$9FFF) [WRITE NO RAM]
+          writeNESRegisterE000( i);      // PRG Bank 0 ($8000-$9FFF) [WRITE NO RAM]
           write_prg_byte(0xE800, i + 1);  // PRG Bank 1 ($A000-$BFFF) [WRITE NO RAM]
           dumpPRG16KiB(base);
         }
@@ -3279,7 +3284,7 @@ void readPRG(bool readrom) {
       case 331:
         banks = prgBanks16K;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xE000, i >> 3);
+          writeNESRegisterE000( i >> 3);
           writeNESRegisterA000(i);
           write_prg_byte(0xC000, i);
           dumpPRG32KiB(base);
@@ -4138,7 +4143,7 @@ void readCHR(bool readrom) {
         case 331:
           banks = chrBanks4K;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xE000, i >> 3);
+            writeNESRegisterE000( i >> 3);
             writeNESRegisterA000(i << 3);
             dumpCHR4KiB();
           }
