@@ -77,6 +77,7 @@ void browseRootFileWithPathAndClear(const __FlashStringHelper* label) __attribut
 void appendSelectedFilePath() __attribute__((noinline));
 void clearAndRootDirectory() __attribute__((noinline));
 void showRomRevision() __attribute__((noinline));
+void getCartInfo_GB() __attribute__((noinline));
 void showSavedToFolder() __attribute__((noinline));
 void showSearchingDatabase() __attribute__((noinline));
 void showRomNameLine() __attribute__((noinline));
