@@ -41,7 +41,7 @@ void write_byte_PCE(uint32_t address, uint8_t data);
 uint32_t detect_rom_size_PCE(void);
 void read_bank_PCE_ROM(uint32_t address_start, uint32_t address_end, uint32_t *processed_size, uint32_t total_size);
 void read_bank_PCE_RAM(uint32_t address_start);
-void read_rom_PCE(void);
+void read_rom_PCE(void) __attribute__((noinline));
 
 /******************************************
    Variables
