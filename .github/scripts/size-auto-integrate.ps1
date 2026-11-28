@@ -3,6 +3,7 @@ $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
 $repo = $env:GITHUB_WORKSPACE
 . (Join-Path $PSScriptRoot 'size-policy.ps1')
+. (Join-Path $PSScriptRoot 'size-conflict.ps1')
 if ($env:GITHUB_REF -ne 'refs/heads/experiment/size-reduction-phase2') { throw 'Wrong target branch' }
 $request = Get-Content (Join-Path $repo '.github/size-parallel-request.json') -Raw | ConvertFrom-Json -AsHashtable
 if ($request.auto_integrate -ne $true -or $request.endpoints_only -eq $true) { throw 'Not an independent auto request' }
@@ -19,7 +20,7 @@ $temp = Join-Path $env:RUNNER_TEMP 'phase2-auto-build'
 $out = Join-Path $env:RUNNER_TEMP 'phase2-auto-output'
 $wt = Join-Path $env:RUNNER_TEMP 'phase2-auto-worktree'
 New-Item -ItemType Directory -Force -Path $temp,$out | Out-Null
-$report = [ordered]@{schema=2; acceptance_policy='flash_and_ram_nonincreasing_at_least_one_decreases'; id=$request.id; run_id=$env:GITHUB_RUN_ID; run_attempt=$env:GITHUB_RUN_ATTEMPT; base=$base; start=$start; dry_run=$dry; status='running'; candidates=@(); hardware_validation='pending'}
+$report = [ordered]@{schema=3; acceptance_policy='flash_and_ram_nonincreasing_at_least_one_decreases'; id=$request.id; run_id=$env:GITHUB_RUN_ID; run_attempt=$env:GITHUB_RUN_ATTEMPT; base=$base; start=$start; dry_run=$dry; status='running'; candidates=@(); hardware_validation='pending'}
 function Save-Report {
   $report | ConvertTo-Json -Depth 20 | Set-Content -Encoding utf8 (Join-Path $out 'integration.json')
 }
@@ -111,7 +112,7 @@ try {
   $index = 0
   foreach ($candidate in $request.candidates) {
     $index++
-    $item = [ordered]@{id=$candidate.id; head=$candidate.head; order=$index; independent_flash=$null; independent_ram=$null; independent_delta=$null; independent_ram_delta=$null; decision='rejected'; reason=''; before_flash=$null; before_ram=$null; trial_flash=$null; trial_ram=$null; incremental_delta=$null; incremental_ram_delta=$null; accepted_commit=$null}
+    $item = [ordered]@{id=$candidate.id; head=$candidate.head; order=$index; independent_flash=$null; independent_ram=$null; independent_delta=$null; independent_ram_delta=$null; decision='rejected'; reason=''; before_flash=$null; before_ram=$null; trial_flash=$null; trial_ram=$null; incremental_delta=$null; incremental_ram_delta=$null; accepted_commit=$null; conflict_paths=@(); conflict_onto=$null}
     $report.candidates += $item
     try {
       if ($candidate.reviewed -ne $true) { throw 'Candidate not reviewed' }
@@ -135,8 +136,16 @@ try {
   foreach ($item in ($eligible | Sort-Object { $_.independent_delta }, { $_.independent_ram_delta }, { $_.order })) {
     $item.before_flash = $current.flash
     $item.before_ram = $current.ram
+    $patch = Invoke-SizeCandidatePatch $wt $item.head $accepted
+    if ($patch.status -eq 'pending_conflict') {
+      $item.decision = 'pending_conflict'
+      $item.reason = 'Manual semantic merge and remeasurement required'
+      $item.conflict_paths = @($patch.paths)
+      $item.conflict_onto = $accepted
+      Save-Report
+      continue
+    }
     try {
-      git -C $wt cherry-pick --no-commit $item.head | Out-Host
       if (!(git -C $wt diff --cached --name-only)) { throw 'Empty cumulative patch' }
       git -C $wt commit -m ("Auto size trial: " + $item.id + " (" + $item.head + ")") | Out-Host
       $trial = git -C $wt rev-parse HEAD
@@ -167,6 +176,10 @@ try {
   $report.ram_delta = $final.ram - $initial.ram
   if ($final.flash -gt $initial.flash -or $final.ram -gt $initial.ram) { throw 'Final size exceeds baseline' }
   $report.firmware_commit = $accepted
+  $report.pending_count = @($report.candidates | Where-Object decision -eq 'pending_conflict').Count
+  $report.pending = @($report.candidates | Where-Object decision -eq 'pending_conflict' | ForEach-Object {
+    @{id=$_.id; original_base=$base; original_head=$_.head; conflict_onto=$_.conflict_onto; paths=$_.conflict_paths; independent_flash_delta=$_.independent_delta; independent_ram_delta=$_.independent_ram_delta; rebase_onto_firmware=$accepted; expected_base_flash=$final.flash; expected_base_ram=$final.ram}
+  })
   $report.status = 'measured'
   Save-Report
   $md = @(("# " + $request.id + " automatic integration"), "", "Run: $($env:GITHUB_RUN_ID)/$($env:GITHUB_RUN_ATTEMPT). Dry run: $dry. Hardware validation pending.", "", "Baseline: $($initial.flash) B / RAM $($initial.ram) B. Final: $($final.flash) B / RAM $($final.ram) B. Flash delta: $($report.delta) B. RAM delta: $($report.ram_delta) B.", "", '| Candidate | Independent Flash delta | Independent RAM delta | Cumulative Flash delta | Cumulative RAM delta | Decision | Reason |', '| --- | ---: | ---: | ---: | ---: | --- | --- |')
@@ -174,6 +187,11 @@ try {
     $reason = $item.reason -replace '[\r\n|]', ' '
     $md += "| $($item.id) | $($item.independent_delta) | $($item.independent_ram_delta) | $($item.incremental_delta) | $($item.incremental_ram_delta) | $($item.decision) | $reason |"
   }
+  $md += @('', "Pending conflicts: $($report.pending_count). Not rejected; resolve against the final accepted firmware and submit as new reviewed independent candidates.")
+  foreach ($pending in $report.pending) {
+    $md += "- $($pending.id): original head $($pending.original_head); paths $($pending.paths -join ', '); rebase onto $($pending.rebase_onto_firmware)"
+  }
+  ConvertTo-Json -InputObject @($report.pending) -Depth 12 | Set-Content -Encoding utf8 (Join-Path $out 'pending-conflicts.json')
   $md | Set-Content -Encoding utf8 (Join-Path $out 'integration.md')
   $md | Add-Content $env:GITHUB_STEP_SUMMARY
   $dest = Join-Path $wt 'size-auto-results'
@@ -181,6 +199,7 @@ try {
   $name = "$($request.id)-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT)"
   Copy-Item (Join-Path $out 'integration.json') (Join-Path $dest "$name.json")
   Copy-Item (Join-Path $out 'integration.md') (Join-Path $dest "$name.md")
+  Copy-Item (Join-Path $out 'pending-conflicts.json') (Join-Path $dest "$name-pending.json")
   git -C $wt add -- size-auto-results
   git -C $wt commit -m "Finalize automatic size integration $name (Flash $($report.delta) B, RAM $($report.ram_delta) B)" | Out-Host
   $commit = git -C $wt rev-parse HEAD

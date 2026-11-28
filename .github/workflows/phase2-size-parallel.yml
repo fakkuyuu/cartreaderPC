@@ -319,6 +319,9 @@ jobs:
       - name: Test Flash/RAM acceptance policy
         shell: pwsh
         run: ./.github/scripts/test-size-policy.ps1
+      - name: Test Git conflict deferral
+        shell: pwsh
+        run: ./.github/scripts/test-size-conflict.ps1
       - name: Measure and adopt cumulatively
         shell: pwsh
         run: ./.github/scripts/size-auto-integrate.ps1

@@ -6,6 +6,8 @@ on:
       - '.github/scripts/size-policy.ps1'
       - '.github/scripts/test-size-policy.ps1'
       - '.github/workflows/size-policy-test.yml'
+      - '.github/scripts/size-conflict.ps1'
+      - '.github/scripts/test-size-conflict.ps1'
 permissions:
   contents: read
 jobs:
@@ -16,3 +18,7 @@ jobs:
       - name: Verify all nine Flash and RAM sign combinations
         shell: pwsh
         run: ./.github/scripts/test-size-policy.ps1
+
+      - name: Verify actual Git conflict deferral and continuation
+        shell: pwsh
+        run: ./.github/scripts/test-size-conflict.ps1
