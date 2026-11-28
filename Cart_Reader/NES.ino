@@ -822,18 +822,19 @@ void getMapping() {
     manualFallback = true;
   } else {
     char crcStrAlt[9];
+    const bool differentCrc = oldcrc32 != oldcrc32MMC3;
     println_Msg(F("Searching database"));
     print_Msg(F("for "));
     formatFixedHex(crcStr, oldcrc32, 8);
     print_Msg(crcStr);
-    if (oldcrc32 != oldcrc32MMC3) {
+    if (differentCrc) {
       print_Msg(F(" or "));
       formatFixedHex(crcStrAlt, oldcrc32MMC3, 8);
       print_Msg(crcStrAlt);
     }
     println_Msg(FS(SharedFlashText::ellipsis));
     display_Update();
-    if (database.isPc()) database.findRecord(1, crcStr, oldcrc32 != oldcrc32MMC3 ? crcStrAlt : nullptr);
+    if (database.isPc()) database.findRecord(1, crcStr, differentCrc ? crcStrAlt : nullptr);
     while (database.available()) {
       struct database_entry entry;
 
