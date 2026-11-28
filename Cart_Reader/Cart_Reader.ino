@@ -95,6 +95,7 @@ void showEraseReproWarning() __attribute__((noinline));
 void showPathEllipsisAndUpdate() __attribute__((noinline));
 void showReproCartSizeMb() __attribute__((noinline));
 void showFlashIdAndBlank() __attribute__((noinline));
+void setup_SMS() __attribute__((noinline));
 void showSavingFolderLine() __attribute__((noinline));
 void showFatalWriteVerification() __attribute__((noinline, noreturn));
 void showFlashErasing() __attribute__((noinline));
