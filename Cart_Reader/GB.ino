@@ -100,6 +100,12 @@ bool gbxFlashCFI() {
 }
 #endif
 
+void writeByteSRAM_GB(int, byte);
+static void writeGBSramRegisterA000(uint8_t data) __attribute__((noinline));
+static void writeGBSramRegisterA000(uint8_t data) {
+  writeByteSRAM_GB(0xA000, data);
+}
+
 void feedbackPressAndReset() {
   // Prints string out of the common strings array either with or without newline
   promptAndWaitForButton();
@@ -1161,9 +1167,9 @@ void readROM_GB() {
     // Set ROM bank for TAMA5
     else if (romType == 0xFD) {
       writeByteSRAM_GB(0xA001, 0);
-      writeByteSRAM_GB(0xA000, currBank & 0x0f);
+      writeGBSramRegisterA000(currBank & 0x0f);
       writeByteSRAM_GB(0xA001, 1);
-      writeByteSRAM_GB(0xA000, (currBank >> 4) & 0x0f);
+      writeGBSramRegisterA000((currBank >> 4) & 0x0f);
     }
 
     // Set ROM bank for MBC2/3/4/5
@@ -2587,15 +2593,15 @@ bool writeCFI_GB() {
   Pelican Gameboy Device Read Function
 **************************************************/
 void sendW29C020Command_GB(byte cmd) {
-  writeByteSRAM_GB(0xA000, 0x2);
+  writeGBSramRegisterA000(0x2);
   sendW29C020CommandSufix_GB(cmd);
 }
 
 void sendW29C020CommandSufix_GB(byte cmd) {
   writeByte_GB(0x3555, 0xAA);
-  writeByteSRAM_GB(0xA000, 0x1);
+  writeGBSramRegisterA000(0x1);
   writeByte_GB(0x2AAA, 0x55);
-  writeByteSRAM_GB(0xA000, 0x2);
+  writeGBSramRegisterA000(0x2);
   writeByte_GB(0x3555, cmd);
 }
 
@@ -2616,15 +2622,15 @@ static void dumpAccessoryRange_GB(word& startAddress, word finalAddress, uint32_
 
 static void identifyPelicanSstFlash_GB() __attribute__((noinline));
 static void identifyPelicanSstFlash_GB() {
-  writeByteSRAM_GB(0xA000, 0x2);
+  writeGBSramRegisterA000(0x2);
   writeByte_GB(0x3555, 0xFF);
   delay(100);
-  writeByteSRAM_GB(0xA000, 0x2);
+  writeGBSramRegisterA000(0x2);
   writeByte_GB(0x3555, 0x90);
   delay(100);
   flashid = readByte_GB(0) << 8;
   flashid |= readByte_GB(1);
-  writeByteSRAM_GB(0xA000, 0x2);
+  writeGBSramRegisterA000(0x2);
   writeByte_GB(0x3555, 0xFF);
   delay(100);
   if (flashid != 0xBF04) {
@@ -2650,7 +2656,7 @@ static void identifyPelicanW29C020_GB() {
   delay(10);
 
   // Read the two id bytes into a string
-  writeByteSRAM_GB(0xA000, 0x0);
+  writeGBSramRegisterA000(0x0);
   flashid = readByte_GB(0) << 8;
   flashid |= readByte_GB(1);
 
@@ -2715,7 +2721,7 @@ void readPelican_GB() {
   Pelican Gameboy Device Write Function
 *****************************************/
 void send28LF040Potection_GB(bool enable) {
-  writeByteSRAM_GB(0xA000, 0x0);
+  writeGBSramRegisterA000(0x0);
   readByte_GB(0x3823);
   readByte_GB(0x3820);
   readByte_GB(0x3822);
@@ -2752,7 +2758,7 @@ void writePelican_GB() {
         // Disable BootBlock
         sendW29C020Command_GB(0x80);
         sendW29C020CommandSufix_GB(0x40);
-        writeByteSRAM_GB(0xA000, 0x1);
+        writeGBSramRegisterA000(0x1);
         writeByte_GB(0x2AAA, 0xAA);
         delay(100);
       }
@@ -2776,12 +2782,12 @@ void writePelican_GB() {
       delay(100);
 
       //Erase flash
-      writeByteSRAM_GB(0xA000, 0x2);
+      writeGBSramRegisterA000(0x2);
       writeByte_GB(0x3555, 0x30);
       writeByte_GB(0x3555, 0x30);
       delay(100);
 
-      writeByteSRAM_GB(0xA000, 0x2);
+      writeGBSramRegisterA000(0x2);
       writeByte_GB(0x3555, 0xFF);
       delay(100);
     }
@@ -2795,7 +2801,7 @@ void writePelican_GB() {
       blinkLED();
 
       // Set ROM bank
-      writeByteSRAM_GB(0xA000, currBank);
+      writeGBSramRegisterA000(currBank);
 
       blankCheckRange_GB(0x2000, 0x4000);
     }
@@ -2832,7 +2838,7 @@ void writePelican_GB() {
         sendW29C020Command_GB(0xA0);
 
         // Set ROM bank
-        writeByteSRAM_GB(0xA000, currBank);
+        writeGBSramRegisterA000(currBank);
 
         for (int currByte = 0; currByte < 128; currByte++) {
 
@@ -2854,9 +2860,9 @@ void writePelican_GB() {
 
           toggle = true;
           // Write current byte
-          writeByteSRAM_GB(0xA000, 0x2);
+          writeGBSramRegisterA000(0x2);
           writeByte_GB(0x3555, 0x10);
-          writeByteSRAM_GB(0xA000, currBank);
+          writeGBSramRegisterA000(currBank);
           writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
           while (toggle) {
             byte1 = readByte_GB(currAddr + currByte);
@@ -2865,9 +2871,9 @@ void writePelican_GB() {
           }
           byte1 = readByte_GB(currAddr + currByte);
           if (byte1 != sdBuffer[currByte]) {
-            writeByteSRAM_GB(0xA000, 0x2);
+            writeGBSramRegisterA000(0x2);
             writeByte_GB(0x3555, 0x10);
-            writeByteSRAM_GB(0xA000, currBank);
+            writeGBSramRegisterA000(currBank);
             writeByte_GB(currAddr + currByte, sdBuffer[currByte]);
             while (toggle) {
               byte1 = readByte_GB(currAddr + currByte);
@@ -2901,7 +2907,7 @@ void writePelican_GB() {
 
   // Read number of banks and switch banks
   for (word bank = 0; bank < romBanks; bank++) {
-    writeByteSRAM_GB(0xA000, bank);  // Set ROM bank
+    writeGBSramRegisterA000(bank);  // Set ROM bank
     romAddress = 0x2000;
 
     // Blink led
