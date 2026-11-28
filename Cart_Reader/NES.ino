@@ -3367,10 +3367,10 @@ static void setOuterChr45_NES(size_t i) {
   write_prg_byte(0x6000, 0x80);                       // PRG-AND
 }
 
-static void __attribute__((noinline)) dumpVrcChrR64_NES(word banks, word upperReg, byte upperMask) {
+static void __attribute__((noinline)) dumpVrcChrR64_NES(word banks, word upperReg, byte upperMask, word lowerReg = 0xB000, byte shift = 0) {
   for (word i = 0; i < banks; ++i) {
-    write_prg_byte(0xB000, i & 0xF);
-    write_prg_byte(upperReg, (i >> 4) & upperMask);
+    write_prg_byte(lowerReg, (i << shift) & 0xF);
+    write_prg_byte(upperReg, (i >> (4 - shift)) & upperMask);
     dumpCHR1KiB();
   }
 }
@@ -3601,12 +3601,7 @@ void readCHR(bool readrom) {
           break;
 
         case 18:  // 128K/256K
-          banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xA000, i & 0xF);         // CHR Bank Lower 4 bits
-            write_prg_byte(0xA001, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits
-            dumpCHR1KiB();
-          }
+          dumpVrcChrR64_NES(chrBanks4K * 4, 0xA001, 0xF, 0xA000, 0);
           break;
 
         case 19:  // 128K/256K
@@ -3630,12 +3625,7 @@ void readCHR(bool readrom) {
 
 
         case 22:  // 128K
-          banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xB000, (i << 1) & 0xF);  // CHR Bank Lower 4 bits
-            write_prg_byte(0xB002, (i >> 3) & 0xF);  // CHR Bank Upper 4 bits
-            dumpCHR1KiB();
-          }
+          dumpVrcChrR64_NES(chrBanks4K * 4, 0xB002, 0xF, 0xB000, 1);
           break;
 
         case 23:
