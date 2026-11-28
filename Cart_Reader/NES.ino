@@ -675,14 +675,11 @@ void setRomnameFromString(const char* input) {
 
   uint8_t myLength = 0;
   for (uint8_t i = 0; i < 20 && myLength < 15; i++) {
+    const char c = input[i];
     // Stop at first "(" to remove "(Country)"
-    if (input[i] == '(') {
-      break;
-    }
-    if (
-      (input[i] >= '0' && input[i] <= '9') || (input[i] >= 'A' && input[i] <= 'Z') || (input[i] >= 'a' && input[i] <= 'z')) {
-      romName[myLength++] = input[i];
-    }
+    if (c == '(') break;
+    if (uint8_t(c - '0') <= 9 || uint8_t((c | 0x20) - 'a') <= 25)
+      romName[myLength++] = c;
   }
 
   // If name consists out of all japanese characters use CART as name
