@@ -750,7 +750,7 @@ static void writeSramBlock_MSX(word address) {
   }
 }
 
-void writeRAM_MSX() {
+void __attribute__((noinline)) writeRAM_MSX() {
   display_Clear();
 
   if (msxramsize == 0) {
