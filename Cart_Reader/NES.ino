@@ -2062,6 +2062,13 @@ static void dumpCHR8KiB() {
 }
 
 // Simple mappers select each bank with a single register write.
+static void __attribute__((noinline)) dumpMaskedPrgR67_NES(word count, word reg, byte mask, byte shift, byte step, word size, word base) {
+  for (word i = 0; i < count; i += step) {
+    write_prg_byte(reg, (i & mask) << shift);
+    dumpBankPRG(0, size, base);
+  }
+}
+
 static void dumpSequentialPRGBanks(uint16_t count, uint16_t reg, uint8_t shift,
                                    uint16_t bankSize, uint16_t base, uint16_t start = 0) {
   for (uint16_t bank = 0; bank < count; ++bank) {
@@ -2871,11 +2878,7 @@ void readPRG(bool readrom) {
         break;
 
       case 113:
-        banks = prgBanks16K / 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x4100, (i & 0x07) << 3);
-          dumpPRG32KiB(base);
-        }
+        dumpMaskedPrgR67_NES(prgBanks16K / 2, 0x4100, 0x07, 3, 1, 0x8000, base);
         break;
 
       case 114:  // Submapper 0
@@ -2983,11 +2986,7 @@ void readPRG(bool readrom) {
         break;
 
       case 189:
-        banks = prgBanks16K / 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x4132, (i << 4) & 0xF0);
-          dumpPRG32KiB(base);
-        }
+        dumpMaskedPrgR67_NES(prgBanks16K / 2, 0x4132, 0x0F, 4, 1, 0x8000, base);
         break;
 
       case 200:
@@ -3016,11 +3015,7 @@ void readPRG(bool readrom) {
         break;
 
       case 203:
-        banks = prgBanks16K;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8000, (i & 0x1F) << 2);
-          dumpPRG16KiB(base);
-        }
+        dumpMaskedPrgR67_NES(prgBanks16K, 0x8000, 0x1F, 2, 1, 0x4000, base);
         break;
 
       case 210:  // 128K/256K
@@ -3183,11 +3178,7 @@ void readPRG(bool readrom) {
         break;
 
       case 240:
-        banks = prgBanks16K / 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x5FFF, (i & 0xF) << 4);
-          dumpPRG32KiB(base);
-        }
+        dumpMaskedPrgR67_NES(prgBanks16K / 2, 0x5FFF, 0x0F, 4, 1, 0x8000, base);
         break;
 
       case 242:                            // total size is 640k THIS IS NORMAL
