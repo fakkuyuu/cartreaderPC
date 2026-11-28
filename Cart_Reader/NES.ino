@@ -2057,7 +2057,7 @@ static void __attribute__((noinline)) dumpMaskedPrgR67_NES(word count, word reg,
   }
 }
 
-static void dumpSequentialPRGBanks(uint16_t count, uint16_t reg, uint8_t shift,
+static void __attribute__((noinline)) dumpSequentialPRGBanks(uint16_t count, uint16_t reg, uint8_t shift,
                                    uint16_t bankSize, uint16_t base, uint16_t start = 0) {
   for (uint16_t bank = 0; bank < count; ++bank) {
     write_prg_byte(reg, bank << shift);
