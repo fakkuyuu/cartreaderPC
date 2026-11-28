@@ -2458,16 +2458,11 @@ void readPRG(bool readrom) {
       case 75:  // 128K/256K
       case 272:
         banks = prgBanks16K * 2;
-        if (mapper == 23) {
+        if (mapper == 23 || mapper == 272) {
           write_prg_byte(0x9002, 0);
-          write_prg_byte(0x9008, 0);
-        }
-        if (mapper == 25) {
+          write_prg_byte(mapper == 23 ? 0x9008 : 0x9004, 0);
+        } else if (mapper == 25) {
           write_prg_byte(0x9005, 0);  // set vrc4 swap setting for TMNT2
-        }
-        if (mapper == 272) {
-          write_prg_byte(0x9002, 0);
-          write_prg_byte(0x9004, 0);
         }
         dumpSequentialPRGBanks(banks, 0x8000, 0, 0x2000, base);
         break;
