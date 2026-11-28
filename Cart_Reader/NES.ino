@@ -2148,6 +2148,8 @@ static void writeAndDump235R64_NES(word address, word base) {
   dumpPRG32KiB(base);
 }
 
+static void initMapper19Ram_NES();
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2437,9 +2439,7 @@ void readPRG(bool readrom) {
 
       case 19:  // 128K/256K
       case 532:
-        for (size_t j = 0; j < 64; j++) {  // Init Register
-          write_ram_byte(0xE000, 0);       // PRG Bank 0 ($8000-$9FFF)
-        }
+        initMapper19Ram_NES();  // PRG Bank 0 ($8000-$9FFF)
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i++) {
           write_ram_byte(0xE000, i);  // PRG Bank 0 ($8000-$9FFF)
