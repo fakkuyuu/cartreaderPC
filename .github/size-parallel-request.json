@@ -1,98 +1,135 @@
 {
-  "id": "round80-auto",
-  "base": "29bfab9f093a608e1e81520f404687fb2673f089",
-  "expected_base_flash": 201824,
+  "id": "round80b-auto",
+  "base": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+  "expected_base_flash": 201772,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "gb-0x7fe1",
-      "head": "c84fbe475587c582f167f38f110cfd76cb2ac19d",
+      "id": "r80b-nes-e000",
+      "head": "943ad5596bc335a9fcd3afd6d1f5a1cbe8a6fd2a",
       "reviewed": true,
-      "target": "GB",
-      "functions": [
-        "writeByte_GB",
-        "writeGBRegister7FE1"
-      ],
-      "description": "Share fixed address 0x7FE1 for writeByte_GB; replace 8 exact-address source calls (8 address-load sites in round 79 final ELF)."
-    },
-    {
-      "id": "nes-0xc000",
-      "head": "4da0b9c3e2298a31bf0efdb4f8e92b7c076b9453",
-      "reviewed": true,
-      "target": "NES",
-      "functions": [
-        "write_prg_byte",
-        "writeNESRegisterC000"
-      ],
-      "description": "Share only exact 0xC000 writes in write_prg_byte; replace 13 exact-constant source calls (6 address-load sites in round 79 final ELF). Leave 0xC000 + expressions untouched."
-    },
-    {
-      "id": "nes-0xe000",
-      "head": "a39500c86ee74355d6f3a7a1da930a3621130db6",
-      "reviewed": true,
+      "retest": true,
+      "retest_reason": "Resubmission of round 80 pending_conflict after three round 80 candidates were adopted. The exact 0xE000 calls were reapplied on the final integrated firmware; the prior independent result did not include cumulative interaction with that firmware.",
       "target": "NES",
       "functions": [
         "write_prg_byte",
         "writeNESRegisterE000"
       ],
-      "description": "Share fixed address 0xE000 for write_prg_byte; replace 6 exact-address source calls (6 address-load sites in round 79 final ELF)."
+      "description": "Resubmit round 80 NES 0xE000 fixed-address helper; preserve six exact-address writes against the round 80 integrated firmware.",
+      "resubmission": {
+        "original_run_id": "46133264369",
+        "original_candidate_sha": "a39500c86ee74355d6f3a7a1da930a3621130db6",
+        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "conflict_files": [
+          "Cart_Reader/NES.ino"
+        ],
+        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "candidate_sha": "943ad5596bc335a9fcd3afd6d1f5a1cbe8a6fd2a"
+      }
     },
     {
-      "id": "msx-0x4fff",
-      "head": "19850de16f29402e165c928b5fd100b2344d2ec9",
+      "id": "r80b-msx-a000",
+      "head": "292511b7ffa5f62373e45c3bfa270747ea124877",
       "reviewed": true,
-      "target": "MSX",
-      "functions": [
-        "writeData_MSX",
-        "writeMSXRegister4FFF"
-      ],
-      "description": "Share fixed address 0x4FFF for writeData_MSX; replace 6 exact-address source calls (6 address-load sites in round 79 final ELF)."
-    },
-    {
-      "id": "msx-0xa000",
-      "head": "cdc6aaeaf7fac4f19c89125845eabc08061091d8",
-      "reviewed": true,
+      "retest": true,
+      "retest_reason": "Resubmission of round 80 pending_conflict after three round 80 candidates were adopted. The exact 0xA000 calls were reapplied on the final integrated firmware; the prior independent result did not include cumulative interaction with that firmware.",
       "target": "MSX",
       "functions": [
         "writeData_MSX",
         "writeMSXRegisterA000"
       ],
-      "description": "Share fixed address 0xA000 for writeData_MSX; replace 5 exact-address source calls (6 address-load sites in round 79 final ELF)."
+      "description": "Resubmit round 80 MSX 0xA000 fixed-address helper; preserve five exact-address writes against the round 80 integrated firmware.",
+      "resubmission": {
+        "original_run_id": "46133264369",
+        "original_candidate_sha": "cdc6aaeaf7fac4f19c89125845eabc08061091d8",
+        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "conflict_files": [
+          "Cart_Reader/MSX.ino"
+        ],
+        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "candidate_sha": "292511b7ffa5f62373e45c3bfa270747ea124877"
+      }
     },
     {
-      "id": "gb-0x3000",
-      "head": "81f647c2fcb69d249ed2f361d22093a2936581fa",
+      "id": "r80b-gb-3000",
+      "head": "877c39f431ff0e25dcd2789a0e923c0caf377601",
       "reviewed": true,
+      "retest": true,
+      "retest_reason": "Resubmission of round 80 pending_conflict after three round 80 candidates were adopted. The 2-argument writeByte_GB calls were reapplied on the final integrated firmware, keeping the 3-argument overload untouched.",
       "target": "GB",
       "functions": [
         "writeByte_GB",
         "writeGBRegister3000"
       ],
-      "description": "Share fixed address 0x3000 for the 2-argument writeByte_GB overload; replace 8 exact-address calls (5 address-load sites in round 79 final ELF)."
+      "description": "Resubmit round 80 GB 0x3000 helper using only the 2-argument writeByte_GB overload; preserve eight exact-address writes against the round 80 integrated firmware.",
+      "resubmission": {
+        "original_run_id": "46133264369",
+        "original_candidate_sha": "81f647c2fcb69d249ed2f361d22093a2936581fa",
+        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "conflict_files": [
+          "Cart_Reader/GB.ino"
+        ],
+        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "candidate_sha": "877c39f431ff0e25dcd2789a0e923c0caf377601"
+      }
     },
     {
-      "id": "nes-0x6001",
-      "head": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+      "id": "r80b-nes-6001",
+      "head": "685d639cae05b9e4e987a5870297359843e93e27",
       "reviewed": true,
+      "retest": true,
+      "retest_reason": "Resubmission of round 80 pending_conflict after three round 80 candidates were adopted. The exact 0x6001 calls were reapplied on the final integrated firmware; the prior independent result did not include cumulative interaction with that firmware.",
       "target": "NES",
       "functions": [
         "write_prg_byte",
         "writeNESRegister6001"
       ],
-      "description": "Share fixed address 0x6001 for write_prg_byte; replace 6 exact-address source calls (5 address-load sites in round 79 final ELF)."
+      "description": "Resubmit round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes against the round 80 integrated firmware.",
+      "resubmission": {
+        "original_run_id": "46133264369",
+        "original_candidate_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
+        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "conflict_files": [
+          "Cart_Reader/NES.ino"
+        ],
+        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27"
+      }
     },
     {
-      "id": "msx-0x6000",
-      "head": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+      "id": "r80b-msx-6000",
+      "head": "947f388154f0e923ea2f682118c3e95300dad5c6",
       "reviewed": true,
+      "retest": true,
+      "retest_reason": "Resubmission of round 80 pending_conflict after three round 80 candidates were adopted. The exact 0x6000 calls were reapplied on the final integrated firmware; the prior independent result did not include cumulative interaction with that firmware.",
       "target": "MSX",
       "functions": [
         "writeData_MSX",
         "writeMSXRegister6000"
       ],
-      "description": "Share fixed address 0x6000 for writeData_MSX; replace 3 exact-address source calls (4 address-load sites in round 79 final ELF)."
+      "description": "Resubmit round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes against the round 80 integrated firmware.",
+      "resubmission": {
+        "original_run_id": "46133264369",
+        "original_candidate_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
+        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
+        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
+        "conflict_files": [
+          "Cart_Reader/MSX.ino"
+        ],
+        "conflict_onto_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "target_base_sha": "6b6c8b0d524d192636248b5f55d46f9f39e37e46",
+        "candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6"
+      }
     }
   ]
 }
