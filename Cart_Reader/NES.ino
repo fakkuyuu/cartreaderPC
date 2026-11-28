@@ -429,6 +429,12 @@ static const char* const menuOptionsNESFlash[] PROGMEM = { nesFlashMenuItem1, ne
 #endif
 
 // NES start menu
+static void __attribute__((noinline)) finishNesRawMenuR71_NES() {
+  resetROM();
+  printBlankLine();
+  promptAndWaitForButton();
+}
+
 static void finishNesRomMenuRead() __attribute__((noinline));
 static void finishNesRomMenuRead() {
   printBlankLine();
@@ -484,9 +490,7 @@ void nesMenu() {
         readRAM();
       else
         writeRAM();
-      resetROM();
-      printBlankLine();
-      promptAndWaitForButton();
+      finishNesRawMenuR71_NES();
       break;
 
     // Change Mapper
@@ -535,9 +539,7 @@ void nesChipMenu() {
         readPRG(false);
       else
         readCHR(false);
-      resetROM();
-      printBlankLine();
-      promptAndWaitForButton();
+      finishNesRawMenuR71_NES();
       break;
 
     // Return to Main Menu
