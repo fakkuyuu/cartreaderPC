@@ -1050,6 +1050,11 @@ static void writeNESRegisterC000(uint8_t data) {
   write_prg_byte(0xC000, data);
 }
 
+static void writeNESRegister6800(uint8_t data) __attribute__((noinline));
+static void writeNESRegister6800(uint8_t data) {
+  write_prg_byte(0x6800, data);
+}
+
 static void write_prg_byte(unsigned int address, uint8_t data) {
   PHI2_LOW;
   ROMSEL_HI;
@@ -2328,7 +2333,7 @@ void readPRG(bool readrom) {
               write_prg_byte(0x4100, 0x01);  // MMC3 mode
             }
             if ((mapper == 126) || (mapper == 422) || (mapper == 534)) {
-              write_prg_byte(0x6800, (i & 0x300) >> 4 | (i & 0x70) >> 4);  // submapper 0
+              writeNESRegister6800( (i & 0x300) >> 4 | (i & 0x70) >> 4);  // submapper 0
               // write_prg_byte(0x6800, (i & 0x80) >> 2 | (i & 0x70) >> 4); // submapper 1
             }
             if (mapper == 134) {
