@@ -2879,10 +2879,7 @@ void readPRG(bool readrom) {
 
       case 125:
         base = 0x6000;
-        for (size_t i = 0; i < 16; i++) {
-          write_prg_byte(0x6000, i);
-          dumpPRG8KiB(base);
-        }
+        dumpSequentialPRGBanks(16, 0x6000, 0, 0x2000, base);
         break;
 
       case 142:
