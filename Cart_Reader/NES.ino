@@ -2124,6 +2124,11 @@ static void __attribute__((noinline)) writePair68R61_NES(byte a, byte b) {
   write_prg_byte(0x8000, b);
 }
 
+static void writeAndDump235R64_NES(word address, word base) {
+  write_prg_byte(address, 0);
+  dumpPRG32KiB(base);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3151,25 +3156,12 @@ void readPRG(bool readrom) {
         break;
 
       case 235:
-        for (size_t i = 0; i < 32; i++) {
-          write_prg_byte(0x8000 + i, 0);
-          dumpPRG32KiB(base);
-        }
-        if (prgsize > 6) {
-          for (size_t i = 32; i < 64; i++) {
-            write_prg_byte(0x80E0 + i, 0);
-            dumpPRG32KiB(base);
-          }
-          if (prgsize > 7) {
-            for (size_t i = 64; i < 96; i++) {
-              write_prg_byte(0x81E0 + i, 0);
-              dumpPRG32KiB(base);
-            }
-            for (size_t i = 96; i < 128; i++) {
-              write_prg_byte(0x82E0 + i, 0);
-              dumpPRG32KiB(base);
-            }
-          }
+        for (byte region = 0; region < 4; ++region) {
+          if (region == 1 && prgsize <= 6) break;
+          if (region == 2 && prgsize <= 7) break;
+          word start = region == 0 ? 0x8000U : 0x8000U + (word(region) << 8) + (word(region - 1) << 5);
+          for (byte bank = 0; bank < 32; ++bank)
+            writeAndDump235R64_NES(start + bank, base);
         }
         break;
 
@@ -3389,6 +3381,14 @@ static void setOuterChr45_NES(size_t i) {
   write_prg_byte(0x6000, 0x80);                       // PRG-AND
 }
 
+static void __attribute__((noinline)) dumpVrcChrR64_NES(word banks, word upperReg, byte upperMask) {
+  for (word i = 0; i < banks; ++i) {
+    write_prg_byte(0xB000, i & 0xF);
+    write_prg_byte(upperReg, (i >> 4) & upperMask);
+    dumpCHR1KiB();
+  }
+}
+
 void readCHR(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3555,14 +3555,8 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           write_prg_byte(0x5101, 0);  // 8K CHR Banks
           for (size_t i = 0; i < banks; i++) {
-            if (i == 0)
-              write_prg_byte(0x5130, 0);  // Set Upper 2 bits
-            else if (i == 8)
-              write_prg_byte(0x5130, 1);  // Set Upper 2 bits
-            else if (i == 16)
-              write_prg_byte(0x5130, 2);  // Set Upper 2 bits
-            else if (i == 24)
-              write_prg_byte(0x5130, 3);  // Set Upper 2 bits
+            if (i <= 24 && (i & 7) == 0)
+              write_prg_byte(0x5130, i >> 3);
             write_prg_byte(0x5127, i);
             dumpCHR8KiB();
           }
@@ -3621,14 +3615,7 @@ void readCHR(bool readrom) {
 
         case 21:  // 128K/256K
           banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xB000, i & 0xF);           // CHR Bank Lower 4 bits
-            if (chrsize == 5)                          // Check CHR Size to determine VRC4a (128K) or VRC4c (256K)
-              write_prg_byte(0xB002, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4a (Wai Wai World 2)
-            else                                       // banks == 256
-              write_prg_byte(0xB040, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits VRC4c (Ganbare Goemon Gaiden 2)
-            dumpCHR1KiB();
-          }
+          dumpVrcChrR64_NES(banks, chrsize == 5 ? 0xB002 : 0xB040, 0xF);
           break;
 
 
@@ -3654,11 +3641,7 @@ void readCHR(bool readrom) {
               display_Update();
               m23reg = 0xB004;
             }
-            for (size_t i = 0; i < banks; i++) {
-              write_prg_byte(0xB000, i & 0xF);          // CHR Bank 0: Lower 4 bits
-              write_prg_byte(m23reg, (i >> 4) & 0x1F);  // CHR Bank 0: Upper 5 bits
-              dumpCHR1KiB();
-            }
+            dumpVrcChrR64_NES(banks, m23reg, 0x1F);
             break;
           }
 
@@ -3671,11 +3654,7 @@ void readCHR(bool readrom) {
 
         case 25:  // 128K/256K
           banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xB000, i & 0xF);         // CHR Bank Lower 4 bits
-            write_prg_byte(0xB00A, (i >> 4) & 0xF);  // Combine VRC2c and VRC4b, VRC4d reg
-            dumpCHR1KiB();
-          }
+          dumpVrcChrR64_NES(banks, 0xB00A, 0xF);
           break;
 
 
@@ -3752,19 +3731,10 @@ void readCHR(bool readrom) {
           banks = chrBanks4K * 4;
           write_prg_byte(0xA001, 0x80);  // Unlock Write Protection - not used by some carts
           for (size_t i = 0; i < banks; i++) {
-            // set outer bank registers
-            setOuterChr45_NES(i);
-            // set inner bank registers
-            writeMmc3PairR59_NES(0x2, i);
-            for (size_t address = 0x1000; address < 0x1200; address += 512) {
-              dumpCHR_M2(address);  // Read CHR with M2 Pulse
-            }
-            // set outer bank registers
-            setOuterChr45_NES(i);
-            // set inner bank registers
-            writeMmc3PairR59_NES(0x2, i);
-            for (size_t address = 0x1200; address < 0x1400; address += 512) {
-              dumpCHR_M2(address);  // Read CHR with M2 Pulse
+            for (word address = 0x1000; address < 0x1400; address += 512) {
+              setOuterChr45_NES(i);
+              writeMmc3PairR59_NES(0x2, i);
+              dumpCHR_M2(address);
             }
           }
           break;
