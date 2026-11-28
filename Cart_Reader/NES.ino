@@ -3389,6 +3389,13 @@ static void __attribute__((noinline)) dumpVrcChrR64_NES(word banks, word upperRe
   }
 }
 
+static void __attribute__((noinline)) dumpMaskedChrR65_NES(word banks, word reg, byte mask, word bankSize) {
+  for (word i = 0; i < banks; ++i) {
+    write_prg_byte(reg, i & mask);
+    dumpBankCHR(0, bankSize);
+  }
+}
+
 void readCHR(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3720,11 +3727,7 @@ void readCHR(bool readrom) {
           break;
 
         case 42:
-          banks = chrBanks4K;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, i & 0x0F);
-            dumpCHR4KiB();
-          }
+          dumpMaskedChrR65_NES(chrBanks4K, 0x8000, 0x0F, 0x1000);
           break;
 
         case 45:  // 128K/256K/512K/1024K
@@ -4062,11 +4065,7 @@ void readCHR(bool readrom) {
           break;
 
         case 203:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, (i & 0x03));
-            dumpCHR8KiB();
-          }
+          dumpMaskedChrR65_NES(chrBanks4K / 2, 0x8000, 0x03, 0x2000);
           break;
 
         case 210:  // 128K/256K
@@ -4120,11 +4119,7 @@ void readCHR(bool readrom) {
           break;
 
         case 240:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x5FFF, (i & 0xF));
-            dumpCHR8KiB();
-          }
+          dumpMaskedChrR65_NES(chrBanks4K / 2, 0x5FFF, 0xF, 0x2000);
           break;
 
         case 246:
@@ -4212,11 +4207,7 @@ void readCHR(bool readrom) {
           break;
 
         case 519:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000, i & 0x7F);
-            dumpCHR8KiB();
-          }
+          dumpMaskedChrR65_NES(chrBanks4K / 2, 0x8000, 0x7F, 0x2000);
           break;
       }
       if (!readrom) {
