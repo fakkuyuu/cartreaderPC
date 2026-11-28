@@ -1,64 +1,98 @@
 {
-  "id": "round80c-auto",
-  "base": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
-  "expected_base_flash": 201750,
+  "id": "round81-auto",
+  "base": "6ba1b83f43e31405b7efb3bdd0067ecaa9449d64",
+  "expected_base_flash": 201738,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "r80c-nes-6001",
-      "head": "536f443394379900ea6d50e9c46f94678e809ac2",
+      "id": "r81-gb-2100",
+      "head": "a5232164f4280447ace832c9e50a9ed371b1fe7f",
       "reviewed": true,
-      "retest": true,
-      "retest_reason": "Second resubmission of the original round 80 NES 0x6001 pending conflict. Reapplied the exact 0x6001 helper and six original call sites onto the later accepted firmware after the NES 0xE000 candidate was adopted; cumulative result on that firmware must be measured.",
+      "target": "GB",
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegister2100"
+      ],
+      "description": "Share fixed 0x2100 writes; 5 exact-address call sites."
+    },
+    {
+      "id": "r81-gb-7555",
+      "head": "5cb8c796e5b7796fe8ae8ea152a5607b23ddf596",
+      "reviewed": true,
+      "target": "GB",
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegister7555"
+      ],
+      "description": "Share fixed 0x7555 writes; 4 exact-address call sites."
+    },
+    {
+      "id": "r81-gb-1000",
+      "head": "fe45505fcb0873bf7e87e6580e19e3b67ec23b30",
+      "reviewed": true,
+      "target": "GB",
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegister1000"
+      ],
+      "description": "Share fixed 0x1000 writes; 4 exact-address call sites."
+    },
+    {
+      "id": "r81-gb-4aaa",
+      "head": "c95d8975ef33790492f07eff67dd69474a0bd981",
+      "reviewed": true,
+      "target": "GB",
+      "functions": [
+        "writeByte_GB",
+        "writeGBRegister4AAA"
+      ],
+      "description": "Share fixed 0x4AAA writes; 3 exact-address call sites."
+    },
+    {
+      "id": "r81-nes-9555",
+      "head": "dab6a70c67bf7d374afdbf342a35f117549899ba",
+      "reviewed": true,
       "target": "NES",
       "functions": [
         "write_prg_byte",
-        "writeNESRegister6001"
+        "writeNESRegister9555"
       ],
-      "description": "Second resubmission of round 80 NES 0x6001 fixed-address helper; preserve six exact-address writes on the updated integrated firmware.",
-      "resubmission": {
-        "original_run_id": "46133264369",
-        "original_candidate_sha": "b1cfcecc1eec52630095cfa5395ece391d49279b",
-        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
-        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
-        "prior_resubmission_run_id": "46134316289",
-        "prior_resubmission_candidate_sha": "685d639cae05b9e4e987a5870297359843e93e27",
-        "conflict_files": [
-          "Cart_Reader/NES.ino"
-        ],
-        "conflict_onto_sha": "a2d6eb6ad04522b6cd06514b04c8800c19c65a66",
-        "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
-        "candidate_sha": "536f443394379900ea6d50e9c46f94678e809ac2"
-      }
+      "description": "Share fixed 0x9555 writes; 16 exact-address call sites."
     },
     {
-      "id": "r80c-msx-6000",
-      "head": "b27ce72e15943c7f2a306385f10b817855924ad1",
+      "id": "r81-nes-aaaa",
+      "head": "4ec6f931b0e73042ac678bc11ac93cad7b187a61",
       "reviewed": true,
-      "retest": true,
-      "retest_reason": "Second resubmission of the original round 80 MSX 0x6000 pending conflict. Reapplied the exact 0x6000 helper and three original call sites onto the later accepted firmware after the MSX 0xA000 candidate was adopted; cumulative result on that firmware must be measured.",
-      "target": "MSX",
+      "target": "NES",
       "functions": [
-        "writeData_MSX",
-        "writeMSXRegister6000"
+        "write_prg_byte",
+        "writeNESRegisterAAAA"
       ],
-      "description": "Second resubmission of round 80 MSX 0x6000 fixed-address helper; preserve three exact-address writes on the updated integrated firmware.",
-      "resubmission": {
-        "original_run_id": "46133264369",
-        "original_candidate_sha": "13289d049ede84e64c842c84cbe9f0897240ab4f",
-        "original_pending_record": "size-auto-results/round80-auto-46133264369-1-pending.json",
-        "original_integration_record": "size-auto-results/round80-auto-46133264369-1.json",
-        "prior_resubmission_run_id": "46134316289",
-        "prior_resubmission_candidate_sha": "947f388154f0e923ea2f682118c3e95300dad5c6",
-        "conflict_files": [
-          "Cart_Reader/MSX.ino"
-        ],
-        "conflict_onto_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
-        "target_base_sha": "1e34e18b8b4e7ac01a10bacbd9c9c2ddddb788e3",
-        "candidate_sha": "b27ce72e15943c7f2a306385f10b817855924ad1"
-      }
+      "description": "Share fixed 0xAAAA writes; 9 exact-address call sites."
+    },
+    {
+      "id": "r81-nes-6800",
+      "head": "3163c281f47194b630ea749704a797cfad9fd096",
+      "reviewed": true,
+      "target": "NES",
+      "functions": [
+        "write_prg_byte",
+        "writeNESRegister6800"
+      ],
+      "description": "Share fixed 0x6800 writes; 6 active exact-address call sites; commented call excluded."
+    },
+    {
+      "id": "r81-nes-5001",
+      "head": "3267bdfb04aeee0918287413368eaca95a068841",
+      "reviewed": true,
+      "target": "NES",
+      "functions": [
+        "write_prg_byte",
+        "writeNESRegister5001"
+      ],
+      "description": "Share fixed 0x5001 writes; 4 exact-address call sites."
     }
   ]
 }
