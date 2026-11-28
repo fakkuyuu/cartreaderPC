@@ -2721,7 +2721,7 @@ void write369in1(byte blockNumber) {
 //******************************************
 // Flash Repro function
 //******************************************
-void flashRepro_GBA(boolean option) {
+__attribute__((noinline)) void flashRepro_GBA(boolean option) {
   // Check flashrom ID's
   idFlashrom_GBA();
 
