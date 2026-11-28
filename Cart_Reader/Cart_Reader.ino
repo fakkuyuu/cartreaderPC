@@ -91,6 +91,7 @@ void showFileNameAndUpdate() __attribute__((noinline));
 void closeAndClearDisplay() __attribute__((noinline));
 void showEraseReproWarning() __attribute__((noinline));
 void showPathEllipsisAndUpdate() __attribute__((noinline));
+void readROM_GBA() __attribute__((noinline));
 void showReproCartSizeMb() __attribute__((noinline));
 void showFlashIdAndBlank() __attribute__((noinline));
 void showSavingFolderLine() __attribute__((noinline));
