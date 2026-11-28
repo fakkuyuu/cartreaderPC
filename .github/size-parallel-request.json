@@ -1,25 +1,40 @@
 {
-  "id": "round62-cumulative",
-  "base": "654d322cbff2ab753be06cdc19d992c6053b939e",
-  "expected_base_flash": 204098,
+  "id": "round63-independent",
+  "base": "a2fb50d4f878d7650ce22e9a7df637aaa0bfd876",
+  "expected_base_flash": 203930,
   "expected_base_ram": 6059,
-  "endpoints_only": true,
   "candidates": [
     {
-      "id": "stage2",
-      "head": "b5db1c81732f4ae38cb10900537cdd572eae5682"
+      "id": "nes-a29040-title",
+      "head": "6f1e1f2395f9ea93b85e83e7af3d5d4f36cf22af"
     },
     {
-      "id": "stage3",
-      "head": "f6cb28cf3ac0da142f8bfbd9d5681715b3a4ecbc"
+      "id": "ws-verify-report",
+      "head": "16fac9b98e128fef6b3c51daffff8d473cd3bbed"
     },
     {
-      "id": "stage4",
-      "head": "60ae8afface8d5a76c79eda2c26bcd13f7b25caa"
+      "id": "snes-spc7110-map",
+      "head": "1c30f06703bffa8be090cae28d046df2bb5a1769"
     },
     {
-      "id": "stage5",
-      "head": "eea266f21387475aa5f75bfba2e29d6dc17dc104"
+      "id": "nes-chr-unlock",
+      "head": "944f7e599aec7015051b49a6b8527829975093ca"
+    },
+    {
+      "id": "gb-mbc6-error-cleanup",
+      "head": "8934f2c6281f92b1f852c949bab941afbda4f4a2"
+    },
+    {
+      "id": "md-read-finish",
+      "head": "cb42affde52d1a96fc17fca805d5cee8f778b1c4"
+    },
+    {
+      "id": "md-write-finish",
+      "head": "13f10246e84e3fed3c41af387b3115e5ae91e346"
+    },
+    {
+      "id": "n64-repro-warning",
+      "head": "77cc4253cf6e6e53f4dc7b744c0ec80c180cc621"
     }
   ]
 }
