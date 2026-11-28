@@ -890,10 +890,11 @@ void readDataLine_NES(FsFile& database, void* e) {
   struct database_entry* entry = (database_entry*)e;
   get_line(entry->crc_str, &database, sizeof(entry->crc_str));
 
-  entry->crc_str[8] = 0;
-  entry->crc512_str = &entry->crc_str[8 + 1];
-  entry->crc512_str[8] = 0;
-  entry->iNES_str = &entry->crc_str[8 + 1 + 8 + 1];
+  char* text = entry->crc_str;
+  text[8] = 0;
+  text[17] = 0;
+  entry->crc512_str = text + 9;
+  entry->iNES_str = text + 18;
 
   // Convert "4E4553" to (0x4E, 0x45, 0x53)
   decodeNesHeader(entry->iNES_str, iNES_HEADER);
