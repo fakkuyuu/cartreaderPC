@@ -2572,10 +2572,7 @@ void readPRG(bool readrom) {
 
       case 43:
         base = 0xC000;
-        for (size_t i = 0; i < 8; i++) {
-          write_prg_byte(0x4022, i);
-          dumpPRG8KiB(base);
-        }
+        dumpSequentialPRGBanks(8, 0x4022, 0, 0x2000, base);
         base = 0x5000;
         for (size_t i = 0; i < 4; i++) {
           dumpBankPRG(0x0, 0x1000, base);
@@ -2891,20 +2888,14 @@ void readPRG(bool readrom) {
 
       case 120:
         base = 0x6000;
-        for (size_t i = 0; i < 8; i++) {
-          write_prg_byte(0x41FF, i);
-          dumpPRG8KiB(base);
-        }
+        dumpSequentialPRGBanks(8, 0x41FF, 0, 0x2000, base);
         base = 0x8000;
         dumpPRG32KiB(base);
         break;
 
       case 125:
         base = 0x6000;
-        for (size_t i = 0; i < 16; i++) {
-          write_prg_byte(0x6000, i);
-          dumpPRG8KiB(base);
-        }
+        dumpSequentialPRGBanks(16, 0x6000, 0, 0x2000, base);
         break;
 
       case 142:
@@ -3212,11 +3203,7 @@ void readPRG(bool readrom) {
 
       case 252:
       case 253:
-        banks = prgBanks16K * 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xA010, i);
-          dumpBankPRG(0x2000, 0x4000, base);
-        }
+        dumpSequentialPRGBanks(prgBanks16K * 2, 0xA010, 0, 0x4000, base, 0x2000);
         break;
 
       case 261:
