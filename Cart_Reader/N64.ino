@@ -3732,7 +3732,7 @@ void writeMSP55LV100_N64(unsigned long sectorSize) {
 }
 
 // Write Spansion S29GL256N flashrom using the 32 byte write buffer
-void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
+__attribute__((noinline)) void writeFlashBuffer_N64(unsigned long sectorSize, byte bufferSize) {
   unsigned long flashBase = romBase;
 
   //Initialize progress bar
