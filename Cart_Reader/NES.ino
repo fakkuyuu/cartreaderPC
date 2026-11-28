@@ -2143,13 +2143,11 @@ void readPRG(bool readrom) {
     clearAndUpdateDisplay();
 
     rgbLed(blue_color);
-    set_address(0);
-    _delay_us(1);
-    CreatePRGFileInSD();
-  } else {
-    set_address(0);
-    _delay_us(1);
   }
+  set_address(0);
+  _delay_us(1);
+  if (!readrom)
+    CreatePRGFileInSD();
 
   word base = 0x8000;
   bool busConflict = false;
