@@ -4623,10 +4623,8 @@ void EepromDevice_NES() {  // 24C02 ONLY
   EepromSet1_NES();
   EepromSet0_NES();
   EepromSet1_NES();
-  EepromSet0_NES();
-  EepromSet0_NES();  // A2
-  EepromSet0_NES();  // A1
-  EepromSet0_NES();  // A0
+  for (byte n = 0; n < 4; ++n)
+    EepromSet0_NES();  // device bit 0 and A2-A0
 }
 
 void EepromReadMode_NES() {
