@@ -1,6 +1,6 @@
 {
-  "id": "round76-auto",
-  "base": "421c1c8065bc1225a63d910b9a18a3d128e01f2f",
+  "id": "round76-retry-auto",
+  "base": "a6d7c3cd4fbc53ad0fe7e86bd5da722dde0405ab",
   "expected_base_flash": 202704,
   "expected_base_ram": 6059,
   "auto_integrate": true,
@@ -8,42 +8,42 @@
   "candidates": [
     {
       "id": "gb-show-info-noinline",
-      "head": "2571fb92263dbb3e17ccde7e61772ea51fefa921",
+      "head": "f4739febc65dfac13d016ca0754cfd71287116c9",
       "reviewed": true
     },
     {
       "id": "gb-get-info-noinline",
-      "head": "f41a9004919534f256f8c116f3cc6a51b6e6683e",
+      "head": "84c02816b84293972c3be0b344eff40a17cffcb6",
       "reviewed": true
     },
     {
       "id": "gba-setup-noinline",
-      "head": "e799631207556d5165271a0e3509bf0d13992fc0",
+      "head": "d369ee05862a49095389ade3588c540dbc77040f",
       "reviewed": true
     },
     {
       "id": "gba-read-rom-noinline",
-      "head": "8da2174ff6a909ffda8ac3de3a0279203810a561",
+      "head": "ad618f684529e580c01082ef39b3602a0ea33d3e",
       "reviewed": true
     },
     {
       "id": "md-read-rom-noinline",
-      "head": "33e3faefc7e8b113b343703af6e67754f10fb641",
+      "head": "58bdadb207c7f99d4b9872241fa9bdbdfb15c95e",
       "reviewed": true
     },
     {
       "id": "msx-read-rom-noinline",
-      "head": "43a3765efdc47a0bffbe3ffe94c94e685789baae",
+      "head": "da12a407da4f36137cb62879a98e368c331ac45a",
       "reviewed": true
     },
     {
       "id": "msx-write-ram-noinline",
-      "head": "eb2f805f474ff5be962cd0bd17f579f72199459f",
+      "head": "cccc15c0c86860f47e90ed0754d73a739ced46af",
       "reviewed": true
     },
     {
       "id": "gb-read-rom-noinline",
-      "head": "748f4a963087cd625c9634f4500a5e0f33c1d114",
+      "head": "5c897abb62ca29c9431f2f4ac73a69914fed24b3",
       "reviewed": true
     }
   ]
