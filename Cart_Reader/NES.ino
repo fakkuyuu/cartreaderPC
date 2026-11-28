@@ -2035,6 +2035,12 @@ void dumpBankPRG(const size_t from, const size_t to, const size_t base) {
   }
 }
 
+static void write_prg_byte(unsigned int, uint8_t);
+static void writeNESRegisterA001(uint8_t data) __attribute__((noinline));
+static void writeNESRegisterA001(uint8_t data) {
+  write_prg_byte(0xA001, data);
+}
+
 void dumpBankCHR(const size_t from, const size_t to) {
   for (size_t address = from; address < to; address += 512) {
     dumpCHR(address);
@@ -2096,7 +2102,7 @@ static void dumpSequentialCHRBanks(uint16_t count, uint16_t reg, uint8_t shift,
 // Same initialization for PRG and CHR MMC3-family paths.
 static void initMmc3OuterBanks_NES() __attribute__((noinline));
 static void initMmc3OuterBanks_NES() {
-  write_prg_byte(0xA001, 0x80);  // Block Register - PRG RAM Chip Enable, Writable
+  writeNESRegisterA001(0x80);  // Block Register - PRG RAM Chip Enable, Writable
   if ((mapper == 126) || (mapper == 422) || (mapper == 534)) {
     write_prg_byte(0x6803, 0);  // set MMC3 banking mode
   }
@@ -2289,7 +2295,7 @@ void readPRG(bool readrom) {
               }
             }
             if (mapper == 44) {
-              write_prg_byte(0xA001, 0x80 | ((i >> 4) & 0x07));
+              writeNESRegisterA001(0x80 | ((i >> 4) & 0x07));
             }
             if (mapper == 47) {
               write_prg_byte(0x6000 + (i >> 4), 0);
@@ -3517,7 +3523,7 @@ void readCHR(bool readrom) {
               }
             }
             if (mapperForMmc3 == 44) {
-              write_prg_byte(0xA001, 0x80 | ((i >> 7) & 0x07));
+              writeNESRegisterA001(0x80 | ((i >> 7) & 0x07));
             }
             if (mapperForMmc3 == 47) {
               write_prg_byte(0x6800 + ((i & 0x180) >> 7), 0);
@@ -3608,7 +3614,7 @@ void readCHR(bool readrom) {
           banks = chrBanks4K * 4;
           for (size_t i = 0; i < banks; i++) {
             writeNESRegisterA000(i & 0xF);         // CHR Bank Lower 4 bits
-            write_prg_byte(0xA001, (i >> 4) & 0xF);  // CHR Bank Upper 4 bits
+            writeNESRegisterA001((i >> 4) & 0xF);  // CHR Bank Upper 4 bits
             dumpCHR1KiB();
           }
           break;
@@ -3733,7 +3739,7 @@ void readCHR(bool readrom) {
 
         case 45:  // 128K/256K/512K/1024K
           banks = chrBanks4K * 4;
-          write_prg_byte(0xA001, 0x80);  // Unlock Write Protection - not used by some carts
+          writeNESRegisterA001(0x80);  // Unlock Write Protection - not used by some carts
           for (size_t i = 0; i < banks; i++) {
             for (word address = 0x1000; address < 0x1400; address += 512) {
               setOuterChr45_NES(i);
@@ -3897,7 +3903,7 @@ void readCHR(bool readrom) {
 
         case 88:
           banks = chrBanks4K * 4;
-          write_prg_byte(0xA001, 0x80);
+          writeNESRegisterA001(0x80);
           for (size_t i = 0; i < banks; i += 2) {
             if (i < 64) {
               writeMmc3PairR59_NES(0, i);
@@ -4245,7 +4251,7 @@ static void initMapper19Ram_NES() {
 
 static void enableDefaultSram_NES(bool writing) {
   if (mapper == 118)               // 8K
-    write_prg_byte(0xA001, writing ? 0x80 : 0xC0);  // PRG RAM enable, read-only or writable
+    writeNESRegisterA001(writing ? 0x80 : 0xC0);  // PRG RAM enable, read-only or writable
   else if (!writing && mapper == 19) {
     initMapper19Ram_NES();
   } else if ((mapper == 21) || (mapper == 25))  // 8K
@@ -4268,7 +4274,7 @@ static void visitMmc6Sram_NES(word base, bool writing) {
   byte access = writing ? 0x30 : 0x20;
   for (word address = 0x1000; address < 0x1400; address += 512) {
     writeNESRegister8000(0x20);
-    write_prg_byte(0xA001, access);
+    writeNESRegisterA001(access);
     if (writing)
       writeBankWRAM(address, address + 512, base);
     else
@@ -4312,7 +4318,7 @@ void readRAM() {
           if (mmc6) {
             visitMmc6Sram_NES(base, false);
           } else {                           // MMC3 8K
-            write_prg_byte(0xA001, 0xC0);    // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
+            writeNESRegisterA001(0xC0);    // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
             dumpPRG8KiB(base);  // 8K
           }
           break;
@@ -4437,9 +4443,9 @@ void writeRAM() {
           if (mmc6) {
             visitMmc6Sram_NES(base, true);
           } else {                            // MMC3 8K
-            write_prg_byte(0xA001, 0x80);     // PRG RAM CHIP ENABLE - Chip Enable, Allow Writes
+            writeNESRegisterA001(0x80);     // PRG RAM CHIP ENABLE - Chip Enable, Allow Writes
             writeBankPRG(0x0, 0x2000, base);  // 8K
-            write_prg_byte(0xA001, 0xC0);     // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
+            writeNESRegisterA001(0xC0);     // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
           }
           break;
 
@@ -4513,7 +4519,7 @@ void writeRAM() {
           writeBankPRG(0x0, 0x2000, base);
 
           if (mapper == 118)               // 8K
-            write_prg_byte(0xA001, 0xC0);  // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
+            writeNESRegisterA001(0xC0);  // PRG RAM CHIP ENABLE - Chip Enable, Write Protect
           else if (mapper == 26)           // 8K
             write_prg_byte(0xB003, 0);     // PRG RAM DISABLE
           //            else if (mapper == 68) // 8K
