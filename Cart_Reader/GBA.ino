@@ -131,91 +131,13 @@ void gbaMenu() {
     case 2:
       // Write save
       clearAndRootDirectory();
-      {
-      const byte detectedWriteSaveType = getSaveType();
-      if (detectedWriteSaveType == 4 || detectedWriteSaveType == 5) {
-        idFlash_GBA();
-        resetFLASH_GBA();
-      }
-      switch (detectedWriteSaveType) {
-        case 1:
-        case 2: {
-          const byte size = detectedWriteSaveType == 1 ? 4 : 64;
-          writeEeprom_GBA(size);
-          verifyEEP_GBA(size);
-          if (detectedWriteSaveType == 1)
-            setROM_GBA();
-          break;
-        }
-
-        case 3:
-        case 6: {
-          const uint32_t size = detectedWriteSaveType == 3 ? 32768UL : 65536UL;
-          writeSRAM_GBA(1, size, 0);
-          verifySRAM_GBA(size, 0);
-          break;
-        }
-
-        case 4:
-          // 512K FLASH
-
-          if (flashid == 0x1F3D) {
-            printFlashTypeAndWait(F("Atmel AT29LV512"));
-          } else if (flashid == 0xBFD4) {
-            printFlashTypeAndWait(F("SST 39VF512"));
-          } else if (flashid == 0xC21C) {
-            printFlashTypeAndWait(F("Macronix MX29L512"));
-          } else if (flashid == 0x321B) {
-            printFlashTypeAndWait(F("Panasonic MN63F805MNP"));
-          } else {
-            printFlashTypeAndWait(FS(SharedFlashText::textUnknown));
-            //print_FatalError(FSTRING_EMPTY);
-          }
-
-          if (flashid == 0x1F3D) {  // Atmel
-            writeFLASH_GBA(1, 65536, 0, 1);
-            verifyFLASH_GBA(65536, 0);
-          } else {
-            eraseFLASH_GBA();
-            const uint32_t bankSize = flashBankSizeP30_GBA(strcmp("PEAJ", cartID) == 0);
-            if (blankcheckFLASH_GBA(bankSize)) {
-              writeFLASH_GBA(1, bankSize, 0, 0);
-              verifyFLASH_GBA(bankSize, 0);
-            }
-          }
-          break;
-
-        case 5:
-          // 1M FLASH
-
-          if (flashid == 0xC209) {
-            printFlashTypeAndWait(F("Macronix MX29L010"));
-          } else if (flashid == 0x6213) {
-            printFlashTypeAndWait(F("SANYO LE26FV10N1TS"));
-          } else {
-            printFlashTypeAndWait(FS(SharedFlashText::textUnknown));
-            //print_FatalError(FSTRING_EMPTY);
-          }
-
-          eraseFLASH_GBA();
-          // 131072 bytes are divided into two 65536 byte banks
-          for (byte bank = 0; bank < 2; bank++) {
-            switchBank_GBA(bank);
-            setROM_GBA();
-            // Card e-Reader+ does not allow access to last 128 bytes of a bank
-            const uint32_t bankSize = flashBankSizeP30_GBA(strcmp("PSAE", cartID) == 0 || strcmp("PSAJ", cartID) == 0);
-            if (!blankcheckFLASH_GBA(bankSize))
-              break;
-            writeFLASH_GBA(!bank, bankSize, bank ? 65536 : 0, 0);
-            if (verifyFLASH_GBA(bankSize, bank ? 65536 : 0))
-              break;
-          }
-          break;
+      writeSaveMenu_GBA_R82();
+      printBlankLine();
+      // Prints string out of the common strings array either with or without newline
+      promptAndWaitForButton();
+      break;
 
 
-      }
-      }
-      setROM_GBA();
       printBlankLine();
       // Prints string out of the common strings array either with or without newline
       promptAndWaitForButton();
@@ -232,6 +154,93 @@ void gbaMenu() {
       resetArduino();
       break;
   }
+}
+
+static void writeSaveMenu_GBA_R82() __attribute__((noinline));
+static void writeSaveMenu_GBA_R82() {
+  const byte detectedWriteSaveType = getSaveType();
+        if (detectedWriteSaveType == 4 || detectedWriteSaveType == 5) {
+          idFlash_GBA();
+          resetFLASH_GBA();
+        }
+        switch (detectedWriteSaveType) {
+          case 1:
+          case 2: {
+            const byte size = detectedWriteSaveType == 1 ? 4 : 64;
+            writeEeprom_GBA(size);
+            verifyEEP_GBA(size);
+            if (detectedWriteSaveType == 1)
+              setROM_GBA();
+            break;
+          }
+  
+          case 3:
+          case 6: {
+            const uint32_t size = detectedWriteSaveType == 3 ? 32768UL : 65536UL;
+            writeSRAM_GBA(1, size, 0);
+            verifySRAM_GBA(size, 0);
+            break;
+          }
+  
+          case 4:
+            // 512K FLASH
+  
+            if (flashid == 0x1F3D) {
+              printFlashTypeAndWait(F("Atmel AT29LV512"));
+            } else if (flashid == 0xBFD4) {
+              printFlashTypeAndWait(F("SST 39VF512"));
+            } else if (flashid == 0xC21C) {
+              printFlashTypeAndWait(F("Macronix MX29L512"));
+            } else if (flashid == 0x321B) {
+              printFlashTypeAndWait(F("Panasonic MN63F805MNP"));
+            } else {
+              printFlashTypeAndWait(FS(SharedFlashText::textUnknown));
+              //print_FatalError(FSTRING_EMPTY);
+            }
+  
+            if (flashid == 0x1F3D) {  // Atmel
+              writeFLASH_GBA(1, 65536, 0, 1);
+              verifyFLASH_GBA(65536, 0);
+            } else {
+              eraseFLASH_GBA();
+              const uint32_t bankSize = flashBankSizeP30_GBA(strcmp("PEAJ", cartID) == 0);
+              if (blankcheckFLASH_GBA(bankSize)) {
+                writeFLASH_GBA(1, bankSize, 0, 0);
+                verifyFLASH_GBA(bankSize, 0);
+              }
+            }
+            break;
+  
+          case 5:
+            // 1M FLASH
+  
+            if (flashid == 0xC209) {
+              printFlashTypeAndWait(F("Macronix MX29L010"));
+            } else if (flashid == 0x6213) {
+              printFlashTypeAndWait(F("SANYO LE26FV10N1TS"));
+            } else {
+              printFlashTypeAndWait(FS(SharedFlashText::textUnknown));
+              //print_FatalError(FSTRING_EMPTY);
+            }
+  
+            eraseFLASH_GBA();
+            // 131072 bytes are divided into two 65536 byte banks
+            for (byte bank = 0; bank < 2; bank++) {
+              switchBank_GBA(bank);
+              setROM_GBA();
+              // Card e-Reader+ does not allow access to last 128 bytes of a bank
+              const uint32_t bankSize = flashBankSizeP30_GBA(strcmp("PSAE", cartID) == 0 || strcmp("PSAJ", cartID) == 0);
+              if (!blankcheckFLASH_GBA(bankSize))
+                break;
+              writeFLASH_GBA(!bank, bankSize, bank ? 65536 : 0, 0);
+              if (verifyFLASH_GBA(bankSize, bank ? 65536 : 0))
+                break;
+            }
+            break;
+  
+  
+        }
+  setROM_GBA();
 }
 
 #if defined(ENABLE_FLASH)
