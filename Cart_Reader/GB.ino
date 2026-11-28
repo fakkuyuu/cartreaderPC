@@ -1516,6 +1516,11 @@ static void mbc6UnlockSequenceP16_GB() {
   writeByte_GB(0x4AAA, 0x55);
 }
 
+static void __attribute__((noinline)) cleanupMbc6R63_GB() {
+  disableFlashSaveMemory();
+  closeAndClearDisplay();
+}
+
 void writeSRAMFLASH_MBC6_GB() {
   // Create filepath
   appendSelectedFilePath();
@@ -1569,8 +1574,7 @@ void writeSRAMFLASH_MBC6_GB() {
           if (sr == 0x80) break;
           delay(1);
           if (lives-- <= 0) {
-            disableFlashSaveMemory();
-            closeAndClearDisplay();
+            cleanupMbc6R63_GB();
             print_FatalError(F("Error erasing FLASH sector."));
           }
         }
@@ -1593,8 +1597,7 @@ void writeSRAMFLASH_MBC6_GB() {
           if (sr == 0x80) break;
           delay(1);
           if (lives-- <= 0) {
-            disableFlashSaveMemory();
-            closeAndClearDisplay();
+            cleanupMbc6R63_GB();
             print_FatalError(F("Error writing to FLASH."));
           }
         }
