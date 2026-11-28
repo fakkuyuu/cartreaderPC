@@ -2544,11 +2544,7 @@ void readPRG(bool readrom) {
         break;
 
       case 40:
-        banks = prgBanks16K * 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xFFFF, i);
-          dumpBankPRG(0x4000, 0x6000, base);
-        }
+        dumpSequentialPRGBanks(prgBanks16K * 2, 0xFFFF, 0, 0x6000, base, 0x4000);
         if (prgsize > 2) {
           write_prg_byte(0xC018, 0);
           dumpPRG32KiB(base);
@@ -3116,10 +3112,7 @@ void readPRG(bool readrom) {
           banks = prgBanks16K / 4;
           for (size_t outerbank = 0; outerbank < 4; outerbank++) {
             write_prg_byte(0x8000, outerbank << 3);
-            for (size_t i = 0; i < banks; i++) {
-              write_prg_byte(0xC000, i);
-              dumpPRG16KiB(base);
-            }
+            dumpSequentialPRGBanks(banks, 0xC000, 0, 0x4000, base);
           }
         }
         break;
