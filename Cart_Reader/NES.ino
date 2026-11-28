@@ -1499,17 +1499,10 @@ chooseMapper:
           else
             hundreds = 2;
         } else if (digit == 1) {
-          if (hundreds == 2) {
-            if (tens > 0)
-              tens--;
-            else
-              tens = 1;
-          } else {
-            if (tens > 0)
-              tens--;
-            else
-              tens = 9;
-          }
+          if (tens > 0)
+            tens--;
+          else
+            tens = hundreds == 2 ? 1 : 9;
         } else if (digit == 2) {
           if (units > 0)
             units--;
