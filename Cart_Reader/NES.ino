@@ -2509,9 +2509,10 @@ void readPRG(bool readrom) {
       case 36:
         banks = prgBanks16K / 2;
         for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xFFA0 + i, (i << 4));
+          const byte bankValue = i << 4;
+          write_prg_byte(0xFFA0 + i, bankValue);
           write_prg_byte(0x4101, 0);
-          write_prg_byte(0x4102, (i << 4));
+          write_prg_byte(0x4102, bankValue);
           write_prg_byte(0x4103, 0);
           write_prg_byte(0x4100, 0);
           write_prg_byte(0x4103, 0xFF);
