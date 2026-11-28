@@ -3555,14 +3555,8 @@ void readCHR(bool readrom) {
           banks = chrBanks4K / 2;
           write_prg_byte(0x5101, 0);  // 8K CHR Banks
           for (size_t i = 0; i < banks; i++) {
-            if (i == 0)
-              write_prg_byte(0x5130, 0);  // Set Upper 2 bits
-            else if (i == 8)
-              write_prg_byte(0x5130, 1);  // Set Upper 2 bits
-            else if (i == 16)
-              write_prg_byte(0x5130, 2);  // Set Upper 2 bits
-            else if (i == 24)
-              write_prg_byte(0x5130, 3);  // Set Upper 2 bits
+            if (i <= 24 && (i & 7) == 0)
+              write_prg_byte(0x5130, i >> 3);
             write_prg_byte(0x5127, i);
             dumpCHR8KiB();
           }
