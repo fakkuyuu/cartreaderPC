@@ -1,0 +1,30 @@
+[
+  {
+    "id": "nes-m41-double-write",
+    "original_base": "6c98f5b223cd21f803f02bce5490a518bd11cc36",
+    "expected_base_flash": 203570,
+    "expected_base_ram": 6059,
+    "conflict_onto": "a459d439b994ec9684c34303c524e83db29d7be1",
+    "rebase_onto_firmware": "a459d439b994ec9684c34303c524e83db29d7be1",
+    "independent_flash_delta": -2,
+    "independent_ram_delta": 0,
+    "paths": [
+      "Cart_Reader/NES.ino"
+    ],
+    "original_head": "cc3c99b479fe8cb05cfa408e5943843d564ee5ac"
+  },
+  {
+    "id": "nes-chr-masked",
+    "original_base": "6c98f5b223cd21f803f02bce5490a518bd11cc36",
+    "expected_base_flash": 203570,
+    "expected_base_ram": 6059,
+    "conflict_onto": "51aac2dd24d64572a1c9b72667d4c9adadcd9d5c",
+    "rebase_onto_firmware": "a459d439b994ec9684c34303c524e83db29d7be1",
+    "independent_flash_delta": -26,
+    "independent_ram_delta": 0,
+    "paths": [
+      "Cart_Reader/NES.ino"
+    ],
+    "original_head": "c8f8329d1d42e015329a7df6d8dca60648e1916a"
+  }
+]
