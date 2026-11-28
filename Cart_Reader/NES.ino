@@ -2729,10 +2729,8 @@ void readPRG(bool readrom) {
         for (size_t i = 0; i < banks; i++) {  // 128K
           write_prg_byte(0x8000, i | 0x80);   // PRG Command + Bank
           write_prg_byte(0x8000, i);          // PRG Bank
-          if (mapper == 72)
-            dumpPRG16KiB(base);
-          else
-            dumpBankPRG(0x4000, 0x8000, base);
+          const word start = mapper == 72 ? 0 : 0x4000;
+          dumpBankPRG(start, start + 0x4000U, base);
         }
         break;
 
