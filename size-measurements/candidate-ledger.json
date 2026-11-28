@@ -25128,7 +25128,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_rejected",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "rejected",
+      "integration_reason": "Independent Flash/RAM policy rejected",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "integration_base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
     },
     {
       "patch_id": "1fd9a56c5f6a9e23b7afc386f81bd7373527de75",
@@ -25161,7 +25168,14 @@
       "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46140520310",
       "independent_decision": "build_failed_or_missing",
       "measurement_status": "build_failed",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "rejected",
+      "integration_reason": "Independent build or calibration failed",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "integration_base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
     },
     {
       "patch_id": "9c7f4e305dd8a0490118ae72f7f9b3ff526a0194",
@@ -25195,7 +25209,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "adopted",
+      "integration_reason": "Neither resource increased and at least one decreased",
+      "integration_flash_delta": -18,
+      "integration_ram_delta": 0,
+      "accepted_commit": "67333721338fa06d61387d5acfb7e5ff39937690",
+      "conflict_paths": [],
+      "integration_base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
     },
     {
       "patch_id": "469ec987271e34b76b8abed52fde5fb11ed33eeb",
@@ -25229,7 +25250,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_improvement",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "adopted",
+      "integration_reason": "Neither resource increased and at least one decreased",
+      "integration_flash_delta": -674,
+      "integration_ram_delta": 0,
+      "accepted_commit": "a475c4d645353b1cf90d9d0aace0306d5e0e9568",
+      "conflict_paths": [],
+      "integration_base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
     },
     {
       "patch_id": "f1757d236c3689577a117d62a759002eecb0a897",
@@ -25263,7 +25291,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_rejected",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "rejected",
+      "integration_reason": "Independent Flash/RAM policy rejected",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "integration_base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
     },
     {
       "patch_id": "29b9c4d56a066cd35c5df35fe041dfe2d44546a3",
@@ -25295,7 +25330,14 @@
       "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46140520310",
       "independent_decision": "build_failed_or_missing",
       "measurement_status": "build_failed",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "rejected",
+      "integration_reason": "Independent build or calibration failed",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "integration_base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
     },
     {
       "patch_id": "eecae5a777e2f0072b58afde08679b5bf4d5d2c0",
@@ -25329,7 +25371,14 @@
       "independent_ram_delta": 0,
       "independent_decision": "independent_rejected",
       "measurement_status": "ok",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "rejected",
+      "integration_reason": "Independent Flash/RAM policy rejected",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "integration_base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
     },
     {
       "patch_id": "79b262974e0dc2f4a77b202022b44ee953654859",
@@ -25360,7 +25409,14 @@
       "run_url": "https://github.com/fakkuyuu/cartreaderPC/actions/runs/46140520310",
       "independent_decision": "build_failed_or_missing",
       "measurement_status": "build_failed",
-      "reason": "No identical patch or commit was found in the ledger."
+      "reason": "No identical patch or commit was found in the ledger.",
+      "integration_decision": "rejected",
+      "integration_reason": "Independent build or calibration failed",
+      "integration_flash_delta": null,
+      "integration_ram_delta": null,
+      "accepted_commit": null,
+      "conflict_paths": [],
+      "integration_base_sha": "bf224c6198128ac85a93d1402bec8d2e6dfef866"
     }
   ],
   "duplicate_attempts": [
