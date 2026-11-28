@@ -2086,6 +2086,15 @@ static void dumpSequentialCHRBanks(uint16_t count, uint16_t reg, uint8_t shift,
 }
 
 // Same initialization for PRG and CHR MMC3-family paths.
+static void __attribute__((noinline)) setM37OuterR69_NES(word bank, word stride) {
+  if (bank == 0)
+    write_prg_byte(0x6000, 0);
+  else if (bank == stride)
+    write_prg_byte(0x6000, 3);
+  else if (bank == stride * 2)
+    write_prg_byte(0x6000, 4);
+}
+
 static void initMmc3OuterBanks_NES() __attribute__((noinline));
 static void initMmc3OuterBanks_NES() {
   write_prg_byte(0xA001, 0x80);  // Block Register - PRG RAM Chip Enable, Writable
@@ -2272,13 +2281,7 @@ void readPRG(bool readrom) {
           initMmc3OuterBanks_NES();
           for (size_t i = 0; i < banks; i++) {
             if (mapper == 37) {
-              if (i == 0) {
-                write_prg_byte(0x6000, 0);  // Switch to Lower Block ($0000-$FFFF)
-              } else if (i == 8) {
-                write_prg_byte(0x6000, 3);  // Switch to 2nd 64K Block ($10000-$1FFFF)
-              } else if (i == 16) {
-                write_prg_byte(0x6000, 4);  // Switch to 128K Block ($20000-$3FFFF)
-              }
+              setM37OuterR69_NES(i, 8);
             }
             if (mapper == 44) {
               write_prg_byte(0xA001, 0x80 | ((i >> 4) & 0x07));
@@ -3507,13 +3510,7 @@ void readCHR(bool readrom) {
               write_prg_byte(0x4132, (i & 0x100) >> 8 | (i & 0x100) >> 4);
             }
             if (mapperForMmc3 == 37) {
-              if (i == 0) {
-                write_prg_byte(0x6000, 0);
-              } else if (i == 64) {
-                write_prg_byte(0x6000, 3);
-              } else if (i == 128) {
-                write_prg_byte(0x6000, 4);
-              }
+              setM37OuterR69_NES(i, 64);
             }
             if (mapperForMmc3 == 44) {
               write_prg_byte(0xA001, 0x80 | ((i >> 7) & 0x07));
