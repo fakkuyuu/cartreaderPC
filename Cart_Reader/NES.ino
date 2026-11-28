@@ -1050,6 +1050,11 @@ static void writeNESRegisterC000(uint8_t data) {
   write_prg_byte(0xC000, data);
 }
 
+static void writeNESRegisterAAAA(uint8_t data) __attribute__((noinline));
+static void writeNESRegisterAAAA(uint8_t data) {
+  write_prg_byte(0xAAAA, data);
+}
+
 static void write_prg_byte(unsigned int address, uint8_t data) {
   PHI2_LOW;
   ROMSEL_HI;
@@ -4763,7 +4768,7 @@ void NESmaker_Cmd(byte cmd) {
   writeNESRegisterC000( 0x01);
   write_prg_byte(0x9555, 0xAA);
   writeNESRegisterC000( 0x00);
-  write_prg_byte(0xAAAA, 0x55);
+  writeNESRegisterAAAA( 0x55);
   writeNESRegisterC000( 0x01);
   write_prg_byte(0x9555, cmd);
 }
