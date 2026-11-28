@@ -1,49 +1,49 @@
 {
-  "id": "round68-auto",
-  "base": "ad7d8a50e008dfa9ef22f563504a390ff35fbd47",
-  "expected_base_flash": 203260,
+  "id": "round69-auto",
+  "base": "1709308e18a971adf61919dcbe08049a4041a310",
+  "expected_base_flash": 203194,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "nes-chr-address-value",
-      "head": "73cd04f28ddbab3d95b05afcdcaad44e30519fa7",
+      "id": "nes-prg-step-mask-reuse",
+      "head": "e31a2fcf87f163e18deac79164eb10032f01dd92",
       "reviewed": true
     },
     {
-      "id": "nes-chr-vrc-extra-nibbles",
-      "head": "926bf3a2708debdbbdce5e78e7d1502bfb765d37",
+      "id": "nes-m37-outer-bank",
+      "head": "ece104714a69c3e572aa280fa8a82d35efef1062",
       "reviewed": true
     },
     {
-      "id": "nes-chr-group-registers",
-      "head": "811cbbbd48306bff59df64931fe001f8a5207288",
+      "id": "nes-m19-prg-init-reuse",
+      "head": "5124a2df0f4ff9ae421990e15987051ae4875ce2",
       "reviewed": true
     },
     {
-      "id": "nes-chr-pair-registers",
-      "head": "4b0fbed5f99c0332bc53030f7bc50fa02e759b4f",
+      "id": "nes-vrc-prg-init",
+      "head": "d4d38de927989da27d9bd71f9c7049f91fb6ce8c",
       "reviewed": true
     },
     {
-      "id": "nes-mmc3-outer-same",
-      "head": "ea7cd7c8c35b65276c80c26fb35bb1fb8a8a5fc1",
+      "id": "nes-eeprom-device-zero-loop",
+      "head": "5a1e43a1be24e8204191acddaaf27bd10c224788",
       "reviewed": true
     },
     {
-      "id": "nes-vrc-case-group",
-      "head": "ae5389bcb4ce71eff67d005c1ba362e1e8f39162",
+      "id": "nes-eeprom-address-serialization",
+      "head": "3195267c1e524cded3bca83b026405e83ada87e5",
       "reviewed": true
     },
     {
-      "id": "nes-chr-address-m174",
-      "head": "afc4fe2081433b18e8ddf8465213081e83a6f265",
+      "id": "nes-mmc5-protection-pair",
+      "head": "5ba082c582320b9891d2595237c64d555176a7b6",
       "reviewed": true
     },
     {
-      "id": "nes-chr-command-pair",
-      "head": "95f5b692a7d252e859479c8b10d182cada7e700b",
+      "id": "nes-prg-nina-sequential",
+      "head": "da79d016415bf78f87859d104b1936e527290fe5",
       "reviewed": true
     }
   ]
