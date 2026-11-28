@@ -1431,12 +1431,16 @@ static uint8_t spc7110RetryMode = 0xff;
 // SPC7110 exposes D0-DF, E0-EF and F0-FF as separate 1 MiB windows.
 // Reapply the captured baseline and the appropriate F-window page whenever
 // the requested frame moves to a different part of the ROM.
+static void __attribute__((noinline)) restoreSpcPairR63_SNES() {
+  writeSnesRegister_SNES(0x4831, spc7110OriginalDMap);
+  writeSnesRegister_SNES(0x4832, spc7110OriginalEMap);
+}
+
 static void setSpc7110RetryMode_SNES(uint8_t mode) {
   if (mode == spc7110RetryMode) return;
   const uint8_t fMap = (mode == 2) ? 3 : spc7110OriginalFMap;
   const uint8_t sramMap = (mode == 0) ? spc7110OriginalSramMap : 0xff;
-  writeSnesRegister_SNES(0x4831, spc7110OriginalDMap);
-  writeSnesRegister_SNES(0x4832, spc7110OriginalEMap);
+  restoreSpcPairR63_SNES();
   writeSnesRegister_SNES(0x4833, fMap);
   writeSnesRegister_SNES(0x4834, sramMap);
   spc7110RetryMode = mode;
@@ -1631,8 +1635,7 @@ void readROM_SNES() {
         beginSpc7110Retry_SNES, readLoRomRetryWord_SNES, true, true);
     if (spc7110RetryMode != 0xff) {
       // Restore every mapping register to the value present before dumping.
-      writeSnesRegister_SNES(0x4831, spc7110OriginalDMap);
-      writeSnesRegister_SNES(0x4832, spc7110OriginalEMap);
+      restoreSpcPairR63_SNES();
       writeSnesRegister_SNES(0x4833, spc7110OriginalFMap);
       writeSnesRegister_SNES(0x4834, spc7110OriginalSramMap);
     }
