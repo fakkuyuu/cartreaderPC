@@ -1,49 +1,29 @@
 {
-  "id": "round78-auto",
-  "base": "ac1cf3ebf0ce5099d52bcc3c9c2c1590dca0e959",
-  "expected_base_flash": 202580,
+  "id": "round78b-auto",
+  "base": "e938d86b36d6986404b0efdf5c5d27cc37fdf3e1",
+  "expected_base_flash": 202334,
   "expected_base_ram": 6059,
   "auto_integrate": true,
   "dry_run": false,
   "candidates": [
     {
-      "id": "nes-0x8000",
-      "head": "26d4e67d82315424f883eb8e09452e7c6b72c62a",
-      "reviewed": true
-    },
-    {
       "id": "nes-0x6000",
-      "head": "94a329ce33832f83be6d0c789a912f8ad3231af4",
+      "head": "530ba582ebad9d5c907e02d9bc3e5397b8d0639b",
       "reviewed": true
     },
     {
       "id": "nes-0x800d",
-      "head": "8f66702e76e72f4f1942445b7c827cf28d8ec0d0",
-      "reviewed": true
-    },
-    {
-      "id": "gb-0x2000",
-      "head": "159c205ac51afba0c9933a757a67b1b25bad467f",
+      "head": "f7254e38527b25bd09bd9935e08140412509fdb3",
       "reviewed": true
     },
     {
       "id": "gb-0x4000",
-      "head": "0df0d15d63f9c2c0397605e528328da2ba00f329",
+      "head": "dc5dc63ba62605ffbb152271716d70921cd42976",
       "reviewed": true
     },
     {
       "id": "gb-0x6000",
-      "head": "f5b62c3ace0a34ede74b46702f07ad7510f7a721",
-      "reviewed": true
-    },
-    {
-      "id": "msx-0x7000",
-      "head": "600070202889a47d3b02dc8cb873d85be6e66a12",
-      "reviewed": true
-    },
-    {
-      "id": "md-0x5555",
-      "head": "410f5d71508efb5c0d23fd9d907fdacee55d9a8b",
+      "head": "f5ccba782f18345794bee1a2f8f0752d0f64bbe9",
       "reviewed": true
     }
   ]
