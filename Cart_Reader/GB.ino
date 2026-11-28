@@ -791,6 +791,11 @@ static void writeGBRegister6000(byte data) {
   writeByte_GB(0x6000, data);
 }
 
+static void writeGBRegister3000(byte data) __attribute__((noinline));
+static void writeGBRegister3000(byte data) {
+  writeByte_GB(0x3000, data);
+}
+
 
 
 void writeByte_GB(int myAddress, byte myData, boolean audio_as_WE) {
@@ -1173,7 +1178,7 @@ void readROM_GB() {
     else if (romType == 32) {
       writeMbc6ModeR61_GB(0);
       writeGBRegister2000(currBank);
-      writeByte_GB(0x3000, currBank);
+      writeGBRegister3000( currBank);
     }
 
     // Set ROM bank for TAMA5
@@ -1205,7 +1210,7 @@ void readROM_GB() {
         }
       } else {
         if ((romType >= 0x19 && romType <= 0x1E) && (currBank == 0 || currBank == 256)) {
-          writeByte_GB(0x3000, (currBank >> 8) & 0xFF);
+          writeGBRegister3000( (currBank >> 8) & 0xFF);
         }
         writeByte_GB(0x2100, currBank & 0xFF);
       }
@@ -1524,7 +1529,7 @@ void readSRAMFLASH_MBC6_GB() {
     word romAddress = 0x4000;
 
     writeGBRegister2000(currBank);
-    writeByte_GB(0x3000, currBank);
+    writeGBRegister3000( currBank);
 
     // Read banks and save to SD
     while (romAddress <= 0x5FFF) {
@@ -1549,13 +1554,13 @@ static void selectMbc6FlashBank_GB(byte bank) __attribute__((noinline));
 static void selectMbc6FlashBank_GB(byte bank) {
   writeMbc6ModeR61_GB(0x08);
   writeGBRegister2000(bank);
-  writeByte_GB(0x3000, bank);
+  writeGBRegister3000( bank);
 }
 
 static void mbc6UnlockSequenceP16_GB() __attribute__((noinline));
 static void mbc6UnlockSequenceP16_GB() {
   writeGBRegister2000(0x01);
-  writeByte_GB(0x3000, 0x02);
+  writeGBRegister3000( 0x02);
   writeByte_GB(0x7555, 0xAA);
   writeByte_GB(0x4AAA, 0x55);
 }
@@ -1930,7 +1935,7 @@ void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
 
     if (MBC > 0) {
       // Set ROM bank hi 0
-      writeByte_GB(0x3000, 0);
+      writeGBRegister3000( 0);
       // Set ROM bank low 0
       writeGBRegister2000(0);
       delay(100);
@@ -2364,7 +2369,7 @@ void identifyCFI_GB() {
   display_Clear();
   writeGBRegister6000(0);  // Set ROM Mode
   writeGBRegister2000(0);  // Set Bank to 0
-  writeByte_GB(0x3000, 0);
+  writeGBRegister3000( 0);
 
   startCFIMode(false);  // Trying x8 mode first
 
@@ -2456,7 +2461,7 @@ bool writeCFI_GB() {
     }
 
     // Set ROM bank hi 0
-    writeByte_GB(0x3000, 0);
+    writeGBRegister3000( 0);
     // Set ROM bank low 0
     writeGBRegister2000(0);
     delay(100);
