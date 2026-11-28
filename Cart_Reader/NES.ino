@@ -4323,11 +4323,7 @@ void readRAM() {
         case 16:  // 256-byte EEPROM 24C02
         case 159:
           { // 128-byte EEPROM 24C01 [Little Endian]
-            size_t eepsize;
-            if (mapper == 159)
-              eepsize = 128;
-            else
-              eepsize = 256;
+            const size_t eepsize = mapper == 159 ? 128 : 256;
             for (size_t address = 0; address < eepsize; address++) {
               EepromREAD(address);
             }
@@ -4449,11 +4445,7 @@ void writeRAM() {
         case 16:  // 256-byte EEPROM 24C02
         case 159:
           { // 128-byte EEPROM 24C01 [Little Endian]
-            size_t eepsize;
-            if (mapper == 159)
-              eepsize = 128;
-            else
-              eepsize = 256;
+            const size_t eepsize = mapper == 159 ? 128 : 256;
             myFile.read(sdBuffer, eepsize);
             for (size_t address = 0; address < eepsize; address++) {
               EepromWRITE(address);
