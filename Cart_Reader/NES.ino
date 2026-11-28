@@ -1035,6 +1035,11 @@ static void writeNESRegister6000(uint8_t data) {
   write_prg_byte(0x6000, data);
 }
 
+static void writeNESRegister6001(uint8_t data) __attribute__((noinline));
+static void writeNESRegister6001(uint8_t data) {
+  write_prg_byte(0x6001, data);
+}
+
 static void writeNESRegisterC000(uint8_t data) __attribute__((noinline));
 static void writeNESRegisterC000(uint8_t data) {
   write_prg_byte(0xC000, data);
@@ -2144,7 +2149,7 @@ static void __attribute__((noinline)) writeOuterPairR59_NES(byte a, byte b) {
   writeNESRegister5000(a);
   write_prg_byte(0x5001, b);
   writeNESRegister6000(a);
-  write_prg_byte(0x6001, b);
+  writeNESRegister6001( b);
 }
 
 static void __attribute__((noinline)) writeTwiceR65_NES(word address, byte value) {
@@ -2323,7 +2328,7 @@ void readPRG(bool readrom) {
             }
             if (mapper == 134) {
               writeNESRegister6000((i & 0x40) >> 2);  // A19
-              write_prg_byte(0x6001, (i & 0x30) >> 4);  // A18-17
+              writeNESRegister6001( (i & 0x30) >> 4);  // A18-17
             }
             if (mapper == 176) {
               write_prg_byte(0x5FF1, (i & 0xE0) >> 1);
@@ -2362,7 +2367,7 @@ void readPRG(bool readrom) {
                 writeNESRegister5000(((i & 0x70) >> 4) | ((i & 0xC00) >> 6));
                 writeNESRegister6000(((i & 0x70) >> 4) | ((i & 0xC00) >> 6));
               }
-              write_prg_byte(0x6001, ((i & 0x80) >> 3) | ((i & 0x300) >> 6) | 0x60);
+              writeNESRegister6001( ((i & 0x80) >> 3) | ((i & 0x300) >> 6) | 0x60);
               write_prg_byte(0x6002, 0x00);
               write_prg_byte(0x6003, 0x00);
             }
@@ -3540,7 +3545,7 @@ void readCHR(bool readrom) {
               writeNESRegister6000((i & 0x180) >> 3 | (i & 0x200) >> 7);
             }
             if ((mapperForMmc3 == 115) || (mapperForMmc3 == 248)) {
-              write_prg_byte(0x6001, (i & 0x100) >> 8);  // A18
+              writeNESRegister6001( (i & 0x100) >> 8);  // A18
             }
             if (mapperForMmc3 == 116) {
               write_prg_byte(0x4100, 0x01 | ((i & 0x100) >> 6));  // A18
@@ -3550,7 +3555,7 @@ void readCHR(bool readrom) {
             }
             if (mapperForMmc3 == 134) {
               writeNESRegister6000((i & 0x200) >> 4);  // A19
-              write_prg_byte(0x6001, (i & 0x180) >> 3);  // A18-17
+              writeNESRegister6001( (i & 0x180) >> 3);  // A18-17
             }
             if (mapperForMmc3 == 176) {
               write_prg_byte(0x5FF2, (i & 0x700) >> 3);  // outer 256k bank
@@ -3967,7 +3972,7 @@ void readCHR(bool readrom) {
         case 182:
           banks = chrBanks4K * 4;
           for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x6001, (i & 0x80) >> 7);
+            writeNESRegister6001( (i & 0x80) >> 7);
             writeNESRegisterA000(6);
             writeNESRegisterC000( i);
             dumpBankCHR(0x1000, 0x1400);
