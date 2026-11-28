@@ -2124,6 +2124,13 @@ static void __attribute__((noinline)) writePair68R61_NES(byte a, byte b) {
   write_prg_byte(0x8000, b);
 }
 
+static void __attribute__((noinline)) dumpAddrPrgR67_NES(word banks, word reg, word mask, byte shift, byte step, word size, word base) {
+  for (word i = 0; i < banks; i += step) {
+    write_prg_byte(reg + ((i & mask) << shift), 0);
+    dumpBankPRG(0, size, base);
+  }
+}
+
 static void writeAndDump235R64_NES(word address, word base) {
   write_prg_byte(address, 0);
   dumpPRG32KiB(base);
@@ -2664,11 +2671,7 @@ void readPRG(bool readrom) {
 
       case 58:
       case 213:
-        banks = prgBanks16K;
-        for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x8000 + (i & 0x07), 0);
-          dumpPRG32KiB(base);
-        }
+        dumpAddrPrgR67_NES(prgBanks16K, 0x8000, 0x07, 0, 2, 0x8000, base);
         break;
 
       case 59:
@@ -2992,27 +2995,15 @@ void readPRG(bool readrom) {
 
       case 200:
       case 212:
-        banks = prgBanks16K;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8000 + (i & 0x07), 0);
-          dumpPRG16KiB(base);
-        }
+        dumpAddrPrgR67_NES(prgBanks16K, 0x8000, 0x07, 0, 1, 0x4000, base);
         break;
 
       case 201:
-        banks = prgBanks16K / 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8000 + (i & 0xFF), 0);
-          dumpPRG32KiB(base);
-        }
+        dumpAddrPrgR67_NES(prgBanks16K / 2, 0x8000, 0xFF, 0, 1, 0x8000, base);
         break;
 
       case 202:
-        banks = prgBanks16K;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8000 | (i << 1), 0);
-          dumpPRG16KiB(base);
-        }
+        dumpAddrPrgR67_NES(prgBanks16K, 0x8000, 0x3FFF, 1, 1, 0x4000, base);
         break;
 
       case 203:
@@ -3033,11 +3024,7 @@ void readPRG(bool readrom) {
         break;
 
       case 214:
-        banks = prgBanks16K;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8000 | (i << 2), 0);
-          dumpPRG16KiB(base);
-        }
+        dumpAddrPrgR67_NES(prgBanks16K, 0x8000, 0x1FFF, 2, 1, 0x4000, base);
         break;
 
       case 221:
@@ -3074,11 +3061,7 @@ void readPRG(bool readrom) {
         break;
 
       case 227:
-        banks = prgBanks16K / 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0x8083 + ((i & 0xF) << 3), 0);
-          dumpPRG32KiB(base);
-        }
+        dumpAddrPrgR67_NES(prgBanks16K / 2, 0x8083, 0xF, 3, 1, 0x8000, base);
         break;
 
       case 228:
@@ -3348,11 +3331,7 @@ void readPRG(bool readrom) {
         break;
 
       case 519:
-        banks = prgBanks16K;
-        for (size_t i = 0; i < banks; i += 2) {
-          write_prg_byte(0x8000 + (i & 0x3F), 0);
-          dumpPRG32KiB(base);
-        }
+        dumpAddrPrgR67_NES(prgBanks16K, 0x8000, 0x3F, 0, 2, 0x8000, base);
         break;
 
       case 552:
