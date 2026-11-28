@@ -2129,6 +2129,11 @@ static void writeAndDump235R64_NES(word address, word base) {
   dumpPRG32KiB(base);
 }
 
+static void __attribute__((noinline)) repeatRamWriteR66_NES(word address, byte value) {
+  for (word i = 0; i < 64; ++i)
+    write_ram_byte(address, value);
+}
+
 void readPRG(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -2418,9 +2423,7 @@ void readPRG(bool readrom) {
 
       case 19:  // 128K/256K
       case 532:
-        for (size_t j = 0; j < 64; j++) {  // Init Register
-          write_ram_byte(0xE000, 0);       // PRG Bank 0 ($8000-$9FFF)
-        }
+        repeatRamWriteR66_NES(0xE000, 0);
         banks = prgBanks16K * 2;
         for (size_t i = 0; i < banks; i++) {
           write_ram_byte(0xE000, i);  // PRG Bank 0 ($8000-$9FFF)
@@ -3623,9 +3626,7 @@ void readCHR(bool readrom) {
 
         case 19:  // 128K/256K
         case 532:
-          for (size_t j = 0; j < 64; j++) {  // Init Register
-            write_ram_byte(0xE800, 0xC0);    // CHR RAM High/Low Disable (ROM Enable)
-          }
+          repeatRamWriteR66_NES(0xE800, 0xC0);
           banks = chrBanks4K * 4;
           write_ram_byte(0xE800, 0xC0);  // CHR RAM High/Low Disable (ROM Enable)
           for (size_t i = 0; i < banks; i += 8) {
@@ -4292,11 +4293,8 @@ static void setMapper82SramAccess_NES(bool enabled) {
 }
 
 static void enableDefaultSram_NES(bool writing) __attribute__((noinline));
-static void initMapper19Ram_NES() __attribute__((noinline));
 static void initMapper19Ram_NES() {
-  for (size_t i = 0; i < 64; i++) {  // Init Register
-    write_ram_byte(0xE000, 0);
-  }
+  repeatRamWriteR66_NES(0xE000, 0);
 }
 
 static void enableDefaultSram_NES(bool writing) {
@@ -4529,9 +4527,7 @@ void writeRAM() {
               write_prg_byte(0x4800, sdBuffer[x]);  // DATA PORT
             }
           } else {                             // SRAM 8K
-            for (size_t i = 0; i < 64; i++) {  // Init Register
-              write_ram_byte(0xF800, 0x40);    // PRG RAM WRITE ENABLE
-            }
+            repeatRamWriteR66_NES(0xF800, 0x40);
             write_ram_byte(0xF800, 0x40);     // PRG RAM WRITE ENABLE
             writeBankPRG(0x0, 0x2000, base);  // 8K
             write_ram_byte(0xF800, 0x0F);     // PRG RAM WRITE PROTECT
