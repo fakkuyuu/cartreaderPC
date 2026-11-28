@@ -2553,10 +2553,7 @@ void readPRG(bool readrom) {
       case 42:
         banks = prgBanks16K * 2;
         base = 0x6000;  // 8k switchable PRG ROM bank at $6000-$7FFF
-        for (size_t i = 0; i < banks - 4; i++) {
-          write_prg_byte(0xE000, i & 0x0F);
-          dumpPRG8KiB(base);
-        }
+        dumpMaskedPrgR67_NES(banks - 4, 0xE000, 0x0F, 0, 1, 0x2000, base);
         base = 0x8000;  // last 32k fixed to $8000-$FFFF
         dumpPRG32KiB(base);
         break;
