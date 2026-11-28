@@ -909,11 +909,10 @@ bool selectMapping(FsFile& database) {
   if (myLetter == 27) {
     // Change Mapper
     configureMapperP16_NES();
-    return 0;
-  } else {
-    seek_first_letter_in_database(database, myLetter);
+    return false;
   }
-  return 1;
+  seek_first_letter_in_database(database, myLetter);
+  return true;
 }
 
 void read_NES(const char* fileSuffix, const byte* header, const uint8_t headersize, const boolean renamerom) {
