@@ -2045,6 +2045,13 @@ static void dumpPRG32KiB(uint16_t base) {
   dumpBankPRG(0x0, 0x8000, base);
 }
 
+static void __attribute__((noinline)) dumpOffsetBankR67_NES(word start, word end, word reg, word size, word base) {
+  for (word i = start; i < end; ++i) {
+    write_prg_byte(reg + i, i);
+    dumpBankPRG(0, size, base);
+  }
+}
+
 static void dumpCHR1KiB() {
   dumpBankCHR(0x0, 0x400);
 }
@@ -2382,10 +2389,7 @@ void readPRG(bool readrom) {
       case 11:
       case 144:
         banks = prgBanks16K / 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xFFB0 + i, i);
-          dumpPRG32KiB(base);
-        }
+        dumpOffsetBankR67_NES(0, banks, 0xFFB0, 0x8000, base);
         break;
 
       case 15:
@@ -3099,10 +3103,7 @@ void readPRG(bool readrom) {
       case 229:
         write_prg_byte(0x8000, 0);
         dumpPRG32KiB(base);
-        for (size_t i = 2; i < 32; i++) {
-          write_prg_byte(0x8000 + i, i);
-          dumpPRG16KiB(base);
-        }
+        dumpOffsetBankR67_NES(2, 32, 0x8000, 0x4000, base);
         break;
 
       case 232:
@@ -3229,10 +3230,7 @@ void readPRG(bool readrom) {
 
       case 286:
         banks = prgBanks16K * 2;
-        for (size_t i = 0; i < banks; i++) {
-          write_prg_byte(0xA0F0 + i, i);
-          dumpPRG8KiB(base);
-        }
+        dumpOffsetBankR67_NES(0, banks, 0xA0F0, 0x2000, base);
         break;
 
       case 288:
