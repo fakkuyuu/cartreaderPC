@@ -1,40 +1,21 @@
 {
-  "id": "round64-independent",
+  "id": "round64-cumulative",
   "base": "4b49f56e475a146b14d8d6920bc0c7e0452cb11c",
   "expected_base_flash": 203914,
   "expected_base_ram": 6059,
+  "endpoints_only": true,
   "candidates": [
     {
-      "id": "nes-m235-loop",
-      "head": "304ad4538518fbbd5e90e292a13ab969090e2b2a"
+      "id": "stage2",
+      "head": "478856729624a3961a0a99de82095a24a4984c3e"
     },
     {
-      "id": "nes-m5-chr-upper",
-      "head": "b25e90b1dfa56e591d76428f5f9e8fae238f5854"
+      "id": "stage3",
+      "head": "f826bc59784749d0f031c9757783d2d2f0a61a6d"
     },
     {
-      "id": "nes-m45-chr-loop",
-      "head": "540a083a7167991fd8c9acc028af4e56afc27cab"
-    },
-    {
-      "id": "nes-conflict-scan",
-      "head": "71d8c2c95ba02c82a0b3daae052e025f2c132410"
-    },
-    {
-      "id": "nes-vrc-chr-loop",
-      "head": "135676625240434af04bd47c12602347960c8602"
-    },
-    {
-      "id": "gb-flash-noinline",
-      "head": "ba750cb228b0e41897192542def7c2ed2a9abc99"
-    },
-    {
-      "id": "gba-flash-noinline",
-      "head": "fdacf9664fca3e5afe1bf22c6083796a28066e43"
-    },
-    {
-      "id": "n64-flash-buffer-noinline",
-      "head": "f374bc211232c52e5f7bef4108823c36ba8d0455"
+      "id": "stage4",
+      "head": "71519b1836f4078ba3771dba5b87d8867ce69707"
     }
   ]
 }
