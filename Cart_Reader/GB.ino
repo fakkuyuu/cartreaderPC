@@ -1862,7 +1862,7 @@ static void showFlashBankCount_GB(const __FlashStringHelper* suffix) {
   display_Update();
 }
 
-void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
+__attribute__((noinline)) void writeFlash_GB(byte MBC, byte commandSet, boolean flashErase) {
   // Launch filebrowser
   browseRootFileAndClear();
 
