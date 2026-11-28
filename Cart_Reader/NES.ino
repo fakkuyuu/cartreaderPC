@@ -3389,6 +3389,16 @@ static void __attribute__((noinline)) dumpVrcChrR64_NES(word banks, word upperRe
   }
 }
 
+static void __attribute__((noinline)) dumpPulseChrR65_NES(word banks, word reg1, word reg2, byte value1Or, byte value2Or) {
+  for (word i = 0; i < banks; ++i) {
+    for (word address = 0; address < 0x2000; address += 512) {
+      write_prg_pulsem2(reg1, value1Or | (i & 7));
+      write_prg_pulsem2(reg2, value2Or | ((i & 8) << 3));
+      dumpCHR_pulsem2(address);
+    }
+  }
+}
+
 void readCHR(bool readrom) {
   if (!readrom) {
     clearAndUpdateDisplay();
@@ -3752,14 +3762,7 @@ void readCHR(bool readrom) {
           break;
 
         case 57:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            for (word address = 0x0; address < 0x2000; address += 512) {
-              write_prg_pulsem2(0x8800, i & 0x07);                  // A15-A13
-              write_prg_pulsem2(0x8000, 0x80 | ((i & 0x08) << 3));  // A16
-              dumpCHR_pulsem2(address);
-            }
-          }
+          dumpPulseChrR65_NES(chrBanks4K / 2, 0x8800, 0x8000, 0, 0x80);
           break;
 
         case 58:
@@ -4201,14 +4204,7 @@ void readCHR(bool readrom) {
           break;
 
         case 332:  // 128K
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            for (word address = 0x0; address < 0x2000; address += 512) {
-              write_prg_pulsem2(0x6001, 0x30 | (i & 0x07));
-              write_prg_pulsem2(0x6000, (i & 0x08) << 3);
-              dumpCHR_pulsem2(address);
-            }
-          }
+          dumpPulseChrR65_NES(chrBanks4K / 2, 0x6001, 0x6000, 0x30, 0);
           break;
 
         case 519:
