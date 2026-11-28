@@ -84,6 +84,7 @@ void showVerifyingLineAndUpdate() __attribute__((noinline));
 void showChecksumAndUpdate() __attribute__((noinline));
 void showEraseLabelAndUpdate() __attribute__((noinline));
 void showClockGeneratorMissing() __attribute__((noinline, noreturn));
+void setup_GBA() __attribute__((noinline));
 void showNoSramError() __attribute__((noinline));
 void blankLineAndUpdate() __attribute__((noinline));
 void showWritingFlashAndUpdate() __attribute__((noinline));
