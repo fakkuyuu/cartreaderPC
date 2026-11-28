@@ -791,6 +791,11 @@ static void writeGBRegister6000(byte data) {
   writeByte_GB(0x6000, data);
 }
 
+static void writeGBRegister7FE1(byte data) __attribute__((noinline));
+static void writeGBRegister7FE1(byte data) {
+  writeByte_GB(0x7FE1, data);
+}
+
 
 
 void writeByte_GB(int myAddress, byte myData, boolean audio_as_WE) {
@@ -3200,11 +3205,11 @@ void writeMegaMem_GB() {
   Datel GBC Gameshark Gameboy Device Read Function
 ***************************************************/
 void sendGamesharkCommand_GB(byte cmd) {
-  writeByte_GB(0x7FE1, 0x2);
+  writeGBRegister7FE1( 0x2);
   writeGBRegister5555(0xAA);
-  writeByte_GB(0x7FE1, 0x1);
+  writeGBRegister7FE1( 0x1);
   writeByte_GB(0x4AAA, 0x55);
-  writeByte_GB(0x7FE1, 0x2);
+  writeGBRegister7FE1( 0x2);
   writeGBRegister5555(cmd);
 }
 
@@ -3216,7 +3221,7 @@ static void identifyGamesharkFlash_GB() {
   delay(10);
 
   // Read the two id bytes into a string
-  writeByte_GB(0x7FE1, 0x0);
+  writeGBRegister7FE1( 0x0);
   flashid = readByte_GB(0x4000) << 8;
   flashid |= readByte_GB(0x4001);
 
@@ -3275,7 +3280,7 @@ void readGameshark_GB() {
 
     startAddress = 0x4000;
 
-    writeByte_GB(0x7FE1, (workBank & 0xFF));
+    writeGBRegister7FE1( (workBank & 0xFF));
 
     // Read banks and save to SD
     dumpAccessoryRange_GB(startAddress, finalAddress, processedProgressBar, totalProgressBar);
@@ -3335,7 +3340,7 @@ void writeGameshark_GB() {
     blinkLED();
 
     // Set ROM bank
-    writeByte_GB(0x7FE1, currBank);
+    writeGBRegister7FE1( currBank);
 
     blankCheckRange_GB(0x4000, 0x6000);
   }
@@ -3365,7 +3370,7 @@ void writeGameshark_GB() {
         sendGamesharkCommand_GB(0xA0);
 
         // Set ROM bank
-        writeByte_GB(0x7FE1, currBank);
+        writeGBRegister7FE1( currBank);
 
         toggle = true;
 
@@ -3396,7 +3401,7 @@ void writeGameshark_GB() {
 
   // Read number of banks and switch banks
   for (word bank = 0; bank < romBanks; bank++) {
-    writeByte_GB(0x7FE1, bank);  // Set ROM bank
+    writeGBRegister7FE1( bank);  // Set ROM bank
     romAddress = 0x4000;
 
     // Blink led
