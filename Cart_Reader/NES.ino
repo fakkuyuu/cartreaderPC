@@ -3661,11 +3661,7 @@ void readCHR(bool readrom) {
 
         case 27:
           banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xB000, i & 0x0F);
-            write_prg_byte(0xB001, i >> 4);
-            dumpCHR1KiB();
-          }
+          dumpVrcChrR64_NES(banks, 0xB001, 0xFF);
           break;
 
         case 32:  // 128K
@@ -4139,11 +4135,7 @@ void readCHR(bool readrom) {
         case 252:
         case 253:
           banks = chrBanks4K * 4;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xB000, i & 0x0F);
-            write_prg_byte(0xB004, ((i >> 4) & 0x0F) | ((i >> 8) << 4));
-            dumpCHR1KiB();
-          }
+          dumpVrcChrR64_NES(banks, 0xB004, 0xFF);
           break;
 
         case 261:
