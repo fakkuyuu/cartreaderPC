@@ -3392,6 +3392,13 @@ static void __attribute__((noinline)) dumpMaskedChrR65_NES(word banks, word reg,
   }
 }
 
+static void __attribute__((noinline)) dumpAddrValueChrR68_NES(word banks, word reg, word mask, byte shift, word size) {
+  for (word i = 0; i < banks; ++i) {
+    write_prg_byte(reg + (i & mask), i << shift);
+    dumpBankCHR(0, size);
+  }
+}
+
 static void __attribute__((noinline)) dumpAddrChrR66_NES(word banks, word mask, byte shift) {
   for (word i = 0; i < banks; ++i) {
     write_prg_byte(0x8000 | ((i & mask) << shift), 0);
@@ -3584,11 +3591,7 @@ void readCHR(bool readrom) {
 
         case 11:
         case 144:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xFFB0 + i, i << 4);
-            dumpCHR8KiB();
-          }
+          dumpAddrValueChrR68_NES(chrBanks4K / 2, 0xFFB0, 0xFFFF, 4, 0x2000);
           break;
 
         case 16:
@@ -4066,10 +4069,7 @@ void readCHR(bool readrom) {
           break;
 
         case 229:
-          for (size_t i = 0; i < 32; i++) {
-            write_prg_byte(0x8000 + i, i);
-            dumpCHR8KiB();
-          }
+          dumpAddrValueChrR68_NES(32, 0x8000, 0xFFFF, 0, 0x2000);
           break;
 
         case 236:
@@ -4096,27 +4096,15 @@ void readCHR(bool readrom) {
           break;
 
         case 261:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0xF000 + (i & 0x0F), i);
-            dumpCHR8KiB();
-          }
+          dumpAddrValueChrR68_NES(chrBanks4K / 2, 0xF000, 0x0F, 0, 0x2000);
           break;
 
         case 286:
-          banks = chrBanks4K * 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 + i, i);
-            dumpCHR2KiB();
-          }
+          dumpAddrValueChrR68_NES(chrBanks4K * 2, 0x8000, 0xFFFF, 0, 0x800);
           break;
 
         case 288:
-          banks = chrBanks4K / 2;
-          for (size_t i = 0; i < banks; i++) {
-            write_prg_byte(0x8000 + (i & 0x07), i);
-            dumpCHR8KiB();
-          }
+          dumpAddrValueChrR68_NES(chrBanks4K / 2, 0x8000, 0x07, 0, 0x2000);
           break;
 
         case 290:
